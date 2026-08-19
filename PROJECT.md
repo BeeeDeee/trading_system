@@ -101,6 +101,8 @@ PostgreSQL provides persistent storage.
 * `docs/DATA_MODEL.md`
 * `docs/DATA_SOURCES.md`
 * `docs/STATE_AND_PERSISTENCE.md`
+* `docs/PACKAGE_STRUCTURE.md`
+* `docs/INTERFACES.md`
 
 ### Interfaces
 
