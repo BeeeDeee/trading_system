@@ -134,7 +134,7 @@ PostgreSQL provides persistent storage.
 
 ### Core Application
 
-* [ ] Python project structure
+* [x] Python project structure
 * [ ] FastAPI control plane
 * [ ] Trading runtime
 * [ ] Domain models
