@@ -1,0 +1,36 @@
+# Virtual environments & package caches
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Data, logs, and artifacts (especially heavy in trading/ML)
+data/
+results/
+logs/
+*.csv
+*.parquet
+*.h5
+*.log
+
+# Server, IDE, and build caches
+.cursor-server/
+.cache/
+node_modules/
+dist/
+build/
+
+# Others
+.codex
+.config
+.copilot
+.cua-driver
+.local
+.npm
+.pytest_cache
+.ssh
+.vscode-server
+docker/backups/
+backend/.ruff_cache/
+backend/.venv/
+
