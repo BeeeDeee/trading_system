@@ -19,7 +19,23 @@ One Python process
 ```
 
 The runtime uses asyncio tasks for I/O, websocket connections, reconnects,
-and background work. Trading logic does not use threads initially.
+and background work. Trading logic does not use threads initially. CPU-bound
+work (feature computation, ML inference) must not block the event loop; it is
+offloaded to an executor when it becomes measurable.
+
+## 1a. Decision Cadence
+
+The runtime is bar-driven (`ADR/008-bar-driven-runtime.md`). The decision
+pipeline runs once per completed bar of the configured timeframe (initially
+1h). Between bar closes the runtime only:
+
+- ingests market data,
+- processes asynchronous execution events (fills, rejections, cancellations),
+- maintains exchange-native protective orders,
+- serves control-plane commands.
+
+Sub-bar protection is the job of exchange-native stop/take-profit orders,
+not the pipeline.
 
 ## 2. Serialized State Transitions
 
@@ -32,8 +48,7 @@ an actor framework or an internal event bus.
 
 ```text
 snapshot
- → features
- → regime
+ → features (incl. regime)
  → strategies
  → portfolio
  → risk
@@ -41,7 +56,9 @@ snapshot
  → execution
 ```
 
-The pipeline is a normal Python call chain coordinated by the runtime.
+The pipeline is a normal Python call chain coordinated by the runtime. Every
+stage result is persisted to the decision audit trail with correlation
+identifiers.
 
 ## 4. Runtime Commands
 
@@ -76,8 +93,10 @@ positions are not automatically closed.
 
 ### HALT
 
-Enter an emergency safety state and prohibit new orders. Cancellation of open
-orders may follow according to configuration.
+Enter an emergency safety state and prohibit new risk-opening orders.
+Reduce-only exits remain permitted, and exchange-native protective stop
+orders remain active. Cancellation of open risk-opening orders may follow
+according to configuration; protective orders are not cancelled by HALT.
 
 ### RESUME
 
@@ -90,6 +109,7 @@ Request an explicit comparison of local state with external account state.
 
 ## 5. Failure Behavior
 
-Required inputs and safety dependencies fail closed. See
-`ARCHITECTURE.md` for the failure policy. n8n is outside the runtime and its
+The failure policy is asymmetric: opening risk fails closed; reducing risk
+requires the minimum possible dependencies. See `ARCHITECTURE.md` and
+`ADR/010-asymmetric-failure-policy.md`. n8n is outside the runtime and its
 availability does not determine whether trading can continue.

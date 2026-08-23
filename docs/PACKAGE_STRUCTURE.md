@@ -26,20 +26,24 @@ backend/
     ├── modules/
     │   ├── data_sources/
     │   ├── normalization/
-    │   ├── features/
-    │   ├── regime/
+    │   ├── features/          # incl. regime features
     │   ├── strategies/
     │   ├── portfolio/
     │   ├── risk/
     │   ├── order_planning/
     │   ├── execution/
+    │   ├── backtest/          # simulated execution, backtest clock, fill model
     │   └── reconciliation/
     ├── infrastructure/
-    │   ├── persistence/
+    │   ├── persistence/       # repositories + Alembic migrations
     │   ├── exchanges/
     │   ├── configuration/
     │   └── notifications/
     └── main.py
+
+data/                          # gitignored Parquet market data
+├── raw/
+└── processed/
 
 tests/
 ├── unit/
@@ -96,6 +100,11 @@ infrastructure. Modules must not import FastAPI or call repositories directly.
 ## 4. Initial Scope Rule
 
 The first implementation should create only the packages needed for the
-simulated-execution vertical slice. Empty extension packages for AI, model
-management, and additional data providers should not be created until their
-contracts are required.
+backtest vertical slice: domain models, historical data loading, features,
+one reference strategy, portfolio, risk, order planning, and `modules/backtest`
+simulated execution. Milestone 1b then adds news/sentiment adapters and
+features under `modules/data_sources/` and `modules/features/` — no new
+top-level package is required. Empty extension packages for AI, model
+management, and on-chain/macro providers should not be created until their
+contracts are required. Live exchange adapters and the runtime loop belong
+to Milestone 2.

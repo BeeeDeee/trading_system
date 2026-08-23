@@ -28,18 +28,46 @@ It does not contain trading logic.
 
 - account state
 
-### News and Sentiment
+### News and Sentiment (near-term — Milestone 1b)
 
-- news APIs
-- RSS
-- social media
-- sentiment providers
-- Fear & Greed
-- other external sentiment signals
+First-class alternative data, implemented right after the price backtest
+slice. Same adapter → normalize → Feature Engine path as market data.
+
+Near-term sources (priority order):
+
+- Fear & Greed (or equivalent crypto sentiment index)
+- news APIs / headlines with timestamped relevance to BTC
+- optional: RSS or curated feeds
+
+Later expansion:
+
+- social media / Reddit-style providers
+- other commercial sentiment feeds
+
+Sentiment is **optional for strategies**. Missing or stale sentiment must not
+block strategies that only use price features. Strategies that require
+sentiment fail closed for *their* signals only.
+
+Example flow:
+
+```text
+Fear & Greed / News API
+    ↓
+SentimentAdapter / NewsAdapter
+    ↓
+Normalization → SentimentSnapshot / NewsEvent[]
+    ↓
+Feature Engine → sentiment features (aligned to 1h bars)
+    ↓
+Strategy (optional consumer)
+```
+
+Historical sentiment series are stored as Parquet under `data/` alongside
+OHLCV so backtests can replay the same inputs.
 
 ### On-Chain
 
-Potential future inputs:
+Potential future inputs (after Milestone 1b):
 
 - transaction activity,
 - exchange flows,
@@ -93,9 +121,10 @@ BinanceMarketDataAdapter
 BybitMarketDataAdapter
 BinanceAccountExecutionAdapter
 BybitAccountExecutionAdapter
-NewsProviderAdapter
-RedditAdapter
-OnChainProviderAdapter
+FearGreedAdapter          # Milestone 1b
+NewsProviderAdapter       # Milestone 1b
+RedditAdapter             # later expansion
+OnChainProviderAdapter    # future
 ```
 
 The rest of the platform must not depend on provider-specific response formats.
@@ -128,11 +157,19 @@ Funding API
 Funding Rate
     ↓
 Funding Feature
+
+Fear & Greed API
+    ↓
+SentimentSnapshot
+    ↓
+Sentiment Feature (aligned to bar close)
 ```
 
 The adapter retrieves the raw value.
 
 The Feature Engine decides how to derive analytical features from it.
+Sentiment features must be point-in-time correct in backtests (no lookahead
+from articles published after the bar).
 
 ---
 
@@ -146,7 +183,36 @@ n8n may be used for non-critical external data workflows where appropriate.
 
 ---
 
-## 8. Reliability
+## 8. Historical Data Storage
+
+Backtesting and research require years of historical bars. Storage split:
+
+```text
+Parquet files (data/, gitignored)
+  ├── raw/        untouched provider downloads
+  └── processed/  cleaned, normalized, resampled
+
+PostgreSQL
+  └── trading state only (orders, positions, trades, decisions, config)
+```
+
+Parquet is the research and backtest data store: columnar, fast to scan,
+trivially portable. PostgreSQL is not used for bulk candle history.
+
+The live runtime and the backtest engine consume the same canonical
+`MarketSnapshot` model regardless of whether data comes from a websocket or
+a Parquet file.
+
+Initial datasets:
+
+- BTC/USDT 1h bars, several years of history, plus funding when perpetuals
+  are in scope (Milestone 1).
+- Sentiment / Fear & Greed (and news event) history aligned for backtest
+  replay (Milestone 1b).
+
+---
+
+## 9. Reliability
 
 Each source should expose enough metadata to determine:
 
@@ -160,6 +226,6 @@ Stale or invalid data must be detectable before it influences trading decisions.
 
 ---
 
-## 9. Future Expansion
+## 10. Future Expansion
 
 New data sources should be added by implementing a new adapter rather than changing downstream trading logic.

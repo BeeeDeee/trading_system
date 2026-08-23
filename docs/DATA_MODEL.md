@@ -17,9 +17,7 @@ They must not depend on exchange-specific API models.
 ```text
 MarketSnapshot
       ↓
-FeatureSet
-      ↓
-RegimeState
+FeatureSet (may include RegimeState)
       ↓
 TradingSignal[]
       ↓
@@ -33,6 +31,11 @@ OrderIntent
       ↓
 ExecutionReport
 ````
+
+Every object in the chain carries correlation identifiers so an
+`ExecutionReport` can be traced back to the `TradingSignal` and `FeatureSet`
+that produced it. Stage results are persisted as the decision audit trail
+(see `STATE_AND_PERSISTENCE.md`).
 
 ---
 
@@ -70,16 +73,21 @@ Examples:
 * volatility,
 * momentum,
 * funding features,
-* sentiment features,
-* on-chain features.
+* **sentiment features** (near-term — Fear & Greed, news-derived scores;
+  see `DATA_SOURCES.md` Milestone 1b),
+* on-chain features (later).
 
 Features should be deterministic for a given input and feature version.
+Sentiment features used in backtests must be point-in-time correct relative
+to the bar timestamp.
 
 ---
 
 ## 5. RegimeState
 
-Represents current market regime.
+Represents current market regime as a **derived feature owned by the Feature
+Engine**. It is an optional part of `FeatureSet`, not a standalone pipeline
+stage. Strategies may consume it or ignore it.
 
 Initial structure:
 
@@ -108,7 +116,19 @@ Additional fields may include:
 
 ---
 
-## 6. TradingSignal
+## 5a. SentimentSnapshot / NewsEvent (near-term)
+
+Canonical inputs for Milestone 1b alternative data (exchange-independent):
+
+**SentimentSnapshot** — point-in-time aggregate sentiment (e.g. Fear & Greed
+value, source, timestamp, freshness).
+
+**NewsEvent** — timestamped headline or article reference (source, published
+at, optional relevance / polarity score). Features derived from news must
+only use events with `published_at <= bar_timestamp` in backtests.
+
+These are owned by Data / Normalization; the Feature Engine turns them into
+sentiment features inside `FeatureSet`.
 
 Represents the output of a strategy.
 
@@ -175,7 +195,14 @@ Represents an execution request that has passed risk validation.
 
 It should contain platform-level execution information rather than exchange-specific API structures.
 
-Possible fields:
+Required fields:
+
+* `client_order_id` — a client-generated idempotency key. Retries after
+  network failures must reuse the same key so an order is never
+  double-submitted.
+* `account_id` — present from day one even while only one account exists.
+
+Additional fields:
 
 * symbol,
 * side,
@@ -185,6 +212,9 @@ Possible fields:
 * reduce-only flag,
 * strategy identifier,
 * risk decision identifier.
+
+Price and quantity are represented as `Decimal`, rounded to the instrument's
+tick size and step size before submission.
 
 ---
 
@@ -245,12 +275,14 @@ May include:
 
 ## 13. Ownership
 
-| Object          | Primary Owner        |
-| --------------- | -------------------- |
-| MarketSnapshot  | Data / Normalization |
-| FeatureSet      | Feature Engine       |
-| RegimeState     | Regime Detection     |
-| TradingSignal   | Strategy Engine      |
+| Object            | Primary Owner        |
+| ----------------- | -------------------- |
+| MarketSnapshot    | Data / Normalization |
+| SentimentSnapshot | Data / Normalization |
+| NewsEvent         | Data / Normalization |
+| FeatureSet        | Feature Engine       |
+| RegimeState       | Feature Engine (derived feature) |
+| TradingSignal     | Strategy Engine      |
 | TargetPosition  | Portfolio Manager    |
 | RiskDecision    | Risk Manager         |
 | OrderIntent     | Order Planner        |
@@ -264,6 +296,14 @@ May include:
 
 * Domain models must remain exchange-independent.
 * `OrderIntent` may only be created from an approved or modified `RiskDecision`.
+* Every `OrderIntent` carries a client-generated `client_order_id`
+  (idempotency key).
+* Account-scoped models (orders, positions, trades, balances) carry an
+  `account_id` from day one, even while only one account exists.
+* Money at the order, balance, and P&L accumulation boundaries uses
+  `Decimal` or integer minor units. Floats remain acceptable for
+  time-series features and analytics.
+* All timestamps are timezone-aware UTC.
 * `PortfolioState` is a derived view, not the authoritative source of order or position truth.
 * Domain models should be immutable where practical.
 * Models should be strongly typed.

@@ -25,16 +25,21 @@ Normalizer
 FeatureEngine
   calculate(snapshot, feature_context) -> FeatureSet
 
-RegimeDetector
-  detect(snapshot, features) -> RegimeState
-
 Strategy
-  evaluate(snapshot, features, regime, portfolio) -> TradingSignal[]
+  evaluate(snapshot, features, portfolio) -> TradingSignal[]
 ```
 
 `MarketDataPort` is implemented by market-data adapters. Normalization owns
 conversion to canonical models; feature generation begins only after
 normalization.
+
+Regime classification is part of `FeatureSet` (produced by the Feature
+Engine); there is no standalone regime port. Strategies that need regime
+information read it from `features`.
+
+Lookahead rule: a `FeatureSet` computed for bar close time `t` may only use
+data with timestamp `<= t`, and the resulting decision executes no earlier
+than the next bar open (see `ADR/009-cross-cutting-conventions.md`).
 
 ## 3. Decision and Execution Ports
 
@@ -59,12 +64,18 @@ ExecutionPort
   get_fills(since) -> ExternalFill[]
 ```
 
+`RiskManager` may reduce or reject a proposed size but never increases it.
+Sizing is proposed by `PortfolioManager`.
+
 `OrderPlanner` may create intents only for `APPROVE` or `MODIFY` decisions. It
-must reject or return no intents for `REJECT` and `HALT`.
+must reject or return no intents for `REJECT` and `HALT`. It assigns the
+client-generated `client_order_id` to every intent.
 
 `TradingEngine` accepts only risk-approved `OrderIntent` objects and owns local
-order lifecycle state around `ExecutionPort` calls. `ExecutionPort` is the
-provider-facing boundary and returns provider-neutral acknowledgements.
+order lifecycle state around `ExecutionPort` calls, including placement and
+maintenance of exchange-native protective stop/take-profit orders.
+`ExecutionPort` is the provider-facing boundary and returns provider-neutral
+acknowledgements.
 
 ## 4. Account and Reconciliation Ports
 
@@ -99,7 +110,15 @@ TradeRepository
 
 StrategyRepository
   get_active() -> StrategyConfiguration[]
+
+DecisionRepository
+  save(decision_record)
+  get_by_correlation(correlation_id) -> DecisionRecord[]
 ```
+
+`DecisionRepository` persists the decision audit trail: signals, risk
+decisions (including rejections), and planned intents, linked by correlation
+identifiers.
 
 Repositories are called by application services. Domain modules do not access
 PostgreSQL directly.
@@ -124,5 +143,11 @@ internal message broker.
 2. No execution call bypasses the Trading Engine.
 3. No strategy or API route calls an exchange adapter directly.
 4. `PortfolioState` is derived and is not authoritative order state.
-5. Missing or stale required inputs produce no new trading order.
-6. Exchange-specific models stop at infrastructure adapter boundaries.
+5. Missing or stale required inputs produce no new **risk-opening** order.
+   Reduce-only exits follow the asymmetric failure policy
+   (`ADR/010-asymmetric-failure-policy.md`).
+6. Every `OrderIntent` carries a `client_order_id`; resubmission with the
+   same key must not create a duplicate order.
+7. Risk never increases a proposed position size.
+8. Every pipeline decision is persisted via `DecisionRepository`.
+9. Exchange-specific models stop at infrastructure adapter boundaries.

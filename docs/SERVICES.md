@@ -39,7 +39,8 @@ Modules communicate through explicit Python interfaces and typed domain models.
 
 ### Owns
 
-- connection to external data providers,
+- connection to external data providers (market data, **news / sentiment**,
+  and later alternative sources),
 - retrieval of raw data,
 - provider-specific authentication,
 - provider-specific rate limiting,
@@ -77,8 +78,16 @@ Modules communicate through explicit Python interfaces and typed domain models.
 
 - technical indicators,
 - statistical features,
-- alternative-data features,
+- alternative-data features including **news and market sentiment**
+  (near-term Milestone 1b),
+- market regime classification (trend/range/chop, trend direction,
+  volatility state) as derived features,
 - deterministic feature generation.
+
+Regime classification and sentiment features are ordinary derived features,
+not pipeline stages. Strategies may consume them or ignore them. Their
+unavailability affects only strategies that require them; they are not
+system-wide trading prerequisites.
 
 ### Does not own
 
@@ -88,35 +97,15 @@ Modules communicate through explicit Python interfaces and typed domain models.
 
 ---
 
-## 6. Regime Detection
-
-### Owns
-
-- market regime classification,
-- regime confidence,
-- regime state.
-
-Initial regimes:
-
-- TREND
-- RANGE
-- CHOP
-
-### Does not own
-
-- strategy selection,
-- portfolio allocation,
-- execution.
-
----
-
-## 7. Strategy Engine
+## 6. Strategy Engine
 
 ### Owns
 
 - strategy logic,
 - strategy evaluation,
-- trading signals.
+- trading signals,
+- proposed exit levels (stop-loss and take-profit proposals attached to
+  signals).
 
 ### Does not own
 
@@ -126,14 +115,18 @@ Initial regimes:
 
 ---
 
-## 8. Portfolio Manager
+## 7. Portfolio Manager
 
 ### Owns
 
 - aggregation of strategy signals,
 - capital allocation,
 - strategy weighting,
-- target positions.
+- **proposing target position sizes**.
+
+Position sizing is proposed here. The Risk Manager may constrain a proposed
+size (reduce or reject) but never increases it. This is the single place
+where the sizing responsibility split is defined.
 
 PortfolioState is derived from current local and reconciled account/position
 state. The Portfolio Manager is not the authoritative owner of order or
@@ -147,27 +140,33 @@ position lifecycle state.
 
 ---
 
-## 9. Risk Manager
+## 8. Risk Manager
 
 ### Owns
 
 - risk limits,
-- position sizing,
 - exposure constraints,
 - drawdown protection,
 - trading halts,
-- final risk approval.
+- final risk approval,
+- **constraining proposed position sizes** (cap, scale down, reject — never
+  increase).
 
 Risk Manager evaluates a `TargetPosition` and returns `RiskDecision`. It may
-approve, modify, reject, or halt. It does not create exchange orders.
+approve, modify, reject, or halt. It does not create exchange orders and it
+does not propose sizes.
 
-### Critical rule
+### Critical rules
 
-No order may proceed to execution without Risk Manager approval.
+- No risk-opening order may proceed to execution without Risk Manager
+  approval.
+- Risk-reducing (reduce-only) exits are subject to a minimal, explicitly
+  degraded-mode-compatible check path so that reducing risk is never blocked
+  by unavailable non-essential dependencies.
 
 ---
 
-## 10. Trading Engine
+## 9. Trading Engine
 
 ### Owns
 
@@ -175,7 +174,20 @@ No order may proceed to execution without Risk Manager approval.
 - execution,
 - cancellation,
 - partial fills,
-- local order lifecycle and position-state updates.
+- local order lifecycle and position-state updates,
+- **position exit management**: placement and maintenance of exchange-native
+  protective stop-loss and take-profit orders derived from approved exit
+  levels.
+
+Protective stops live on the exchange by default so they survive platform
+restarts, network failures, and database outages. The Trading Engine ensures
+that every open position has its protective orders in place and reconciles
+them on restart.
+
+Asynchronous execution events (fills, partial fills, rejections,
+cancellations) arriving between decision cycles are handled by the Trading
+Engine as serialized state transitions; they do not re-enter the decision
+pipeline.
 
 ### Does not own
 
@@ -185,7 +197,7 @@ No order may proceed to execution without Risk Manager approval.
 
 ---
 
-## 11. Exchange Adapters
+## 10. Exchange Adapters
 
 Exchange-specific client code is split into two platform-level adapter
 boundaries. They may share a provider client implementation.
@@ -198,32 +210,36 @@ data retrieval.
 ### Account / Execution Adapter
 
 Owns balances, positions, open orders, order submission, cancellation, and fill
-retrieval.
+retrieval, including exchange-native conditional (stop / take-profit) orders.
 
-Both adapters own provider authentication, symbol mapping, rate limits, and
-provider-specific errors for their respective operations.
+Both adapters own provider authentication, symbol mapping, rate limits,
+tick-size and step-size rounding rules, and provider-specific errors for
+their respective operations.
 
 The rest of the system must use platform-level interfaces instead of exchange-specific APIs.
 
 ---
 
-## 12. Reconciliation
+## 11. Reconciliation
 
 ### Owns
 
 - comparing local order and position state with external account snapshots,
+- verifying protective stop orders exist for every open position,
 - identifying state differences,
 - coordinating recovery according to operational policy.
 
 Reconciliation does not own strategy decisions or order creation.
 
-## 13. Order Planner
+## 12. Order Planner
 
 The Order Planner converts an approved or modified target position into the
-required position change and creates `OrderIntent` objects. It does not make
-risk decisions, communicate with exchanges, or own order lifecycle state.
+required position change and creates `OrderIntent` objects, including
+reduce-only intents and protective-order intents. It assigns the
+client-generated idempotency key. It does not make risk decisions,
+communicate with exchanges, or own order lifecycle state.
 
-## 14. AI / ML
+## 13. AI / ML
 
 ### Owns
 
@@ -241,7 +257,7 @@ AI availability should not be a system-wide single point of failure.
 
 ---
 
-## 15. Notifications
+## 14. Notifications
 
 ### Owns
 
@@ -255,7 +271,7 @@ AI availability should not be a system-wide single point of failure.
 
 ---
 
-## 16. Communication Rules
+## 15. Communication Rules
 
 Core modules should communicate through:
 
@@ -274,7 +290,7 @@ No internal message broker is required initially.
 
 ---
 
-## 17. Forbidden Dependencies
+## 16. Forbidden Dependencies
 
 The following are explicitly forbidden:
 
@@ -300,7 +316,7 @@ Data
 
 ---
 
-## 18. Extraction Rule
+## 17. Extraction Rule
 
 A logical module becomes a separate runtime service only when there is a concrete reason such as:
 

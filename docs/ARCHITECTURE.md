@@ -63,8 +63,7 @@ The core trading application is initially implemented as a **modular monolith ru
                       │ Normalization           │
                       │      ↓                  │
                       │ Feature Engine          │
-                      │      ↓                  │
-                      │ Regime Detection        │
+                      │ (incl. regime features) │
                       │      ↓                  │
                       │ Strategy Engine         │
                       │      ↓                  │
@@ -123,9 +122,7 @@ Data Sources
      ↓
 Normalization
      ↓
-Feature Engine
-     ↓
-Regime Detection
+Feature Engine (incl. regime features)
      ↓
 Strategy Engine
      ↓
@@ -142,9 +139,18 @@ Account / Execution Adapter
 
 All components initially run inside the same Python process.
 
+The runtime is **bar-driven**: the decision pipeline runs once per completed
+bar of the configured timeframe (initially 1h). Sub-bar protection is handled
+by exchange-native conditional orders, not by the pipeline
+(see `ADR/008-bar-driven-runtime.md`).
+
 The runtime uses asyncio tasks for the API, market-data handling, reconnects,
 and background work. Trading state transitions are serialized. The initial
 design does not use threads for trading logic or an internal event bus.
+
+Market regime classification (trend/range/chop, volatility state) is owned by
+the Feature Engine as derived features. It is an optional strategy input, not
+a pipeline stage and not a trading prerequisite.
 
 ---
 
@@ -157,9 +163,7 @@ External Data
      ↓
 Canonical Data Model
      ↓
-Analytical Features
-     ↓
-Market Regime
+Analytical Features (incl. regime)
      ↓
 Strategy Signal
      ↓
@@ -174,43 +178,63 @@ Order Intent
 Execution Report
 ```
 
+Every stage result is persisted as a decision audit trail with correlation
+identifiers, so any live order can be traced back to the signal and features
+that produced it (see `STATE_AND_PERSISTENCE.md`).
+
 The domain objects in this flow are defined in `DATA_MODEL.md`.
 
 ---
 
-## 7. Backtesting
+## 7. Backtesting and Paper Trading
 
-Backtesting should reuse the same decision pipeline.
-
-```text
-Historical Data
-      ↓
-Same Trading Pipeline
-      ↓
-Simulated Execution
-```
-
-Live trading:
+The platform has three execution modes sharing the same decision pipeline.
+Only configuration and the data/execution adapters differ:
 
 ```text
-Live Data
-      ↓
-Same Trading Pipeline
-      ↓
-Real Execution
+Backtest:  Historical Data → Same Pipeline → Simulated Execution
+Paper:     Live Data       → Same Pipeline → Testnet / PaperBroker
+Live:      Live Data       → Same Pipeline → Real Execution
 ```
 
-The main difference should be the data source and execution implementation, not the trading logic itself.
+The backtest vertical slice is the first implementation milestone; it
+validates the pipeline and its interfaces before any live infrastructure is
+built. Paper trading is a mandatory stage before live trading.
+
+In backtests the clock source is the bar timestamp, never wall-clock.
+Simulation assumptions (fees, slippage, funding, fill model) are explicit
+backtest concerns.
+
+A faithful event-driven backtest and a fast vectorized research layer serve
+different purposes; the research layer may exist separately, but strategy
+validation must use the shared pipeline.
 
 ---
 
-## 8. AI
+## 8. News, Sentiment, and AI
+
+### News and sentiment (near-term)
+
+News and market sentiment are **planned near-term inputs** (Milestone 1b),
+not optional afterthoughts. They enter through provider adapters, are
+normalized into platform models, and become Feature Engine outputs that
+strategies may consume.
+
+They must:
+
+* align to the bar-driven clock (1h) without lookahead in backtests,
+* fail soft when unavailable (only strategies that require them are affected),
+* never bypass Risk Management or create orders directly.
+
+On-chain and macro data remain later expansions; see `DATA_SOURCES.md`.
+
+### AI / ML
 
 AI/ML is an optional analytical layer.
 
 It may support:
 
-* regime detection,
+* regime / sentiment scoring,
 * signal scoring,
 * anomaly detection,
 * strategy selection,
@@ -245,18 +269,29 @@ n8n is not part of realtime trading.
 The core trading runtime continues when n8n is unavailable. n8n is not part
 of the safety boundary.
 
-Trading decisions fail closed:
+The failure policy is **asymmetric** (see `ADR/010-asymmetric-failure-policy.md`):
+
+- **Opening or increasing risk fails closed.** All required inputs and safety
+  dependencies must be healthy.
+- **Reducing or closing risk requires the minimum possible dependencies.**
+  Reduce-only exits remain permitted in degraded states, and exchange-native
+  protective stops remain active even if the platform process is down.
+
+Risk-opening decisions fail closed:
 
 | Condition | Behavior |
 |---|---|
-| stale market data | no trade |
-| missing features | no trade |
-| unavailable regime detection | no trade |
-| unavailable risk management | no trade |
+| stale market data | no new risk-opening trade |
+| missing features | no new risk-opening trade |
+| unavailable risk management | no new risk-opening trade |
 | unavailable AI | strategy-defined fallback or no trade |
 | unavailable exchange | no new orders |
-| unavailable PostgreSQL | no new orders; reconcile later |
+| unavailable PostgreSQL | no new risk-opening orders; reconcile later |
 | unavailable n8n | trading continues |
+
+Regime features are ordinary features: if unavailable, strategies that
+require them produce no signal; strategies that do not require them are
+unaffected. The same rule applies to news / sentiment features.
 
 ## 11. Persistence
 
