@@ -119,6 +119,10 @@ PostgreSQL provides persistent storage.
 * `docs/N8N.md`
 * `docs/RUNTIME.md`
 
+### Local development
+
+* `docs/LOCAL_SETUP.md`
+
 ### Decisions
 
 * `docs/ADR/`

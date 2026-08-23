@@ -21,6 +21,7 @@ class TradingSignal:
     confidence: Decimal
     target_exposure: Decimal
     timestamp: datetime
+    signal_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,6 +46,8 @@ class RiskDecision:
 @dataclass(frozen=True, slots=True)
 class OrderIntent:
     intent_id: str
+    client_order_id: str
+    account_id: str
     instrument: str
     side: OrderSide
     quantity: Decimal
@@ -52,6 +55,7 @@ class OrderIntent:
     risk_decision_id: str
     price: Decimal | None = None
     reduce_only: bool = False
+    strategy_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -63,3 +67,4 @@ class ExecutionReport:
     average_price: Decimal | None = None
     fee: Decimal | None = None
     reason: str | None = None
+    client_order_id: str | None = None

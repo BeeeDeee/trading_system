@@ -18,9 +18,16 @@ class RawMarketData:
 class MarketSnapshot:
     instrument: str
     timestamp: datetime
-    price: Decimal
+    open: Decimal
+    high: Decimal
+    low: Decimal
+    close: Decimal
     volume: Decimal | None = None
     is_valid: bool = True
+
+    @property
+    def price(self) -> Decimal:
+        return self.close
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,3 +47,16 @@ class RegimeState:
     volatility: str
     confidence: Decimal | None = None
     detector_version: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class CandleBar:
+    """Normalized OHLCV bar used by historical loaders and the backtester."""
+
+    instrument: str
+    timestamp: datetime
+    open: Decimal
+    high: Decimal
+    low: Decimal
+    close: Decimal
+    volume: Decimal

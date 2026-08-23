@@ -1,8 +1,40 @@
-# Ignore Cursor/VSCode temporary and server files
-.cursor-server/
-.cursor/
+# Project artifacts
+data/
+!data/**/.gitkeep
+results/
+!results/**/.gitkeep
+logs/
+*.csv
+*.parquet
+*.h5
 
-# Root directory files
+# Secrets / env
+.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+backend/.venv/
+.venv/
+venv/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Cursor / home-dir noise (repo currently lives in home on VPS)
+.cursor/
+.cursor-server/
 .bash_history
 .bash_logout
 .bashrc
@@ -20,8 +52,4 @@
 .viminfo
 .vscode-server/
 .wget-hsts
-
-# Others
 docker/backups/
-backend/.ruff_cache/
-backend/.venv/

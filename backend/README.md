@@ -1,36 +1,42 @@
-# Backend Skeleton
+# Backend
 
-This directory contains the minimal Python application skeleton and type-only
-domain ports. It intentionally has no exchange, database, strategy, or trading
-pipeline implementation yet.
+Python trading application (modular monolith).
 
 ## Requirements
 
-- Python 3.10 or newer
+- Python 3.10+
 
 ## Setup
 
 ```bash
 cd backend
-python3 -m venv .venv
-. .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e '.[dev]'
+python -m venv .venv
+# Windows: .\.venv\Scripts\activate
+# Linux/macOS:
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -e '.[dev]'
 ```
 
-## Verification
+Full Windows path instructions: [`docs/LOCAL_SETUP.md`](../docs/LOCAL_SETUP.md).
+
+## Download data + run backtest
 
 ```bash
-python -m compileall -q app
-PYTHONPATH=. pytest ../tests
+download-data          # BTC/USDT 1h -> ../data/processed/BTCUSDT_1h.parquet
+run-backtest           # writes ../results/<run-id>/
+pytest
 ```
 
-## Run the Control Plane
+Equivalent:
+
+```bash
+python -m app.cli.download_data
+python -m app.cli.run_backtest
+```
+
+## Control plane (stub)
 
 ```bash
 uvicorn app.main:app --reload
 ```
-
-The application currently exposes only the FastAPI application factory. Routes
-and runtime wiring are deliberately deferred until the simulated-execution
-vertical slice is implemented.
