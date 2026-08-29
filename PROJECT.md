@@ -16,10 +16,9 @@ exists. See [ADR-015](docs/ADR/015-equities-first.md).
 
 ## Current stage
 
-**M0 in progress.** M0.1 (repo skeleton), M0.2 (domain model), and M0.3 (config)
-are done.
+**M0 done.** M0.1–M0.4 (repo skeleton, domain model, config, utils) are complete.
 
-Next task: **M0.4** in [the roadmap](docs/15-ROADMAP.md#m0--foundation).
+Next task: **M1.1** in [the roadmap](docs/15-ROADMAP.md#m1--data-and-features).
 New chats: paste the handoff block in
 [`docs/17-IMPLEMENTER_GUIDE.md` §8](docs/17-IMPLEMENTER_GUIDE.md#8-starting-a-new-chat).
 
@@ -86,7 +85,7 @@ and [`§14`](docs/00-REVIEW.md#14-the-equity-pivot).
 
 | Milestone | Scope | Estimate | Status |
 |---|---|---|---|
-| M0 | Repo skeleton, config, domain model | 3 days | In progress (M0.1–M0.3 done) |
+| M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data pipeline, calendar, features, PIT universe | 7 days | Not started |
 | M2 | Strategies, setup labeling, edge table | 4 days | Not started |
 | M3 | Backtest engine, metrics, **the holdout answer** | 6 days | Not started |
