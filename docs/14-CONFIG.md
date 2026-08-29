@@ -67,7 +67,7 @@ run:
 # Canonical splits: 04-DATA_AND_UNIVERSE.md §8. Do not widen the holdout in YAML.
 period:
   start: 1998-01-01T00:00:00Z
-  warmup_end: 2004-01-01T00:00:00Z       # >= start + 5 years (validated)
+  warmup_end: 2004-01-01T00:00:00Z       # trading begins; >= start + 6 months
   end: 2017-12-31T23:59:59Z
   split: DEVELOPMENT                     # DEVELOPMENT | HOLDOUT | FORWARD
 
@@ -398,7 +398,7 @@ Beyond per-field types, `validate_config` enforces:
 
 | Rule | Error |
 |---|---|
-| `warmup_end >= start + 5 years` | `ScoutConfigError` |
+| `warmup_end >= start + 6 months` | `ScoutConfigError` |
 | `end > warmup_end` | `ScoutConfigError` |
 | `costs.cost_multiplier >= 1.0` | `ScoutConfigError` |
 | `portfolio.max_cluster_risk_pct <= max_portfolio_heat_pct` | `ScoutConfigError` |

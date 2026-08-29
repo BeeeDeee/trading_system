@@ -1,0 +1,7 @@
+period:
+  start: 1998-01-01T00:00:00Z      # history is still needed to warm the bins
+  warmup_end: 2018-01-01T00:00:00Z # no trade before the holdout begins
+  end: 2026-08-01T00:00:00Z
+  split: HOLDOUT
+edge:
+  lcb_method: bootstrap            # mandatory for holdout

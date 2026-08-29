@@ -16,7 +16,7 @@ not commitments.
 
 | Milestone | Scope | Estimate | Status |
 |---|---|---|---|
-| M0 | Repo skeleton, config, domain model | 3 days | Not started |
+| M0 | Repo skeleton, config, domain model | 3 days | In progress (M0.1–M0.3 done) |
 | M1 | Equity data, calendar, features, PIT universe | 7 days | Not started |
 | M2 | Strategies, labeling, edge table | 4 days | Not started |
 | M3 | Backtest engine, metrics, **the answer** | 6 days | Not started |
@@ -33,7 +33,7 @@ before M7 is unlocked.**
 
 ## M0 — Foundation
 
-### M0.1 Repo cleanup
+### M0.1 Repo cleanup — done
 - Delete `backend/` entirely (empty `pyproject.toml`, empty `README.md`, and a
   stale `.venv`).
 - Create `pyproject.toml` at repo root exactly as in
@@ -46,7 +46,7 @@ before M7 is unlocked.**
 `python -c "import scout"` works. `ruff check .` and `mypy src/scout/domain`
 pass. `backend/` does not exist.
 
-### M0.2 Domain model
+### M0.2 Domain model — done
 Implement all of [`02-DOMAIN_MODEL.md`](02-DOMAIN_MODEL.md): every enum,
 dataclass, `MarketPanel`, `FeaturePanel`, `EdgeTable`. Validators in
 `Setup.__post_init__` and the UTC assertions.
@@ -58,7 +58,7 @@ non-positive risk, and a naive datetime. `MarketPanel.as_of` returns only rows
 with `ts <= requested`, verified on a fixture. `mypy --strict src/scout/domain`
 clean.
 
-### M0.3 Config
+### M0.3 Config — done
 Pydantic schema, loader with layered resolution, hashing, cross-field validation
 from [`14-CONFIG.md §8`](14-CONFIG.md#8-cross-field-validation). `config/base.yaml`
 with every default.
