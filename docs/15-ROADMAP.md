@@ -16,7 +16,7 @@ not commitments.
 
 | Milestone | Scope | Estimate | Status |
 |---|---|---|---|
-| M0 | Repo skeleton, config, domain model | 3 days | In progress (M0.1–M0.3 done) |
+| M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data, calendar, features, PIT universe | 7 days | Not started |
 | M2 | Strategies, labeling, edge table | 4 days | Not started |
 | M3 | Backtest engine, metrics, **the answer** | 6 days | Not started |
@@ -67,7 +67,7 @@ with every default.
 key path in the message. Key reordering does not change the hash. Loading
 `config/base.yaml` produces a fully-populated `ScoutConfig`.
 
-### M0.4 Utils
+### M0.4 Utils — done
 `clock.py` (`BarClock`, `WallClock`), `logging.py` (JSON formatter with `run_id`),
 `errors.py`, `decimals.py` (tick/step rounding), `stats.py` (bootstrap CI,
 Welch's t-test, deflated Sharpe).
