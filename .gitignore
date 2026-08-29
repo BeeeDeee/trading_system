@@ -8,6 +8,10 @@ logs/
 *.parquet
 *.h5
 
+# Research integrity record — MUST be committed. See docs/ADR/011-holdout-lockbox.md
+!experiments/registry.csv
+!experiments/holdout_lockbox.json
+
 # Secrets / env
 .env
 !.env.example
