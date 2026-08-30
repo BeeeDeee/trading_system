@@ -17,7 +17,7 @@ not commitments.
 | Milestone | Scope | Estimate | Status |
 |---|---|---|---|
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
-| M1 | Equity data, calendar, features, PIT universe | 7 days | Not started |
+| M1 | Equity data, calendar, features, PIT universe | 7 days | In progress (M1.1–M1.3 done) |
 | M2 | Strategies, labeling, edge table | 4 days | Not started |
 | M3 | Backtest engine, metrics, **the answer** | 6 days | Not started |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
@@ -84,7 +84,7 @@ Prado paper's example.
 Paid vendor required. Yahoo is fixtures-only.
 [`04-DATA_AND_UNIVERSE.md §1`](04-DATA_AND_UNIVERSE.md#1-data-source-this-decision-is-load-bearing).
 
-### M1.1 Ingest
+### M1.1 Ingest — done
 `data/norgate_source.py` or `data/sharadar_source.py`, `cli/ingest.py`. Unadjusted
 OHLCV, actions table, earnings dates, sector, delisted included. Writes
 `data/raw/equity/SNAPSHOT.json`.
@@ -95,7 +95,7 @@ process mid-write leaves no truncated file. `SNAPSHOT.json` is written last.
 `cli/build_universe.py` later refuses to run if the delisted fraction of the
 candidate list is below 15%.
 
-### M1.2 Calendar, actions, and quality
+### M1.2 Calendar, actions, and quality — done
 `data/calendar.py` (`exchange_calendars`, XNYS), `data/actions.py` (causal
 adjustment), `data/quality.py`. **No resample step** — v1 ingests daily bars
 directly.
@@ -107,7 +107,7 @@ Dividends are applied on the ex-date, never the pay date. **Nothing is
 forward-filled.** `close` (adjusted) and `close_raw` are both present on every
 row.
 
-### M1.3 `ParquetCandleSource`
+### M1.3 `ParquetCandleSource` — done
 **Accept:** satisfies the `CandleSource` Protocol. `load_panel` returns a
 `(ts, asset_id)`-sorted frame, omits missing symbols without raising, and is
 deterministic. Loading 1,000 symbols × 25 years of daily bars takes under 15
