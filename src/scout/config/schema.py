@@ -131,7 +131,7 @@ class FeaturesConfig(_Frozen):
     keltner_k: float = 2.0
     er_n: int = 20
     er_long_n: int = 60
-    vol_window_bars: int = 252
+    vol_window_bars: int = 504
     vol_min_periods: int = 126
     beta_window: int = 90
     beta_reference_symbol: str = "SPY"

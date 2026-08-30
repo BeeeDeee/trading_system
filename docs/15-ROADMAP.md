@@ -17,7 +17,7 @@ not commitments.
 | Milestone | Scope | Estimate | Status |
 |---|---|---|---|
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
-| M1 | Equity data, calendar, features, PIT universe | 7 days | In progress (M1.1–M1.3 done) |
+| M1 | Equity data, calendar, features, PIT universe | 7 days | In progress (M1.1–M1.4 done) |
 | M2 | Strategies, labeling, edge table | 4 days | Not started |
 | M3 | Backtest engine, metrics, **the answer** | 6 days | Not started |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
@@ -113,7 +113,7 @@ row.
 deterministic. Loading 1,000 symbols × 25 years of daily bars takes under 15
 seconds and under 600 MB.
 
-### M1.4 Indicators
+### M1.4 Indicators — done
 `features/indicators.py`: every formula in
 [`05-FEATURES_AND_REGIME.md`](05-FEATURES_AND_REGIME.md) for daily bars,
 including cross-sectional ranks over the eligible set at `t`.

@@ -112,7 +112,7 @@ features:
   keltner_k: 2.0
   er_n: 20
   er_long_n: 60
-  vol_window_bars: 252                   # ~1y of sessions
+  vol_window_bars: 504                   # ≈2y of sessions
   vol_min_periods: 126
   beta_window: 90
   beta_reference_symbol: SPY
