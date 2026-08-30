@@ -5,7 +5,7 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from scout.cli import build_universe, ingest
+from scout.cli import adjust, build_universe, ingest
 from scout.utils.errors import ScoutError
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -36,6 +36,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     ingest_p = sub.add_parser("ingest", help="Download unadjusted equity data")
     ingest.add_arguments(ingest_p)
 
+    adjust_p = sub.add_parser("adjust", help="Build XNYS calendar and causally adjust the panel")
+    adjust.add_arguments(adjust_p)
+
     uni_p = sub.add_parser("build-universe", help="Build point-in-time universe snapshots")
     build_universe.add_arguments(uni_p)
 
@@ -43,6 +46,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         if args.command == "ingest":
             return ingest.run(args)
+        if args.command == "adjust":
+            return adjust.run(args)
         if args.command == "build-universe":
             return build_universe.run(args)
     except ScoutError as exc:

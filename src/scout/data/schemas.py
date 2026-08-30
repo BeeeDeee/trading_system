@@ -56,4 +56,27 @@ SNAPSHOT_KEYS: tuple[str, ...] = (
     "earnings_rows",
 )
 
+CALENDAR_COLUMNS: tuple[str, ...] = (
+    "session",
+    "open_utc",
+    "close_utc",
+    "is_half_day",
+    "session_index",
+)
+
+PANEL_COLUMNS: tuple[str, ...] = (
+    "asset_id",
+    "symbol",
+    "ts",
+    "session_index",
+    "open",
+    "high",
+    "low",
+    "close",
+    "close_raw",
+    "volume",
+    "dollar_volume",
+    "is_suspect",
+)
+
 MIN_DELISTED_FRACTION = 0.15
