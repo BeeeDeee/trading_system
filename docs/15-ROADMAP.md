@@ -17,7 +17,7 @@ not commitments.
 | Milestone | Scope | Estimate | Status |
 |---|---|---|---|
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
-| M1 | Equity data, calendar, features, PIT universe | 7 days | In progress (M1.1–M1.4 done) |
+| M1 | Equity data, calendar, features, PIT universe | 7 days | In progress (M1.1–M1.5 done) |
 | M2 | Strategies, labeling, edge table | 4 days | Not started |
 | M3 | Backtest engine, metrics, **the answer** | 6 days | Not started |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
@@ -122,8 +122,8 @@ including cross-sectional ranks over the eligible set at `t`.
 `test_donchian_excludes_current_bar` passes. Truncating the panel does not
 change any cross-sectional rank at earlier `t`. NaN during warm-up, never zero.
 
-### M1.5 Regime
-`features/regime.py` (per-symbol) and `features/market_regime.py` (SPY).
+### M1.5 Regime — done
+`features/regime.py` (per-symbol) and `features/market.py` (SPY).
 
 **Accept:** every test in `test_regime.py`. Pure and total. Straight line ⇒ ER of
 exactly 1.0; perfect zigzag ⇒ exactly 0.0. SPY below its 200-day MA with a 20%
