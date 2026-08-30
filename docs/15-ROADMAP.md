@@ -17,7 +17,7 @@ not commitments.
 | Milestone | Scope | Estimate | Status |
 |---|---|---|---|
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
-| M1 | Equity data, calendar, features, PIT universe | 7 days | In progress (M1.1–M1.6 done) |
+| M1 | Equity data, calendar, features, PIT universe | 7 days | In progress (M1.1–M1.7 done) |
 | M2 | Strategies, labeling, edge table | 4 days | Not started |
 | M3 | Backtest engine, metrics, **the answer** | 6 days | Not started |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
@@ -136,7 +136,7 @@ drawdown ⇒ `RISK_OFF`.
 `beta_bench_90` is 1.0. Symbol-order invariance. 1,000 symbols × 25 years in
 under 90 seconds.
 
-### M1.7 Universe
+### M1.7 Universe — done
 `universe/spread.py`, `universe/eligibility.py`, `universe/build.py`,
 `cli/build_universe.py`. Liquidity rank, not index membership
 ([ADR-018](ADR/018-liquidity-rank-universe.md)).

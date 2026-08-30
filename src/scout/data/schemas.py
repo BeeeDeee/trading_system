@@ -79,4 +79,19 @@ PANEL_COLUMNS: tuple[str, ...] = (
     "is_suspect",
 )
 
+UNIVERSE_SNAPSHOT_COLUMNS: tuple[str, ...] = (
+    "ts",
+    "asset_id",
+    "symbol",
+    "eligible",
+    "reason",
+    "adv_usd_60",
+    "adv_rank",
+    "spread_bps_est",
+    "close_raw",
+    "bars_available",
+    "sector",
+    "is_etf",
+)
+
 MIN_DELISTED_FRACTION = 0.15

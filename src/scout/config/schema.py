@@ -108,7 +108,7 @@ class SpreadFloorConfig(_Frozen):
 class UniverseConfig(_Frozen):
     candidates_file: str = "config/universe_candidates.txt"
     clusters_file: str = "config/clusters.yaml"
-    snapshot_frequency: str = "weekly"
+    snapshot_frequency: str = "monthly"
     snapshots_path: str = "data/universe/snapshots.parquet"
     universe_size: int = 1000
     min_history_bars: int = 400

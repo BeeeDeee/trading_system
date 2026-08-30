@@ -27,7 +27,7 @@ data:
 universe:
   candidates_file: config/universe_candidates.txt
   clusters_file: config/clusters.yaml
-  snapshot_frequency: weekly
+  snapshot_frequency: monthly
   snapshots_path: data/universe/snapshots.parquet
   universe_size: 1000                    # top-N by trailing ADV rank
   min_history_bars: 400                  # sessions
