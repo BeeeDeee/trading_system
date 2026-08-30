@@ -15,7 +15,7 @@ period:
 
 # ─── data ────────────────────────────────────────────────────────────────────
 data:
-  vendor: norgate                        # norgate | sharadar | polygon | fixture
+  vendor: sharadar                       # sharadar | norgate | polygon | fixture
   calendar: XNYS                         # exchange_calendars code
   decision_timeframe: 1d                 # sessions. The only v1 timeframe.
   raw_dir: data/raw/equity

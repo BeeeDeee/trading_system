@@ -89,7 +89,7 @@ class PeriodConfig(_Frozen):
 
 
 class DataConfig(_Frozen):
-    vendor: DataVendor = DataVendor.NORGATE
+    vendor: DataVendor = DataVendor.SHARADAR
     calendar: str = "XNYS"
     decision_timeframe: str = "1d"
     raw_dir: str = "data/raw/equity"

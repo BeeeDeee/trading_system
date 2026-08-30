@@ -1,9 +1,9 @@
-# Project artifacts
-data/
-!data/**/.gitkeep
-results/
-!results/**/.gitkeep
-logs/
+# Project artifacts (repo-root only — do not ignore src/scout/data/)
+/data/
+!/data/**/.gitkeep
+/results/
+!/results/**/.gitkeep
+/logs/
 *.csv
 *.parquet
 *.h5
