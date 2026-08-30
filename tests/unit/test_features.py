@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import fields
 from datetime import UTC, datetime, timedelta
 
 import numpy as np
@@ -10,7 +11,10 @@ import pytest
 
 from scout.config.schema import FeaturesConfig
 from scout.domain.enums import VolBucket
+from scout.domain.features import FEATURE_COLUMNS, FeatureRow
+from scout.domain.market import BENCHMARK_COLUMNS, MARKET_COLUMNS, BenchmarkPanel, MarketPanel
 from scout.features.cross_sectional import cross_sectional_ranks, eligible_mask
+from scout.features.engine import compute_features
 from scout.features.indicators import (
     atr_percentile,
     atr_wilder,
@@ -24,6 +28,7 @@ from scout.features.indicators import (
     slope_atr,
     true_range,
 )
+from scout.utils.errors import ScoutLookaheadError
 
 REL = 1e-9
 
@@ -379,3 +384,191 @@ def test_eligible_mask_rounds_backward() -> None:
     at = by_ts.loc[by_ts["ts"] >= timestamps[3]]
     assert bool(at.loc[at["symbol"] == "A", "eligible"].all())
     assert not bool(at.loc[at["symbol"] == "B", "eligible"].any())
+
+
+def _engine_timestamps(n: int) -> pd.DatetimeIndex:
+    start = datetime(2015, 1, 5, 21, 0, tzinfo=UTC)
+    return pd.DatetimeIndex([start + timedelta(days=i) for i in range(n)], tz="UTC")
+
+
+def _trending_close(n: int, *, start: float, step: float) -> np.ndarray:
+    return start + step * np.arange(n, dtype="float64")
+
+
+def _market_panel_from_closes(
+    timestamps: pd.DatetimeIndex,
+    closes: dict[str, np.ndarray],
+    *,
+    symbol_order: list[str] | None = None,
+    session_index: np.ndarray | None = None,
+) -> MarketPanel:
+    symbols = symbol_order if symbol_order is not None else list(closes)
+    n = len(timestamps)
+    if session_index is None:
+        session_index = np.arange(n, dtype=np.int32)
+    rows: list[dict[str, object]] = []
+    for i, ts in enumerate(timestamps):
+        for symbol in symbols:
+            close = float(closes[symbol][i])
+            rows.append(
+                {
+                    "asset_id": symbol,
+                    "symbol": symbol,
+                    "ts": ts,
+                    "session_index": int(session_index[i]),
+                    "open": close,
+                    "high": close + 1.0,
+                    "low": close - 1.0,
+                    "close": close,
+                    "close_raw": close,
+                    "volume": 1_000.0,
+                    "dollar_volume": close * 1_000.0,
+                    "is_suspect": False,
+                }
+            )
+    return MarketPanel(pd.DataFrame(rows, columns=list(MARKET_COLUMNS)))
+
+
+def _benchmark_panel(timestamps: pd.DatetimeIndex, close: np.ndarray) -> BenchmarkPanel:
+    rows: list[dict[str, object]] = []
+    for i, ts in enumerate(timestamps):
+        px = float(close[i])
+        rows.append(
+            {
+                "ts": ts,
+                "session_index": i,
+                "open": px,
+                "high": px + 1.0,
+                "low": px - 1.0,
+                "close": px,
+                "vix_close": 18.0,
+                "vix9d_close": 17.0,
+                "vix3m_close": 19.0,
+            }
+        )
+    return BenchmarkPanel(pd.DataFrame(rows, columns=list(BENCHMARK_COLUMNS)))
+
+
+def _all_eligible_snapshots(timestamps: pd.DatetimeIndex, symbols: list[str]) -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "ts": [timestamps[0]] * len(symbols),
+            "symbol": symbols,
+            "eligible": [True] * len(symbols),
+        }
+    )
+
+
+def _engine_bundle(
+    n: int,
+    symbols: list[str],
+    *,
+    symbol_order: list[str] | None = None,
+    drop_last: int = 0,
+) -> tuple[MarketPanel, BenchmarkPanel, pd.DataFrame]:
+    timestamps = _engine_timestamps(n)
+    closes = {
+        symbol: _trending_close(n, start=50.0 + 10.0 * i, step=0.05 + 0.01 * i)
+        for i, symbol in enumerate(symbols)
+    }
+    spy_close = (
+        closes["SPY"] if "SPY" in closes else _trending_close(n, start=200.0, step=0.02)
+    )
+    used_ts = timestamps[: n - drop_last] if drop_last else timestamps
+    used_closes = {sym: arr[: len(used_ts)] for sym, arr in closes.items()}
+    panel = _market_panel_from_closes(used_ts, used_closes, symbol_order=symbol_order)
+    bench = _benchmark_panel(used_ts, spy_close[: len(used_ts)])
+    snaps = _all_eligible_snapshots(used_ts, symbols)
+    return panel, bench, snaps
+
+
+def test_feature_columns_match_dataclass() -> None:
+    panel, bench, snaps = _engine_bundle(40, ["AAA", "BBB"])
+    out = compute_features(panel, bench, snaps, FeaturesConfig())
+    assert set(out.frame.columns) == {f.name for f in fields(FeatureRow)}
+    assert tuple(out.frame.columns) == FEATURE_COLUMNS
+
+
+def test_market_regime_broadcast_no_lost_rows() -> None:
+    warmup = required_warmup_bars(FeaturesConfig())
+    panel, bench, snaps = _engine_bundle(warmup + 10, ["AAA", "BBB"])
+    out = compute_features(panel, bench, snaps, FeaturesConfig())
+    assert len(out.frame) == len(panel.frame)
+    warm = out.frame["is_warm"]
+    assert bool(warm.any())
+    assert out.frame.loc[warm, "market_regime"].notna().all()
+
+
+def test_market_regime_mismatch_raises() -> None:
+    panel, bench, snaps = _engine_bundle(30, ["AAA"])
+    truncated = BenchmarkPanel(bench.frame.iloc[:-1].copy())
+    with pytest.raises(ScoutLookaheadError, match="lost rows"):
+        compute_features(panel, truncated, snaps, FeaturesConfig())
+
+
+def test_beta_spy_self_is_one() -> None:
+    panel, bench, snaps = _engine_bundle(80, ["SPY", "AAA"])
+    out = compute_features(panel, bench, snaps, FeaturesConfig())
+    spy = out.frame.loc[out.frame["symbol"].astype(str) == "SPY"]
+    assert (spy["beta_bench_90"] == 1.0).all()
+    assert (spy["corr_bench_90"] == 1.0).all()
+
+
+def test_symbol_order_invariance() -> None:
+    symbols_ab = ["AAA", "BBB"]
+    symbols_ba = ["BBB", "AAA"]
+    n = 60
+    panel_ab, bench_ab, snaps_ab = _engine_bundle(n, symbols_ab, symbol_order=symbols_ab)
+    panel_ba, bench_ba, snaps_ba = _engine_bundle(n, symbols_ab, symbol_order=symbols_ba)
+    cfg = FeaturesConfig()
+    a = compute_features(panel_ab, bench_ab, snaps_ab, cfg).frame
+    b = compute_features(panel_ba, bench_ba, snaps_ba, cfg).frame
+    a = a.sort_values(["ts", "symbol"], kind="mergesort").reset_index(drop=True)
+    b = b.sort_values(["ts", "symbol"], kind="mergesort").reset_index(drop=True)
+    pd.testing.assert_frame_equal(a, b, check_categorical=False)
+
+
+def test_engine_warmup_is_warm_false() -> None:
+    cfg = FeaturesConfig()
+    warmup = required_warmup_bars(cfg)
+    panel, bench, snaps = _engine_bundle(warmup + 5, ["AAA"])
+    out = compute_features(panel, bench, snaps, cfg).frame
+    cold = out["bars_available"] < warmup
+    assert not out.loc[cold, "is_warm"].any()
+    assert out.loc[~cold, "is_warm"].all()
+    assert out.loc[out["bars_available"] < cfg.mom_lookback_bars, "mom_252_skip21"].isna().all()
+    cold_atr = out.loc[cold, "atr_14"]
+    assert not bool((cold_atr == 0).any())
+
+
+def test_engine_cross_sectional_truncation() -> None:
+    n = 400
+    drop = 100
+    symbols = ["AAA", "BBB", "CCC", "DDD"]
+    panel_full, bench_full, snaps = _engine_bundle(n, symbols)
+    panel_cut, bench_cut, snaps_cut = _engine_bundle(n, symbols, drop_last=drop)
+    cfg = FeaturesConfig()
+    full = compute_features(panel_full, bench_full, snaps, cfg).frame
+    truncated = compute_features(panel_cut, bench_cut, snaps_cut, cfg).frame
+    overlap_ts = truncated["ts"].unique()
+    overlap = full.loc[full["ts"].isin(overlap_ts)].sort_values(["ts", "symbol"])
+    trunc_sorted = truncated.sort_values(["ts", "symbol"])
+    for col in ("mom_252_xs_pct", "vol_xs_pct", "xs_population"):
+        assert np.array_equal(
+            overlap[col].to_numpy(),
+            trunc_sorted[col].to_numpy(),
+            equal_nan=True,
+        )
+
+
+def test_bars_since_gap_resets_after_calendar_hole() -> None:
+    n = 8
+    timestamps = _engine_timestamps(n)
+    session_index = np.array([0, 1, 2, 5, 6, 7, 8, 9], dtype=np.int32)
+    closes = {"AAA": _trending_close(n, start=100.0, step=0.1)}
+    panel = _market_panel_from_closes(timestamps, closes, session_index=session_index)
+    bench = _benchmark_panel(timestamps, _trending_close(n, start=200.0, step=0.02))
+    snaps = _all_eligible_snapshots(timestamps, ["AAA"])
+    out = compute_features(panel, bench, snaps, FeaturesConfig()).frame
+    got = out.sort_values("ts")["bars_since_gap"].to_numpy()
+    assert list(got) == [0, 1, 2, 0, 1, 2, 3, 4]

@@ -15,7 +15,7 @@ from scout.features.market import (
     classify_market_regime,
     compute_market_columns,
 )
-from scout.features.regime import classify_regime
+from scout.features.regime import classify_regime, classify_regime_vectorized
 
 REL = 1e-9
 
@@ -90,6 +90,15 @@ def test_classifier_is_pure() -> None:
     ]
     assert first == second
     assert all(isinstance(label, Regime) for label in first)
+
+    vec = classify_regime_vectorized(
+        pd.Series(er_20),
+        pd.Series(er_60),
+        pd.Series(slope),
+        pd.Series(vol),
+        _CFG,
+    )
+    assert list(vec) == first
 
 
 @given(

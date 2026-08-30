@@ -17,7 +17,7 @@ not commitments.
 | Milestone | Scope | Estimate | Status |
 |---|---|---|---|
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
-| M1 | Equity data, calendar, features, PIT universe | 7 days | In progress (M1.1–M1.5 done) |
+| M1 | Equity data, calendar, features, PIT universe | 7 days | In progress (M1.1–M1.6 done) |
 | M2 | Strategies, labeling, edge table | 4 days | Not started |
 | M3 | Backtest engine, metrics, **the answer** | 6 days | Not started |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
@@ -129,7 +129,7 @@ change any cross-sectional rank at earlier `t`. NaN during warm-up, never zero.
 exactly 1.0; perfect zigzag ⇒ exactly 0.0. SPY below its 200-day MA with a 20%
 drawdown ⇒ `RISK_OFF`.
 
-### M1.6 Feature engine
+### M1.6 Feature engine — done
 `features/engine.py`: `compute_features(panel, snapshot, benchmark, cfg)`.
 
 **Accept:** column set equals `FeatureRow`'s field set exactly. SPY's own
