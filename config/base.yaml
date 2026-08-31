@@ -83,10 +83,10 @@ market_regime:
 gates:
   require_warm: true
   require_universe_eligible: true
-  require_regime_allowed: true
+  require_regime_allowed: true           # engine (M3), not evaluate_gates
   max_bar_staleness_bars: 2
-  earnings_blackout_sessions: 2          # skip if earnings in (t, t+hold]
-  skip_hard_to_borrow: true
+  min_xs_population: 100
+  skip_hard_to_borrow: true              # no historical borrow file in v1
 
 # ─── strategies ──────────────────────────────────────────────────────────────
 strategies:

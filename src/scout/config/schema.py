@@ -160,9 +160,9 @@ class MarketRegimeConfig(_Frozen):
 class GatesConfig(_Frozen):
     require_warm: bool = True
     require_universe_eligible: bool = True
-    require_regime_allowed: bool = True
+    require_regime_allowed: bool = True  # engine (M3), not evaluate_gates
     max_bar_staleness_bars: int = 2
-    earnings_blackout_sessions: int = 2
+    min_xs_population: int = 100
     skip_hard_to_borrow: bool = True
 
 

@@ -36,15 +36,15 @@ Three separate problems:
 within the expected holding window.**
 
 ```
-earnings_in_window(symbol, t, max_hold_bars) -> bool
+earnings_in_window(...) -> bool   # internal helper of evaluate_gates; not a public API
 ```
 
-True if the next earnings date for `symbol` after `t` is on or before session
-`t + max_hold_bars`, using `max_hold_bars` from the strategy, not the realised hold.
+True if an earnings date for `symbol` falls in `(t, t + max_hold_bars]`, using
+`max_hold_bars` from the strategy under consideration, not the realised hold
+and not a separate config knob. There is no `earnings_blackout_sessions`.
 
-Implemented as gate `EARNINGS_IN_WINDOW`, positioned in the fixed gate order
-after liquidity gates and before strategy detection
-([`14-CONFIG.md`](../14-CONFIG.md)).
+Implemented as gate `EARNINGS_IN_WINDOW` inside `evaluate_gates`, in the fixed
+gate order ([`14-CONFIG.md` §5](../14-CONFIG.md#5-gate-order)).
 
 **An open position whose earnings date arrives is closed at the next open before
 the report**, with `exit_reason="EARNINGS"`. This can only happen when the earnings
@@ -65,12 +65,13 @@ The rule:
 
 - Store both `date_confirmed` and `date_estimated`, plus `as_of` (when the row
   became known) where the vendor provides it.
-- If `as_of` is available, use only rows with `as_of <= t`.
+- If `as_of` / `available_ts` is available, use only rows with `available_ts <= t`.
 - If it is not, use the **conservative fallback** (project rule 4): treat the
-  earnings date as a window of `± earnings_uncertainty_days` (default 4) around the
-  known date, and gate if the *window* intersects the holding period. A missing
-  earnings date is treated as **"earnings unknown, therefore blocked"** for
-  individual equities — never as "no earnings, therefore allowed."
+  earnings date as a window of `± EARNINGS_UNCERTAINTY_SESSIONS` (constant **4**,
+  sessions on the XNYS grid — not a YAML knob) around the known date, and gate
+  if the *window* intersects the holding period. A missing earnings date is
+  treated as **"earnings unknown, therefore blocked"** for individual equities —
+  never as "no earnings, therefore allowed."
 
 The conservative fallback means a symbol with no earnings data is untradable. That
 is intentional and it is the correct direction of error.

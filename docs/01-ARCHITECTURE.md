@@ -163,10 +163,10 @@ Regime lives here, as two continuous features plus one derived label, per
 | | |
 |---|---|
 | **Exists because** | Hard constraints must be separated from graded evidence. Mixing them was the original brief's core error. |
-| **Owns** | The ordered gate list, each gate's rejection reason string. |
-| **Consumes** | `FeaturePanel` row, `UniverseSnapshot` row, config. |
-| **Produces** | `RejectionReason | None` per `(t, symbol)` — the first failing gate, or `None` if all pass. There is no `GateResult` wrapper; the reason *is* the result. |
-| **Must not know** | Edge statistics or portfolio state. Gates answer "may we consider this at all", not "is it good". |
+| **Owns** | The ordered gate list (14-CONFIG §5 rows 1–8), each gate's rejection reason. |
+| **Consumes** | `FeatureRow` or None, `UniverseEntry` or None, earnings events known at `t`, the session calendar, the strategy's `max_hold_bars`, config. |
+| **Produces** | `RejectionReason` or None per `(t, symbol, strategy)` — the first failing gate, or `None` if all pass. There is no `GateResult` wrapper; the reason *is* the result. Called per strategy because the earnings window is that strategy's `max_hold_bars`. |
+| **Must not know** | Edge statistics or portfolio state. Gates answer "may we consider this at all", not "is it good". Regime membership (rows 9–10) is the engine's check before `detect()`, not this module's. |
 
 ### 3.5 `strategies` — setup detection
 
@@ -278,10 +278,23 @@ For decision timestamp `t`:
  1. panel        = MarketPanel of all bars with close_time <= t
  2. snapshot     = universe.snapshot_at(t)                  # from file, causal
  3. features     = features.compute(panel, t)               # per eligible symbol
- 4. for each symbol in snapshot.eligible_symbols:
-      reason = gates.evaluate_gates(features[symbol], snapshot[symbol], cfg.gates)
-      if reason is not None: record(reason); continue
-      for each strategy where features[symbol].regime in strategy.allowed_regimes:
+ 4. for each symbol in snapshot (all candidates, not only eligible):
+      for each enabled strategy:
+          reason = gates.evaluate_gates(
+              features.get(symbol), snapshot.entries.get(symbol), cfg.gates,
+              is_etf=assets[symbol].is_etf,
+              earnings=earnings_known_at(t, symbol),
+              max_hold_bars=strategy.max_hold_bars,
+              calendar=calendar,
+              min_bars_since_gap=cfg.universe.min_bars_since_gap,
+          )
+          if reason is not None: record(reason); continue
+          if cfg.gates.require_regime_allowed:
+              if market_regime not in strategy.allowed_market_regimes:
+                  record(MARKET_REGIME_BLOCKED); continue
+              if strategy.allowed_regimes
+                 and features[symbol].regime not in strategy.allowed_regimes:
+                  record(REGIME_BLOCKED); continue
           setup = strategy.detect(features[symbol])
           if setup is None: record(NO_SETUP); continue
           stats = edge_table.lookup(bin_key(setup, features[symbol]), as_of=t)

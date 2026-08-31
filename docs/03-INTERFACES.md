@@ -322,15 +322,33 @@ def classify_regime(er_20: float, er_60: float, slope_atr: float,
 
 ```python
 def evaluate_gates(
-    feature_row: FeatureRow,
-    universe_entry: UniverseEntry,
-    cfg: GateConfig,
+    feature_row: FeatureRow | None,
+    universe_entry: UniverseEntry | None,
+    cfg: GatesConfig,
+    *,
+    is_etf: bool,
+    earnings: Sequence[EarningsEvent],
+    max_hold_bars: int,
+    calendar: pd.DataFrame,
+    min_bars_since_gap: int,
+    bar_age_bars: int = 0,
+    direction: Direction | None = None,
+    borrow_bps_per_year: float | None = None,
+    hard_to_borrow_max_bps_per_year: float = 300.0,
 ) -> RejectionReason | None:
     """Return the FIRST failing gate's reason, or None if all pass.
 
-    Gate order is FIXED and defined in 14-CONFIG.md §5. Order matters because
-    the reason recorded is the first failure, and funnel analysis depends on
-    that being stable across runs.
+    Owns 14-CONFIG.md §5 rows 1–8 (universe through HARD_TO_BORROW, including
+    THIN_CROSS_SECTION). Rows 9–10 (market / per-symbol regime) are the
+    engine's, not this function's.
+
+    `universe_entry is None` is gate 1 (`NOT_IN_UNIVERSE`). `max_hold_bars` is
+    the strategy's planned hold — the earnings window is `(t, t+max_hold_bars]`,
+    never a separate config knob. `earnings_in_window` is an internal helper,
+    not a second public gate API.
+
+    Gate order is FIXED. Order matters because the reason recorded is the first
+    failure, and funnel analysis depends on that being stable across runs.
     """
 ```
 

@@ -78,7 +78,7 @@ trading_system/
 │       │   └── engine.py           # compute_features
 │       │
 │       ├── gates/
-│       │   └── eligibility.py      # evaluate_gates
+│       │   └── eligibility.py      # evaluate_gates (14-CONFIG §5 rows 1–8)
 │       │
 │       ├── strategies/
 │       │   ├── xsec_momentum.py    # primary

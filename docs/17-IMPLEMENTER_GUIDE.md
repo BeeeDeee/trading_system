@@ -98,6 +98,7 @@ Every fallback for missing data must be the *conservative* one:
 | Funding rate | config default | assume 0 |
 | Sentiment | neutral, multiplier 1.0 | assume favourable |
 | Universe snapshot | no entries this cycle | use the current symbol list |
+| Earnings date (equity, not ETF) | blocked (`EARNINGS_IN_WINDOW`) | assume none, allow |
 
 ### Rule 5 — Never use wall-clock time
 

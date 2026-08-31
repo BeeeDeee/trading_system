@@ -17,7 +17,7 @@ not commitments.
 | Milestone | Scope | Estimate | Status |
 |---|---|---|---|
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
-| M1 | Equity data, calendar, features, PIT universe | 7 days | In progress (M1.1–M1.7 done) |
+| M1 | Equity data, calendar, features, PIT universe | 7 days | Done |
 | M2 | Strategies, labeling, edge table | 4 days | Not started |
 | M3 | Backtest engine, metrics, **the answer** | 6 days | Not started |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
@@ -146,13 +146,17 @@ under 90 seconds.
 reasons. Candidate list delisted fraction ≥ 15%. Eligible count per year printed.
 `adv_rank <= 1000` is the binding size constraint.
 
-### M1.8 Gates
+### M1.8 Gates — done
 `gates/eligibility.py`, including the earnings blackout
 ([ADR-020](ADR/020-earnings-gate.md)).
 
-**Accept:** each gate produces its documented reason. Order is stable. ETFs are
-exempt from the earnings gate. A stock with earnings in 2 sessions is blocked;
-the same stock 5 sessions after earnings is not.
+**Accept:** each of 14-CONFIG §5 rows 1–8 produces its documented reason
+(rows 9–10 are engine, M3). Order is stable. ETFs are exempt from the earnings
+gate. A stock with earnings in 2 sessions is blocked (`2 <= max_hold_bars`);
+the same stock 5 sessions after earnings is not (window is open on the left).
+Announcement in `(t, t+max_hold_bars]` blocks; `t+max_hold_bars+1` does not.
+A stock with no earnings row is blocked. `earnings_blackout_sessions` does not
+exist — the window is the strategy's `max_hold_bars`.
 
 ---
 

@@ -343,9 +343,11 @@ Size: 1,500 candidates × 340 months ≈ 510k rows.
 | `timing` | `string` | `BMO`, `AMC`, `UNKNOWN` |
 
 Read only with `available_ts <= t` where available. Where it is not, the
-conservative `± earnings_uncertainty_days` window applies
-([ADR-020](ADR/020-earnings-gate.md)). A symbol with **no** earnings row and
-`is_etf=False` is treated as **blocked**, never as "no earnings, therefore fine".
+conservative `± EARNINGS_UNCERTAINTY_SESSIONS` window (constant 4 sessions,
+[ADR-020](ADR/020-earnings-gate.md)) applies. A symbol with **no** earnings row
+and `is_etf=False` is treated as **blocked**, never as "no earnings, therefore
+fine". ETFs are exempt. The lookforward window is the strategy's
+`max_hold_bars`, not a gates config field.
 
 ### 6.7 Data-quality checks and `is_suspect`
 
@@ -360,7 +362,7 @@ Set `is_suspect=True`, do not modify or delete the row, when any of:
 | Session present in the panel but absent from the calendar | any |
 
 The universe gate makes a symbol ineligible while any of the last
-`gates.max_suspect_lookback` sessions is suspect (default 5). Flagging rather than
+`universe.max_suspect_lookback` sessions is suspect (default 5). Flagging rather than
 deleting keeps the panel aligned and keeps the problem visible. An unexplained
 ±170% session is almost always a missing split, and a missing split is the most
 damaging single-row error available: it manufactures a 90% one-day return that

@@ -181,16 +181,15 @@ The cost model charges the expectation; `SimBroker` applies the realisation.
 
 **Hard-to-borrow is a gate, not a cost.** Borrow rates on genuinely hard-to-borrow
 names run to 20%+ per year, and at that level the position is not viable. Rather
-than model it, gate it:
-
-```python
-if universe_entry.borrow_bps_per_year > cfg.hard_to_borrow_max_bps_per_year:
-    return RejectionReason.HARD_TO_BORROW      # default threshold 300 bps/yr
-```
+than model it, `evaluate_gates` rejects shorts when the passed-in borrow rate
+exceeds the cap (default 300 bps/yr). `UniverseEntry` does not carry borrow;
+the engine supplies `borrow_bps_per_year`. `gates.skip_hard_to_borrow` defaults
+to true because v1 has no historical borrow file.
 
 If historical borrow-rate data is unavailable — and for most vendors it is —
 `borrow_bps_per_year` falls back to `cfg.borrow_bps_per_year_default` and the
-`HARD_TO_BORROW` gate cannot fire. That is a **known optimism** in the short book
+`HARD_TO_BORROW` gate cannot fire (`skip_hard_to_borrow: true`, or a `None`
+rate). That is a **known optimism** in the short book
 and it is recorded as a limitation in every run's `run.log`. It is also a reason to
 read the short-side results more sceptically than the long side.
 

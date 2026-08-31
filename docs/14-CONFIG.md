@@ -141,10 +141,10 @@ market_regime:
 gates:
   require_warm: true
   require_universe_eligible: true
-  require_regime_allowed: true
+  require_regime_allowed: true           # engine (M3), not evaluate_gates
   max_bar_staleness_bars: 2
-  earnings_blackout_sessions: 2          # skip if earnings in (t, t+hold]
-  skip_hard_to_borrow: true
+  min_xs_population: 100
+  skip_hard_to_borrow: true              # no historical borrow file in v1
 
 # ─── strategies ──────────────────────────────────────────────────────────────
 strategies:
@@ -313,20 +313,30 @@ project and a random-number generator with a diagram.
 compares reason counts across runs and reordering silently changes what those
 counts mean.
 
-| # | Gate | Reason on failure |
-|---|---|---|
-| 1 | Symbol in the universe snapshot at `t` | `NOT_IN_UNIVERSE` |
-| 2 | `universe_entry.eligible` | the snapshot's own reason |
-| 3 | `feature_row.is_warm` | `INSUFFICIENT_HISTORY` |
-| 4 | `bars_since_gap >= min_bars_since_gap` | `DATA_GAP` |
-| 5 | Latest bar age ≤ `max_bar_staleness_bars` | `STALE_DATA` |
-| 6 | Earnings not in `(t, t+max_hold]` (equities only; ETFs exempt) | `EARNINGS_IN_WINDOW` |
-| 7 | Not hard-to-borrow when going short | `HARD_TO_BORROW` |
-| 8 | Market regime in `strategy.allowed_market_regimes` | `MARKET_REGIME_BLOCKED` |
-| 9 | Per-symbol `regime` in `strategy.allowed_regimes` (Donchian only) | `REGIME_BLOCKED` |
+`evaluate_gates` (`gates/eligibility.py`) owns rows 1–8. Rows 9–10 are checked
+by the engine before `detect()`, gated by `require_regime_allowed`. They are
+not inside `evaluate_gates`.
 
-Gates 1–7 are per symbol; 8–9 are per `(symbol, strategy)`. Cheapest and
-broadest first.
+| # | Gate | Reason on failure | Where |
+|---|---|---|---|
+| 1 | Symbol in the universe snapshot at `t` (`universe_entry is None`) | `NOT_IN_UNIVERSE` | `evaluate_gates` |
+| 2 | `universe_entry.eligible` | the snapshot's own reason | `evaluate_gates` |
+| 3 | `feature_row` present and `is_warm` | `INSUFFICIENT_HISTORY` | `evaluate_gates` |
+| 4 | `bars_since_gap >= min_bars_since_gap` (threshold from `universe` config, passed in) | `DATA_GAP` | `evaluate_gates` |
+| 5 | Latest bar age ≤ `max_bar_staleness_bars` | `STALE_DATA` | `evaluate_gates` |
+| 6 | `xs_population >= min_xs_population` | `THIN_CROSS_SECTION` | `evaluate_gates` |
+| 7 | Earnings not in `(t, t+max_hold_bars]` (equities only; ETFs exempt). Window is the strategy's `max_hold_bars`, not a separate config knob. | `EARNINGS_IN_WINDOW` | `evaluate_gates` |
+| 8 | Not hard-to-borrow when going short | `HARD_TO_BORROW` | `evaluate_gates` |
+| 9 | Market regime in `strategy.allowed_market_regimes` | `MARKET_REGIME_BLOCKED` | engine (M3) |
+| 10 | Per-symbol `regime` in `strategy.allowed_regimes` (Donchian only) | `REGIME_BLOCKED` | engine (M3) |
+
+Rows 1–6 are per symbol (same answer for every strategy). Rows 7–8 take
+`max_hold_bars` / `direction` from the strategy under consideration, so the
+engine calls `evaluate_gates` per `(symbol, strategy)`. Rows 9–10 are also per
+`(symbol, strategy)`. Cheapest and broadest first.
+
+A missing earnings row for an individual equity is `EARNINGS_IN_WINDOW`, never
+a pass. See [ADR-020](ADR/020-earnings-gate.md).
 
 Two later gates are not in this table because they occur after scoring:
 `INSUFFICIENT_BIN_SAMPLES` and `COST_UNAVAILABLE`.

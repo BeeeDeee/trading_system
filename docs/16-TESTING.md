@@ -30,6 +30,7 @@ tests/
 │   ├── test_sentiment.py
 │   ├── test_sentiment_pit.py
 │   ├── test_universe.py
+│   ├── test_gates.py
 │   ├── test_calendar.py
 │   ├── test_actions.py
 │   ├── test_delisting.py
@@ -248,8 +249,25 @@ Every formula gets a hand-computed expected value. `pytest.approx` with
 | `test_eligible_symbols_sorted` | Determinism |
 | **`test_delisted_position_force_closed`** | Data ends mid-position ⇒ force-close, loss taken, trade in `trades.csv` |
 | `test_delisted_symbol_not_reentered` | No new entry after the delisting |
-| `test_earnings_in_window_blocks` | Announcement in `(t, t+max_hold]` ⇒ `EARNINGS_IN_WINDOW`; ETFs exempt |
 | `test_min_price_uses_close_raw` | A reverse-split-adjusted close above $5 with `close_raw` below $5 is `LOW_PRICE` |
+
+### Gates (`test_gates.py`)
+
+| Test | Assertion |
+|---|---|
+| `test_not_in_universe_when_entry_missing` | `universe_entry is None` ⇒ `NOT_IN_UNIVERSE` |
+| `test_ineligible_returns_snapshot_reason` | Ineligible entry ⇒ that entry's reason, not a later gate |
+| `test_insufficient_history` | `is_warm=False` ⇒ `INSUFFICIENT_HISTORY` |
+| `test_data_gap` | `bars_since_gap < min_bars_since_gap` ⇒ `DATA_GAP` |
+| `test_stale_data` | `bar_age_bars > max_bar_staleness_bars` ⇒ `STALE_DATA` |
+| `test_thin_cross_section` | `xs_population < min_xs_population` ⇒ `THIN_CROSS_SECTION` |
+| **`test_earnings_in_window_blocks`** | Announcement in `(t, t+max_hold_bars]` ⇒ `EARNINGS_IN_WINDOW`; ETFs exempt even with no earnings row |
+| `test_earnings_two_sessions_ahead_blocks` | Earnings in 2 sessions, `max_hold_bars=21` ⇒ blocked |
+| `test_earnings_five_sessions_after_does_not_block` | Earnings 5 sessions ago ⇒ not blocked |
+| `test_earnings_window_is_max_hold_not_two` | Earnings at `t+10`: hold 5 ⇒ pass; hold 21 ⇒ `EARNINGS_IN_WINDOW` |
+| `test_missing_earnings_blocks_stock` | No earnings rows, `is_etf=False` ⇒ `EARNINGS_IN_WINDOW` |
+| `test_hard_to_borrow_shorts_only` | Short + borrow above cap ⇒ `HARD_TO_BORROW`; long does not |
+| `test_gate_order_stable` | Several failures at once ⇒ the earliest reason in §5 |
 
 ### Calendar and corporate actions (`test_calendar.py`, `test_actions.py`)
 
