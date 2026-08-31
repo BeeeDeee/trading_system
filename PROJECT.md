@@ -16,9 +16,16 @@ exists. See [ADR-015](docs/ADR/015-equities-first.md).
 
 ## Current stage
 
-**M2 in progress.** M0 and M1 are complete. M2.1 (the two strategies) is complete.
+**M2 in progress.** M0 and M1 are complete. M2.1 (the two strategies) and M2.2
+(labeling *code*) are complete.
 
-Next task: **M2.2** Labeling in [the roadmap](docs/15-ROADMAP.md#m22-labeling).
+**Blocked, do not skip later:** [M2.2a](docs/15-ROADMAP.md#m22a-real-data-labeling-sanity--blocked)
+— pooled `mean_r` on real Sharadar labels. Raw ingest exists; processed panel,
+universe snapshots, and `data/reference/benchmark_1d.parquet` do not. Unblocks
+after `scout adjust` + `scout build-universe` + the benchmark file. Hard gate
+before M3.6. Record in [`docs/results/m2_labeling_sanity.md`](docs/results/m2_labeling_sanity.md).
+
+Next *coding* task: **M2.3** Edge table in [the roadmap](docs/15-ROADMAP.md#m23-edge-table).
 New chats: paste the handoff block in
 [`docs/17-IMPLEMENTER_GUIDE.md` §8](docs/17-IMPLEMENTER_GUIDE.md#8-starting-a-new-chat).
 

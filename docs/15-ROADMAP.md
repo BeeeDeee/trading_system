@@ -2,10 +2,12 @@
 
 > Milestones M0–M7 with per-task acceptance criteria.
 >
-> **For implementers:** pick the lowest-numbered unfinished task. Do only that
-> task. A task is done when every acceptance criterion is objectively verifiable
-> and its listed tests pass. Do not start a later task because an earlier one
-> looks boring.
+> **For implementers:** pick the lowest-numbered task that is not done and not
+> **Blocked**. Do only that task. A task is done when every acceptance criterion
+> is objectively verifiable and its listed tests pass. Do not start a later task
+> because an earlier one looks boring. Skip **Blocked** items until every listed
+> trigger file exists; then that item becomes the next task, even if a later
+> number is already in progress.
 
 Estimates assume one focused developer plus AI assistance. They are calibration,
 not commitments.
@@ -172,20 +174,53 @@ exist — the window is the strategy's `max_hold_bars`.
 where it must not. An unknown `strategy_id` raises `ScoutConfigError` at config
 load.
 
-### M2.2 Labeling
+### M2.2 Labeling — done (code)
 `scoring/labeling.py`, `cli/label_setups.py`.
 
 **Accept:** every test in `test_labeling.py`. **`test_both_barriers_same_bar_gives_stop`**
 and **`test_stop_target_reanchored_on_entry`** pass. Produces
 `data/labels/setups_<id>.parquet` with the full §3 schema.
 
-**Then run the master sanity check and record the result in
-`docs/results/m2_labeling_sanity.md`:** pooled `mean(realised_r_gross)` on a
-seeded geometric random walk of the same length and volatility must be within the
-bootstrap CI of zero, and `win_rate` must be near `1/(1+rr)`. **If pooled
-`mean_r` on real data exceeds about 0.4 R, stop and find the bug** — the likely
-culprits are the missing Donchian shift, the tie rule, and stop/target
-re-anchoring, in that order. Do not proceed to M2.3 until this is recorded.
+Random-walk master sanity is recorded in
+[`docs/results/m2_labeling_sanity.md`](results/m2_labeling_sanity.md). The
+**real-data** half of that check is **M2.2a**, not this task.
+
+M2.3–M2.5 may proceed on fixtures. They must not consume a real
+`setups_*.parquet` as evidence of edge.
+
+### M2.2a Real-data labeling sanity — **Blocked**
+
+Not a coding task. Do not pick this while the trigger is unmet.
+
+Raw Sharadar ingest exists (`data/raw/equity/`, snapshot `20260830-sharadar`).
+Labeling still cannot run: there is no processed panel, no universe snapshots,
+and no benchmark file.
+
+**Unblocked when all three exist:**
+
+| File | How it appears |
+|---|---|
+| `data/processed/panel/1d/*.parquet` | `scout adjust --config config/development.yaml` |
+| `data/universe/snapshots.parquet` | `scout build-universe --config config/development.yaml` |
+| `data/reference/benchmark_1d.parquet` | Schema in [`04-DATA_AND_UNIVERSE.md §6.3`](04-DATA_AND_UNIVERSE.md#63-datareferencebenchmark_1dparquet). **No M1 task writes this file.** If it is still missing after adjust, that gap is part of this task — do not invent a schema. |
+
+**When unblocked, do only this:**
+
+1. `scout label --config config/development.yaml`
+2. Fill the **Real data** section of
+   [`docs/results/m2_labeling_sanity.md`](results/m2_labeling_sanity.md) with the
+   pooled table from [`07-EDGE_AND_SCORING.md §3`](07-EDGE_AND_SCORING.md#3-the-resolved-setup-table)
+   (per strategy: `mean_r`, win rate, stop/time rates, `min(realised_r_gross)`,
+   `mean(entry_gap_atr)`).
+3. **If pooled `mean_r` exceeds about 0.4 R, STOP.** That is a bug, not an edge.
+   Likely culprits, in order: missing split adjustment, survivorship-biased
+   candidates, cross-sectional rank over the full panel, missing Donchian
+   `.shift(1)`, optimistic tie rule or losses clipped at −1 R, stop/target not
+   re-anchored on the fill.
+
+**Hard gate:** M3.6 must not start, and no real `EdgeTable` may be trusted,
+until this write-up is complete and `mean_r` is not ~0.4 R. Fixture work
+(M2.3–M3.5) is allowed in the meantime.
 
 ### M2.3 Edge table
 `scoring/edge.py`, `cli/build_edge_table.py`. Bins, `BinStats`, both LCB methods,
@@ -266,6 +301,10 @@ timezone-aware axes. `deflated_sharpe` reads the trial count from the registry.
 from a dirty git tree.**
 
 ### M3.6 Development run and iteration
+
+**Precondition:** [M2.2a](#m22a-real-data-labeling-sanity--blocked) recorded
+and pooled real-data `mean_r` is not ~0.4 R.
+
 Run the full pipeline on `config/development.yaml`. Follow the inspection order in
 [`12-RESEARCH_PROTOCOL.md §7`](12-RESEARCH_PROTOCOL.md#7-required-workflow):
 funnel, then trade count, then cost drag, then calibration, then stability, and
@@ -447,11 +486,13 @@ M0.1 ─► M0.2 ─► M0.3 ─► M0.4
 M1.1 ─► M1.2 ─► M1.3 ─► M1.4 ─► M1.5 ─► M1.6 ─► M1.7 ─► M1.8
                                                  │
                                                  ▼
-                          M2.1 ─► M2.2 ─► M2.3 ─► M2.5
-                                    │       ▲
-                                    │     M2.4
-                                    ▼
-                          M3.1 ─► M3.2 ─► M3.3 ─► M3.4 ─► M3.5 ─► M3.6 ─► M3.7
+                          M2.1 ─► M2.2 ─► M2.3 ─► M2.5 ─► M3.1 ─► … ─► M3.6
+                                    │       ▲                      ▲
+                                    │     M2.4                     │
+                                    ▼                              │
+                          M2.2a (blocked until adjust + universe   │
+                                 + benchmark exist) ───────────────┘
+                                 hard gate: real labels trusted before M3.6
                                                                             │
                                                                     ┌───────┴───────┐
                                                                  PROCEED          STOP
@@ -464,7 +505,8 @@ M1.1 ─► M1.2 ─► M1.3 ─► M1.4 ─► M1.5 ─► M1.6 ─► M1.7 ─
 ```
 
 Parallelisable: M2.4 (costs) alongside M2.1–M2.3. M3.5 (metrics) alongside
-M3.1–M3.4. Everything else is sequential.
+M3.1–M3.4. M2.2a is a data-run gate, not a coding task; skip it while Blocked.
+Everything else is sequential.
 
 ---
 

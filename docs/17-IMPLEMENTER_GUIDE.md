@@ -8,7 +8,8 @@
 ## 1. How to work on this project
 
 1. Open [`15-ROADMAP.md`](15-ROADMAP.md). Find the lowest-numbered task that is
-   not done.
+   not done and not **Blocked**. A Blocked task is not pickable until every
+   trigger file listed on it exists; then it jumps the queue.
 2. Read the document referenced by that task, in full.
 3. Implement **only that task**. Do not implement the next one because it is
    small. Do not refactor an earlier one because you would have done it

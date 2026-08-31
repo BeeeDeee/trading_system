@@ -13,7 +13,8 @@
 
 Read [`docs/17-IMPLEMENTER_GUIDE.md`](docs/17-IMPLEMENTER_GUIDE.md), then
 [`docs/15-ROADMAP.md`](docs/15-ROADMAP.md). Pick the lowest-numbered unfinished
-task and do only that task.
+task that is not **Blocked**, and do only that task. Blocked tasks are skipped
+until every trigger file on them exists; then they jump the queue.
 
 If the documentation is ambiguous or self-contradictory, **stop and ask**. Do not
 resolve it by guessing. An ambiguity resolved silently in the scoring or labeling
