@@ -251,6 +251,22 @@ Every formula gets a hand-computed expected value. `pytest.approx` with
 | `test_delisted_symbol_not_reentered` | No new entry after the delisting |
 | `test_min_price_uses_close_raw` | A reverse-split-adjusted close above $5 with `close_raw` below $5 is `LOW_PRICE` |
 
+### Strategies (`test_strategies.py`)
+
+| Test | Assertion |
+|---|---|
+| `test_xsec_momentum_satisfies_protocol` | `isinstance(XSecMomentum(), Strategy)` and no Protocol in `__mro__` |
+| `test_donchian_breakout_satisfies_protocol` | Same for `DonchianBreakout` |
+| `test_xsec_momentum_long_fires` | `mom_252_xs_pct >= 0.90` ⇒ LONG, `target_price is None`, stop = close − 5 ATR |
+| `test_xsec_momentum_short_fires` | `mom_252_xs_pct <= 0.10` ⇒ SHORT, `target_price is None`, stop = close + 5 ATR |
+| `test_xsec_momentum_mid_rank_does_not_fire` | Rank 0.50 ⇒ `None` |
+| `test_donchian_long_fires` | Close through 55-session high + buffer, TREND_UP, ema spread ok ⇒ LONG with target at 2 R |
+| `test_donchian_short_fires` | Mirror |
+| `test_donchian_close_on_channel_does_not_fire` | Close equal to the buffered level ⇒ `None` |
+| `test_from_params_rejects_unknown_key` | Misspelled param ⇒ `ScoutConfigError` |
+| `test_build_strategies_unknown_id_raises` | Unknown `strategy_id` ⇒ `ScoutConfigError` |
+| `test_no_range_fade_in_v1` | Registry keys are exactly the two v1 ids |
+
 ### Gates (`test_gates.py`)
 
 | Test | Assertion |

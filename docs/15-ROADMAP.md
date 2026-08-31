@@ -18,7 +18,7 @@ not commitments.
 |---|---|---|---|
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data, calendar, features, PIT universe | 7 days | Done |
-| M2 | Strategies, labeling, edge table | 4 days | Not started |
+| M2 | Strategies, labeling, edge table | 4 days | In progress |
 | M3 | Backtest engine, metrics, **the answer** | 6 days | Not started |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
 | M5 | Paper then live trading | 15 days | Gated on M4 + 60-day soak |
@@ -162,7 +162,7 @@ exist — the window is the strategy's `max_hold_bars`.
 
 ## M2 — Strategies and edge
 
-### M2.1 The two strategies
+### M2.1 The two strategies — done
 `strategies/xsec_momentum.py`, `strategies/donchian_breakout.py`, `registry.py`.
 **No `range_fade` in v1.**
 

@@ -16,11 +16,9 @@ exists. See [ADR-015](docs/ADR/015-equities-first.md).
 
 ## Current stage
 
-**M1 in progress.** M0 is complete. M1.1–M1.7 (ingest, calendar/actions/quality,
-`ParquetCandleSource`, indicators, regime, feature engine, PIT universe) are
-complete.
+**M2 in progress.** M0 and M1 are complete. M2.1 (the two strategies) is complete.
 
-Next task: **M1.8** Gates in [the roadmap](docs/15-ROADMAP.md#m18-gates).
+Next task: **M2.2** Labeling in [the roadmap](docs/15-ROADMAP.md#m22-labeling).
 New chats: paste the handoff block in
 [`docs/17-IMPLEMENTER_GUIDE.md` §8](docs/17-IMPLEMENTER_GUIDE.md#8-starting-a-new-chat).
 
