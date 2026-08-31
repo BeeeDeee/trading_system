@@ -1,14 +1,22 @@
+from __future__ import annotations
+
 import bisect
 import math
+import os
 from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd  # type: ignore[import-untyped]
+import pyarrow as pa  # type: ignore[import-untyped]
+import pyarrow.parquet as pq  # type: ignore[import-untyped]
 
 from scout.domain._checks import require_aware
 from scout.domain.enums import Direction, VolBucket
+
+_META_CONFIG_HASH = b"config_hash"
+_META_SNAPSHOT_ID = b"data_snapshot_id"
 
 # Documented default in 07-EDGE_AND_SCORING.md §5. Config arrives in M0.3;
 # this is the value `is_usable` uses until then.
@@ -110,7 +118,15 @@ class EdgeTable:
     with backward search, so a decision at 2023-04-17 uses the 2023-04-01 table.
     """
 
-    def __init__(self, stats: Sequence[BinStats] = ()) -> None:
+    def __init__(
+        self,
+        stats: Sequence[BinStats] = (),
+        *,
+        config_hash: str = "",
+        data_snapshot_id: str = "",
+    ) -> None:
+        self.config_hash = config_hash
+        self.data_snapshot_id = data_snapshot_id
         grouped: dict[BinKey, list[BinStats]] = {}
         for row in stats:
             grouped.setdefault(row.key, []).append(row)
@@ -162,18 +178,38 @@ class EdgeTable:
         frame = pd.DataFrame(records, columns=list(_EDGE_COLUMNS))
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_name(path.name + ".tmp")
-        frame.to_parquet(tmp)
-        tmp.replace(path)
+        table = pa.Table.from_pandas(frame, preserve_index=False)
+        meta = dict(table.schema.metadata or {})
+        meta[_META_CONFIG_HASH] = self.config_hash.encode("utf-8")
+        meta[_META_SNAPSHOT_ID] = self.data_snapshot_id.encode("utf-8")
+        table = table.replace_schema_metadata(meta)
+        tmp = path.with_name(f".{path.name}.tmp")
+        try:
+            pq.write_table(table, tmp)
+            os.replace(tmp, path)
+        except BaseException:
+            if tmp.exists():
+                tmp.unlink()
+            raise
 
     @classmethod
-    def load(cls, path: Path) -> "EdgeTable":
-        frame = pd.read_parquet(path)
+    def load(cls, path: Path) -> EdgeTable:
+        table = pq.read_table(path)
+        raw_meta = table.schema.metadata or {}
+        digest = raw_meta.get(_META_CONFIG_HASH, b"").decode("utf-8")
+        snapshot = raw_meta.get(_META_SNAPSHOT_ID, b"").decode("utf-8")
+        frame = table.to_pandas()
         stats: list[BinStats] = []
         for rec in frame.to_dict(orient="records"):
             as_of = rec["as_of"]
             if isinstance(as_of, pd.Timestamp):
-                as_of = as_of.to_pydatetime()
+                ts = as_of
+                ts = ts.tz_localize("UTC") if ts.tzinfo is None else ts.tz_convert("UTC")
+                as_of = ts.to_pydatetime()
+            if not isinstance(as_of, datetime):
+                as_of = pd.Timestamp(as_of).to_pydatetime()
+            if as_of.tzinfo is None:
+                as_of = as_of.replace(tzinfo=UTC)
             stats.append(
                 BinStats(
                     key=BinKey(
@@ -198,4 +234,4 @@ class EdgeTable:
                     p95_r=float(rec["p95_r"]),
                 )
             )
-        return cls(stats)
+        return cls(stats, config_hash=digest, data_snapshot_id=snapshot)

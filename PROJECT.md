@@ -16,8 +16,8 @@ exists. See [ADR-015](docs/ADR/015-equities-first.md).
 
 ## Current stage
 
-**M2 in progress.** M0 and M1 are complete. M2.1 (the two strategies) and M2.2
-(labeling *code*) are complete.
+**M2 in progress.** M0 and M1 are complete. M2.1 (the two strategies), M2.2
+(labeling *code*), and M2.3 (edge table) are complete.
 
 **Blocked, do not skip later:** [M2.2a](docs/15-ROADMAP.md#m22a-real-data-labeling-sanity--blocked)
 — pooled `mean_r` on real Sharadar labels. Raw ingest exists; processed panel,
@@ -25,7 +25,7 @@ universe snapshots, and `data/reference/benchmark_1d.parquet` do not. Unblocks
 after `scout adjust` + `scout build-universe` + the benchmark file. Hard gate
 before M3.6. Record in [`docs/results/m2_labeling_sanity.md`](docs/results/m2_labeling_sanity.md).
 
-Next *coding* task: **M2.3** Edge table in [the roadmap](docs/15-ROADMAP.md#m23-edge-table).
+Next *coding* task: **M2.4** Costs in [the roadmap](docs/15-ROADMAP.md#m24-costs).
 New chats: paste the handoff block in
 [`docs/17-IMPLEMENTER_GUIDE.md` §8](docs/17-IMPLEMENTER_GUIDE.md#8-starting-a-new-chat).
 
@@ -94,7 +94,7 @@ and [`§14`](docs/00-REVIEW.md#14-the-equity-pivot).
 |---|---|---|---|
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data pipeline, calendar, features, PIT universe | 7 days | In progress (M1.1–M1.6 done) |
-| M2 | Strategies, setup labeling, edge table | 4 days | Not started |
+| M2 | Strategies, setup labeling, edge table | 4 days | In progress |
 | M3 | Backtest engine, metrics, **the holdout answer** | 6 days | Not started |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
 | M5 | Paper trading, then live | 15 days | Gated on M4 + 60-day soak |

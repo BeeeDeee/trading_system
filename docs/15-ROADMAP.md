@@ -222,7 +222,7 @@ and no benchmark file.
 until this write-up is complete and `mean_r` is not ~0.4 R. Fixture work
 (M2.3–M3.5) is allowed in the meantime.
 
-### M2.3 Edge table
+### M2.3 Edge table — done
 `scoring/edge.py`, `cli/build_edge_table.py`. Bins, `BinStats`, both LCB methods,
 the monthly `as_of` grid, `EdgeTable` with backward lookup.
 

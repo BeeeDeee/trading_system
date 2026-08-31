@@ -5,7 +5,7 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from scout.cli import adjust, build_universe, ingest, label_setups
+from scout.cli import adjust, build_edge_table, build_universe, ingest, label_setups
 from scout.utils.errors import ScoutError
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -45,6 +45,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     label_p = sub.add_parser("label", help="Detect and triple-barrier-label historical setups")
     label_setups.add_arguments(label_p)
 
+    edge_p = sub.add_parser("build-edge", help="Build the walk-forward edge table")
+    build_edge_table.add_arguments(edge_p)
+
     args = parser.parse_args(list(argv) if argv is not None else None)
     try:
         if args.command == "ingest":
@@ -55,6 +58,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             return build_universe.run(args)
         if args.command == "label":
             return label_setups.run(args)
+        if args.command == "build-edge":
+            return build_edge_table.run(args)
     except ScoutError as exc:
         print(exc, file=sys.stderr)
         return 1
