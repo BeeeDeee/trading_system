@@ -6,6 +6,7 @@ import pandas as pd  # type: ignore[import-untyped]
 
 from scout.domain._checks import require_aware
 from scout.domain.enums import MarketRegime, Regime, VolBucket
+from scout.domain.market import exact_ts_index
 from scout.utils.errors import ScoutLookaheadError
 
 
@@ -178,6 +179,11 @@ def _row_to_feature_row(record: dict[str, object]) -> FeatureRow:
     return FeatureRow(**kwargs)  # type: ignore[arg-type]
 
 
+def feature_row_from_record(record: dict[str, object]) -> FeatureRow:
+    """Build a FeatureRow from a FeaturePanel record. Used by the engine loop."""
+    return _row_to_feature_row(record)
+
+
 class FeaturePanel:
     """DataFrame wrapper whose columns are exactly FeatureRow's fields."""
 
@@ -229,6 +235,14 @@ class FeaturePanel:
         if view.empty:
             return view
         return view.drop_duplicates(subset=["symbol"], keep="last").reset_index(drop=True)
+
+    def rows_at(self, ts: datetime) -> pd.DataFrame:
+        """Rows whose ts equals `ts` exactly. Searchsorted slice, not a mask."""
+        i = exact_ts_index(self._timestamps, ts)
+        if i is None:
+            return self._frame.iloc[0:0]
+        start = 0 if i == 0 else self._end_idx[i - 1]
+        return self._frame.iloc[start : self._end_idx[i]]
 
     def row(self, ts: datetime, symbol: str) -> FeatureRow:
         require_aware(ts, "ts")

@@ -292,14 +292,23 @@ def accrue_borrow(
     return out
 
 
-def mark(state: PortfolioState, panel: MarketPanel, ts: datetime) -> PortfolioState:
-    """Recompute unrealised at this bar's close. Update peak, day-start, bars_held."""
-    marks = _marks_at(panel, state.positions, ts)
+def mark(
+    state: PortfolioState,
+    panel: MarketPanel,
+    ts: datetime,
+    marks: Mapping[str, Decimal] | None = None,
+) -> PortfolioState:
+    """Recompute unrealised at this bar's close. Update peak, day-start, bars_held.
+
+    The engine passes `marks` for the open symbols so the loop does not scan
+    the whole panel every bar. Unit tests may omit it.
+    """
+    resolved = marks if marks is not None else _marks_at(panel, state.positions, ts)
     positions = dict(state.positions)
     held: dict[str, Position] = {}
     for symbol, pos in positions.items():
         held[symbol] = replace(pos, bars_held=pos.bars_held + 1)
-    unrealised = _unrealised(held, marks)
+    unrealised = _unrealised(held, resolved)
     equity = state.cash_usd + unrealised
     peak = max(state.peak_equity_usd, equity)
     date_changed = state.ts.date() != ts.date()

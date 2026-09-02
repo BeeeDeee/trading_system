@@ -21,7 +21,7 @@ not commitments.
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data, calendar, features, PIT universe | 7 days | Done |
 | M2 | Strategies, labeling, edge table | 4 days | In progress (M2.1–M2.5 done; M2.2a blocked) |
-| M3 | Backtest engine, metrics, **the answer** | 6 days | In progress (M3.1–M3.3 done) |
+| M3 | Backtest engine, metrics, **the answer** | 6 days | In progress (M3.1–M3.4 done) |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
 | M5 | Paper then live trading | 15 days | Gated on M4 + 60-day soak |
 | M6 | ML evaluation | 10 days | Gated on M3 criteria |
@@ -282,7 +282,7 @@ disabled, neutral, or aligned. Every test in `test_sentiment.py` **and**
 though no real source exists yet — the plumbing must be correct before data arrives, because retrofitting
 point-in-time discipline never happens.
 
-### M3.4 Engine
+### M3.4 Engine — done
 `backtest/engine.py`, `storage/decision_sink.py`, `storage/run_outputs.py`,
 `cli/run_backtest.py`.
 

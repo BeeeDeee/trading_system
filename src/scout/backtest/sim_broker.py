@@ -173,7 +173,11 @@ class SimBroker:
         return tuple(out)
 
     def mark(
-        self, state: PortfolioState, panel: MarketPanel, ts: datetime
+        self,
+        state: PortfolioState,
+        panel: MarketPanel,
+        ts: datetime,
+        closes: Mapping[str, Decimal] | None = None,
     ) -> PortfolioState:
         """Dividends, borrow, then MTM. Halts on zero equity via the ledger."""
         self._panel = panel
@@ -191,11 +195,14 @@ class SimBroker:
             current = ledger_mod.apply_dividend(
                 current, symbol, to_decimal(action.cash_amount), ts
             )
-        latest = panel.latest(ts)
-        close_by_symbol = {
-            str(rec["symbol"]): to_decimal(float(rec["close"]))
-            for rec in latest.to_dict("records")
-        } if not latest.empty else {}
+        if closes is None:
+            latest = panel.latest(ts)
+            close_by_symbol = {
+                str(rec["symbol"]): to_decimal(float(rec["close"]))
+                for rec in latest.to_dict("records")
+            } if not latest.empty else {}
+        else:
+            close_by_symbol = dict(closes)
         for symbol, pos in list(current.positions.items()):
             if pos.direction is Direction.LONG:
                 continue
@@ -206,7 +213,7 @@ class SimBroker:
                 pos.qty * mark_px * self._borrow_bps_per_year / _BPS / _SESSIONS_PER_YEAR
             )
             current = ledger_mod.accrue_borrow(current, symbol, daily, ts)
-        current = ledger_mod.mark(current, panel, ts)
+        current = ledger_mod.mark(current, panel, ts, marks=close_by_symbol)
         self._state = current
         return current
 

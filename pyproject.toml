@@ -54,5 +54,6 @@ disallow_untyped_defs = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = "-q --strict-markers"
 filterwarnings = ["error::FutureWarning"]

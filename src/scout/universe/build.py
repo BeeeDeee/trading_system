@@ -6,6 +6,7 @@ ScoutLookaheadError and must not be caught.
 
 from __future__ import annotations
 
+import bisect
 from datetime import datetime
 
 import numpy as np
@@ -79,6 +80,54 @@ def build_snapshots(
     ranked = _assign_adv_rank(joined)
     ranked = apply_eligibility_rules(ranked, cfg)
     return _finalize(ranked)
+
+
+class SnapshotBook:
+    """Point-in-time universe snapshots with O(log n) backward lookup.
+
+    `load_all` / `snapshot_at` match the engine skeleton in 11-BACKTEST_ENGINE.md.
+    """
+
+    def __init__(self, frame: pd.DataFrame) -> None:
+        self._frame = frame
+        if frame.empty:
+            if "ts" not in frame.columns:
+                frame = pd.DataFrame(
+                    {
+                        "ts": pd.DatetimeIndex([], tz="UTC"),
+                        "symbol": pd.Series(dtype="object"),
+                        "eligible": pd.Series(dtype=bool),
+                    }
+                )
+            self._frame = frame
+            self._as_ofs: list[datetime] = []
+            self._snaps: list[UniverseSnapshot] = []
+            return
+        ts_index = _utc_ns(frame["ts"])
+        unique = ts_index.unique().sort_values()
+        as_ofs: list[datetime] = []
+        snaps: list[UniverseSnapshot] = []
+        for stamp in unique:
+            py = pd.Timestamp(stamp).to_pydatetime()
+            if not isinstance(py, datetime):
+                raise TypeError(f"snapshot ts is not a datetime: {type(py)!r}")
+            as_ofs.append(py)
+            part = frame.loc[ts_index == stamp]
+            snaps.append(to_universe_snapshot(part))
+        self._as_ofs = as_ofs
+        self._snaps = snaps
+
+    def load_all(self) -> pd.DataFrame:
+        return self._frame
+
+    def snapshot_at(self, ts: datetime) -> UniverseSnapshot | None:
+        """Latest snapshot with snapshot.ts <= ts. None if none exist yet."""
+        if ts.tzinfo is None:
+            raise ValueError("lookup ts must be timezone-aware UTC")
+        i = bisect.bisect_right(self._as_ofs, ts) - 1
+        if i < 0:
+            return None
+        return self._snaps[i]
 
 
 def lookup_snapshot(snapshots: pd.DataFrame, ts: datetime) -> pd.DataFrame:

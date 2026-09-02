@@ -16,8 +16,10 @@ exists. See [ADR-015](docs/ADR/015-equities-first.md).
 
 ## Current stage
 
-**M3.3 done** (sentiment plumbing: null source, PIT aggregation, penalty-only
-multiplier; [`docs/10-SENTIMENT.md`](docs/10-SENTIMENT.md)).
+**M3.4 done** (timestamp-outer backtest engine, decision sink, run outputs,
+`scout backtest` CLI; [`docs/11-BACKTEST_ENGINE.md`](docs/11-BACKTEST_ENGINE.md)).
+M3.3 sentiment plumbing remains as specified in
+[`docs/10-SENTIMENT.md`](docs/10-SENTIMENT.md).
 M3.2 portfolio sizing/selection/breakers remains as specified in
 [`docs/09-PORTFOLIO_AND_RISK.md`](docs/09-PORTFOLIO_AND_RISK.md).
 M3.1 SimBroker and ledger conventions remain locked in
@@ -32,8 +34,8 @@ Raw ingest exists; processed panel, universe snapshots, and
 `scout build-universe` + the benchmark file. Hard gate before M3.6. Record in
 [`docs/results/m2_labeling_sanity.md`](docs/results/m2_labeling_sanity.md).
 
-Next *coding* task: **M3.4** Backtest engine in
-[the roadmap](docs/15-ROADMAP.md#m34-engine).
+Next *coding* task: **M3.5** Metrics, plots, diagnostics, registry, lockbox in
+[the roadmap](docs/15-ROADMAP.md#m35-metrics-plots-diagnostics).
 New chats: paste the handoff block in
 [`docs/17-IMPLEMENTER_GUIDE.md` §8](docs/17-IMPLEMENTER_GUIDE.md#8-starting-a-new-chat).
 
@@ -103,7 +105,7 @@ and [`§14`](docs/00-REVIEW.md#14-the-equity-pivot).
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data pipeline, calendar, features, PIT universe | 7 days | Done |
 | M2 | Strategies, setup labeling, edge table | 4 days | In progress (M2.1–M2.5 done; M2.2a blocked) |
-| M3 | Backtest engine, metrics, **the holdout answer** | 6 days | In progress (M3.1–M3.2 done) |
+| M3 | Backtest engine, metrics, **the holdout answer** | 6 days | In progress (M3.1–M3.4 done) |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
 | M5 | Paper trading, then live | 15 days | Gated on M4 + 60-day soak |
 | M6 | ML evaluation | 10 days | Gated on M3 criteria |

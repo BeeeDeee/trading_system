@@ -186,6 +186,20 @@ def _build_ts_index(frame: pd.DataFrame) -> tuple[pd.DatetimeIndex, list[int]]:
     return timestamps, end_idx
 
 
+def exact_ts_index(timestamps: pd.DatetimeIndex, ts: datetime) -> int | None:
+    """Index of `ts` in `timestamps`, or None. Compares UTC ns, not Timestamp identity."""
+    require_aware(ts, "ts")
+    req = pd.Timestamp(ts).tz_convert("UTC")
+    i = int(timestamps.searchsorted(req, side="left"))
+    if i >= len(timestamps):
+        return None
+    hit = pd.Timestamp(timestamps[i])
+    hit = hit.tz_localize("UTC") if hit.tzinfo is None else hit.tz_convert("UTC")
+    if int(hit.value) != int(req.value):
+        return None
+    return i
+
+
 def _as_of_end(timestamps: pd.DatetimeIndex, end_idx: list[int], ts: datetime) -> int:
     require_aware(ts, "ts")
     req = pd.Timestamp(ts).tz_convert("UTC")
@@ -262,6 +276,14 @@ class MarketPanel:
         if view.empty:
             return view
         return view.drop_duplicates(subset=["asset_id"], keep="last").reset_index(drop=True)
+
+    def rows_at(self, ts: datetime) -> pd.DataFrame:
+        """Rows whose ts equals `ts` exactly. Searchsorted slice, not a mask."""
+        i = exact_ts_index(self._timestamps, ts)
+        if i is None:
+            return self._frame.iloc[0:0]
+        start = 0 if i == 0 else self._end_idx[i - 1]
+        return self._frame.iloc[start : self._end_idx[i]]
 
 
 class BenchmarkPanel:

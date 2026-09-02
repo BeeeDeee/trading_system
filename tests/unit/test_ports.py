@@ -5,8 +5,15 @@ from pathlib import Path
 from scout.backtest.sim_broker import SimBroker
 from scout.config.schema import CostsConfig, PortfolioConfig
 from scout.data.parquet_source import ParquetCandleSource
-from scout.domain.ports import Broker, CandleSource, SentimentSource, Strategy
+from scout.domain.ports import (
+    Broker,
+    CandleSource,
+    DecisionSink,
+    SentimentSource,
+    Strategy,
+)
 from scout.sentiment.null_source import NullSentimentSource
+from scout.storage.decision_sink import NullDecisionSink, ParquetDecisionSink
 from scout.strategies.donchian_breakout import DonchianBreakout
 from scout.strategies.xsec_momentum import XSecMomentum
 
@@ -38,3 +45,16 @@ def test_null_sentiment_source_satisfies_protocol() -> None:
     source = NullSentimentSource()
     assert isinstance(source, SentimentSource)
     assert SentimentSource not in NullSentimentSource.__mro__
+
+
+def test_null_decision_sink_satisfies_protocol() -> None:
+    sink = NullDecisionSink()
+    assert isinstance(sink, DecisionSink)
+    assert DecisionSink not in NullDecisionSink.__mro__
+
+
+def test_parquet_decision_sink_satisfies_protocol(tmp_path: Path) -> None:
+    sink = ParquetDecisionSink(tmp_path / "decisions.parquet")
+    assert isinstance(sink, DecisionSink)
+    assert DecisionSink not in ParquetDecisionSink.__mro__
+
