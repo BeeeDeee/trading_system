@@ -44,7 +44,7 @@ provisional = state                     # mutated copy as we accept
 for rank, opp in enumerate(ranked, start=1):
 
     # --- global blocks: checked first, cheapest, and most important ---
-    if not risk_cfg.trading_enabled:                  reject(KILL_SWITCH)
+    if not trading_enabled(risk_cfg):                 reject(KILL_SWITCH)
     if breaker_tripped(provisional, risk_cfg):        reject(CIRCUIT_BREAKER)
 
     # --- per-opportunity blocks ---
@@ -53,6 +53,8 @@ for rank, opp in enumerate(ranked, start=1):
     if rank > cfg.top_n:                              reject(BELOW_TOP_N)
 
     # --- sentiment: veto or penalty, never a bonus ---
+    # Formula from 10-SENTIMENT.md §4. Implemented in selection.py until M3.3
+    # extracts it to sentiment/multiplier.py.
     mult_sentiment = sentiment_multiplier(sentiment.get(opp.symbol), opp.direction,
                                           sentiment_cfg)
     if mult_sentiment <= 0.0:                         reject(SENTIMENT_VETO)
@@ -69,11 +71,18 @@ for rank, opp in enumerate(ranked, start=1):
     after = simulate_add(provisional, opp, qty, risk_usd)
     if after.open_risk_pct > cfg.max_portfolio_heat_pct:     reject(PORTFOLIO_HEAT_CAP)
     if after.cluster_risk_pct(opp.cluster) > cfg.max_cluster_risk_pct: reject(CLUSTER_CAP)
+    if cluster_count(after, opp.cluster) > cfg.max_positions_per_cluster: reject(CLUSTER_CAP)
     if abs(after.net_beta_exposure_pct) > cfg.max_net_beta_pct:        reject(BETA_CAP)
     if after.gross_exposure_pct > cfg.max_gross_exposure_pct: reject(GROSS_EXPOSURE_CAP)
 
     # --- re-check EV with the final cost at the final size ---
-    final_cost = estimate_cost(opp.setup, ..., notional(qty, opp), risk_usd, ...)
+    # Opportunity.atr_pct is copied from FeatureRow at ranking.
+    # price_raw is setup.reference_price (the same price sizing uses as entry).
+    final_cost = estimate_cost(
+        opp.setup, universe_entry_from(opp), float(notional), float(risk_usd),
+        opp.expected_bars_held, cost_cfg,
+        atr_pct=opp.atr_pct, price_raw=opp.setup.reference_price,
+    )
     if opp.ev_r_lcb - final_cost.cost_r < min_ev_net_r: reject(BELOW_EV_THRESHOLD)
 
     accept(opp, qty, risk_usd, mult, final_cost)
@@ -91,6 +100,12 @@ Two properties of this loop matter more than the individual caps:
 2. **Rejection reasons are recorded in the order the checks run**, so the order
    is fixed and must not be changed casually — funnel analysis compares reason
    counts across runs.
+
+`simulate_add` copies `Opportunity.beta_bench_90` onto `Position`, increments
+`trades_today` (so `max_trades_per_day` sees this-cycle accepts), and leaves
+cash/equity unchanged — cap checks use open risk at the decision-time entry.
+Accepted `TradeDecision.client_order_id` is `{symbol}-{int(ts.timestamp())}-e`;
+the engine prefixes `run_id[:8]` when constructing `OrderIntent` (M3.4).
 
 Rejecting a candidate never terminates the loop. A lower-ranked opportunity in a
 different cluster can still be accepted after a higher-ranked one was blocked by
@@ -245,9 +260,12 @@ capped as one theme. International, bond, and commodity ETFs get their own
 clusters because their residual risk is not the US equity market.
 
 `max_cluster_risk_pct` at half the total heat cap means no single theme can be
-more than half the portfolio's risk. That is the single most valuable constraint
-in this document: five info-tech longs are capped at 1% total risk rather than
-2% across five positions pretending to be independent.
+more than half the portfolio's risk. `max_positions_per_cluster` (default 2) is
+the count cap on the same `CLUSTER_CAP` reason: it is checked on the
+post-`simulate_add` state, after the risk-pct check, so funnel order is stable.
+Together they are the single most valuable constraint in this document: five
+info-tech longs are capped at 1% total risk *and* two names, rather than 2%
+across five positions pretending to be independent.
 
 ### The honest limitation
 
@@ -269,6 +287,10 @@ net_beta_exposure_pct = Σ over positions of (
 ```
 
 `max_net_beta_pct`, default **0.015**.
+
+`beta_bench_90` lives on `Position` (copied from `Opportunity` at
+`simulate_add` / `apply_entry`). `PortfolioState.net_beta_exposure_pct` uses the
+formula above, so `after.net_beta_exposure_pct` in §2 is the same number.
 
 This is the entire market-exposure model: risk-weighted, beta-adjusted, signed,
 against **SPY**. It permits a fully long-biased book up to 1.5% of equity in
@@ -365,9 +387,11 @@ time stop always proceed. This is the asymmetric failure policy
 tripped breaker must never trap you in a position.
 
 `trading_enabled` reads from `SCOUT_TRADING_ENABLED` first and config second, so
-it can be flipped without a deploy. In live mode it is re-read **before every
-order send**, not cached at startup — a kill switch you have to restart the
-process to use is not a kill switch.
+it can be flipped without a deploy. The config loader applies the env var into
+the resolved config (and therefore the `config_hash`) at startup. `select_and_size`
+**also re-reads the env on every call** via `portfolio/breakers.py::trading_enabled`
+— a kill switch you have to restart the process to use is not a kill switch. In
+live mode (M5) `LiveBroker` re-reads it again before every order send.
 
 ### Why breakers run in the backtest
 

@@ -177,6 +177,7 @@ def _position(**overrides: Any) -> Position:
         "bars_held": 1,
         "strategy_id": "donchian_breakout_v1",
         "cluster": "INFO_TECH",
+        "beta_bench_90": 1.0,
         "client_order_id": "run-AAPL-1-e",
         "realised_fees_usd": Decimal("0"),
         "dividends_usd": Decimal("0"),
@@ -520,6 +521,24 @@ def test_portfolio_heat_at_entry() -> None:
     assert state.open_risk_pct == pytest.approx(0.0005)
     assert state.cluster_risk_pct("INFO_TECH") == pytest.approx(0.0005)
     assert state.cluster_risk_pct("ENERGY") == 0.0
+    assert state.net_beta_exposure_pct == pytest.approx(0.0005)
+
+
+def test_net_beta_weights_by_beta_bench_90() -> None:
+    pos = _position(beta_bench_90=2.0)
+    state = PortfolioState(
+        ts=TS,
+        equity_usd=Decimal("100000"),
+        cash_usd=Decimal("99000"),
+        positions={"AAPL": pos},
+        peak_equity_usd=Decimal("100000"),
+        realised_pnl_today_usd=Decimal("0"),
+        day_start_equity_usd=Decimal("100000"),
+        trades_today=1,
+        bars_since_breaker=10_000,
+    )
+    # open_risk 50 / 100000 * beta 2.0
+    assert state.net_beta_exposure_pct == pytest.approx(0.001)
 
 
 def test_trade_decision_reason_iff_rejected() -> None:
@@ -546,6 +565,7 @@ def test_trade_decision_reason_iff_rejected() -> None:
         spread_bps_est=5.0,
         beta_bench_90=1.0,
         cluster="INFO_TECH",
+        atr_pct=0.02,
     )
     with pytest.raises(ValueError, match="iff accepted"):
         TradeDecision(

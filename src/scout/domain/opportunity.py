@@ -43,6 +43,7 @@ class Opportunity:
     spread_bps_est: float
     beta_bench_90: float
     cluster: str
+    atr_pct: float  # FeatureRow.atr_pct at detection; portfolio cost re-check
 
     def __post_init__(self) -> None:
         require_aware(self.ts, "ts")

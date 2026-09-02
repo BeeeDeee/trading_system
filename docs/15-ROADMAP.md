@@ -21,7 +21,7 @@ not commitments.
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data, calendar, features, PIT universe | 7 days | Done |
 | M2 | Strategies, labeling, edge table | 4 days | In progress (M2.1–M2.5 done; M2.2a blocked) |
-| M3 | Backtest engine, metrics, **the answer** | 6 days | In progress (M3.1 done) |
+| M3 | Backtest engine, metrics, **the answer** | 6 days | In progress (M3.1–M3.2 done) |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
 | M5 | Paper then live trading | 15 days | Gated on M4 + 60-day soak |
 | M6 | ML evaluation | 10 days | Gated on M3 criteria |
@@ -262,7 +262,7 @@ identity holds after every operation. All ledger fields are `Decimal`.
 **`test_gap_through_stop_loses_more_than_one_r` passes.** Targets never fill
 better than the target. Zero equity halts the run.
 
-### M3.2 Portfolio
+### M3.2 Portfolio — done
 `portfolio/sizing.py`, `portfolio/selection.py`, `portfolio/breakers.py`.
 
 **Accept:** every test in `test_sizing.py` and `test_selection.py`.

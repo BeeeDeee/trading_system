@@ -50,6 +50,7 @@ def build_opportunity(
         spread_bps_est=universe_entry.spread_bps_est,
         beta_bench_90=row.beta_bench_90,
         cluster=asset.cluster,
+        atr_pct=row.atr_pct,
     )
 
 

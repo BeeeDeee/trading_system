@@ -203,6 +203,7 @@ def _opportunity(**overrides: Any) -> Opportunity:
         "spread_bps_est": 1.0,
         "beta_bench_90": 1.1,
         "cluster": "INFO_TECH",
+        "atr_pct": 0.02,
     }
     kwargs.update(overrides)
     return Opportunity(**kwargs)
@@ -239,6 +240,7 @@ def test_build_opportunity_populates_every_field() -> None:
         "spread_bps_est": 1.0,
         "beta_bench_90": 1.1,
         "cluster": "INFO_TECH",
+        "atr_pct": 0.02,
     }
     names = {f.name for f in fields(Opportunity)}
     assert set(expected) == names

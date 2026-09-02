@@ -392,9 +392,16 @@ def estimate_cost(
     risk_capital_usd: float,
     expected_bars_held: float,
     cfg: CostConfig,
+    *,
+    atr_pct: float,
+    price_raw: float,
+    borrow_bps_per_year: float | None = None,
+    dividend_yield_annual: float | None = None,
 ) -> CostEstimate:
     """Formulas in 08-COSTS.md. Same function in backtest and live — there is
-    no second implementation and no mode flag."""
+    no second implementation and no mode flag. Ranking passes FeatureRow.atr_pct
+    and close_raw; the portfolio re-check passes Opportunity.atr_pct and
+    setup.reference_price."""
 ```
 
 ### Portfolio — `portfolio/selection.py`, `portfolio/sizing.py`

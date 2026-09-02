@@ -26,6 +26,12 @@ def estimate_cost(
     risk_capital_usd: float,
     expected_bars_held: float,          # SESSIONS
     cfg: CostConfig,
+    *,
+    atr_pct: float,                     # FeatureRow.atr_pct / Opportunity.atr_pct
+    price_raw: float,                   # unadjusted close; portfolio re-check
+                                        # uses setup.reference_price
+    borrow_bps_per_year: float | None = None,
+    dividend_yield_annual: float | None = None,
 ) -> CostEstimate:
 ```
 

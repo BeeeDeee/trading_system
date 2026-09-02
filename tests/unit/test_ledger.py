@@ -106,6 +106,7 @@ def _decision(*, direction: Direction = Direction.LONG) -> TradeDecision:
         spread_bps_est=1.0,
         beta_bench_90=1.0,
         cluster="INFO_TECH",
+        atr_pct=0.02,
     )
     return TradeDecision(
         opportunity=opp,

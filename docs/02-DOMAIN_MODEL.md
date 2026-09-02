@@ -679,6 +679,8 @@ class Opportunity:
     spread_bps_est: float
     beta_bench_90: float
     cluster: str
+    atr_pct: float               # FeatureRow.atr_pct at detection; used by
+                                 # the portfolio-stage cost re-check
 ```
 
 ### Comparison to the brief's `Opportunity`
@@ -713,6 +715,8 @@ class Position:
     bars_held: int
     strategy_id: str
     cluster: str
+    beta_bench_90: float         # copied from Opportunity at entry; weights
+                                 # PortfolioState.net_beta_exposure_pct (§6 of 09)
     client_order_id: str         # idempotency key of the entry
     realised_fees_usd: Decimal
     dividends_usd: Decimal       # cash dividends received (longs) or paid (shorts)
@@ -746,7 +750,8 @@ class PortfolioState:
     @property
     def gross_exposure_pct(self) -> float: ...
     @property
-    def net_beta_exposure_pct(self) -> float: ...
+    def net_beta_exposure_pct(self) -> float:
+        """Σ direction.sign * open_risk_usd / equity_usd * beta_bench_90."""
     def cluster_risk_pct(self, cluster: str) -> float: ...
     def drawdown_pct(self) -> float:
         """(peak_equity_usd - equity_usd) / peak_equity_usd, floored at 0."""
@@ -813,15 +818,23 @@ class Fill:
 
 ### `client_order_id` construction
 
+The portfolio stage (`select_and_size`) does not receive `run_id`. It emits a
+decision-local id; the engine prefixes `run_id` when it builds `OrderIntent`
+(M3.4).
+
 ```python
+# TradeDecision.client_order_id — portfolio stage (M3.2)
+client_order_id = f"{symbol}-{int(ts.timestamp())}-e"
+
+# OrderIntent.client_order_id — engine (M3.4)
 client_order_id = f"{run_id[:8]}-{symbol}-{int(ts.timestamp())}-{leg}"
 # leg ∈ {"e", "s", "t"}  (entry, stop, target)
 ```
 
-Deterministic from `(run, symbol, decision bar, leg)`. A retry after a network
-timeout regenerates the identical id, so the exchange rejects the duplicate
-rather than double-filling. This satisfies the global idempotency rule without a
-UUID table.
+Deterministic from `(run, symbol, decision bar, leg)` once the engine prefix is
+applied. A retry after a network timeout regenerates the identical id, so the
+exchange rejects the duplicate rather than double-filling. This satisfies the
+global idempotency rule without a UUID table.
 
 ---
 

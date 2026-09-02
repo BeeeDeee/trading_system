@@ -365,9 +365,12 @@ SCOUT_TRADING_ENABLED=1
 SCOUT_LOGGING__LEVEL=INFO
 ```
 
-Never logged, never written to `results/`, never in any YAML. `LiveBroker`
-re-reads `SCOUT_TRADING_ENABLED` before **every** order send — a kill switch that
-requires a restart is not a kill switch.
+Never logged, never written to `results/`, never in any YAML. The config loader
+applies `SCOUT_TRADING_ENABLED` into `risk.trading_enabled` at load (so the
+resolved `config.yaml` and `config_hash` record the startup value).
+`portfolio/breakers.py` **re-reads the env on every `select_and_size` call**,
+and `LiveBroker` (M5) re-reads it before **every** order send — a kill switch
+that requires a restart is not a kill switch.
 
 ---
 

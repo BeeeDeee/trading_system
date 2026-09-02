@@ -91,6 +91,7 @@ def apply_entry(
         bars_held=0,
         strategy_id=opp.strategy_id,
         cluster=opp.cluster,
+        beta_bench_90=opp.beta_bench_90,
         client_order_id=fill.client_order_id,
         realised_fees_usd=fill.fee_usd,
         dividends_usd=_ZERO,

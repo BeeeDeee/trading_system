@@ -22,6 +22,7 @@ class Position:
     bars_held: int
     strategy_id: str
     cluster: str
+    beta_bench_90: float  # Opportunity.beta_bench_90 at entry; §6 net-beta weight
     client_order_id: str  # idempotency key of the entry
     realised_fees_usd: Decimal
     dividends_usd: Decimal  # cash dividends received (longs) or paid (shorts)
@@ -89,13 +90,16 @@ class PortfolioState:
 
     @property
     def net_beta_exposure_pct(self) -> float:
-        # Position has no beta field. Signed open-risk / equity, implicit beta 1.0.
+        """Signed, risk-weighted, beta-adjusted exposure vs SPY.
+
+        Σ direction.sign * open_risk_usd / equity_usd * beta_bench_90
+        """
         if self.equity_usd == 0:
             return 0.0
         total = Decimal("0")
         for pos in self.positions.values():
             signed = Decimal(pos.direction.sign) * pos.open_risk_usd(pos.entry_price)
-            total += signed
+            total += signed * Decimal(str(pos.beta_bench_90))
         return float(total / self.equity_usd)
 
     def cluster_risk_pct(self, cluster: str) -> float:
