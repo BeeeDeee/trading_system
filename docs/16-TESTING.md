@@ -229,15 +229,18 @@ Every formula gets a hand-computed expected value. `pytest.approx` with
 
 | Test | Assertion |
 |---|---|
-| `test_equity_identity` | `equity == cash + unrealised`, after every operation |
+| `test_equity_identity` | `equity == cash + signed MTM`, after every operation |
 | `test_decimal_throughout` | No `float` in any ledger field; asserted by type inspection |
 | `test_round_trip_pnl` | Hand-computed net P&L including fees, dividends, and borrow |
 | `test_entry_fills_next_session_open` | Never the decision bar's close; MOO of the next XNYS session |
 | **`test_gap_through_stop_loses_more_than_one_r`** | Bar opens beyond the stop ⇒ `realised_r < -1.0` |
 | `test_target_never_fills_better_than_target` | Bar opens beyond the target ⇒ fill exactly at the target |
+| `test_stop_target_reanchored_on_entry` | Gap between decision close and fill ⇒ working stop/target shift with the fill; intended R unchanged |
+| `test_exit_fill_has_no_extra_slippage` | Modelled slip is on the entry only; a stop at the stop level fills at the stop |
 | `test_no_next_bar_no_entry` | ⇒ `DATA_GAP`, no position |
 | `test_dividend_credits_long` | Ex-date cash credit on a long |
-| `test_zero_equity_halts` | Raises and marks the run failed |
+| `test_zero_equity_halts` | Raises `ScoutError` and marks the run failed |
+| `test_apply_exit_forwards_regime_and_vol_bucket` | `ClosedTrade.regime` / `vol_bucket` come from `apply_exit` kwargs |
 
 ### Universe (`test_universe.py`, `test_delisting.py`)
 
@@ -384,8 +387,9 @@ Required property tests:
 
 ## 6. Runtime tripwires
 
-Assertions that stay in **production** code, not just tests. They raise
-`ScoutLookaheadError` and are never caught.
+Assertions that stay in **production** code, not just tests. Causality
+failures raise `ScoutLookaheadError` and are never caught. Zero equity raises
+`ScoutError` (not an `assert`: those are stripped under `python -O`).
 
 | Location | Assertion |
 |---|---|
@@ -395,7 +399,8 @@ Assertions that stay in **production** code, not just tests. They raise
 | `sentiment/aggregate.py` | `available_ts <= ts` for all contributing observations |
 | `backtest/sim_broker.py` entry | fill bar's `ts > decision ts` |
 | `universe/build.py` | every bar used has `ts <= snapshot ts` |
-| `backtest/ledger.py` mark | `equity == cash + unrealised` |
+| `backtest/ledger.py` mark | `equity == cash + signed MTM` (`ScoutLookaheadError`) |
+| `backtest/ledger.py` mark | `equity > 0` (`ScoutError`, not an assert — those vanish under `-O`) |
 
 Cost: microseconds per bar. Benefit: a lookahead bug crashes instead of producing
 a profitable backtest you believe.

@@ -707,7 +707,8 @@ class Position:
     entry_price: Decimal
     entry_ts: datetime
     stop_price: Decimal
-    target_price: Decimal
+    target_price: Decimal        # take-profit; when the Setup has none (ADR-019)
+                                 # this is set to entry_price and is NOT a target
     max_hold_bars: int
     bars_held: int
     strategy_id: str
@@ -728,7 +729,7 @@ class Position:
 @dataclass(frozen=True, slots=True)
 class PortfolioState:
     ts: datetime
-    equity_usd: Decimal         # cash + unrealised
+    equity_usd: Decimal         # cash + signed MTM (sign * qty * mark), not P&L
     cash_usd: Decimal
     positions: Mapping[str, Position]
 

@@ -189,15 +189,18 @@ invisible in the output and both are large.
 ### 4.3 Dividends as ledger cash flows
 
 Dividends are **not** used to inflate the price series for P&L. They are applied
-as an explicit cash flow when an ex-date falls inside a holding period:
+as an explicit cash flow when an ex-date falls inside a holding period.
+
+`SimBroker.mark` credits or debits on the session whose UTC date equals
+`ex_date`, before MTM and before that cycle's exits or new entries. A name
+bought later in the same cycle does not receive the dividend.
 
 ```python
-# In SimBroker, at the open of the ex-date session:
 cash_flow = direction.sign * qty * Decimal(str(cash_amount))   # long receives, short pays
 ```
 
 `Decimal`, because this compounds ([ADR-012](ADR/012-float-decimal-boundary.md)).
-Recorded on `ClosedTrade.dividend_usd` so the effect is measurable rather than
+Recorded on `ClosedTrade.dividends_usd` so the effect is measurable rather than
 buried in the entry price.
 
 For a short, a 2% annual yield over a 21-session hold is an expected 17 bps —

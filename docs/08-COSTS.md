@@ -135,9 +135,12 @@ with different volatilities. `impact_coef` defaults to 1.0, the pessimistic end 
 the literature range; it cannot be calibrated without live fills, so it is
 recalibrated from real fills at M5.
 
-Applied once (entry only). Exits are stops, targets, or scheduled market orders,
-whose impact is partly reflected in the fill assumptions in
-[`11-BACKTEST_ENGINE.md §5`](11-BACKTEST_ENGINE.md#5-fill-rules).
+Applied once (entry only). Exits are stops, targets, or scheduled market orders.
+SimBroker does **not** add a second slippage factor on those fills — the
+round-trip already sits on the entry (see
+[`11-BACKTEST_ENGINE.md §5.1`](11-BACKTEST_ENGINE.md#51-entry)). A stop that
+trades at the stop fills at the stop; a stop that gaps through fills at the
+open.
 
 For a retail account this term is near zero at the top of the universe (0.4 bps at
 $1.5B ADV) and material at the bottom (7.1 bps at the $8M ADV floor). That spread

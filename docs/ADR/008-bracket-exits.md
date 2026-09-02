@@ -30,7 +30,7 @@ take-profit submitted together as one logical unit. The stop and target are
 
 ## Equity instantiation
 
-The design carries over, with three differences that matter:
+The design carries over, with four differences that matter:
 
 1. **`target=None` is now a normal case.** `xsec_momentum_v1` submits an entry plus
    a 5 ATR disaster stop and no target. A one-legged bracket. The
@@ -47,6 +47,11 @@ The design carries over, with three differences that matter:
    overnight gaps, so `SimBroker` must model gap-through fills correctly or the
    backtest is materially optimistic. See
    [`11-BACKTEST_ENGINE.md`](../11-BACKTEST_ENGINE.md).
+4. **Stop and target are re-anchored on the actual MOO fill.** The Setup states a
+   risk distance, not a dollar stop frozen at yesterday's close. After the
+   opening auction the protective stop is fill ± sized risk — the same geometry
+   as labeling (`test_stop_target_reanchored_on_entry`). Keeping the decision-
+   time absolute stop would silently change the R you sized.
 
 ## Consequences
 

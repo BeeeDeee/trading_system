@@ -234,8 +234,15 @@ class Broker(Protocol):
         """Submit entry plus protective stop plus target as one logical unit.
 
         Returns (entry_fill_or_None, correlation_id).
-        `None` means accepted-but-not-yet-filled (live limit orders); the
-        backtest SimBroker always fills on the next bar open and returns a Fill.
+        `None` means accepted-but-not-yet-filled (live limit orders). Backtest
+        `SimBroker` fills on the next session open, or returns `None` when that
+        bar does not exist (`DATA_GAP` — the engine records the rejection).
+
+        SimBroker additionally takes keyword-only `cost: CostEstimate | None`
+        and `decision: TradeDecision | None`. The engine must pass both: `cost`
+        worsens the entry fill by modelled spread/slip/impact; `decision`
+        re-anchors stop and target on the actual fill (same geometry as
+        labeling). Omitting them is a unit-test path only.
 
         Contract:
           - Idempotent on entry.client_order_id. Re-submitting the same id

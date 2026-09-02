@@ -61,7 +61,9 @@ class BacktestEngine:
 
             # --- 1. intrabar exits: stops, targets (before anything else) ---
             fills = self.broker.poll_fills(ts)
-            state, closed = apply_exits(state, fills, ts)
+            state, closed = apply_exits(
+                state, fills, ts, last_marks=closes_at(panel, ts),
+            )
             trades.extend(closed)
 
             # --- 2. time stops and delistings ---
@@ -85,7 +87,12 @@ class BacktestEngine:
             records.extend(to_records(decisions, ts))
 
             for d in (d for d in decisions if d.accepted):
-                fill, corr = self.broker.submit_bracket(*build_bracket(d, ts))
+                fill, corr = self.broker.submit_bracket(
+                    *build_bracket(d, ts), cost=d.final_cost, decision=d,
+                )
+                if fill is None:
+                    records.append(data_gap_record(d, ts))
+                    continue
                 state = apply_entry(state, d, fill, corr)
 
             # --- 4. record ---
@@ -171,14 +178,58 @@ fill_price = raw_entry * (1 + direction.sign * (slip / 1e4))
 ```
 
 Decision at the close of `t`, fill at the open of `t+1`, worsened by the modelled
-half-spread, slippage, and impact. If `t+1` does not exist (end of data, or a
-gap), **the entry does not happen** and the decision is recorded with a
-`DATA_GAP` rejection. Never fill at the decision bar's close: that is a
-one-bar lookahead worth several percent per year in a trending market.
+round-trip spread, slippage, and impact from `CostEstimate`. Those terms are
+applied **once, on the entry fill**. Stops, targets, time stops, and delisting
+fills do **not** add a second slippage factor — charging them again would
+double-count the round-trip already in `cost_r`.
+
+`SimBroker.submit_bracket` accepts the `Broker` Protocol's three `OrderIntent`s
+plus keyword-only `cost=` and `decision=`. The engine must pass both. Without
+`cost`, the fill is the raw next open and the fee comes from the commission
+schedule.
+
+If `t+1` does not exist (end of data, or a gap), **the entry does not happen**:
+`submit_bracket` returns `(None, correlation_id)` and sets
+`last_entry_rejection = DATA_GAP`. The engine records the `DATA_GAP` rejection.
+Never fill at the decision bar's close: that is a one-bar lookahead worth
+several percent per year in a trending market.
+
+### 5.1.1 Stop and target are re-anchored on the fill
+
+The Setup states a **risk distance** (`risk_per_unit`) and an optional reward
+distance, not a dollar stop that is frozen at yesterday's close.
+
+Overnight the market gaps. The MOO fill is `102` after a decision close of
+`100` with a 5-point stop. Two ways to handle that:
+
+| Rule | Working stop | What −1 R means |
+|---|---|---|
+| Keep 95 | 95 | A clean stop-out is −7 points = −1.4 R. You took more risk than you sized. |
+| Re-anchor | 97 | A clean stop-out is still −5 points = −1 R. The gap is market movement, already in the fill. |
+
+**This system re-anchors**, identical to labeling
+(`test_stop_target_reanchored_on_entry` in both `test_labeling.py` and
+`test_sim_broker.py`):
+
+```python
+stop   = fill_price - direction.sign * setup.risk_per_unit
+target = fill_price + direction.sign * setup.reward_per_unit  # if target exists
+```
+
+That is also what you would do live: the protective stop is placed **after**
+the MOO fill is known, at fill ± the sized risk. Submitting a dollar stop at
+the previous close would silently change the R you thought you were taking.
+
+`xsec_momentum_v1` has `target_price is None` (ADR-019). There is no take-profit
+leg. `Position.target_price` is still a required `Decimal`; it is set to the
+entry price and **must not** be read as a target. `SimBroker` stores
+`target_price=None` on the working bracket and never checks a target for that
+trade.
 
 ### 5.2 Stop and target within a bar
 
-For each open position, on each bar after entry:
+For each open position, on each bar from the entry session onward, using the
+**re-anchored** levels:
 
 ```python
 hit_stop   = bar.low  <= stop   if long else bar.high >= stop
@@ -195,14 +246,13 @@ elif hit_target:
 Fill prices:
 
 ```python
-# Stops: assume the stop level, plus a gap penalty when the bar OPENED beyond it.
+# Stops: the stop level, or the open if the bar OPENED beyond it. No extra slip.
 if long:
     stop_fill = min(stop, bar.open) if bar.open < stop else stop
 else:
     stop_fill = max(stop, bar.open) if bar.open > stop else stop
-stop_fill *= (1 - direction.sign * exit_slippage_bps / 1e4)
 
-# Targets: assume exactly the target level, never better.
+# Targets: exactly the target level, never better, even on a gap through.
 target_fill = target
 ```
 
@@ -218,18 +268,29 @@ past it. That is the mirror-image conservatism.
 
 ### 5.3 Dividends and borrow (equities)
 
-Cash dividends on a long credit `Position.dividends_usd` at the ex-date (session
-close of the last cum-dividend bar, paid as cash at the next open — match the
-vendor's ex-date convention and document it in the ingest adapter). Shorts pay
-the dividend. Borrow accrues daily on open short notional at the snapshot
-borrow rate ([`08-COSTS.md`](08-COSTS.md)). Both are `Decimal`.
+Cash dividends are an explicit ledger cash flow, not a price adjustment.
+
+`SimBroker.mark` applies them on the session whose UTC date equals
+`CorporateAction.ex_date`, **before** MTM and **before** exits or new entries
+in that cycle:
+
+```python
+cash_flow = direction.sign * qty * Decimal(str(cash_amount))   # long receives, short pays
+```
+
+Because entries in the engine happen after `mark`, a name bought on the ex-date
+does not receive the dividend (correct: you were not holder of record). A name
+already held does. Shorts pay. Both are `Decimal`.
+
+Borrow accrues daily on open short notional at the snapshot borrow rate
+([`08-COSTS.md`](08-COSTS.md)), also inside `mark`, using that bar's close.
 
 Crypto funding (8-hour intervals, `funding_paid_usd`) is **M7 only**.
 
 ### 5.4 Time stop
 
-At `bars_held >= max_hold_bars`, exit at that bar's close plus exit slippage.
-Evaluated at step 2 of the cycle, before new entries.
+At `bars_held >= max_hold_bars`, exit at that bar's close. No extra slippage
+(see §5.1). Evaluated at step 2 of the cycle, before new entries.
 
 ### 5.5 Delisting
 
@@ -243,28 +304,49 @@ taken. The trade appears in `trades.csv`.
 
 `backtest/ledger.py`. All `Decimal`.
 
-```python
-def apply_entry(state, decision, fill, corr_id) -> PortfolioState:
-    """cash -= notional + fee (cash equities, not margin perps). Open a Position.
-    Track notional through the Position for exposure caps."""
+Cash equities, not margin: `apply_entry` does
+`cash -= direction.sign * qty * fill.price + fee` (longs pay the notional,
+shorts receive it).
 
-def apply_exit(state, position, fill, ts) -> tuple[PortfolioState, ClosedTrade]:
-    """gross_pnl = sign * (exit - entry) * qty
-       net_pnl   = gross_pnl - fees_total - borrow_total + dividends_total
-       cash     += notional proceeds + net_pnl
-       equity    = cash + Σ unrealised"""
+**Unrealised** in the identity is signed mark-to-market value, not P&L:
 
-def mark(state, panel, ts) -> PortfolioState:
-    """Recompute unrealised P&L at this bar's close. Update peak_equity_usd,
-    day_start_equity_usd (on UTC date change), and reset trades_today."""
+```text
+unrealised = Σ direction.sign * qty * mark
+equity     = cash + unrealised
 ```
 
-Invariants asserted every bar (cheap, and they catch ledger drift immediately):
+A long of 10 shares at a 100 mark contributes `+1000`, not `qty * (mark − entry)`.
+Otherwise debiting the notional from cash would make inventory disappear from
+equity.
 
 ```python
-assert state.equity_usd == state.cash_usd + sum(unrealised)
-assert state.equity_usd > 0, "account blew up"        # halt the run
-assert all(p.qty > 0 for p in state.positions.values())
+def apply_entry(state, decision, fill, corr_id) -> PortfolioState:
+    """cash -= sign * qty * fill.price + fee. Open a Position.
+    Stop/target are re-anchored from the fill using Setup risk/reward."""
+
+def apply_exit(state, position, fill, ts, *, last_mark=None,
+               regime=UNKNOWN, vol_bucket=UNKNOWN, ...) -> tuple[PortfolioState, ClosedTrade]:
+    """gross_pnl = sign * (exit - entry) * qty
+       net_pnl   = gross_pnl - fees_total - borrow_total + dividends_total
+       cash     += sign * qty * fill.price - exit_fee
+       # last_mark is the close used in the preceding mark(). Required in the
+       # engine so remaining MTM is not computed from the exit fill.
+       # regime / vol_bucket come from the Opportunity at entry."""
+
+def mark(state, panel, ts) -> PortfolioState:
+    """Recompute unrealised (signed MTM) at this bar's close. Update
+    peak_equity_usd, day_start_equity_usd (on UTC date change), and reset
+    trades_today. Raises ScoutError if equity_usd <= 0."""
+```
+
+Invariants checked every bar (cheap, and they catch ledger drift immediately):
+
+```python
+# ScoutLookaheadError — a math bug, never caught
+if equity != cash + unrealised: raise ScoutLookaheadError(...)
+# ScoutError — the account is gone; halt. Not an assert: those vanish under -O.
+if equity <= 0: raise ScoutError("account blew up")
+if any(p.qty <= 0 for p in positions.values()): raise ScoutError(...)
 ```
 
 An account reaching zero equity **halts the run** rather than continuing with
@@ -282,8 +364,9 @@ which it is.
 | Stop and target both touched in one bar | STOP (conservative tie rule) |
 | Bar opens beyond the stop | Fill at the open; loss exceeds 1 R |
 | Bar opens beyond the target | Fill at the target; gain does not exceed the target |
+| Fill gaps from the decision close | Stop/target re-anchored so intended R is unchanged |
 | `atr_14` is zero or NaN | Symbol ineligible (`INSUFFICIENT_HISTORY`); never divide |
-| Equity reaches zero | Halt, mark the run failed |
+| Equity reaches zero | Halt (`ScoutError`), mark the run failed |
 | Two candidates with identical `ev_per_bar_r` | Alphabetical tie-break by `(symbol, strategy_id)` |
 | Two strategies fire on the same symbol at the same `ts` | Both ranked; the second is rejected `ALREADY_IN_POSITION` if the first is accepted |
 | Universe snapshot missing at `t` | No entries this cycle; recorded |

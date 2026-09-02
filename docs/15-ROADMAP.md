@@ -21,7 +21,7 @@ not commitments.
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data, calendar, features, PIT universe | 7 days | Done |
 | M2 | Strategies, labeling, edge table | 4 days | In progress (M2.1–M2.5 done; M2.2a blocked) |
-| M3 | Backtest engine, metrics, **the answer** | 6 days | Not started |
+| M3 | Backtest engine, metrics, **the answer** | 6 days | In progress (M3.1 done) |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
 | M5 | Paper then live trading | 15 days | Gated on M4 + 60-day soak |
 | M6 | ML evaluation | 10 days | Gated on M3 criteria |
@@ -250,8 +250,12 @@ alphabetically. Verified deterministic under shuffled input order.
 
 ## M3 — Backtest and the answer
 
-### M3.1 SimBroker and ledger
+### M3.1 SimBroker and ledger — done
 `backtest/sim_broker.py`, `backtest/ledger.py`.
+
+Fill and ledger conventions (re-anchor on fill, entry-only slip, signed MTM
+identity, `ScoutError` on zero equity) are locked in
+[`11-BACKTEST_ENGINE.md` §5–6](11-BACKTEST_ENGINE.md#5-fill-rules).
 
 **Accept:** every test in `test_sim_broker.py` and `test_ledger.py`. The equity
 identity holds after every operation. All ledger fields are `Decimal`.
