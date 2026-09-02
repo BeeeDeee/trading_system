@@ -20,7 +20,7 @@ not commitments.
 |---|---|---|---|
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data, calendar, features, PIT universe | 7 days | Done |
-| M2 | Strategies, labeling, edge table | 4 days | In progress |
+| M2 | Strategies, labeling, edge table | 4 days | In progress (M2.1–M2.5 done; M2.2a blocked) |
 | M3 | Backtest engine, metrics, **the answer** | 6 days | Not started |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
 | M5 | Paper then live trading | 15 days | Gated on M4 + 60-day soak |
@@ -231,7 +231,7 @@ is the critical one.** Bootstrap is deterministic. Lookup is O(log n), verified 
 timing 100,000 lookups in under one second. Table saves and loads with its
 `config_hash` in the metadata.
 
-### M2.4 Costs
+### M2.4 Costs — done
 `costs/model.py`.
 
 **Accept:** every test in `test_costs.py`. Reproduces the large-cap long worked
@@ -239,7 +239,7 @@ example in [`08-COSTS.md §3`](08-COSTS.md#3-worked-examples) to within 0.001 R.
 Impact follows the square-root law. `cost_multiplier < 1.0` is rejected. Shorts
 accrue borrow; longs do not.
 
-### M2.5 Ranking
+### M2.5 Ranking — done
 `scoring/rank.py`.
 
 **Accept:** `build_opportunity` populates every field. `rank` filters by
