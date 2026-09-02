@@ -5,7 +5,8 @@ from pathlib import Path
 from scout.backtest.sim_broker import SimBroker
 from scout.config.schema import CostsConfig, PortfolioConfig
 from scout.data.parquet_source import ParquetCandleSource
-from scout.domain.ports import Broker, CandleSource, Strategy
+from scout.domain.ports import Broker, CandleSource, SentimentSource, Strategy
+from scout.sentiment.null_source import NullSentimentSource
 from scout.strategies.donchian_breakout import DonchianBreakout
 from scout.strategies.xsec_momentum import XSecMomentum
 
@@ -31,3 +32,9 @@ def test_sim_broker_satisfies_protocol() -> None:
     broker = SimBroker(CostsConfig(), PortfolioConfig())
     assert isinstance(broker, Broker)
     assert Broker not in SimBroker.__mro__
+
+
+def test_null_sentiment_source_satisfies_protocol() -> None:
+    source = NullSentimentSource()
+    assert isinstance(source, SentimentSource)
+    assert SentimentSource not in NullSentimentSource.__mro__

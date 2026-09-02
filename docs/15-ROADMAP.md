@@ -21,7 +21,7 @@ not commitments.
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data, calendar, features, PIT universe | 7 days | Done |
 | M2 | Strategies, labeling, edge table | 4 days | In progress (M2.1–M2.5 done; M2.2a blocked) |
-| M3 | Backtest engine, metrics, **the answer** | 6 days | In progress (M3.1–M3.2 done) |
+| M3 | Backtest engine, metrics, **the answer** | 6 days | In progress (M3.1–M3.3 done) |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
 | M5 | Paper then live trading | 15 days | Gated on M4 + 60-day soak |
 | M6 | ML evaluation | 10 days | Gated on M3 criteria |
@@ -271,7 +271,7 @@ better than the target. Zero equity halts the run.
 tested. Breakers block entries but never exits. `SCOUT_TRADING_ENABLED=0` blocks
 all entries.
 
-### M3.3 Sentiment plumbing
+### M3.3 Sentiment plumbing — done
 `sentiment/null_source.py`, `aggregate.py`, `multiplier.py`. **No real sources.**
 
 **Accept:** `NullSentimentSource` returns `()`. `build_view` on an empty

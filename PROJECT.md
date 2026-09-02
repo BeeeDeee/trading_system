@@ -16,8 +16,10 @@ exists. See [ADR-015](docs/ADR/015-equities-first.md).
 
 ## Current stage
 
-**M3.2 done** (portfolio sizing, selection, breakers;
-[`docs/09-PORTFOLIO_AND_RISK.md`](docs/09-PORTFOLIO_AND_RISK.md)).
+**M3.3 done** (sentiment plumbing: null source, PIT aggregation, penalty-only
+multiplier; [`docs/10-SENTIMENT.md`](docs/10-SENTIMENT.md)).
+M3.2 portfolio sizing/selection/breakers remains as specified in
+[`docs/09-PORTFOLIO_AND_RISK.md`](docs/09-PORTFOLIO_AND_RISK.md).
 M3.1 SimBroker and ledger conventions remain locked in
 [`docs/11-BACKTEST_ENGINE.md` §5–6](docs/11-BACKTEST_ENGINE.md#5-fill-rules).
 M0 and M1 are complete. M2 coding is complete (M2.1–M2.5). Remaining M2 work is
@@ -30,8 +32,8 @@ Raw ingest exists; processed panel, universe snapshots, and
 `scout build-universe` + the benchmark file. Hard gate before M3.6. Record in
 [`docs/results/m2_labeling_sanity.md`](docs/results/m2_labeling_sanity.md).
 
-Next *coding* task: **M3.3** Sentiment plumbing in
-[the roadmap](docs/15-ROADMAP.md#m33-sentiment-plumbing).
+Next *coding* task: **M3.4** Backtest engine in
+[the roadmap](docs/15-ROADMAP.md#m34-engine).
 New chats: paste the handoff block in
 [`docs/17-IMPLEMENTER_GUIDE.md` §8](docs/17-IMPLEMENTER_GUIDE.md#8-starting-a-new-chat).
 

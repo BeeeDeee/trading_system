@@ -9,7 +9,7 @@ from types import MappingProxyType
 from scout.config.schema import CostsConfig, PortfolioConfig, RiskConfig, SentimentConfig
 from scout.costs.model import estimate_cost
 from scout.domain.costs import CostEstimate
-from scout.domain.enums import Direction, OrderType, RejectionReason
+from scout.domain.enums import OrderType, RejectionReason
 from scout.domain.market import Asset
 from scout.domain.opportunity import Opportunity
 from scout.domain.portfolio import PortfolioState, Position, TradeDecision
@@ -17,6 +17,7 @@ from scout.domain.sentiment import SentimentView
 from scout.domain.universe import UniverseEntry
 from scout.portfolio.breakers import breaker_tripped, trading_enabled
 from scout.portfolio.sizing import heat_multiplier, liquidity_multiplier, size_position
+from scout.sentiment.multiplier import sentiment_multiplier
 from scout.utils.decimals import to_decimal
 from scout.utils.errors import ScoutError
 
@@ -57,7 +58,7 @@ def select_and_size(
             continue
 
         view = sentiment.get(opp.symbol)
-        mult_sentiment = _sentiment_multiplier(view, opp.direction, sentiment_cfg)
+        mult_sentiment = sentiment_multiplier(view, opp.direction, sentiment_cfg)
         if mult_sentiment <= 0.0:
             decisions.append(_rejected(opp, rank, RejectionReason.SENTIMENT_VETO))
             continue
@@ -161,23 +162,6 @@ def simulate_add(
         trades_today=state.trades_today + 1,
         bars_since_breaker=state.bars_since_breaker,
     )
-
-
-def _sentiment_multiplier(
-    view: SentimentView | None,
-    direction: Direction,
-    cfg: SentimentConfig,
-) -> float:
-    """Size penalty in [0.0, 1.0]. Lives here until M3.3 moves it to sentiment/."""
-    if not cfg.enabled or view is None or view.is_neutral:
-        return 1.0
-    aligned = view.score * direction.sign
-    if aligned >= 0.0:
-        return 1.0
-    severity = abs(aligned) * view.confidence
-    if severity >= cfg.veto_threshold:
-        return 0.0
-    return max(cfg.min_multiplier, 1.0 - cfg.penalty_slope * severity)
 
 
 def _notional(qty: Decimal, opp: Opportunity) -> Decimal:
