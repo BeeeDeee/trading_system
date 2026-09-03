@@ -65,7 +65,7 @@ _TOP_LEVEL_SECTIONS = frozenset(
 _M7_UNLOCKED = False
 
 
-def load_config(path: Path) -> ScoutConfig:
+def load_config(path: Path, *, force_holdout: bool = False) -> ScoutConfig:
     """Deep-merge, validate, then run cross-field validation (§8).
     Raises ScoutConfigError with the offending key path on any failure.
     """
@@ -77,7 +77,7 @@ def load_config(path: Path) -> ScoutConfig:
     for key in applied:
         _LOG.warning("env override applied: %s", key)
     cfg = _parse_config(data)
-    validate_config(cfg)
+    validate_config(cfg, force_holdout=force_holdout)
     return cfg
 
 
@@ -163,7 +163,7 @@ def _wrap_validation(exc: ValidationError) -> ScoutConfigError:
     return ScoutConfigError("; ".join(parts))
 
 
-def validate_config(cfg: ScoutConfig) -> None:
+def validate_config(cfg: ScoutConfig, *, force_holdout: bool = False) -> None:
     _validate_period(cfg)
     _validate_costs(cfg)
     _validate_portfolio(cfg)
@@ -174,7 +174,7 @@ def validate_config(cfg: ScoutConfig) -> None:
     _validate_sentiment(cfg)
     _warn_unmapped_symbols(cfg)
     _validate_live(cfg)
-    _validate_holdout(cfg)
+    _validate_holdout(cfg, force_holdout=force_holdout)
     _validate_crypto_holdout(cfg)
 
 
@@ -326,15 +326,17 @@ def _validate_live(cfg: ScoutConfig) -> None:
         raise ScoutConfigError("run.mode: LIVE requires a clean git tree")
 
 
-def _validate_holdout(cfg: ScoutConfig) -> None:
+def _validate_holdout(cfg: ScoutConfig, *, force_holdout: bool = False) -> None:
     if cfg.period.split is not PeriodSplit.HOLDOUT:
+        return
+    if not git_tree_is_clean():
+        raise ScoutConfigError("period.split: HOLDOUT requires a clean git tree")
+    if force_holdout:
         return
     if not lockbox_budget_available(Path(cfg.research.lockbox_path)):
         raise ScoutConfigError(
             "period.split: HOLDOUT lockbox budget is exhausted"
         )
-    if not git_tree_is_clean():
-        raise ScoutConfigError("period.split: HOLDOUT requires a clean git tree")
 
 
 def _validate_crypto_holdout(cfg: ScoutConfig) -> None:

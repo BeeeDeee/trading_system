@@ -122,3 +122,48 @@ strategies:
     )
     with pytest.raises(ScoutConfigError, match="not_a_real_strategy_v1"):
         load_config(path)
+
+
+def test_holdout_exhausted_refused(
+    tmp_path: Path, isolated_env: None, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr("scout.config.loader.git_tree_is_clean", lambda: True)
+    lock = tmp_path / "holdout_lockbox.json"
+    lock.write_text('{"budget": 3, "used": 3, "evaluations": []}\n', encoding="utf-8")
+    path = _overlay(
+        tmp_path,
+        f"""
+period:
+  start: 1998-01-01T00:00:00Z
+  warmup_end: 2018-01-01T00:00:00Z
+  end: 2026-08-01T00:00:00Z
+  split: HOLDOUT
+research:
+  lockbox_path: {lock.as_posix()}
+""",
+    )
+    with pytest.raises(ScoutConfigError, match="lockbox"):
+        load_config(path)
+    load_config(path, force_holdout=True)
+
+
+def test_holdout_dirty_git_refused_even_when_forced(
+    tmp_path: Path, isolated_env: None, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr("scout.config.loader.git_tree_is_clean", lambda: False)
+    lock = tmp_path / "holdout_lockbox.json"
+    lock.write_text('{"budget": 3, "used": 0, "evaluations": []}\n', encoding="utf-8")
+    path = _overlay(
+        tmp_path,
+        f"""
+period:
+  start: 1998-01-01T00:00:00Z
+  warmup_end: 2018-01-01T00:00:00Z
+  end: 2026-08-01T00:00:00Z
+  split: HOLDOUT
+research:
+  lockbox_path: {lock.as_posix()}
+""",
+    )
+    with pytest.raises(ScoutConfigError, match="clean git"):
+        load_config(path, force_holdout=True)

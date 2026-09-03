@@ -21,7 +21,7 @@ not commitments.
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data, calendar, features, PIT universe | 7 days | Done |
 | M2 | Strategies, labeling, edge table | 4 days | In progress (M2.1–M2.5 done; M2.2a blocked) |
-| M3 | Backtest engine, metrics, **the answer** | 6 days | In progress (M3.1–M3.4 done) |
+| M3 | Backtest engine, metrics, **the answer** | 6 days | In progress (M3.1–M3.5 done) |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
 | M5 | Paper then live trading | 15 days | Gated on M4 + 60-day soak |
 | M6 | ML evaluation | 10 days | Gated on M3 criteria |
@@ -293,7 +293,7 @@ entries. Every corner case in
 All output files from §8 are produced. `registry.csv` gains exactly one row per
 run. 6,300 sessions × 1,000 symbols completes in under 3 minutes.
 
-### M3.5 Metrics, plots, diagnostics
+### M3.5 Metrics, plots, diagnostics — done
 `research/metrics.py`, `plots.py`, `diagnostics.py`, `stability.py`,
 `registry.py`, `lockbox.py`.
 

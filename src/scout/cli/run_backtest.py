@@ -23,26 +23,39 @@ from scout.domain.edge import EdgeTable
 from scout.domain.enums import ActionType
 from scout.domain.market import Asset, CorporateAction, EarningsEvent
 from scout.domain.ports import SentimentSource
+from scout.research.lockbox import (
+    FORCE_HOLDOUT_WARNING,
+    period_requires_lockbox,
+    request_holdout_evaluation,
+)
+from scout.research.registry import current_git_sha
 from scout.sentiment.null_source import NullSentimentSource
 from scout.storage.decision_sink import ParquetDecisionSink
 from scout.storage.run_outputs import make_run_id, results_dir, write_run_outputs
 from scout.strategies.registry import build_strategies
 from scout.universe.build import SnapshotBook
-from scout.utils.clock import WallClock
-from scout.utils.errors import ScoutDataError
+from scout.utils.clock import Clock, WallClock
+from scout.utils.errors import ScoutConfigError, ScoutDataError
 from scout.utils.logging import configure_logging
 
 
 def add_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--notes", default="", help="Registry notes; required for holdout")
+    parser.add_argument(
+        "--force-holdout",
+        action="store_true",
+        help="Spend lockbox budget even if exhausted; still refuses a dirty tree",
+    )
 
 
 def run(args: argparse.Namespace) -> int:
-    cfg = load_config(Path(args.config))
+    force_holdout = bool(getattr(args, "force_holdout", False))
+    cfg = load_config(Path(args.config), force_holdout=force_holdout)
     digest = config_hash(cfg)
     clock = WallClock()
     run_id = make_run_id(cfg.run.strategy_slug, clock)
+    _maybe_spend_lockbox(cfg, str(args.notes), run_id, clock, force_holdout)
     out_dir = results_dir(cfg, run_id)
     out_dir.mkdir(parents=True, exist_ok=True)
     log_path = out_dir / "run.log"
@@ -101,6 +114,30 @@ def run(args: argparse.Namespace) -> int:
         print(f"n_trades={len(result.trades)}")
         print(f"n_decisions={result.n_decisions_considered}")
     return 0
+
+
+def _maybe_spend_lockbox(
+    cfg: ScoutConfig,
+    notes: str,
+    run_id: str,
+    clock: Clock,
+    force_holdout: bool,
+) -> None:
+    split = cfg.period.split.value
+    if not period_requires_lockbox(split, cfg.period.start, cfg.period.end):
+        return
+    if not notes.strip():
+        raise ScoutConfigError("holdout runs require --notes")
+    if force_holdout:
+        print(FORCE_HOLDOUT_WARNING, file=sys.stderr)
+    request_holdout_evaluation(
+        notes,
+        current_git_sha(),
+        path=Path(cfg.research.lockbox_path),
+        run_id=run_id,
+        forced=force_holdout,
+        clock=clock,
+    )
 
 
 class _Tee:

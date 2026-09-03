@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import struct
 from pathlib import Path
 
@@ -90,3 +91,12 @@ def test_run_outputs(tmp_path: Path) -> None:
     registry = pd.read_csv(Path(cfg.research.registry_path))
     assert len(registry) == 1
     assert str(registry.iloc[0]["run_id"]) == "out-run"
+    metrics = json.loads((out / "metrics.json").read_text(encoding="utf-8"))
+    for key in (
+        "total_return_pct",
+        "sharpe",
+        "deflated_sharpe",
+        "cost_drag_pct",
+        "n_trials",
+    ):
+        assert key in metrics

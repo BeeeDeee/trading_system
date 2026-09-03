@@ -16,8 +16,10 @@ exists. See [ADR-015](docs/ADR/015-equities-first.md).
 
 ## Current stage
 
-**M3.4 done** (timestamp-outer backtest engine, decision sink, run outputs,
-`scout backtest` CLI; [`docs/11-BACKTEST_ENGINE.md`](docs/11-BACKTEST_ENGINE.md)).
+**M3.5 done** (metrics, plots, diagnostics, trial registry, holdout lockbox;
+[`docs/12-RESEARCH_PROTOCOL.md`](docs/12-RESEARCH_PROTOCOL.md)).
+M3.4 timestamp-outer backtest engine remains as specified in
+[`docs/11-BACKTEST_ENGINE.md`](docs/11-BACKTEST_ENGINE.md).
 M3.3 sentiment plumbing remains as specified in
 [`docs/10-SENTIMENT.md`](docs/10-SENTIMENT.md).
 M3.2 portfolio sizing/selection/breakers remains as specified in
@@ -34,8 +36,7 @@ Raw ingest exists; processed panel, universe snapshots, and
 `scout build-universe` + the benchmark file. Hard gate before M3.6. Record in
 [`docs/results/m2_labeling_sanity.md`](docs/results/m2_labeling_sanity.md).
 
-Next *coding* task: **M3.5** Metrics, plots, diagnostics, registry, lockbox in
-[the roadmap](docs/15-ROADMAP.md#m35-metrics-plots-diagnostics).
+Next *coding* task: **M3.6**, gated on M2.2a. Do not start M4.
 New chats: paste the handoff block in
 [`docs/17-IMPLEMENTER_GUIDE.md` §8](docs/17-IMPLEMENTER_GUIDE.md#8-starting-a-new-chat).
 
