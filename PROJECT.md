@@ -16,27 +16,13 @@ exists. See [ADR-015](docs/ADR/015-equities-first.md).
 
 ## Current stage
 
-**M3.5 done** (metrics, plots, diagnostics, trial registry, holdout lockbox;
-[`docs/12-RESEARCH_PROTOCOL.md`](docs/12-RESEARCH_PROTOCOL.md)).
-M3.4 timestamp-outer backtest engine remains as specified in
-[`docs/11-BACKTEST_ENGINE.md`](docs/11-BACKTEST_ENGINE.md).
-M3.3 sentiment plumbing remains as specified in
-[`docs/10-SENTIMENT.md`](docs/10-SENTIMENT.md).
-M3.2 portfolio sizing/selection/breakers remains as specified in
-[`docs/09-PORTFOLIO_AND_RISK.md`](docs/09-PORTFOLIO_AND_RISK.md).
-M3.1 SimBroker and ledger conventions remain locked in
-[`docs/11-BACKTEST_ENGINE.md` §5–6](docs/11-BACKTEST_ENGINE.md#5-fill-rules).
-M0 and M1 are complete. M2 coding is complete (M2.1–M2.5). Remaining M2 work is
-only [M2.2a](docs/15-ROADMAP.md#m22a-real-data-labeling-sanity--blocked)
-(real-data labeling sanity), which is **Blocked**.
-
-**Blocked, do not skip later:** M2.2a — pooled `mean_r` on real Sharadar labels.
-Raw ingest exists; processed panel, universe snapshots, and
-`data/reference/benchmark_1d.parquet` do not. Unblocks after `scout adjust` +
-`scout build-universe` + the benchmark file. Hard gate before M3.6. Record in
-[`docs/results/m2_labeling_sanity.md`](docs/results/m2_labeling_sanity.md).
-
-Next *coding* task: **M3.6**, gated on M2.2a. Do not start M4.
+**M3.6 development run recorded** in
+[`docs/results/m3_development.md`](docs/results/m3_development.md).
+Trial 1 (`20260906-203830-…`) is the CHKAQ accounting invalidation. Trial 2
+(`20260907-154935-xsec-momentum-donchian`) is the measurement: 687 trades,
+`mean_r` 0.064 R, inverted calibration, CAGR 0.81%. Do not tune. Do not
+start M3.7 / holdout / M4. Fast labeling is now `scout label` (checkpoints
+in `data/labels`); the slow sibling modules are gone.
 New chats: paste the handoff block in
 [`docs/17-IMPLEMENTER_GUIDE.md` §8](docs/17-IMPLEMENTER_GUIDE.md#8-starting-a-new-chat).
 
@@ -105,7 +91,7 @@ and [`§14`](docs/00-REVIEW.md#14-the-equity-pivot).
 |---|---|---|---|
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data pipeline, calendar, features, PIT universe | 7 days | Done |
-| M2 | Strategies, setup labeling, edge table | 4 days | In progress (M2.1–M2.5 done; M2.2a blocked) |
+| M2 | Strategies, setup labeling, edge table | 4 days | Done (M2.2a recorded) |
 | M3 | Backtest engine, metrics, **the holdout answer** | 6 days | In progress (M3.1–M3.4 done) |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
 | M5 | Paper trading, then live | 15 days | Gated on M4 + 60-day soak |

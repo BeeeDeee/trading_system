@@ -15,6 +15,7 @@ from scout.backtest.sim_broker import SimBroker
 from scout.config.hashing import config_hash
 from scout.config.loader import load_config
 from scout.config.schema import ScoutConfig
+from scout.data.actions import scale_dividend_cash_to_contemporaneous
 from scout.data.calendar import reference_calendar_path
 from scout.data.ingest import load_tickers, read_candidate_pairs
 from scout.data.parquet_source import ParquetCandleSource
@@ -242,6 +243,7 @@ def _load_actions(raw_dir: Path) -> tuple[CorporateAction, ...]:
     frame = read_parquet(path)
     if frame.empty:
         return ()
+    frame = scale_dividend_cash_to_contemporaneous(frame)
     out: list[CorporateAction] = []
     for rec in frame.to_dict("records"):
         raw_type = str(rec.get("action_type", "DIVIDEND"))

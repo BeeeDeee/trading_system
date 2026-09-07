@@ -13,23 +13,54 @@ from scout.utils.decimals import round_qty, round_usd, to_decimal
 from scout.utils.errors import ScoutError
 
 
+def to_raw_distance(
+    adj_from: float,
+    adj_to: float,
+    *,
+    raw_price: Decimal,
+) -> Decimal:
+    """Map `|adj_from - adj_to|` onto the share units of `raw_price`.
+
+    Distances are taken in Decimal (`str(float)`) so `100.0 - 99.9` is `0.1`.
+    Setup stops live in adjusted space; `raw_price` is `close_raw` (ADR-017).
+    """
+    ref = to_decimal(adj_from)
+    if ref <= 0:
+        raise ScoutError("adjusted reference_price must be positive")
+    if raw_price <= 0:
+        raise ScoutError("price_raw must be positive")
+    dist = abs(ref - to_decimal(adj_to))
+    return dist * (raw_price / ref)
+
+
 def size_position(
     opp: Opportunity,
     state: PortfolioState,
     asset: Asset,
     multiplier: float,
     cfg: PortfolioConfig,
+    *,
+    price_raw: float | None = None,
 ) -> tuple[Decimal, Decimal]:
-    """Return (qty, actual_risk_usd). qty is step-rounded DOWN."""
+    """Return (qty, actual_risk_usd). qty is step-rounded DOWN.
+
+    `price_raw` is the unadjusted decision close (`close_raw`). When omitted,
+    `setup.reference_price` is used (tests where adj == raw).
+    """
     equity = state.equity_usd
     risk_frac = Decimal(str(cfg.risk_fraction_per_trade))
     mult = Decimal(str(multiplier))
 
     risk_usd = round_usd(equity * risk_frac * mult)
 
-    entry = to_decimal(opp.setup.reference_price)
-    stop = to_decimal(opp.setup.stop_price)
-    risk_per_unit = abs(entry - stop)
+    entry_raw = to_decimal(
+        opp.setup.reference_price if price_raw is None else price_raw
+    )
+    risk_per_unit = to_raw_distance(
+        opp.setup.reference_price,
+        opp.setup.stop_price,
+        raw_price=entry_raw,
+    )
     if risk_per_unit <= 0:
         raise ScoutError("setup with non-positive risk reached sizing")
 
@@ -40,8 +71,8 @@ def size_position(
         equity * Decimal(str(cfg.max_position_notional_pct)),
         Decimal(str(opp.adv_usd_30 * cfg.max_pct_of_adv)),
     )
-    if entry > 0:
-        qty_raw = min(qty_raw, max_notional / entry)
+    if entry_raw > 0:
+        qty_raw = min(qty_raw, max_notional / entry_raw)
 
     qty = round_qty(qty_raw, asset.step_size)
     actual_risk = qty * risk_per_unit

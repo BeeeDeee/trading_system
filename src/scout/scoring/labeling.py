@@ -3,18 +3,21 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence, Set
+from dataclasses import dataclass
 from datetime import datetime
 
+import numpy as np
 import pandas as pd  # type: ignore[import-untyped]
+from numpy.typing import NDArray
 
 from scout.config.schema import LabelingConfig, TieRule
-from scout.domain.enums import MarketRegime, Regime, SetupOutcome, VolBucket
-from scout.domain.features import FEATURE_COLUMNS, FeaturePanel, FeatureRow
+from scout.domain.enums import SetupOutcome, VolBucket
+from scout.domain.features import FEATURE_COLUMNS, FeaturePanel, FeatureRow, feature_row_from_tuple
 from scout.domain.market import EarningsEvent, MarketPanel
 from scout.domain.ports import Strategy
 from scout.domain.setup import ResolvedSetup, Setup
-from scout.gates.eligibility import earnings_in_window
+from scout.gates.eligibility import EARNINGS_UNCERTAINTY_SESSIONS, SessionLookup
 
 # 07-EDGE_AND_SCORING.md §3. Column order is the schema.
 LABEL_COLUMNS: tuple[str, ...] = (
@@ -205,6 +208,202 @@ def regime_allows(strategy: Strategy, row: FeatureRow) -> bool:
     return row.regime in allowed
 
 
+@dataclass(frozen=True, slots=True)
+class AssetTick:
+    """One asset finished. Used for progress.json / stdout."""
+
+    asset_id: str
+    index: int
+    total: int
+    warm_bars: int
+    setups_asset: int
+    setups_total: int
+    skipped: bool
+
+
+@dataclass(frozen=True, slots=True)
+class _OhlcPack:
+    ts_ns: NDArray[np.int64]
+    ts_py: NDArray[np.object_]
+    open: NDArray[np.float64]
+    high: NDArray[np.float64]
+    low: NDArray[np.float64]
+    close: NDArray[np.float64]
+
+
+@dataclass(frozen=True, slots=True)
+class _PreparedEvent:
+    session_idx: int | None
+    available_ts: datetime | None
+
+
+def earnings_in_window_fast(
+    *,
+    ts: datetime,
+    max_hold_bars: int,
+    events: Sequence[_PreparedEvent],
+    is_etf: bool,
+    lookup: SessionLookup,
+) -> bool:
+    """Same conservative rules as `earnings_in_window`, with a cached calendar."""
+    if is_etf:
+        return False
+    t_idx = lookup.index_at_ts(ts)
+    if t_idx is None:
+        return True
+    known = tuple(
+        event for event in events if event.available_ts is None or event.available_ts <= ts
+    )
+    if not known:
+        return True
+    hold_lo = t_idx + 1
+    hold_hi = t_idx + max_hold_bars
+    for event in known:
+        e_idx = event.session_idx
+        if e_idx is None:
+            return True
+        if event.available_ts is None:
+            lo = e_idx - EARNINGS_UNCERTAINTY_SESSIONS
+            hi = e_idx + EARNINGS_UNCERTAINTY_SESSIONS
+            if _closed_intersect(lo, hi, hold_lo, hold_hi):
+                return True
+        elif _closed_intersect(e_idx, e_idx, hold_lo, hold_hi):
+            return True
+    return False
+
+
+def prepare_earnings(
+    events: Sequence[EarningsEvent],
+    lookup: SessionLookup,
+) -> tuple[_PreparedEvent, ...]:
+    return tuple(
+        _PreparedEvent(
+            session_idx=lookup.index_on_or_after(event.earnings_date),
+            available_ts=event.available_ts,
+        )
+        for event in events
+    )
+
+
+def resolve_setup_arrays(
+    setup: Setup,
+    *,
+    ts_py: NDArray[np.object_],
+    open_: NDArray[np.float64],
+    high: NDArray[np.float64],
+    low: NDArray[np.float64],
+    close: NDArray[np.float64],
+    cfg: LabelingConfig,
+    vol_bucket: VolBucket,
+) -> ResolvedSetup:
+    """Triple-barrier on numpy columns. Same branches as `resolve_setup`."""
+    n = int(open_.shape[0])
+    if n == 0:
+        return _open_unentered(setup, vol_bucket)
+    entry = float(open_[0])
+    entry_ts = _as_utc(ts_py[0])
+    if not math.isfinite(entry):
+        return _open_unentered(setup, vol_bucket)
+
+    sign = setup.direction.sign
+    risk_per_unit = setup.risk_per_unit
+    stop = entry - sign * risk_per_unit
+    if setup.target_price is None:
+        target: float | None = None
+    else:
+        target = entry + sign * setup.reward_per_unit
+
+    mae_r = 0.0
+    mfe_r = 0.0
+    for i in range(n):
+        high_px = float(high[i])
+        low_px = float(low[i])
+        high_r = sign * (high_px - entry) / risk_per_unit
+        low_r = sign * (low_px - entry) / risk_per_unit
+        mae_r = min(mae_r, min(high_r, low_r))
+        mfe_r = max(mfe_r, max(high_r, low_r))
+
+        open_px = float(open_[i])
+        ts = _as_utc(ts_py[i])
+        if _gapped_through_stop(open_px, stop, sign):
+            return _resolved(
+                setup,
+                entry_ts=entry_ts,
+                entry_price=entry,
+                resolution_ts=ts,
+                exit_price=open_px,
+                outcome=SetupOutcome.STOP,
+                bars_held=i + 1,
+                mae_r=mae_r,
+                mfe_r=mfe_r,
+                vol_bucket=vol_bucket,
+            )
+
+        hit_stop = (low_px <= stop) if sign > 0 else (high_px >= stop)
+        hit_target = False
+        if target is not None:
+            hit_target = (high_px >= target) if sign > 0 else (low_px <= target)
+        if hit_stop and hit_target and cfg.tie_rule is TieRule.TARGET:
+            hit_stop = False
+        if hit_stop:
+            return _resolved(
+                setup,
+                entry_ts=entry_ts,
+                entry_price=entry,
+                resolution_ts=ts,
+                exit_price=stop,
+                outcome=SetupOutcome.STOP,
+                bars_held=i + 1,
+                mae_r=mae_r,
+                mfe_r=mfe_r,
+                vol_bucket=vol_bucket,
+            )
+        if hit_target:
+            assert target is not None
+            gap_fill = _gapped_through_target(open_px, target, sign)
+            exit_px = open_px if gap_fill else target
+            return _resolved(
+                setup,
+                entry_ts=entry_ts,
+                entry_price=entry,
+                resolution_ts=ts,
+                exit_price=exit_px,
+                outcome=SetupOutcome.TARGET,
+                bars_held=i + 1,
+                mae_r=mae_r,
+                mfe_r=mfe_r,
+                vol_bucket=vol_bucket,
+            )
+        if i + 1 >= setup.max_hold_bars:
+            close_px = float(close[i])
+            return _resolved(
+                setup,
+                entry_ts=entry_ts,
+                entry_price=entry,
+                resolution_ts=ts,
+                exit_price=close_px,
+                outcome=SetupOutcome.TIME,
+                bars_held=i + 1,
+                mae_r=mae_r,
+                mfe_r=mfe_r,
+                vol_bucket=vol_bucket,
+            )
+
+    return ResolvedSetup(
+        setup=setup,
+        entry_ts=entry_ts,
+        entry_price=entry,
+        resolution_ts=None,
+        exit_price=None,
+        outcome=SetupOutcome.OPEN,
+        bars_held=n,
+        realised_r_gross=float("nan"),
+        mae_r=mae_r,
+        mfe_r=mfe_r,
+        vol_bucket=vol_bucket,
+    )
+
+
 def label_setups(
     feature_panel: FeaturePanel,
     market_panel: MarketPanel,
@@ -215,67 +414,159 @@ def label_setups(
     earnings_by_asset: Mapping[str, Sequence[EarningsEvent]],
     is_etf: Mapping[str, bool],
     calendar: pd.DataFrame,
+    skip_asset_ids: Set[str] = frozenset(),
+    flush_every: int = 25,
+    on_asset: Callable[[AssetTick], None] | None = None,
+    on_batch: Callable[[pd.DataFrame, tuple[str, ...]], None] | None = None,
 ) -> pd.DataFrame:
-    """Detect on every warm bar, resolve each setup, return the §3 table."""
+    """Detect on every warm bar, resolve each setup, return the §3 table.
+
+    Forward bars are sliced with searchsorted to `max_hold_bars`. Batches are
+    converted to a DataFrame immediately so the dict list cannot grow without
+    bound.
+    """
     if not strategies:
         return empty_label_frame()
     feat = feature_panel.frame
     if feat.empty:
         return empty_label_frame()
     mkt = market_panel.frame
-    keys = mkt.loc[:, ["ts", "symbol", "asset_id"]].drop_duplicates(
+    lookup = SessionLookup(calendar)
+    earnings_prep: dict[str, tuple[_PreparedEvent, ...]] = {
+        aid: prepare_earnings(events, lookup) for aid, events in earnings_by_asset.items()
+    }
+    feat_by_symbol: dict[str, pd.DataFrame] = {}
+    for raw_sym, grp in feat.groupby("symbol", sort=False, observed=True):
+        feat_by_symbol[str(raw_sym)] = grp
+
+    grouped = mkt.groupby("asset_id", sort=False, observed=True)
+    total = int(mkt["asset_id"].astype(str).nunique(dropna=True))
+    pending: list[dict[str, object]] = []
+    pending_ids: list[str] = []
+    since_flush = 0
+    setups_total = 0
+    parts: list[pd.DataFrame] = []
+
+    def _flush() -> None:
+        nonlocal pending, pending_ids, since_flush
+        if not pending_ids:
+            return
+        frame = records_to_frame(pending)
+        batch_ids = tuple(pending_ids)
+        if on_batch is not None:
+            on_batch(frame, batch_ids)
+        else:
+            parts.append(frame)
+        pending = []
+        pending_ids = []
+        since_flush = 0
+
+    try:
+        for index, (raw_id, mkt_grp) in enumerate(grouped):
+            asset_id = str(raw_id)
+            if asset_id in skip_asset_ids:
+                if on_asset is not None:
+                    on_asset(
+                        AssetTick(
+                            asset_id=asset_id,
+                            index=index,
+                            total=total,
+                            warm_bars=0,
+                            setups_asset=0,
+                            setups_total=setups_total,
+                            skipped=True,
+                        )
+                    )
+                continue
+            n_setups, n_warm = _label_one_asset(
+                asset_id=asset_id,
+                mkt_grp=mkt_grp,
+                feat_by_symbol=feat_by_symbol,
+                strategies=strategies,
+                cfg=cfg,
+                etf=bool(is_etf.get(asset_id, False)),
+                events=earnings_prep.get(asset_id, ()),
+                lookup=lookup,
+                records=pending,
+            )
+            setups_total += n_setups
+            pending_ids.append(asset_id)
+            since_flush += 1
+            if on_asset is not None:
+                on_asset(
+                    AssetTick(
+                        asset_id=asset_id,
+                        index=index,
+                        total=total,
+                        warm_bars=n_warm,
+                        setups_asset=n_setups,
+                        setups_total=setups_total,
+                        skipped=False,
+                    )
+                )
+            if since_flush >= flush_every:
+                _flush()
+        _flush()
+    except KeyboardInterrupt:
+        _flush()
+        raise
+
+    if not parts:
+        return empty_label_frame()
+    combined = pd.concat(parts, ignore_index=True)
+    return _join_adv(combined, snapshots)
+
+
+def _label_one_asset(
+    *,
+    asset_id: str,
+    mkt_grp: pd.DataFrame,
+    feat_by_symbol: Mapping[str, pd.DataFrame],
+    strategies: Sequence[Strategy],
+    cfg: LabelingConfig,
+    etf: bool,
+    events: Sequence[_PreparedEvent],
+    lookup: SessionLookup,
+    records: list[dict[str, object]],
+) -> tuple[int, int]:
+    if mkt_grp.empty:
+        return 0, 0
+    symbols = mkt_grp["symbol"].astype(str).drop_duplicates().tolist()
+    feat_parts = [feat_by_symbol[sym] for sym in symbols if sym in feat_by_symbol]
+    if not feat_parts:
+        return 0, 0
+    feat_local = feat_parts[0] if len(feat_parts) == 1 else pd.concat(feat_parts, ignore_index=True)
+    keys = mkt_grp.loc[:, ["ts", "symbol", "asset_id"]].drop_duplicates(
         subset=["ts", "symbol"], keep="last"
     )
-    before = len(feat)
-    tagged = feat.merge(keys, on=["ts", "symbol"], how="left", validate="many_to_one")
-    assert len(tagged) == before, "merge duplicated feature rows"
-
-    forward_by_id: dict[str, pd.DataFrame] = {}
-    grouped = mkt.groupby("asset_id", sort=False, observed=True)
-    for asset_id, grp in grouped:
-        forward_by_id[str(asset_id)] = grp.sort_values("ts", kind="mergesort")
-
-    records: list[dict[str, object]] = []
-    for rec in tagged.to_dict("records"):
-        if not bool(rec["is_warm"]):
-            continue
-        raw_id = rec.get("asset_id")
-        if raw_id is None or (isinstance(raw_id, float) and not math.isfinite(raw_id)):
-            continue
-        asset_id = str(raw_id)
-        if asset_id == "" or asset_id == "nan":
-            continue
-        row = _feature_row_from_record({name: rec[name] for name in FEATURE_COLUMNS})
-        etf = bool(is_etf.get(asset_id, False))
-        events = earnings_by_asset.get(asset_id, ())
+    before = len(feat_local)
+    tagged = feat_local.merge(keys, on=["ts", "symbol"], how="inner")
+    if len(tagged) > before:
+        raise AssertionError("merge duplicated feature rows")
+    if tagged.empty:
+        return 0, 0
+    warm = tagged.loc[tagged["is_warm"].to_numpy()]
+    if warm.empty:
+        return 0, 0
+    ordered = mkt_grp.sort_values("ts", kind="mergesort")
+    packed = _pack_ohlc(ordered)
+    n_before = len(records)
+    feat_view = warm.loc[:, list(FEATURE_COLUMNS)]
+    for rec in feat_view.itertuples(index=False, name=None):
+        row = feature_row_from_tuple(tuple(rec))
         for strategy in strategies:
             if not regime_allows(strategy, row):
                 continue
             setup = strategy.detect(row)
             if setup is None:
                 continue
-            source = forward_by_id.get(asset_id)
-            if source is None:
-                resolved = resolve_setup(
-                    setup, _empty_ohlc(), cfg, vol_bucket=row.vol_bucket
-                )
-            else:
-                setup_ts = pd.Timestamp(setup.ts)
-                if setup_ts.tzinfo is None:
-                    setup_ts = setup_ts.tz_localize("UTC")
-                else:
-                    setup_ts = setup_ts.tz_convert("UTC")
-                ts_index = pd.DatetimeIndex(pd.to_datetime(source["ts"], utc=True))
-                forward = source.loc[ts_index > setup_ts]
-                resolved = resolve_setup(
-                    setup, forward, cfg, vol_bucket=row.vol_bucket
-                )
-            had = earnings_in_window(
+            resolved = _resolve_packed(setup, packed, cfg, vol_bucket=row.vol_bucket)
+            had = earnings_in_window_fast(
                 ts=setup.ts,
                 max_hold_bars=setup.max_hold_bars,
                 events=events,
                 is_etf=etf,
-                calendar=calendar,
+                lookup=lookup,
             )
             records.append(
                 label_record(
@@ -286,8 +577,60 @@ def label_setups(
                     had_earnings_in_window=had,
                 )
             )
-    frame = records_to_frame(records)
-    return _join_adv(frame, snapshots)
+    return len(records) - n_before, len(warm)
+
+
+def _pack_ohlc(ordered: pd.DataFrame) -> _OhlcPack:
+    ts_index = pd.DatetimeIndex(pd.to_datetime(ordered["ts"], utc=True))
+    return _OhlcPack(
+        ts_ns=ts_index.asi8.astype(np.int64, copy=False),
+        ts_py=ts_index.to_pydatetime(),
+        open=ordered["open"].to_numpy(dtype=np.float64, copy=False),
+        high=ordered["high"].to_numpy(dtype=np.float64, copy=False),
+        low=ordered["low"].to_numpy(dtype=np.float64, copy=False),
+        close=ordered["close"].to_numpy(dtype=np.float64, copy=False),
+    )
+
+
+def _resolve_packed(
+    setup: Setup,
+    packed: _OhlcPack,
+    cfg: LabelingConfig,
+    *,
+    vol_bucket: VolBucket,
+) -> ResolvedSetup:
+    setup_ts = pd.Timestamp(setup.ts)
+    if setup_ts.tzinfo is None:
+        setup_ts = setup_ts.tz_localize("UTC")
+    else:
+        setup_ts = setup_ts.tz_convert("UTC")
+    start = int(np.searchsorted(packed.ts_ns, np.int64(setup_ts.value), side="right"))
+    end = min(packed.ts_ns.size, start + setup.max_hold_bars)
+    if start >= packed.ts_ns.size or end <= start:
+        return resolve_setup_arrays(
+            setup,
+            ts_py=packed.ts_py[0:0],
+            open_=packed.open[0:0],
+            high=packed.high[0:0],
+            low=packed.low[0:0],
+            close=packed.close[0:0],
+            cfg=cfg,
+            vol_bucket=vol_bucket,
+        )
+    return resolve_setup_arrays(
+        setup,
+        ts_py=packed.ts_py[start:end],
+        open_=packed.open[start:end],
+        high=packed.high[start:end],
+        low=packed.low[start:end],
+        close=packed.close[start:end],
+        cfg=cfg,
+        vol_bucket=vol_bucket,
+    )
+
+
+def _closed_intersect(a0: int, a1: int, b0: int, b1: int) -> bool:
+    return a0 <= a1 and b0 <= b1 and a0 <= b1 and b0 <= a1
 
 
 def label_record(
@@ -398,12 +741,15 @@ def _join_adv(frame: pd.DataFrame, snapshots: pd.DataFrame) -> pd.DataFrame:
     asof_left = left.loc[:, ["_ord", "asset_id", "setup_ts"]].copy()
     asof_left["asset_id"] = asof_left["asset_id"].astype(str)
     asof_left["setup_ts"] = pd.to_datetime(asof_left["setup_ts"], utc=True)
-    asof_left = asof_left.sort_values(["asset_id", "setup_ts"], kind="mergesort")
+    # pandas 2.2 merge_asof checks that `on` is globally monotonic even when
+    # `by` is set. Sort by setup_ts first, not asset_id — overlapping
+    # timestamps across names otherwise raise "left keys must be sorted".
+    asof_left = asof_left.sort_values(["setup_ts", "asset_id"], kind="mergesort")
     right = snapshots.loc[:, ["asset_id", "ts", "adv_usd_60"]].copy()
     right["asset_id"] = right["asset_id"].astype(str)
     right["ts"] = pd.to_datetime(right["ts"], utc=True)
     right = right.rename(columns={"ts": "setup_ts", "adv_usd_60": "adv_from_snap"})
-    right = right.sort_values(["asset_id", "setup_ts"], kind="mergesort")
+    right = right.sort_values(["setup_ts", "asset_id"], kind="mergesort")
     before = len(asof_left)
     joined = pd.merge_asof(
         asof_left,
@@ -585,50 +931,3 @@ def _as_utc(value: object) -> datetime:
     if not isinstance(out, datetime):
         raise TypeError(f"ts is not a datetime: {type(out)!r}")
     return out
-
-
-def _feature_row_from_record(record: Mapping[str, object]) -> FeatureRow:
-    kwargs: dict[str, object] = {}
-    for name in FEATURE_COLUMNS:
-        value = record[name]
-        if name == "ts":
-            kwargs[name] = _as_utc(value)
-        elif name == "regime":
-            kwargs[name] = value if isinstance(value, Regime) else Regime(str(value))
-        elif name == "vol_bucket":
-            kwargs[name] = value if isinstance(value, VolBucket) else VolBucket(str(value))
-        elif name == "market_regime":
-            kwargs[name] = (
-                value if isinstance(value, MarketRegime) else MarketRegime(str(value))
-            )
-        elif name in {"spy_above_ma", "is_warm"}:
-            kwargs[name] = bool(value)
-        elif name in {"xs_population", "bars_available", "bars_since_gap"}:
-            kwargs[name] = _as_int(value)
-        elif name == "symbol":
-            kwargs[name] = str(value)
-        else:
-            kwargs[name] = _as_float(value)
-    return FeatureRow(**kwargs)  # type: ignore[arg-type]
-
-
-def _as_int(value: object) -> int:
-    if isinstance(value, bool):
-        return int(value)
-    if isinstance(value, int):
-        return value
-    if isinstance(value, float):
-        return int(value)
-    if isinstance(value, str):
-        return int(value)
-    raise TypeError(f"cannot convert {type(value).__name__} to int")
-
-
-def _as_float(value: object) -> float:
-    if isinstance(value, bool):
-        return float(value)
-    if isinstance(value, int | float):
-        return float(value)
-    if isinstance(value, str):
-        return float(value)
-    raise TypeError(f"cannot convert {type(value).__name__} to float")

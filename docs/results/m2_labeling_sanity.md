@@ -28,38 +28,43 @@ geometry on a no-edge series, not strategy detection.
 `min_r < −1` is the gap-through-stop rule firing. If it were clipped at −1.0 the
 rule would be missing.
 
-## Real data — **OPEN (M2.2a, Blocked)**
+## Real data — recorded (M2.2a)
 
-This is the half of the M2.2 sanity that the random walk cannot substitute.
-Tracked as [M2.2a](../15-ROADMAP.md#m22a-real-data-labeling-sanity--blocked).
-Do not mark it done until the table below is filled from
-`scout label --config config/development.yaml`.
+Tracked as [M2.2a](../15-ROADMAP.md#m22a-real-data-labeling-sanity--done).
+Development window `config/development.yaml` (1998-01-01 → 2017-12-31), snapshot
+`20260830-sharadar`, `config_hash=d36dea1f0fd93b5e0f0341de3f93affd3c54a500dbe799a06d6a8cda3fb40240`.
+OPEN rows excluded, same as the random-walk table.
 
-Raw Sharadar ingest is on disk (`data/raw/equity/`, snapshot `20260830-sharadar`,
-30 781 symbols, 1998–2026). Labeling still cannot run:
+Labels are from `scout label` after the ADR-017 panel rebuild (contemporaneous
+dividend cash). Written to `data/labels/setups_<id>.parquet`. The table below
+replaces the pre-rebuild counts (pooled 0.086 R on 947 792 rows).
 
 | Trigger file | Present? |
 |---|---|
-| `data/processed/panel/1d/*.parquet` | no — run `scout adjust` |
-| `data/universe/snapshots.parquet` | no — run `scout build-universe` |
-| `data/reference/benchmark_1d.parquet` | no — no M1 task writes this; schema in `04` §6.3 |
-
-When all three exist, run label and paste per-strategy pooled stats here
-(`donchian_breakout_v1` and `xsec_momentum_v1`):
+| `data/processed/panel/1d/*.parquet` | yes |
+| `data/universe/snapshots.parquet` | yes |
+| `data/reference/benchmark_1d.parquet` | yes — SPY OHLC + `vix_close` from Sharadar `^VIX`; `vix9d` / `vix3m` are NaN (not in Sharadar, unused until M4.3) |
 
 | Check | `donchian_breakout_v1` | `xsec_momentum_v1` |
 |---|---|---|
-| n resolved | | |
-| `mean(realised_r_gross)` | | |
-| win rate | | |
-| stop_rate | | |
-| time_rate | | |
-| `min(realised_r_gross)` | | |
-| `mean(entry_gap_atr)` | | |
+| n resolved | 475 455 | 469 668 |
+| `mean(realised_r_gross)` | 0.0812 | 0.0328 |
+| win rate | 0.435 | 0.523 |
+| stop_rate | 0.492 | 0.129 |
+| time_rate | 0.285 | 0.871 |
+| `min(realised_r_gross)` | −230.80 | −4.951 |
+| `mean(entry_gap_atr)` | −0.0032 | 0.0137 |
 
-**If pooled `mean_r` exceeds about 0.4 R, that is a bug, not an edge.** Stop.
-Do not start M3.6 and do not trust a real `EdgeTable` until this section is
-filled and `mean_r` is not ~0.4 R.
+Pooled across both strategies: n = 945 123, `mean_r` = 0.057 R. **Not ~0.4 R.**
+The 0.4 R stop does not fire. M3.6 trial 2 used this label set.
+Donchian `min_r` is still GAHC (stop almost on entry, gap to 0.99), not CHKAQ.
+
+Against [`07-EDGE_AND_SCORING.md` §3](../07-EDGE_AND_SCORING.md#3-the-resolved-setup-table)
+expectations: Donchian stop_rate 0.49 sits in 0.4–0.6 and time_rate 0.29 in
+0.1–0.3. Momentum time_rate 0.87 is above 0.85 and win rate is near 0.50; its
+stop_rate 0.129 is a bit above the “under 0.10” note (5 ATR stop). That is not
+the 0.4 R leak. `min_r < −1` on both sides is gap-through-stop, not clipping.
+`mean(entry_gap_atr)` is near 0.
 
 ## Interpretations (docs were incomplete, not contradictory)
 

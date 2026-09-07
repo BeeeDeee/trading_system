@@ -71,13 +71,18 @@ def apply_entry(
     notional = fill.qty * fill.price
     cash = state.cash_usd - sign * notional - fill.fee_usd
 
-    risk = to_decimal(setup.risk_per_unit)
+    # Dollar risk per share is the sized risk, not adj-distance subtracted
+    # from a raw fill (that mixed units). R is preserved by using risk_usd/qty.
+    if decision.risk_usd is None or decision.qty is None or decision.qty <= 0:
+        raise ScoutError("apply_entry requires sized risk_usd and qty")
+    risk = decision.risk_usd / fill.qty
     stop = fill.price - sign * risk
     if setup.target_price is None:
         # ADR-019: no take-profit. Store a barrier that poll_fills must ignore.
         target = fill.price
     else:
-        target = fill.price + sign * to_decimal(setup.reward_per_unit)
+        rr = to_decimal(setup.reward_risk_ratio)
+        target = fill.price + sign * risk * rr
 
     position = Position(
         symbol=fill.symbol,
@@ -101,7 +106,8 @@ def apply_entry(
     positions = dict(state.positions)
     positions[fill.symbol] = position
     implied = state.equity_usd - state.cash_usd
-    equity = cash + implied + sign * notional
+    unrealised = implied + sign * notional
+    equity = cash + unrealised
     out = replace(
         state,
         cash_usd=cash,
@@ -109,7 +115,7 @@ def apply_entry(
         positions=MappingProxyType(positions),
         trades_today=state.trades_today + 1,
     )
-    _assert_identity(out, implied_unrealised=implied + sign * notional)
+    _assert_identity(out, implied_unrealised=unrealised)
     _assert_qty_positive(out)
     _assert_solvent(out)
     return out
@@ -144,7 +150,8 @@ def apply_exit(
     cash = state.cash_usd + sign * position.qty * fill.price - fill.fee_usd
     remaining = dict(state.positions)
     del remaining[position.symbol]
-    equity = cash + (implied - this_mtm)
+    remaining_mtm = implied - this_mtm
+    equity = cash + remaining_mtm
 
     fees_total = position.realised_fees_usd + fill.fee_usd
     gross = sign * (fill.price - position.entry_price) * position.qty
@@ -185,7 +192,7 @@ def apply_exit(
         positions=MappingProxyType(remaining),
         realised_pnl_today_usd=state.realised_pnl_today_usd + net,
     )
-    _assert_identity(out, implied_unrealised=implied - this_mtm)
+    _assert_identity(out, implied_unrealised=remaining_mtm)
     _assert_qty_positive(out)
     _assert_solvent(out)
     return out, trade
@@ -256,6 +263,33 @@ def apply_dividend(
         equity_usd=equity,
         positions=MappingProxyType(positions),
     )
+    _assert_identity(out, implied_unrealised=out.equity_usd - out.cash_usd)
+    _assert_solvent(out)
+    return out
+
+
+def apply_split(
+    state: PortfolioState,
+    symbol: str,
+    split_ratio: Decimal,
+    ts: datetime,
+) -> PortfolioState:
+    """`qty *= split_ratio`; prices `/= split_ratio`. Cash and equity unchanged."""
+    del ts
+    pos = state.positions.get(symbol)
+    if pos is None or split_ratio <= 0 or split_ratio == Decimal("1"):
+        return state
+    inv = Decimal("1") / split_ratio
+    updated = replace(
+        pos,
+        qty=pos.qty * split_ratio,
+        entry_price=pos.entry_price * inv,
+        stop_price=pos.stop_price * inv,
+        target_price=pos.target_price * inv,
+    )
+    positions = dict(state.positions)
+    positions[symbol] = updated
+    out = replace(state, positions=MappingProxyType(positions))
     _assert_identity(out, implied_unrealised=out.equity_usd - out.cash_usd)
     _assert_solvent(out)
     return out

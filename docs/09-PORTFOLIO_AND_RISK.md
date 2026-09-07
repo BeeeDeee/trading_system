@@ -77,11 +77,11 @@ for rank, opp in enumerate(ranked, start=1):
 
     # --- re-check EV with the final cost at the final size ---
     # Opportunity.atr_pct is copied from FeatureRow at ranking.
-    # price_raw is setup.reference_price (the same price sizing uses as entry).
+    # price_raw is close_raw (ADR-017). Share qty is in the same units.
     final_cost = estimate_cost(
         opp.setup, universe_entry_from(opp), float(notional), float(risk_usd),
         opp.expected_bars_held, cost_cfg,
-        atr_pct=opp.atr_pct, price_raw=opp.setup.reference_price,
+        atr_pct=opp.atr_pct, price_raw=close_raw,
     )
     if opp.ev_r_lcb - final_cost.cost_r < min_ev_net_r: reject(BELOW_EV_THRESHOLD)
 
@@ -116,8 +116,8 @@ a cluster cap, which is the desired diversifying behaviour.
 ## 3. Position sizing
 
 ```python
-def size_position(opp, state, asset, multiplier, cfg) -> tuple[Decimal, Decimal]:
-    """Risk-based sizing. Decimal from here on."""
+def size_position(opp, state, asset, multiplier, cfg, *, price_raw) -> tuple[Decimal, Decimal]:
+    """Risk-based sizing. Decimal from here on. qty is in close_raw shares (ADR-017)."""
 
     equity = state.equity_usd                                   # Decimal
     risk_frac = Decimal(str(cfg.risk_fraction_per_trade))       # 0.004
@@ -125,9 +125,11 @@ def size_position(opp, state, asset, multiplier, cfg) -> tuple[Decimal, Decimal]
 
     risk_usd = (equity * risk_frac * mult).quantize(CENTS, ROUND_DOWN)
 
-    entry = Decimal(str(opp.setup.reference_price))
-    stop = Decimal(str(opp.setup.stop_price))
-    risk_per_unit = abs(entry - stop)
+    entry_raw = Decimal(str(price_raw))                         # close_raw
+    scale = entry_raw / Decimal(str(opp.setup.reference_price))
+    risk_per_unit = abs(
+        Decimal(str(opp.setup.reference_price)) - Decimal(str(opp.setup.stop_price))
+    ) * scale
     if risk_per_unit <= 0:
         raise ScoutError("setup with non-positive risk reached sizing")
 
@@ -138,7 +140,7 @@ def size_position(opp, state, asset, multiplier, cfg) -> tuple[Decimal, Decimal]
         equity * Decimal(str(cfg.max_position_notional_pct)),
         Decimal(str(opp.adv_usd_30 * cfg.max_pct_of_adv)),
     )
-    qty_raw = min(qty_raw, max_notional / entry)
+    qty_raw = min(qty_raw, max_notional / entry_raw)
 
     # Step rounding: ALWAYS down. Rounding up increases risk beyond the mandate.
     qty = (qty_raw / asset.step_size).to_integral_value(ROUND_DOWN) * asset.step_size

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime
 from decimal import Decimal
 
@@ -16,6 +16,7 @@ from scout.domain.enums import ActionType, Direction, RejectionReason
 from scout.domain.execution import Fill, OrderIntent
 from scout.domain.market import CorporateAction, MarketPanel
 from scout.domain.portfolio import PortfolioState, TradeDecision
+from scout.portfolio.sizing import to_raw_distance
 from scout.utils.decimals import to_decimal
 from scout.utils.errors import ScoutLookaheadError
 
@@ -66,9 +67,15 @@ class SimBroker:
         self._state: PortfolioState | None = None
         self._last_ts: datetime | None = None
         self.last_entry_rejection: RejectionReason | None = None
+        self._frames_by_symbol: dict[str, pd.DataFrame] = {}
+        self._symbol_by_asset_id: dict[str, str] = {}
+        self._indexed_panel: MarketPanel | None = None
+        if panel is not None:
+            self._ensure_symbol_index()
 
     def attach_panel(self, panel: MarketPanel) -> None:
         self._panel = panel
+        self._ensure_symbol_index()
 
     def attach_actions(self, actions: Sequence[CorporateAction]) -> None:
         self._actions = tuple(actions)
@@ -102,9 +109,9 @@ class SimBroker:
                 f"entry fill ts {fill_ts.isoformat()} is not after "
                 f"decision ts {entry.created_ts.isoformat()}"
             )
-        raw = to_decimal(float(bar["open"]))
+        raw_open = to_decimal(float(bar["open"]) * _bar_scale(bar))
         direction = entry.side
-        fill_price = _entry_fill_price(raw, direction, cost)
+        fill_price = _entry_fill_price(raw_open, direction, cost)
         fee = _entry_fee(entry.qty, fill_price, cost, self._costs)
         fill = Fill(
             client_order_id=entry.client_order_id,
@@ -149,7 +156,7 @@ class SimBroker:
         bar = self._bar_at(symbol, ts)
         if bar is None:
             return None
-        close_px = to_decimal(float(bar["close"]))
+        close_px = to_decimal(float(bar["close"]) * _bar_scale(bar))
         fee = _exit_fee(bracket.qty, close_px, bracket.cost, self._costs)
         fill = self._exit_fill(bracket, close_px, fee, ts, reason)
         del self._brackets[symbol]
@@ -185,22 +192,27 @@ class SimBroker:
         current = state
         session_day = ts.date()
         for action in self._actions:
-            if action.action_type is not ActionType.DIVIDEND:
-                continue
             if action.ex_date != session_day:
                 continue
             symbol = self._symbol_for_asset(action.asset_id, current.positions)
             if symbol is None:
                 continue
-            current = ledger_mod.apply_dividend(
-                current, symbol, to_decimal(action.cash_amount), ts
-            )
+            if action.action_type is ActionType.SPLIT:
+                ratio = to_decimal(action.split_ratio)
+                current = ledger_mod.apply_split(current, symbol, ratio, ts)
+                self._rescale_bracket(symbol, ratio)
+            elif action.action_type is ActionType.DIVIDEND:
+                current = ledger_mod.apply_dividend(
+                    current, symbol, to_decimal(action.cash_amount), ts
+                )
         if closes is None:
             latest = panel.latest(ts)
-            close_by_symbol = {
-                str(rec["symbol"]): to_decimal(float(rec["close"]))
-                for rec in latest.to_dict("records")
-            } if not latest.empty else {}
+            close_by_symbol = {}
+            if not latest.empty:
+                for rec in latest.itertuples(index=False):
+                    close_by_symbol[str(rec.symbol)] = to_decimal(
+                        float(rec.close) * _bar_scale(rec)
+                    )
         else:
             close_by_symbol = dict(closes)
         for symbol, pos in list(current.positions.items()):
@@ -228,9 +240,10 @@ class SimBroker:
         if bar is None:
             return None
         self._update_excursions(bracket, bar)
-        open_px = to_decimal(float(bar["open"]))
-        high = float(bar["high"])
-        low = float(bar["low"])
+        scale = _bar_scale(bar)
+        open_px = to_decimal(float(bar["open"]) * scale)
+        high = float(bar["high"]) * scale
+        low = float(bar["low"]) * scale
         sign = bracket.direction.sign
         hit_stop = (low <= float(bracket.stop_price)) if sign > 0 else (
             high >= float(bracket.stop_price)
@@ -302,28 +315,56 @@ class SimBroker:
             return None
         return hit.iloc[0]
 
-    def _symbol_frame(self, symbol: str) -> pd.DataFrame | None:
-        if self._panel is None:
-            return None
+    def _ensure_symbol_index(self) -> None:
+        if self._panel is self._indexed_panel:
+            return
+        self._indexed_panel = self._panel
+        self._frames_by_symbol = {}
+        self._symbol_by_asset_id = {}
+        if self._panel is None or self._panel.frame.empty:
+            return
         frame = self._panel.frame
-        mask = frame["symbol"].astype(str) == symbol
-        return frame.loc[mask].sort_values("ts", kind="mergesort")
+        for raw, grp in frame.groupby("symbol", sort=False, observed=True):
+            self._frames_by_symbol[str(raw)] = grp.sort_values("ts", kind="mergesort")
+        asset_ids = frame["asset_id"].astype(str)
+        symbols = frame["symbol"].astype(str)
+        for aid, sym in zip(asset_ids.tolist(), symbols.tolist(), strict=False):
+            self._symbol_by_asset_id.setdefault(aid, sym)
+
+    def _symbol_frame(self, symbol: str) -> pd.DataFrame | None:
+        self._ensure_symbol_index()
+        return self._frames_by_symbol.get(symbol)
 
     def _symbol_for_asset(
         self, asset_id: str, positions: Mapping[str, object]
     ) -> str | None:
         if asset_id in positions:
             return asset_id
-        if self._panel is None:
-            return None
-        frame = self._panel.frame
-        hit = frame.loc[frame["asset_id"].astype(str) == asset_id]
-        if hit.empty:
-            return None
-        symbol = str(hit.iloc[0]["symbol"])
-        if symbol in positions:
+        self._ensure_symbol_index()
+        symbol = self._symbol_by_asset_id.get(asset_id)
+        if symbol is not None and symbol in positions:
             return symbol
         return None
+
+    def _rescale_bracket(self, symbol: str, split_ratio: Decimal) -> None:
+        bracket = self._brackets.get(symbol)
+        if bracket is None or split_ratio <= 0 or split_ratio == Decimal("1"):
+            return
+        inv = Decimal("1") / split_ratio
+        entry = bracket.entry_fill
+        new_fill = replace(
+            entry,
+            qty=entry.qty * split_ratio,
+            price=entry.price * inv,
+        )
+        target = None if bracket.target_price is None else bracket.target_price * inv
+        self._brackets[symbol] = replace(
+            bracket,
+            qty=bracket.qty * split_ratio,
+            entry_fill=new_fill,
+            stop_price=bracket.stop_price * inv,
+            target_price=target,
+        )
 
     def _update_excursions(self, bracket: _Bracket, bar: pd.Series) -> None:
         risk = float(abs(bracket.entry_fill.price - bracket.stop_price))
@@ -331,12 +372,44 @@ class SimBroker:
             return
         entry = float(bracket.entry_fill.price)
         sign = bracket.direction.sign
-        high_r = sign * (float(bar["high"]) - entry) / risk
-        low_r = sign * (float(bar["low"]) - entry) / risk
+        scale = _bar_scale(bar)
+        high_r = sign * (float(bar["high"]) * scale - entry) / risk
+        low_r = sign * (float(bar["low"]) * scale - entry) / risk
         adverse = min(high_r, low_r)
         favorable = max(high_r, low_r)
         bracket.mae_r = min(bracket.mae_r, adverse)
         bracket.mfe_r = max(bracket.mfe_r, favorable)
+
+
+def _bar_scale(bar: object) -> float:
+    """`close_raw / close` for this session. 1.0 when the columns match or close is 0."""
+    close = _bar_float(bar, "close")
+    raw = _bar_float(bar, "close_raw")
+    if close is None or close == 0.0:
+        return 1.0
+    if raw is None:
+        return 1.0
+    return raw / close
+
+
+def _bar_float(bar: object, name: str) -> float | None:
+    if isinstance(bar, pd.Series):
+        if name not in bar.index:
+            return None
+        value: object = bar[name]
+    else:
+        if not hasattr(bar, name):
+            return None
+        value = getattr(bar, name)
+    if value is None:
+        return None
+    try:
+        out = float(str(value))
+    except (TypeError, ValueError):
+        return None
+    if out != out:
+        return None
+    return out
 
 
 def _as_utc(value: object) -> datetime:
@@ -416,10 +489,18 @@ def _anchored_barriers(
     if decision is not None:
         setup = decision.opportunity.setup
         sign = Decimal(direction.sign)
-        stop_px = fill_price - sign * to_decimal(setup.risk_per_unit)
+        if decision.risk_usd is not None and decision.qty is not None and decision.qty > 0:
+            risk = decision.risk_usd / decision.qty
+        else:
+            risk = to_raw_distance(
+                setup.reference_price,
+                setup.stop_price,
+                raw_price=fill_price,
+            )
         if setup.target_price is None:
-            return stop_px, None
-        return stop_px, fill_price + sign * to_decimal(setup.reward_per_unit)
+            return fill_price - sign * risk, None
+        rr = to_decimal(setup.reward_risk_ratio)
+        return fill_price - sign * risk, fill_price + sign * risk * rr
     stop_px = stop.stop_price if stop.stop_price is not None else fill_price
     tgt = target.limit_price if target.limit_price is not None else target.stop_price
     return stop_px, tgt

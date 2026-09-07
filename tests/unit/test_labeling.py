@@ -252,6 +252,53 @@ def test_resolution_ts_is_exit_bar() -> None:
     assert resolved.entry_ts == _ts(1)
 
 
+def test_join_adv_with_overlapping_asset_timestamps() -> None:
+    """pandas 2.2 merge_asof requires `on` globally sorted, even with `by`."""
+    from scout.scoring.labeling import _join_adv
+
+    ts_a = datetime(2015, 1, 5, 21, 0, tzinfo=UTC)
+    ts_b = datetime(2015, 1, 6, 21, 0, tzinfo=UTC)
+    labels = records_to_frame(
+        [
+            label_record(
+                resolve_setup(
+                    _setup(symbol="AAA", ts=ts_a),
+                    _forward([(ts_b, 100.0, 101.0, 95.0, 96.0)]),
+                    _cfg(),
+                    vol_bucket=VolBucket.MID,
+                ),
+                asset_id="B",
+                feature_row=_feature_row(symbol="BBB", ts=ts_a),
+                adv_usd_60=float("nan"),
+                had_earnings_in_window=False,
+            ),
+            label_record(
+                resolve_setup(
+                    _setup(symbol="AAA", ts=ts_a),
+                    _forward([(ts_b, 100.0, 101.0, 95.0, 96.0)]),
+                    _cfg(),
+                    vol_bucket=VolBucket.MID,
+                ),
+                asset_id="A",
+                feature_row=_feature_row(symbol="AAA", ts=ts_a),
+                adv_usd_60=float("nan"),
+                had_earnings_in_window=False,
+            ),
+        ]
+    )
+    snaps = pd.DataFrame(
+        {
+            "ts": [ts_a, ts_a],
+            "asset_id": ["A", "B"],
+            "adv_usd_60": [1.0e8, 2.0e8],
+        }
+    )
+    out = _join_adv(labels, snaps)
+    by_id = out.set_index("asset_id")["adv_usd_60"]
+    assert float(by_id.loc["A"]) == pytest.approx(1.0e8)
+    assert float(by_id.loc["B"]) == pytest.approx(2.0e8)
+
+
 def test_label_parquet_schema() -> None:
     setup = _setup()
     forward = _forward([(_ts(1), 100.0, 101.0, 95.0, 96.0)])

@@ -5,6 +5,8 @@ Called once before the backtest loop, for the whole history. Not per bar.
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 import numpy as np
 import pandas as pd  # type: ignore[import-untyped]
 
@@ -60,6 +62,8 @@ def compute_features(
     benchmark: BenchmarkPanel,
     snapshots: pd.DataFrame,
     cfg: FeaturesConfig,
+    *,
+    on_progress: Callable[[int, int], None] | None = None,
 ) -> FeaturePanel:
     """Compute all FeatureRow columns for every (ts, asset_id) in `panel`.
 
@@ -76,12 +80,14 @@ def compute_features(
     spy_close = _benchmark_close(benchmark)
     parts: list[pd.DataFrame] = []
     grouped = frame.groupby("symbol", sort=False, observed=True)
-    for _, group in grouped:
+    n_symbols = int(grouped.ngroups)
+    for i, (_, group) in enumerate(grouped, start=1):
         parts.append(_symbol_features(group, spy_close, cfg, regime_cfg))
+        if on_progress is not None and (i == 1 or i == n_symbols or i % 200 == 0):
+            on_progress(i, n_symbols)
     per_symbol = pd.concat(parts, ignore_index=True)
 
-    snaps = snapshots.copy()
-    snaps["ts"] = _utc_ns(snaps["ts"])
+    snaps = _snapshots_for_panel(snapshots, frame["symbol"])
     ranked = cross_sectional_ranks(per_symbol, snaps)
     ranked["regime"] = classify_regime_vectorized(
         ranked["efficiency_ratio_20"],
@@ -109,6 +115,21 @@ def compute_features(
         )
     assembled = merged.loc[:, list(FEATURE_COLUMNS)]
     return FeaturePanel(assembled)
+
+
+def _snapshots_for_panel(snapshots: pd.DataFrame, symbols: pd.Series) -> pd.DataFrame:
+    """Copy of snapshot rows for symbols in the panel. Full-file copy is too large."""
+    if snapshots.empty:
+        return snapshots.copy()
+    if "symbol" not in snapshots.columns:
+        out = snapshots.copy()
+        out["ts"] = _utc_ns(out["ts"])
+        return out
+    wanted = pd.Index(symbols.astype(str).unique())
+    mask = snapshots["symbol"].astype(str).isin(wanted)
+    out = snapshots.loc[mask].copy()
+    out["ts"] = _utc_ns(out["ts"])
+    return out
 
 
 def _benchmark_close(benchmark: BenchmarkPanel) -> pd.Series:

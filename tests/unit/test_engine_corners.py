@@ -21,6 +21,7 @@ from tests.backtest_fixtures import (
     engine_config,
     market_panel,
     snapshot_book,
+    snapshot_frame,
     timestamps,
     usable_edge_table,
 )
@@ -244,3 +245,38 @@ def test_exits_applied_before_entries(tmp_path) -> None:
     )
     result = engine.run()
     assert result.n_decisions_considered > 0
+
+
+def test_ineligible_names_count_in_funnel_not_parquet(tmp_path) -> None:
+    from scout.universe.build import SnapshotBook
+
+    stamps = timestamps(20)
+    cfg = engine_config(tmp_path, stamps, warmup_index=5)
+    symbols = ("AAA", "BBB")
+    frame = snapshot_frame(symbols, stamps[0])
+    frame.loc[frame["symbol"] == "BBB", "eligible"] = False
+    frame.loc[frame["symbol"] == "BBB", "reason"] = RejectionReason.LOW_LIQUIDITY.value
+    panel = market_panel(symbols, stamps)
+    sink = NullDecisionSink()
+    engine = BacktestEngine(
+        candles=MemoryCandleSource(panel),
+        sentiment=NullSentimentSource(),
+        broker=SimBroker(cfg.costs, cfg.portfolio, panel=panel),
+        strategies=build_strategies(cfg.strategies),
+        edge_table=usable_edge_table(cfg, stamps[0]),
+        sink=sink,
+        universe=SnapshotBook(frame),
+        assets=assets(symbols),
+        cfg=cfg,
+        calendar=pd.DataFrame(),
+        benchmark=benchmark_panel(stamps),
+        run_id="test0009-engine",
+    )
+    result = engine.run()
+    sink.flush()
+    n_trade = sum(1 for ts in stamps if ts >= cfg.period.warmup_end)
+    n_strategies = len(build_strategies(cfg.strategies))
+    expected = n_trade * n_strategies
+    assert result.n_rejections_by_reason.get(RejectionReason.LOW_LIQUIDITY, 0) == expected
+    assert all(r.symbol != "BBB" for r in sink.records)
+    assert result.n_decisions_considered >= expected

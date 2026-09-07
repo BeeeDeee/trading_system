@@ -20,8 +20,8 @@ not commitments.
 |---|---|---|---|
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data, calendar, features, PIT universe | 7 days | Done |
-| M2 | Strategies, labeling, edge table | 4 days | In progress (M2.1–M2.5 done; M2.2a blocked) |
-| M3 | Backtest engine, metrics, **the answer** | 6 days | In progress (M3.1–M3.5 done) |
+| M2 | Strategies, labeling, edge table | 4 days | Done (M2.2a recorded; pooled `mean_r` = 0.057 R) |
+| M3 | Backtest engine, metrics, **the answer** | 6 days | In progress (M3.1–M3.6 done) |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
 | M5 | Paper then live trading | 15 days | Gated on M4 + 60-day soak |
 | M6 | ML evaluation | 10 days | Gated on M3 criteria |
@@ -188,39 +188,24 @@ Random-walk master sanity is recorded in
 M2.3–M2.5 may proceed on fixtures. They must not consume a real
 `setups_*.parquet` as evidence of edge.
 
-### M2.2a Real-data labeling sanity — **Blocked**
+### M2.2a Real-data labeling sanity — done
 
-Not a coding task. Do not pick this while the trigger is unmet.
+Recorded in [`docs/results/m2_labeling_sanity.md`](results/m2_labeling_sanity.md).
+Pooled `mean_r` = 0.057 R (Donchian 0.081, momentum 0.033). Not ~0.4 R.
 
-Raw Sharadar ingest exists (`data/raw/equity/`, snapshot `20260830-sharadar`).
-Labeling still cannot run: there is no processed panel, no universe snapshots,
-and no benchmark file.
-
-**Unblocked when all three exist:**
+Trigger files used:
 
 | File | How it appears |
 |---|---|
 | `data/processed/panel/1d/*.parquet` | `scout adjust --config config/development.yaml` |
 | `data/universe/snapshots.parquet` | `scout build-universe --config config/development.yaml` |
-| `data/reference/benchmark_1d.parquet` | Schema in [`04-DATA_AND_UNIVERSE.md §6.3`](04-DATA_AND_UNIVERSE.md#63-datareferencebenchmark_1dparquet). **No M1 task writes this file.** If it is still missing after adjust, that gap is part of this task — do not invent a schema. |
+| `data/reference/benchmark_1d.parquet` | `scout build-benchmark` from processed SPY + Sharadar `^VIX` |
 
-**When unblocked, do only this:**
+Labels: `data/labels/setups_donchian_breakout_v1.parquet` and
+`data/labels/setups_xsec_momentum_v1.parquet`
+(`config_hash=d36dea1f0fd93b5e…`).
 
-1. `scout label --config config/development.yaml`
-2. Fill the **Real data** section of
-   [`docs/results/m2_labeling_sanity.md`](results/m2_labeling_sanity.md) with the
-   pooled table from [`07-EDGE_AND_SCORING.md §3`](07-EDGE_AND_SCORING.md#3-the-resolved-setup-table)
-   (per strategy: `mean_r`, win rate, stop/time rates, `min(realised_r_gross)`,
-   `mean(entry_gap_atr)`).
-3. **If pooled `mean_r` exceeds about 0.4 R, STOP.** That is a bug, not an edge.
-   Likely culprits, in order: missing split adjustment, survivorship-biased
-   candidates, cross-sectional rank over the full panel, missing Donchian
-   `.shift(1)`, optimistic tie rule or losses clipped at −1 R, stop/target not
-   re-anchored on the fill.
-
-**Hard gate:** M3.6 must not start, and no real `EdgeTable` may be trusted,
-until this write-up is complete and `mean_r` is not ~0.4 R. Fixture work
-(M2.3–M3.5) is allowed in the meantime.
+**Hard gate for M3.6 is met:** write-up complete and pooled `mean_r` is not ~0.4 R.
 
 ### M2.3 Edge table — done
 `scoring/edge.py`, `cli/build_edge_table.py`. Bins, `BinStats`, both LCB methods,
@@ -304,9 +289,9 @@ timezone-aware axes. `deflated_sharpe` reads the trial count from the registry.
 **The lockbox refuses a fourth holdout evaluation and refuses any holdout run
 from a dirty git tree.**
 
-### M3.6 Development run and iteration
+### M3.6 Development run and iteration — done
 
-**Precondition:** [M2.2a](#m22a-real-data-labeling-sanity--blocked) recorded
+**Precondition:** [M2.2a](#m22a-real-data-labeling-sanity--done) recorded
 and pooled real-data `mean_r` is not ~0.4 R.
 
 Run the full pipeline on `config/development.yaml`. Follow the inspection order in
@@ -494,8 +479,7 @@ M1.1 ─► M1.2 ─► M1.3 ─► M1.4 ─► M1.5 ─► M1.6 ─► M1.7 ─
                                     │       ▲                      ▲
                                     │     M2.4                     │
                                     ▼                              │
-                          M2.2a (blocked until adjust + universe   │
-                                 + benchmark exist) ───────────────┘
+                          M2.2a (recorded; pooled mean_r = 0.057 R) ───┘
                                  hard gate: real labels trusted before M3.6
                                                                             │
                                                                     ┌───────┴───────┐
@@ -509,7 +493,8 @@ M1.1 ─► M1.2 ─► M1.3 ─► M1.4 ─► M1.5 ─► M1.6 ─► M1.7 ─
 ```
 
 Parallelisable: M2.4 (costs) alongside M2.1–M2.3. M3.5 (metrics) alongside
-M3.1–M3.4. M2.2a is a data-run gate, not a coding task; skip it while Blocked.
+M3.1–M3.4. M2.2a is recorded (pooled `mean_r` = 0.057 R); it was the hard gate
+before M3.6.
 Everything else is sequential.
 
 ---

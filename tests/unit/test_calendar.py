@@ -118,6 +118,16 @@ def test_close_utc_is_dst_correct() -> None:
     assert str(summer_close.tz) == "UTC"
 
 
+def test_requested_range_covers_pre_default_bound() -> None:
+    # exchange_calendars' default XNYS bound starts 2006-09-05. Development
+    # data begins 1998-01-02; the calendar must honour the requested start.
+    frame = build_calendar(date(1998, 1, 1), date(1998, 1, 9))
+    present = _sessions(frame)
+    assert date(1998, 1, 1) not in present  # Thursday New Year's Day
+    assert date(1998, 1, 2) in present  # Friday
+    assert date(1998, 1, 5) in present  # Monday
+
+
 def test_unknown_calendar_raises() -> None:
     with pytest.raises(ScoutDataError, match="unknown exchange calendar"):
         build_calendar(date(2008, 1, 1), date(2008, 1, 3), calendar_code="NOT_A_CAL")

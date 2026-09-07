@@ -85,7 +85,9 @@ def write_run_outputs(
         n_trades=int(metrics.get("n_trades", 0.0) or 0),
         mean_r=float(metrics.get("mean_r", float("nan"))),
         sharpe=float(metrics.get("sharpe", float("nan"))),
-        max_dd_pct=float(metrics.get("max_dd_pct", float("nan"))),
+        max_dd_pct=float(
+            metrics.get("max_drawdown_pct", metrics.get("max_dd_pct", float("nan")))
+        ),
         total_return_pct=float(metrics.get("total_return_pct", float("nan"))),
         notes=notes,
         timestamp_utc=now,

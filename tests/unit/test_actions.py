@@ -13,7 +13,9 @@ from scout.data.actions import (
     adjustment_factors,
     apply_adjustments,
     build_processed_panel,
+    contemporaneous_cash_amount,
     run_adjust,
+    scale_dividend_cash_to_contemporaneous,
 )
 from scout.data.calendar import build_calendar, reference_calendar_path
 from scout.data.ingest import run_ingest
@@ -402,3 +404,51 @@ def test_write_helpers_used_in_adjust_pipeline(tmp_path: Path) -> None:
     write_parquet_atomic(path, frame)
     write_json_atomic(tmp_path / "x.json", {"ok": True})
     assert path.is_file()
+
+
+def test_restated_dividend_scaled_by_later_reverse_split() -> None:
+    """Sharadar-style $17.50 on a 2011 $30 stock is $0.0875 after 1-for-200."""
+    cash = contemporaneous_cash_amount(
+        17.50, date(2011, 6, 29), ((date(2020, 4, 15), 0.005),)
+    )
+    assert cash == pytest.approx(0.0875)
+    actions = pd.DataFrame(
+        [
+            _actions_row(
+                date(2011, 6, 29), action_type="DIVIDEND", cash_amount=17.50
+            ),
+            _actions_row(date(2020, 4, 15), split_ratio=0.005),
+        ]
+    )
+    scaled = scale_dividend_cash_to_contemporaneous(actions)
+    divs = scaled.loc[scaled["action_type"] == "DIVIDEND", "cash_amount"]
+    assert float(divs.iloc[0]) == pytest.approx(0.0875)
+
+
+def test_restated_dividend_does_not_crush_adjustment_factor() -> None:
+    pre = date(2011, 6, 28)
+    ex = date(2011, 6, 29)
+    split_ex = date(2020, 4, 15)
+    close_raw = 30.0
+    ohlcv = pd.DataFrame(
+        [
+            _ohlcv_row(pre, close_raw),
+            _ohlcv_row(ex, 29.9),
+            _ohlcv_row(split_ex, 5.0),
+        ]
+    )
+    actions = pd.DataFrame(
+        [
+            _actions_row(ex, action_type="DIVIDEND", cash_amount=17.50),
+            _actions_row(split_ex, split_ratio=0.005),
+        ]
+    )
+    adjusted = apply_adjustments(ohlcv, actions)
+    pre_row = _at(adjusted, pre)
+    cash_raw = 17.50 * 0.005
+    expected_f = (1.0 / 0.005) * (1.0 - cash_raw / close_raw)
+    assert pre_row["close"] == pytest.approx(close_raw * expected_f)
+    crushed = close_raw * (1.0 / 0.005) * (1.0 - 17.50 / close_raw)
+    assert pre_row["close"] != pytest.approx(crushed)
+    assert pre_row["close"] > 1000.0
+    assert pre_row["close_raw"] == pytest.approx(close_raw)

@@ -193,3 +193,17 @@ def test_sizing_never_exceeds_risk_mandate(
     _qty, risk = size_position(opp, state, _asset(), 1.0, cfg)
     mandate = equity * to_decimal(risk_frac)
     assert risk <= mandate * Decimal("1.0001")
+
+
+def test_qty_uses_close_raw_not_crushed_adjusted_price() -> None:
+    """CHKAQ-class: adj ~1e-7, close_raw $30. Qty is tens of shares, not billions."""
+    setup = _setup(reference_price=1.0e-7, stop_price=5.0e-8)
+    opp = _opportunity(setup=setup)
+    qty, risk = size_position(
+        opp, _state(), _asset(), 1.0, PortfolioConfig(), price_raw=30.0
+    )
+    assert qty < Decimal("1000")
+    assert qty > Decimal("0")
+    # Same risk dollars as adj==raw at $30 with a 50% stop: $400 / $15 = 26.
+    assert qty == Decimal("26")
+    assert risk == Decimal("390")

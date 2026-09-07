@@ -16,7 +16,12 @@ from scout.domain.portfolio import PortfolioState, Position, TradeDecision
 from scout.domain.sentiment import SentimentView
 from scout.domain.universe import UniverseEntry
 from scout.portfolio.breakers import breaker_tripped, trading_enabled
-from scout.portfolio.sizing import heat_multiplier, liquidity_multiplier, size_position
+from scout.portfolio.sizing import (
+    heat_multiplier,
+    liquidity_multiplier,
+    size_position,
+    to_raw_distance,
+)
 from scout.sentiment.multiplier import sentiment_multiplier
 from scout.utils.decimals import to_decimal
 from scout.utils.errors import ScoutError
@@ -34,8 +39,13 @@ def select_and_size(
     sentiment_cfg: SentimentConfig,
     cost_cfg: CostsConfig,
     min_ev_net_r: float,
+    price_raw_by_symbol: Mapping[str, float] | None = None,
 ) -> tuple[TradeDecision, ...]:
-    """Greedy in rank order. One decision per input, accepted or rejected."""
+    """Greedy in rank order. One decision per input, accepted or rejected.
+
+    `price_raw_by_symbol` is `close_raw` at the decision bar (ADR-017). When
+    omitted, sizing falls back to `setup.reference_price`.
+    """
     decisions: list[TradeDecision] = []
     provisional = state
 
@@ -71,14 +81,17 @@ def select_and_size(
             * liquidity_multiplier(opp, cfg)
             * heat_multiplier(provisional, cfg)
         )
-        qty, risk_usd = size_position(opp, provisional, assets[opp.symbol], mult, cfg)
+        raw = _price_raw(opp, price_raw_by_symbol)
+        qty, risk_usd = size_position(
+            opp, provisional, assets[opp.symbol], mult, cfg, price_raw=raw
+        )
 
-        notional = _notional(qty, opp)
+        notional = qty * to_decimal(raw)
         if qty <= 0 or notional < assets[opp.symbol].min_notional_usd:
             decisions.append(_rejected(opp, rank, RejectionReason.SIZE_BELOW_MIN_NOTIONAL))
             continue
 
-        after = simulate_add(provisional, opp, qty, risk_usd)
+        after = simulate_add(provisional, opp, qty, risk_usd, price_raw=raw)
         if after.open_risk_pct > cfg.max_portfolio_heat_pct:
             decisions.append(_rejected(opp, rank, RejectionReason.PORTFOLIO_HEAT_CAP))
             continue
@@ -103,14 +116,14 @@ def select_and_size(
             opp.expected_bars_held,
             cost_cfg,
             atr_pct=opp.atr_pct,
-            price_raw=opp.setup.reference_price,
+            price_raw=raw,
         )
         if opp.ev_r_lcb - final_cost.cost_r < min_ev_net_r:
             decisions.append(_rejected(opp, rank, RejectionReason.BELOW_EV_THRESHOLD))
             continue
 
         decisions.append(
-            _accepted(opp, rank, qty, risk_usd, mult, mult_sentiment, final_cost)
+            _accepted(opp, rank, qty, risk_usd, mult, mult_sentiment, final_cost, raw)
         )
         provisional = after
 
@@ -122,14 +135,29 @@ def simulate_add(
     opp: Opportunity,
     qty: Decimal,
     risk_usd: Decimal,
+    *,
+    price_raw: float | None = None,
 ) -> PortfolioState:
     """Provisional state after accepting `opp` at `qty`. Caps see this, not `state`."""
     del risk_usd  # implied by qty and stop distance at entry; Position recomputes it
-    entry = to_decimal(opp.setup.reference_price)
-    stop = to_decimal(opp.setup.stop_price)
-    target = (
-        entry if opp.setup.target_price is None else to_decimal(opp.setup.target_price)
+    entry = to_decimal(
+        opp.setup.reference_price if price_raw is None else price_raw
     )
+    risk = to_raw_distance(
+        opp.setup.reference_price,
+        opp.setup.stop_price,
+        raw_price=entry,
+    )
+    stop = entry - Decimal(opp.direction.sign) * risk
+    if opp.setup.target_price is None:
+        target = entry
+    else:
+        reward = to_raw_distance(
+            opp.setup.reference_price,
+            opp.setup.target_price,
+            raw_price=entry,
+        )
+        target = entry + Decimal(opp.direction.sign) * reward
     position = Position(
         symbol=opp.symbol,
         direction=opp.direction,
@@ -164,8 +192,12 @@ def simulate_add(
     )
 
 
-def _notional(qty: Decimal, opp: Opportunity) -> Decimal:
-    return qty * to_decimal(opp.setup.reference_price)
+def _price_raw(
+    opp: Opportunity, price_raw_by_symbol: Mapping[str, float] | None
+) -> float:
+    if price_raw_by_symbol is not None and opp.symbol in price_raw_by_symbol:
+        return float(price_raw_by_symbol[opp.symbol])
+    return opp.setup.reference_price
 
 
 def _universe_entry(opp: Opportunity) -> UniverseEntry:
@@ -214,6 +246,7 @@ def _accepted(
     size_multiplier: float,
     sentiment_multiplier: float,
     final_cost: CostEstimate,
+    price_raw: float,
 ) -> TradeDecision:
     return TradeDecision(
         opportunity=opp,
@@ -222,7 +255,7 @@ def _accepted(
         rank=rank,
         qty=qty,
         entry_order_type=OrderType.MARKET,
-        intended_notional_usd=_notional(qty, opp),
+        intended_notional_usd=qty * to_decimal(price_raw),
         risk_usd=risk_usd,
         size_multiplier=size_multiplier,
         sentiment_multiplier=sentiment_multiplier,

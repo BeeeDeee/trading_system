@@ -1,7 +1,9 @@
+from collections.abc import Sequence
 from dataclasses import dataclass, fields
 from datetime import datetime
 from enum import Enum
 
+import numpy as np
 import pandas as pd  # type: ignore[import-untyped]
 
 from scout.domain._checks import require_aware
@@ -142,6 +144,8 @@ def _coerce_int(value: object) -> int:
         return int(value)
     if isinstance(value, int):
         return value
+    if isinstance(value, np.integer):
+        return int(value)
     if isinstance(value, float):
         return int(value)
     if isinstance(value, str):
@@ -154,9 +158,17 @@ def _coerce_float(value: object) -> float:
         return float(value)
     if isinstance(value, int | float):
         return float(value)
+    if isinstance(value, np.floating | np.integer):
+        return float(value)
     if isinstance(value, str):
         return float(value)
     raise TypeError(f"cannot convert {type(value).__name__} to float")
+
+
+def _coerce_bool(value: object) -> bool:
+    if isinstance(value, np.bool_):
+        return bool(value)
+    return bool(value)
 
 
 def _row_to_feature_row(record: dict[str, object]) -> FeatureRow:
@@ -182,6 +194,37 @@ def _row_to_feature_row(record: dict[str, object]) -> FeatureRow:
 def feature_row_from_record(record: dict[str, object]) -> FeatureRow:
     """Build a FeatureRow from a FeaturePanel record. Used by the engine loop."""
     return _row_to_feature_row(record)
+
+
+def feature_row_from_tuple(
+    values: Sequence[object], *, ts: datetime | None = None
+) -> FeatureRow:
+    """FeatureRow from a FEATURE_COLUMNS-aligned tuple. No intermediate dict."""
+    if len(values) != len(FEATURE_COLUMNS):
+        raise ValueError(
+            f"expected {len(FEATURE_COLUMNS)} feature values, got {len(values)}"
+        )
+    kwargs: dict[str, object] = {}
+    for name, value in zip(FEATURE_COLUMNS, values, strict=True):
+        if name == "ts":
+            if ts is not None:
+                kwargs[name] = ts
+            elif isinstance(value, datetime) and value.tzinfo is not None:
+                kwargs[name] = value
+            else:
+                kwargs[name] = pd.Timestamp(value).to_pydatetime()
+        elif name in _ENUM_FIELDS:
+            enum_cls = _ENUM_FIELDS[name]
+            kwargs[name] = value if isinstance(value, enum_cls) else enum_cls(str(value))
+        elif name in _BOOL_FIELDS:
+            kwargs[name] = _coerce_bool(value)
+        elif name in _INT_FIELDS:
+            kwargs[name] = _coerce_int(value)
+        elif name == "symbol":
+            kwargs[name] = str(value)
+        else:
+            kwargs[name] = _coerce_float(value)
+    return FeatureRow(**kwargs)  # type: ignore[arg-type]
 
 
 class FeaturePanel:

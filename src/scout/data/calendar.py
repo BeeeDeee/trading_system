@@ -31,13 +31,27 @@ def build_calendar(
     if end < start:
         raise ScoutDataError("calendar end must be on or after start")
     try:
-        cal = xcals.get_calendar(calendar_code)
+        # Default XNYS bounds start 2006-09-05, which drops the 1998-2005
+        # development window. Pass a padded range: get_calendar's start/end
+        # snap to sessions, so a holiday on `start` would otherwise become
+        # first_session = next weekday and sessions_in_range(start) fails.
+        cal_start = pd.Timestamp(start) - pd.Timedelta(days=14)
+        cal_end = pd.Timestamp(end) + pd.Timedelta(days=14)
+        if cal_end <= cal_start:
+            cal_end = cal_start + pd.Timedelta(days=28)
+        cal = xcals.get_calendar(calendar_code, start=cal_start, end=cal_end)
     except InvalidCalendarName as exc:
         raise ScoutDataError(
             f"unknown exchange calendar {calendar_code!r}; "
             f"known names include 'XNYS'"
         ) from exc
-    index = cal.sessions_in_range(pd.Timestamp(start), pd.Timestamp(end))
+    req_start = pd.Timestamp(start)
+    req_end = pd.Timestamp(end)
+    slice_start = max(req_start, pd.Timestamp(cal.first_session))
+    slice_end = min(req_end, pd.Timestamp(cal.last_session))
+    if slice_start > slice_end:
+        return pd.DataFrame(columns=list(CALENDAR_COLUMNS))
+    index = cal.sessions_in_range(slice_start, slice_end)
     if len(index) == 0:
         return pd.DataFrame(columns=list(CALENDAR_COLUMNS))
     opens = cal.opens.loc[index]

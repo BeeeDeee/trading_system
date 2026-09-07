@@ -5,7 +5,17 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from scout.cli import adjust, build_edge_table, build_universe, ingest, label_setups, run_backtest
+from scout.cli import (
+    adjust,
+    build_benchmark,
+    build_edge_table,
+    build_universe,
+    ingest,
+    label_setups,
+    label_status,
+    run_backtest,
+    seed_universe,
+)
 from scout.utils.errors import ScoutError
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -42,8 +52,26 @@ def main(argv: Sequence[str] | None = None) -> int:
     uni_p = sub.add_parser("build-universe", help="Build point-in-time universe snapshots")
     build_universe.add_arguments(uni_p)
 
+    seed_p = sub.add_parser(
+        "seed-universe",
+        help="Append §7.1 candidates to universe_candidates.txt (never deletes)",
+    )
+    seed_universe.add_arguments(seed_p)
+
+    bench_p = sub.add_parser(
+        "build-benchmark",
+        help="Write data/reference/benchmark_1d.parquet from processed SPY + VIX",
+    )
+    build_benchmark.add_arguments(bench_p)
+
     label_p = sub.add_parser("label", help="Detect and triple-barrier-label historical setups")
     label_setups.add_arguments(label_p)
+
+    label_status_p = sub.add_parser(
+        "label-status",
+        help="Print labeling progress.json",
+    )
+    label_status.add_arguments(label_status_p)
 
     edge_p = sub.add_parser("build-edge", help="Build the walk-forward edge table")
     build_edge_table.add_arguments(edge_p)
@@ -59,8 +87,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             return adjust.run(args)
         if args.command == "build-universe":
             return build_universe.run(args)
+        if args.command == "seed-universe":
+            return seed_universe.run(args)
+        if args.command == "build-benchmark":
+            return build_benchmark.run(args)
         if args.command == "label":
             return label_setups.run(args)
+        if args.command == "label-status":
+            return label_status.run(args)
         if args.command == "build-edge":
             return build_edge_table.run(args)
         if args.command == "backtest":

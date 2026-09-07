@@ -382,3 +382,35 @@ def test_exit_fill_has_no_extra_slippage() -> None:
     assert len(exits) == 1
     assert exits[0].exit_reason == "STOP"
     assert exits[0].price == Decimal("95.2")
+
+
+def test_entry_fill_uses_close_raw_scale() -> None:
+    """Adjusted open 1e-7 with close_raw $30 fills at $30, not 1e-7."""
+    records: list[dict[str, Any]] = []
+    rows = [
+        (TS0, 1.0e-7, 1.1e-7, 0.9e-7, 1.0e-7, 30.0),
+        (TS1, 1.0e-7, 1.1e-7, 0.9e-7, 1.0e-7, 30.0),
+    ]
+    for i, (ts, o, h, lo, c, raw) in enumerate(rows):
+        records.append(
+            {
+                "asset_id": "AAPL",
+                "symbol": "AAPL",
+                "ts": ts,
+                "session_index": i,
+                "open": o,
+                "high": h,
+                "low": lo,
+                "close": c,
+                "close_raw": raw,
+                "volume": 1_000.0,
+                "dollar_volume": raw * 1_000.0,
+                "is_suspect": False,
+            }
+        )
+    panel = MarketPanel(pd.DataFrame(records, columns=list(MARKET_COLUMNS)))
+    broker = _broker(panel)
+    fill, _corr = broker.submit_bracket(*_intents(), decision=_decision())
+    assert fill is not None
+    assert fill.price == pytest.approx(Decimal("30"))
+    assert fill.qty == QTY

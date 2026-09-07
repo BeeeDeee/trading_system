@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import fields
+from dataclasses import fields, replace
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from typing import Any
@@ -15,6 +15,7 @@ from scout.backtest.ledger import (
     apply_dividend,
     apply_entry,
     apply_exit,
+    apply_split,
     initial_state,
     mark,
 )
@@ -211,6 +212,18 @@ def test_equity_identity() -> None:
     assert state.equity_usd == state.cash_usd
 
 
+def test_apply_entry_identity_not_three_term_add() -> None:
+    """Decimal is not associative at prec=28. cash + implied + notional drifts."""
+    messy = replace(
+        initial_state(START, TS0),
+        cash_usd=Decimal("80297.76471136582818206050732"),
+        equity_usd=Decimal("107320.9919555519281845850412"),
+    )
+    state = apply_entry(messy, _decision(), _fill(price=ENTRY, ts=TS1), "corr")
+    implied = state.equity_usd - state.cash_usd
+    assert state.equity_usd == state.cash_usd + implied
+
+
 def test_decimal_throughout() -> None:
     panel = _panel(
         [
@@ -352,3 +365,19 @@ def test_apply_exit_forwards_regime_and_vol_bucket() -> None:
     assert trade.regime is Regime.TREND_UP
     assert trade.vol_bucket is VolBucket.HIGH
     assert trade.ev_net_r_at_entry == pytest.approx(0.15)
+
+
+def test_apply_split_preserves_notional() -> None:
+    state = initial_state(START, TS0)
+    state = apply_entry(state, _decision(), _fill(price=ENTRY, ts=TS1), "corr")
+    pos = state.positions["AAPL"]
+    notional = pos.qty * pos.entry_price
+    cash = state.cash_usd
+    equity = state.equity_usd
+    state = apply_split(state, "AAPL", Decimal("2"), TS2)
+    pos = state.positions["AAPL"]
+    assert pos.qty == QTY * Decimal("2")
+    assert pos.entry_price == ENTRY / Decimal("2")
+    assert pos.qty * pos.entry_price == notional
+    assert state.cash_usd == cash
+    assert state.equity_usd == equity

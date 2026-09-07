@@ -399,9 +399,8 @@ def estimate_cost(
     dividend_yield_annual: float | None = None,
 ) -> CostEstimate:
     """Formulas in 08-COSTS.md. Same function in backtest and live — there is
-    no second implementation and no mode flag. Ranking passes FeatureRow.atr_pct
-    and close_raw; the portfolio re-check passes Opportunity.atr_pct and
-    setup.reference_price."""
+    no second implementation and no mode flag. Ranking and the portfolio
+    re-check both pass close_raw (ADR-017), never setup.reference_price."""
 ```
 
 ### Portfolio — `portfolio/selection.py`, `portfolio/sizing.py`
@@ -432,10 +431,11 @@ def select_and_size(
 
 def size_position(
     opp: Opportunity, state: PortfolioState, asset: Asset,
-    multiplier: float, cfg: PortfolioConfig,
+    multiplier: float, cfg: PortfolioConfig, *, price_raw: float | None = None,
 ) -> tuple[Decimal, Decimal]:
-    """Returns (qty, risk_usd). qty is step-rounded DOWN. Decimal boundary
-    starts here."""
+    """Returns (qty, risk_usd). qty is step-rounded DOWN, in close_raw shares
+    (ADR-017). Decimal boundary starts here. `price_raw` is the unadjusted
+    decision close; omitted only when tests set adj == raw."""
 ```
 
 ---

@@ -15,7 +15,7 @@ import pandas as pd  # type: ignore[import-untyped]
 
 from scout.backtest import ledger as ledger_mod
 from scout.config.hashing import config_hash
-from scout.config.schema import FeaturesJsonPolicy, ScoutConfig
+from scout.config.schema import FeaturesJsonPolicy, GatesConfig, ScoutConfig
 from scout.costs.model import estimate_cost
 from scout.data.ingest import read_candidate_pairs
 from scout.data.store import read_parquet
@@ -30,7 +30,7 @@ from scout.domain.enums import (
     VolBucket,
 )
 from scout.domain.execution import Fill, OrderIntent
-from scout.domain.features import FeaturePanel, FeatureRow, feature_row_from_record
+from scout.domain.features import FeaturePanel, FeatureRow, feature_row_from_tuple
 from scout.domain.market import (
     BENCHMARK_COLUMNS,
     Asset,
@@ -47,7 +47,7 @@ from scout.domain.sentiment import SentimentObservation, SentimentView
 from scout.domain.setup import Setup
 from scout.domain.universe import UniverseEntry, UniverseSnapshot
 from scout.features.engine import compute_features
-from scout.gates.eligibility import evaluate_gates
+from scout.gates.eligibility import SessionLookup, earnings_in_window, evaluate_gates
 from scout.portfolio.selection import select_and_size
 from scout.scoring.rank import build_opportunity, rank
 from scout.sentiment.aggregate import build_view
@@ -100,7 +100,7 @@ class BacktestEngine:
         self._bar_clock = BarClock()
         self._entry_meta: dict[str, tuple[Regime, VolBucket, float]] = {}
         self._used_bins: list[BinStats] = []
-        self._last_close: dict[str, Decimal] = {}
+        self._last_close_adj: dict[str, float] = {}
         self._last_close_raw: dict[str, float] = {}
         self._last_ts_by_symbol: dict[str, datetime] = {}
         self._session_pos: dict[datetime, int] = {}
@@ -109,6 +109,9 @@ class BacktestEngine:
         }
         self._observations: tuple[SentimentObservation, ...] = ()
         self._features = features
+        self._session_lookup = SessionLookup(self.calendar)
+        self._ineligible_cache_key: object | None = None
+        self._ineligible_cache_counts: Counter[RejectionReason] = Counter()
 
     def run(self) -> BacktestResult:
         started_at = self._wall.now()
@@ -122,9 +125,12 @@ class BacktestEngine:
             self.run_id = make_run_id(self.cfg.run.strategy_slug, self._wall)
 
         candidates = read_candidate_pairs(Path(self.cfg.universe.candidates_file))
-        symbols = [str(x) for x in candidates["asset_id"].tolist()]
-        if not symbols:
-            symbols = [a.asset_id for a in self.assets.values()]
+        candidate_ids = [str(x) for x in candidates["asset_id"].tolist()]
+        if not candidate_ids:
+            candidate_ids = [a.asset_id for a in self.assets.values()]
+        snapshots_frame = self.universe.load_all()
+        symbols = _panel_asset_ids(snapshots_frame, candidate_ids)
+        print(f"stage=load_panel symbols={len(symbols)}", flush=True)
         panel = self.candles.load_panel(
             symbols,
             self.cfg.data.decision_timeframe,
@@ -139,11 +145,19 @@ class BacktestEngine:
             attach_actions(self._actions)
 
         benchmark = self._benchmark if self._benchmark is not None else _load_benchmark(self.cfg)
-        snapshots_frame = self.universe.load_all()
         if self._features is not None:
             features = self._features
         else:
-            features = compute_features(panel, benchmark, snapshots_frame, self.cfg.features)
+            n_feat_symbols = int(panel.frame["symbol"].nunique()) if not panel.frame.empty else 0
+            print(f"stage=compute_features symbols={n_feat_symbols}", flush=True)
+            features = compute_features(
+                panel,
+                benchmark,
+                snapshots_frame,
+                self.cfg.features,
+                on_progress=_print_feature_progress,
+            )
+            print("stage=compute_features done", flush=True)
         self._session_pos = {_as_utc(t): i for i, t in enumerate(panel.timestamps)}
 
         self._observations = self.sentiment.observations(
@@ -164,14 +178,25 @@ class BacktestEngine:
         reason_counts: Counter[RejectionReason] = Counter()
         records: list[DecisionRecord] = []
 
+        n_trade_bars = sum(
+            1 for t in panel.timestamps if _as_utc(t) >= self.cfg.period.warmup_end
+        )
+        print(f"stage=loop bars={n_trade_bars}", flush=True)
+        loop_i = 0
         for ts in panel.timestamps:
             py_ts = _as_utc(ts)
             if py_ts < self.cfg.period.warmup_end:
                 continue
+            loop_i += 1
             self._bar_clock.set(py_ts)
 
             bar_block = panel.rows_at(py_ts)
-            self._update_close_cache(bar_block)
+            n_bar = len(bar_block)
+            if n_bar > 20_000:
+                raise ScoutDataError(
+                    f"rows_at({py_ts.isoformat()}) returned {n_bar} rows; expected one session"
+                )
+            self._update_close_cache(bar_block, py_ts)
 
             marks = self._marks_for(state, py_ts)
             exit_kwargs = self._exit_kwargs_from_brackets(state)
@@ -194,9 +219,23 @@ class BacktestEngine:
             trades.extend(closed)
 
             snapshot = self.universe.snapshot_at(py_ts)
-            candidates_opp, recs = self.evaluate(py_ts, features, snapshot, state)
+            eval_t0 = self._wall.now()
+            candidates_opp, recs, ineligible_counts = self.evaluate(
+                py_ts, features, snapshot, state
+            )
+            eval_s = (self._wall.now() - eval_t0).total_seconds()
+            if loop_i <= 5 or loop_i == n_trade_bars or loop_i % 10 == 0:
+                n_elig = 0 if snapshot is None else len(snapshot.eligible_symbols)
+                print(
+                    f"stage=loop bars={loop_i}/{n_trade_bars} "
+                    f"ts={py_ts.date().isoformat()} bar_rows={n_bar} "
+                    f"elig={n_elig} recs={len(recs)} opps={len(candidates_opp)} "
+                    f"eval_s={eval_s:.2f}",
+                    flush=True,
+                )
             records.extend(recs)
-            n_considered += len(recs)
+            n_considered += len(recs) + sum(ineligible_counts.values())
+            reason_counts.update(ineligible_counts)
             for rec in recs:
                 if rec.rejection_reason is not None:
                     reason_counts[rec.rejection_reason] += 1
@@ -213,6 +252,7 @@ class BacktestEngine:
                 self.cfg.sentiment,
                 self.cfg.costs,
                 self.cfg.scoring.min_ev_net_r,
+                price_raw_by_symbol=self._last_close_raw,
             )
             decision_recs = to_records(
                 decisions,
@@ -275,25 +315,34 @@ class BacktestEngine:
         features: FeaturePanel,
         snapshot: UniverseSnapshot | None,
         state: PortfolioState,
-    ) -> tuple[tuple[Opportunity, ...], list[DecisionRecord]]:
-        """Gates → detect → edge → cost → Opportunity. Records every rejection."""
+    ) -> tuple[tuple[Opportunity, ...], list[DecisionRecord], Counter[RejectionReason]]:
+        """Gates → detect → edge → cost → Opportunity. Records every rejection.
+
+        Snapshot-ineligible names are counted into the funnel without writing a
+        DecisionRecord per name per strategy. The audit parquet keeps names that
+        could trade that session (eligible_at(t)).
+        """
         recs: list[DecisionRecord] = []
         opps: list[Opportunity] = []
-        feat_block = features.rows_at(ts)
-        feat_by_symbol = _frame_by_symbol(feat_block)
         if snapshot is None:
             recs.append(_blank_record(self.run_id, ts, RejectionReason.NOT_IN_UNIVERSE))
-            return (), recs
+            return (), recs, Counter()
 
-        symbols = tuple(sorted(snapshot.entries))
+        ineligible_counts = self._ineligible_counts(snapshot)
+        eligible_symbols = snapshot.eligible_symbols
+        feat_block = features.rows_at(ts)
+        if len(feat_block) > 20_000:
+            raise ScoutDataError(
+                f"feature rows_at({ts.isoformat()}) returned {len(feat_block)} rows"
+            )
+        raw_by_symbol = _raw_feature_recs(feat_block, eligible_symbols)
+        session_idx = self._session_lookup.index_at_ts(ts)
         equity = float(state.equity_usd)
         risk_capital = equity * self.cfg.portfolio.risk_fraction_per_trade
-        for symbol in symbols:
+        for symbol in eligible_symbols:
             entry = snapshot.entries.get(symbol)
-            feat_rec = feat_by_symbol.get(symbol)
-            feature_row: FeatureRow | None = None
-            if feat_rec is not None and (entry is None or entry.eligible):
-                feature_row = feature_row_from_record(feat_rec)
+            rec = raw_by_symbol.get(symbol)
+            cheap = _column_gate(rec, self.cfg.gates, self.cfg.universe.min_bars_since_gap)
             asset = self.assets.get(symbol)
             is_etf = asset.is_etf if asset is not None else False
             asset_id = (
@@ -303,7 +352,48 @@ class BacktestEngine:
             )
             events = self.earnings_by_asset.get(asset_id, ())
             close_raw = self._last_close_raw.get(symbol)
+            feature_row: FeatureRow | None = None
             for strategy in self.strategies:
+                if cheap is not None:
+                    recs.append(
+                        _rejection_record(
+                            run_id=self.run_id,
+                            ts=ts,
+                            symbol=symbol,
+                            strategy_id=strategy.strategy_id,
+                            reason=cheap,
+                            feature_row=None,
+                            setup=None,
+                            policy=self.cfg.audit.features_json_policy,
+                        )
+                    )
+                    continue
+                max_hold = int(getattr(strategy, "max_hold_bars", 21))
+                if earnings_in_window(
+                    ts=ts,
+                    max_hold_bars=max_hold,
+                    events=events,
+                    is_etf=is_etf,
+                    calendar=self.calendar,
+                    lookup=self._session_lookup,
+                    session_idx=session_idx,
+                ):
+                    recs.append(
+                        _rejection_record(
+                            run_id=self.run_id,
+                            ts=ts,
+                            symbol=symbol,
+                            strategy_id=strategy.strategy_id,
+                            reason=RejectionReason.EARNINGS_IN_WINDOW,
+                            feature_row=None,
+                            setup=None,
+                            policy=self.cfg.audit.features_json_policy,
+                        )
+                    )
+                    continue
+                if feature_row is None:
+                    assert rec is not None
+                    feature_row = feature_row_from_tuple(tuple(rec), ts=ts)
                 reason, setup, opp = self._evaluate_one(
                     ts=ts,
                     symbol=symbol,
@@ -315,6 +405,8 @@ class BacktestEngine:
                     asset=asset,
                     risk_capital=risk_capital,
                     close_raw=close_raw,
+                    skip_eligibility_gates=True,
+                    session_idx=session_idx,
                 )
                 if opp is not None:
                     opps.append(opp)
@@ -331,7 +423,15 @@ class BacktestEngine:
                         policy=self.cfg.audit.features_json_policy,
                     )
                 )
-        return tuple(opps), recs
+        return tuple(opps), recs, ineligible_counts
+
+    def _ineligible_counts(self, snapshot: UniverseSnapshot) -> Counter[RejectionReason]:
+        if snapshot is self._ineligible_cache_key:
+            return self._ineligible_cache_counts
+        counts = _ineligible_reason_counts(snapshot, len(self.strategies))
+        self._ineligible_cache_key = snapshot
+        self._ineligible_cache_counts = counts
+        return counts
 
     def _evaluate_one(
         self,
@@ -346,21 +446,26 @@ class BacktestEngine:
         asset: Asset | None,
         risk_capital: float,
         close_raw: float | None,
+        skip_eligibility_gates: bool = False,
+        session_idx: int | None = None,
     ) -> tuple[RejectionReason | None, Setup | None, Opportunity | None]:
         max_hold = int(getattr(strategy, "max_hold_bars", 21))
-        gate = evaluate_gates(
-            feature_row,
-            universe_entry,
-            self.cfg.gates,
-            is_etf=is_etf,
-            earnings=events,
-            max_hold_bars=max_hold,
-            calendar=self.calendar,
-            min_bars_since_gap=self.cfg.universe.min_bars_since_gap,
-            bar_age_bars=0 if feature_row is not None else 10_000,
-        )
-        if gate is not None:
-            return gate, None, None
+        if not skip_eligibility_gates:
+            gate = evaluate_gates(
+                feature_row,
+                universe_entry,
+                self.cfg.gates,
+                is_etf=is_etf,
+                earnings=events,
+                max_hold_bars=max_hold,
+                calendar=self.calendar,
+                min_bars_since_gap=self.cfg.universe.min_bars_since_gap,
+                bar_age_bars=0 if feature_row is not None else 10_000,
+                session_lookup=self._session_lookup,
+                session_idx=session_idx,
+            )
+            if gate is not None:
+                return gate, None, None
         assert feature_row is not None
         if not math.isfinite(feature_row.atr_14) or feature_row.atr_14 <= 0:
             return RejectionReason.INSUFFICIENT_HISTORY, None, None
@@ -397,6 +502,8 @@ class BacktestEngine:
                 hard_to_borrow_max_bps_per_year=(
                     self.cfg.costs.hard_to_borrow_max_bps_per_year
                 ),
+                session_lookup=self._session_lookup,
+                session_idx=session_idx,
             )
             if htb is RejectionReason.HARD_TO_BORROW:
                 return htb, setup, None
@@ -451,7 +558,7 @@ class BacktestEngine:
             fill = self.broker.close_position(symbol, "TIME")
             if fill is None:
                 continue
-            mark_px = self._last_close.get(symbol)
+            mark_px = self._close_decimal(symbol)
             current, trade = ledger_mod.apply_exit(
                 current,
                 pos,
@@ -482,7 +589,7 @@ class BacktestEngine:
             kwargs = self._one_exit_kwargs(symbol)
             fill = self.broker.close_position(symbol, "DELISTED")
             if fill is None:
-                price = self._last_close.get(symbol)
+                price = self._close_decimal(symbol)
                 if price is None:
                     continue
                 fill = Fill(
@@ -498,7 +605,7 @@ class BacktestEngine:
                     is_maker=False,
                     exit_reason="DELISTED",
                 )
-            mark_px = self._last_close.get(symbol)
+            mark_px = self._close_decimal(symbol)
             current, trade = ledger_mod.apply_exit(
                 current,
                 pos,
@@ -558,22 +665,29 @@ class BacktestEngine:
             )
         return pd.DataFrame(rows)
 
-    def _update_close_cache(self, bar_block: pd.DataFrame) -> None:
+    def _update_close_cache(self, bar_block: pd.DataFrame, ts: datetime) -> None:
         if bar_block.empty:
             return
-        for rec in bar_block.to_dict("records"):
-            symbol = str(rec["symbol"])
-            self._last_close[symbol] = to_decimal(float(rec["close"]))
-            self._last_close_raw[symbol] = float(rec["close_raw"])
-            ts_raw = rec.get("ts")
-            if ts_raw is not None:
-                self._last_ts_by_symbol[symbol] = _as_utc(ts_raw)
+        for rec in bar_block.itertuples(index=False):
+            symbol = str(rec.symbol)
+            self._last_close_adj[symbol] = float(rec.close)
+            self._last_close_raw[symbol] = float(rec.close_raw)
+            self._last_ts_by_symbol[symbol] = ts
+
+    def _close_decimal(self, symbol: str) -> Decimal | None:
+        raw = self._last_close_raw.get(symbol)
+        if raw is None:
+            adj = self._last_close_adj.get(symbol)
+            if adj is None:
+                return None
+            return to_decimal(adj)
+        return to_decimal(raw)
 
     def _marks_for(self, state: PortfolioState, ts: datetime) -> dict[str, Decimal]:
         del ts
         out: dict[str, Decimal] = {}
         for symbol in state.positions:
-            px = self._last_close.get(symbol)
+            px = self._close_decimal(symbol)
             if px is not None:
                 out[symbol] = px
         return out
@@ -846,12 +960,69 @@ def _load_benchmark(cfg: ScoutConfig) -> BenchmarkPanel:
     return BenchmarkPanel(frame.loc[:, list(BENCHMARK_COLUMNS)])
 
 
-def _frame_by_symbol(frame: pd.DataFrame) -> dict[str, dict[str, object]]:
-    if frame.empty:
+def _panel_asset_ids(snapshots: pd.DataFrame, candidate_ids: Sequence[str]) -> list[str]:
+    """OHLC load set: names eligible on at least one snapshot.
+
+    Never-eligible candidates are universe rejects and do not need features.
+    Empty / all-ineligible snapshots fall back to the candidate file so tests
+    that inject a panel still have timestamps.
+    """
+    if snapshots.empty or "eligible" not in snapshots.columns:
+        return list(candidate_ids)
+    elig = snapshots.loc[snapshots["eligible"].astype(bool)]
+    if elig.empty:
+        return list(candidate_ids)
+    col = "asset_id" if "asset_id" in elig.columns else "symbol"
+    return sorted({str(x) for x in elig[col].tolist()})
+
+
+def _ineligible_reason_counts(
+    snapshot: UniverseSnapshot, n_strategies: int
+) -> Counter[RejectionReason]:
+    counts: Counter[RejectionReason] = Counter()
+    if n_strategies <= 0:
+        return counts
+    for entry in snapshot.entries.values():
+        if entry.eligible:
+            continue
+        reason = entry.reason
+        if reason is None:
+            continue
+        counts[reason] += n_strategies
+    return counts
+
+
+def _print_feature_progress(done: int, total: int) -> None:
+    print(f"stage=compute_features symbols={done}/{total}", flush=True)
+
+
+def _column_gate(
+    rec: object | None,
+    gates: GatesConfig,
+    min_bars_since_gap: int,
+) -> RejectionReason | None:
+    """Rows 2-6 of evaluate_gates, from the feature namedtuple. No FeatureRow."""
+    if rec is None:
+        return RejectionReason.INSUFFICIENT_HISTORY
+    if bool(getattr(gates, "require_warm", True)) and not bool(getattr(rec, "is_warm")):
+        return RejectionReason.INSUFFICIENT_HISTORY
+    if int(getattr(rec, "bars_since_gap")) < min_bars_since_gap:
+        return RejectionReason.DATA_GAP
+    if int(getattr(rec, "xs_population")) < int(getattr(gates, "min_xs_population")):
+        return RejectionReason.THIN_CROSS_SECTION
+    return None
+
+
+def _raw_feature_recs(
+    frame: pd.DataFrame, symbols: Sequence[str]
+) -> dict[str, Any]:
+    if frame.empty or not symbols:
         return {}
-    out: dict[str, dict[str, object]] = {}
-    for rec in frame.to_dict("records"):
-        out[str(rec["symbol"])] = rec
+    wanted = set(symbols)
+    sub = frame.loc[frame["symbol"].astype(str).isin(wanted)]
+    out: dict[str, Any] = {}
+    for rec in sub.itertuples(index=False):
+        out[str(rec.symbol)] = rec
     return out
 
 

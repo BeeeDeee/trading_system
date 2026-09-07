@@ -150,7 +150,7 @@ The largest new correctness surface in the equity pivot. Read
 | `ex_date` | `date32` | first session the price reflects the action |
 | `action_type` | `string` | `SPLIT`, `DIVIDEND`, `SPINOFF`, `MERGER`, `TICKER_CHANGE` |
 | `split_ratio` | `double` | new shares per old share; 4.0 for a 4-for-1. 1.0 for non-splits |
-| `cash_amount` | `double` | dividend per share in USD. 0.0 for non-dividends |
+| `cash_amount` | `double` | vendor dividend per share. At adjust/backtest load this is converted to contemporaneous $ per then-share (times later SPLIT ratios) so it matches `close_raw`. 0.0 for non-dividends |
 | `new_symbol` | `string` | for `TICKER_CHANGE`, else empty |
 
 ### 4.2 Ratio back-adjustment

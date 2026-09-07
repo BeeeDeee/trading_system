@@ -20,6 +20,7 @@ trading_system/
 │   ├── README.md … 17-IMPLEMENTER_GUIDE.md
 │   ├── ADR/
 │   └── results/                    # COMMITTED research write-ups
+│       ├── m3_development.md
 │       ├── m3_holdout.md
 │       └── sentiment_promotion.md
 │
@@ -63,10 +64,12 @@ trading_system/
 │       │   ├── calendar.py         # XNYS via exchange_calendars
 │       │   ├── actions.py          # splits, dividends, spinoffs — causal adjust
 │       │   ├── quality.py          # gap / suspect-session detection
-│       │   └── store.py            # atomic parquet read/write
+│       │   ├── store.py            # atomic parquet read/write
+│       │   └── benchmark.py        # SPY + VIX → reference/benchmark_1d.parquet
 │       │
 │       ├── universe/
 │       │   ├── build.py            # snapshot construction
+│       │   ├── candidates.py       # §7.1 seed of universe_candidates.txt
 │       │   ├── eligibility.py      # the ordered rules
 │       │   └── spread.py           # Corwin-Schultz
 │       │
@@ -142,8 +145,11 @@ trading_system/
 │           ├── __main__.py         # `scout` entry point, subcommand dispatch
 │           ├── ingest.py
 │           ├── adjust.py           # causal split/dividend adjust
+│           ├── seed_universe.py    # append-only §7.1 candidate seed
 │           ├── build_universe.py
-│           ├── label_setups.py
+│           ├── build_benchmark.py  # SPY + VIX → reference/benchmark_1d.parquet
+│           ├── label_setups.py       # checkpoints + progress.json
+│           ├── label_status.py
 │           ├── build_edge_table.py
 │           ├── run_backtest.py
 │           ├── robustness.py
@@ -260,14 +266,17 @@ Notes:
 ## 4. CLI surface
 
 ```text
-scout ingest          --config <cfg> [--symbols-file F] [--start D] [--end D]
-scout adjust          --config <cfg>
-scout build-universe  --config <cfg>
-scout label           --config <cfg> [--strategy ID]
-scout build-edge      --config <cfg>
-scout backtest        --config <cfg> [--notes TEXT] [--force-holdout]
-scout robustness      --config <cfg> [--suite NAME]
-scout report          --run-id ID
+scout ingest           --config <cfg> [--symbols-file F] [--start D] [--end D]
+scout adjust           --config <cfg>
+scout seed-universe    --config <cfg>
+scout build-universe   --config <cfg>
+scout build-benchmark  --config <cfg>
+scout label            --config <cfg> [--strategy ID] [--no-resume]
+scout label-status     [--labels-dir DIR]
+scout build-edge       --config <cfg>
+scout backtest         --config <cfg> [--notes TEXT] [--force-holdout]
+scout robustness       --config <cfg> [--suite NAME]
+scout report           --run-id ID
 ```
 
 Full pipeline from nothing:

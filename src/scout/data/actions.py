@@ -7,8 +7,9 @@ is the unadjusted close and is never rewritten. See ADR-017.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 import numpy as np
@@ -34,6 +35,68 @@ from scout.utils.errors import ScoutDataError
 _PRICE_ACTIONS = frozenset(
     {ActionType.SPLIT.value, ActionType.DIVIDEND.value, ActionType.SPINOFF.value}
 )
+
+
+def scale_dividend_cash_to_contemporaneous(actions: pd.DataFrame) -> pd.DataFrame:
+    """Rewrite DIVIDEND `cash_amount` into $ per then-outstanding share.
+
+    Vendors restate historical dividends onto the snapshot share count. A
+    1-for-200 reverse split (`split_ratio=0.005`) turns a 2011 $0.0875
+    quarterly into $17.50. `_cash_factor` divides by `close_raw` (then-dollars
+    per then-share), so the restated figure must be multiplied back by every
+    *later* SPLIT ratio. Spinoffs do not change the parent's share count here.
+    """
+    if actions.empty or "cash_amount" not in actions.columns:
+        return actions
+    parts: list[pd.DataFrame] = []
+    for _, grp in actions.groupby("asset_id", sort=False):
+        parts.append(_scale_one_asset_dividends(grp))
+    if not parts:
+        return actions
+    return pd.concat(parts, ignore_index=True)
+
+
+def contemporaneous_cash_amount(
+    cash_amount: float,
+    ex_date: date,
+    later_splits: Sequence[tuple[date, float]],
+) -> float:
+    """`cash_amount` times product of split_ratio for splits with ex_date > this one."""
+    factor = 1.0
+    for split_ex, ratio in later_splits:
+        if split_ex > ex_date and ratio > 0.0:
+            factor *= ratio
+    return cash_amount * factor
+
+
+def _scale_one_asset_dividends(grp: pd.DataFrame) -> pd.DataFrame:
+    out = grp.copy()
+    types = out["action_type"].astype(str)
+    split_mask = types.eq(ActionType.SPLIT.value)
+    if not bool(split_mask.to_numpy().any()):
+        return out
+    split_ex = [_as_date(v) for v in out.loc[split_mask, "ex_date"].tolist()]
+    split_r = out.loc[split_mask, "split_ratio"].to_numpy(dtype=np.float64)
+    later = tuple(zip(split_ex, (float(r) for r in split_r), strict=True))
+    cash = out["cash_amount"].to_numpy(dtype=np.float64, copy=True)
+    div_mask = types.eq(ActionType.DIVIDEND.value).to_numpy()
+    ex_dates = [_as_date(v) for v in out["ex_date"].tolist()]
+    for i, is_div in enumerate(div_mask):
+        if not is_div:
+            continue
+        cash[i] = contemporaneous_cash_amount(float(cash[i]), ex_dates[i], later)
+    out["cash_amount"] = cash
+    return out
+
+
+def _as_date(value: object) -> date:
+    if isinstance(value, date) and not isinstance(value, datetime):
+        return value
+    ts = pd.Timestamp(value)
+    parsed = ts.date()
+    if not isinstance(parsed, date):
+        raise TypeError(f"cannot parse date from {value!r}")
+    return parsed
 
 
 @dataclass(frozen=True, slots=True)
@@ -70,7 +133,11 @@ def adjustment_factors(
     factors = np.ones(n, dtype=np.float64)
     if actions.empty:
         return pd.Series(factors, index=close_raw.index)
-    events = _per_action_events(actions, session_ts, close_raw)
+    events = _per_action_events(
+        scale_dividend_cash_to_contemporaneous(actions),
+        session_ts,
+        close_raw,
+    )
     if not events:
         return pd.Series(factors, index=close_raw.index)
     events = sorted(events, key=lambda item: item[0])
