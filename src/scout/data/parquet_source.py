@@ -113,6 +113,10 @@ def _all_year_paths(panel_dir: Path) -> list[Path]:
 
 
 def _read_panel_table(paths: Sequence[Path], asset_ids: Sequence[str]) -> pa.Table:
+    n_files = len(paths)
+    first = paths[0].name if paths else ""
+    last = paths[-1].name if paths else ""
+    print(f"stage=load_panel files={n_files} first={first} last={last}", flush=True)
     dataset = ds.dataset([str(p) for p in paths], format="parquet")
     filt = ds.field("asset_id").isin(list(asset_ids))
     try:

@@ -128,14 +128,24 @@ class BacktestEngine:
         candidate_ids = [str(x) for x in candidates["asset_id"].tolist()]
         if not candidate_ids:
             candidate_ids = [a.asset_id for a in self.assets.values()]
+        print("stage=load_universe", flush=True)
         snapshots_frame = self.universe.load_all()
+        print(f"stage=load_universe rows={len(snapshots_frame)}", flush=True)
         symbols = _panel_asset_ids(snapshots_frame, candidate_ids)
-        print(f"stage=load_panel symbols={len(symbols)}", flush=True)
+        print(
+            f"stage=load_panel symbols={len(symbols)} "
+            f"years={self.cfg.period.start.year}-{self.cfg.period.end.year}",
+            flush=True,
+        )
         panel = self.candles.load_panel(
             symbols,
             self.cfg.data.decision_timeframe,
             self.cfg.period.start,
             self.cfg.period.end,
+        )
+        print(
+            f"stage=load_panel done rows={0 if panel.frame.empty else len(panel.frame)}",
+            flush=True,
         )
         attach = getattr(self.broker, "attach_panel", None)
         if callable(attach):

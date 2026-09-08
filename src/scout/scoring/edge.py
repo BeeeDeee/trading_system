@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from datetime import UTC, datetime
 
 import numpy as np
@@ -115,6 +115,7 @@ def build_edge_table(
     sessions: Sequence[datetime] | pd.DatetimeIndex | None = None,
     config_hash: str = "",
     data_snapshot_id: str = "",
+    on_progress: Callable[[int, int, BinKey], None] | None = None,
 ) -> EdgeTable:
     """Bin, then compute BinStats at each as_of grid point using only setups
     with resolution_ts < as_of.
@@ -126,12 +127,15 @@ def build_edge_table(
         return EdgeTable((), config_hash=config_hash, data_snapshot_id=data_snapshot_id)
     stats: list[BinStats] = []
     grouped = prepared.groupby(["strategy_id", "direction", "vol_bucket"], sort=True)
-    for (strategy_id, direction, vol_bucket), group in grouped:
+    n_groups = int(grouped.ngroups)
+    for i, ((strategy_id, direction, vol_bucket), group) in enumerate(grouped, start=1):
         key = BinKey(
             strategy_id=str(strategy_id),
             direction=Direction(str(direction)),
             vol_bucket=VolBucket(str(vol_bucket)),
         )
+        if on_progress is not None:
+            on_progress(i, n_groups, key)
         ordered = group.sort_values("resolution_ts", kind="mergesort")
         res_index = pd.DatetimeIndex(pd.to_datetime(ordered["resolution_ts"], utc=True))
         for as_of in grid:

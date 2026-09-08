@@ -269,6 +269,9 @@ def _validate_sentiment(cfg: ScoutConfig) -> None:
             )
 
 
+_UNMAPPED_PREVIEW = 20
+
+
 def _warn_unmapped_symbols(cfg: ScoutConfig) -> None:
     candidates = _read_candidate_symbols(Path(cfg.universe.candidates_file))
     if not candidates:
@@ -276,11 +279,14 @@ def _warn_unmapped_symbols(cfg: ScoutConfig) -> None:
     mapped = _read_cluster_symbols(Path(cfg.universe.clusters_file))
     missing = sorted(sym for sym in candidates if sym not in mapped)
     if missing:
-        warnings.warn(
-            f"symbols absent from every cluster: {', '.join(missing)}",
-            UserWarning,
-            stacklevel=2,
-        )
+        warnings.warn(_unmapped_warning_message(missing), UserWarning, stacklevel=2)
+
+
+def _unmapped_warning_message(missing: list[str]) -> str:
+    preview = ", ".join(missing[:_UNMAPPED_PREVIEW])
+    extra = len(missing) - min(len(missing), _UNMAPPED_PREVIEW)
+    suffix = f" (+{extra} more)" if extra > 0 else ""
+    return f"symbols absent from every cluster ({len(missing)}): {preview}{suffix}"
 
 
 def _read_candidate_symbols(path: Path) -> list[str]:

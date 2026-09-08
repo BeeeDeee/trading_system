@@ -110,6 +110,34 @@ universe:
         load_config(path)
 
 
+def test_unmapped_symbol_warning_is_truncated(tmp_path: Path, isolated_env: None) -> None:
+    symbols = [f"SYM{i:04d}" for i in range(50)]
+    candidates = tmp_path / "universe_candidates.txt"
+    lines = "\n".join(f"PERM{i},{sym}" for i, sym in enumerate(symbols))
+    candidates.write_text(lines, encoding="utf-8")
+    clusters = tmp_path / "clusters.yaml"
+    clusters.write_text("OTHER: []\n", encoding="utf-8")
+    path = _overlay(
+        tmp_path,
+        f"""
+universe:
+  candidates_file: {candidates.as_posix()}
+  clusters_file: {clusters.as_posix()}
+""",
+    )
+    with pytest.warns(UserWarning) as caught:
+        load_config(path)
+    hits = [str(w.message) for w in caught if "absent from every cluster" in str(w.message)]
+    assert len(hits) == 1
+    message = hits[0]
+    assert "symbols absent from every cluster (50):" in message
+    assert "SYM0000" in message
+    assert "SYM0019" in message
+    assert "SYM0020" not in message
+    assert "(+30 more)" in message
+    assert len(message) < 600
+
+
 def test_unknown_strategy_id_rejected(tmp_path: Path, isolated_env: None) -> None:
     path = _overlay(
         tmp_path,

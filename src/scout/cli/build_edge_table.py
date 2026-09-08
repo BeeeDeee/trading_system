@@ -12,6 +12,7 @@ from scout.config.loader import load_config
 from scout.config.schema import ScoutConfig
 from scout.data.calendar import reference_calendar_path
 from scout.data.store import read_parquet
+from scout.domain.edge import BinKey
 from scout.scoring.edge import build_edge_table
 from scout.utils.errors import ScoutDataError
 from scout.utils.logging import configure_logging
@@ -34,16 +35,26 @@ def run(args: argparse.Namespace) -> int:
     resolved = _load_labels(Path(cfg.labeling.labels_dir))
     calendar = _load_calendar(cfg)
     sessions = _session_closes(calendar, cfg.period.start, cfg.period.end)
+    n_resolved = 0 if resolved.empty else int(resolved["resolution_ts"].notna().sum())
+    print(f"stage=build_edge resolved={n_resolved} sessions={len(sessions)}", flush=True)
+
+    def _progress(done: int, total: int, key: BinKey) -> None:
+        print(
+            f"stage=build_edge bins={done}/{total} "
+            f"key={key.strategy_id}/{key.direction.value}/{key.vol_bucket.value}",
+            flush=True,
+        )
+
     table = build_edge_table(
         resolved,
         cfg.edge,
         sessions=sessions,
         config_hash=digest,
         data_snapshot_id=snapshot_id,
+        on_progress=_progress,
     )
     path = Path(cfg.edge.table_path)
     table.save(path)
-    n_resolved = 0 if resolved.empty else int(resolved["resolution_ts"].notna().sum())
     print(f"resolved_setups={n_resolved}")
     print(f"table_path={path.as_posix()}")
     return 0

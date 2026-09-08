@@ -308,6 +308,7 @@ Every formula gets a hand-computed expected value. `pytest.approx` with
 | `test_config_hash_changes_on_value_change` | |
 | `test_warmup_at_least_six_months` | Violation ⇒ `ScoutConfigError` |
 | `test_unmapped_symbol_warns` | Symbol absent from every cluster ⇒ warning naming it |
+| `test_unmapped_symbol_warning_is_truncated` | Many unmapped symbols ⇒ count + first 20 names, not the full list |
 | `test_unknown_strategy_id_rejected` | |
 
 ---
