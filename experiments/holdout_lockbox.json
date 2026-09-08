@@ -1,6 +1,14 @@
 {
+  "_note": "Committed research integrity record. Do not hand-edit. See docs/ADR/011-holdout-lockbox.md. Allocation: (1) M3 baseline holdout, (2) M4 best development candidate, (3) reserve for sentiment promotion or a final pre-go-live check.",
   "budget": 3,
-  "used": 0,
-  "evaluations": [],
-  "_note": "Committed research integrity record. Do not hand-edit. See docs/ADR/011-holdout-lockbox.md. Allocation: (1) M3 baseline holdout, (2) M4 best development candidate, (3) reserve for sentiment promotion or a final pre-go-live check."
+  "evaluations": [
+    {
+      "forced": false,
+      "git_sha": "841b834e73269061d6d1274198604ec6d9c55efe",
+      "reason": "M3.7 lockbox evaluation 1 of 3",
+      "run_id": "20260908-085154-xsec-momentum-donchian",
+      "ts": "2026-09-08T08:51:55.062081+00:00"
+    }
+  ],
+  "used": 1
 }

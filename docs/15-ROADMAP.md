@@ -21,7 +21,7 @@ not commitments.
 | M0 | Repo skeleton, config, domain model | 3 days | Done |
 | M1 | Equity data, calendar, features, PIT universe | 7 days | Done |
 | M2 | Strategies, labeling, edge table | 4 days | Done (M2.2a recorded; pooled `mean_r` = 0.057 R) |
-| M3 | Backtest engine, metrics, **the answer** | 6 days | In progress (M3.1–M3.6 done) |
+| M3 | Backtest engine, metrics, **the answer** | 6 days | Done (**STOP**: holdout criterion 2) |
 | M4 | Robustness, parameters, sentiment, paper prep | 10 days | Gated on M3 |
 | M5 | Paper then live trading | 15 days | Gated on M4 + 60-day soak |
 | M6 | ML evaluation | 10 days | Gated on M3 criteria |
@@ -309,28 +309,11 @@ or filed as a bug. Every run in the registry.
 shows a gate rejecting 99.9% of candidates, that is a bug. If calibration is flat,
 that is the answer, not a tuning problem.
 
-### M3.7 The holdout run — **lockbox evaluation 1 of 3**
+### M3.7 The holdout run — **lockbox evaluation 1 of 3** — done (**STOP**)
 
-Preconditions, all mandatory:
-- M3.6 complete and written up.
-- Historical borrow/dividend inputs ingested (`costs.dividend_yield_source: historical`).
-- `edge.lcb_method: bootstrap`.
-- Git tree clean and committed.
-- Sentiment disabled.
-- `asset_class: equity`.
-
-Run `config/holdout.yaml` once. Evaluate against the go/no-go criteria in
-[`12-RESEARCH_PROTOCOL.md §9`](12-RESEARCH_PROTOCOL.md#9-go--no-go-criteria-for-m3).
-
-**Accept:** `docs/results/m3_holdout.md` committed, containing the full metrics
-table, all nine criteria with pass/fail, the plots, and an explicit **PROCEED** or
-**STOP** decision.
-
-**If criterion 2, 3, or 4 fails: STOP.** Do not proceed to M4. Change the
-hypothesis, per
-[`12-RESEARCH_PROTOCOL.md §9`](12-RESEARCH_PROTOCOL.md#if-2-3-or-4-fail). Adding
-sentiment or ML to rescue a failed baseline manufactures a fake edge, and doing
-so is the single worst available action at this point.
+`docs/results/m3_holdout.md`. Run `20260908-085154-xsec-momentum-donchian`.
+Criterion 2 fails (bootstrap 90% CI on `mean_r` includes zero). Do not start
+M4. Change the hypothesis. Lockbox `used` = 1 of 3.
 
 ---
 

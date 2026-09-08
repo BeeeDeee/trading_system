@@ -16,13 +16,12 @@ exists. See [ADR-015](docs/ADR/015-equities-first.md).
 
 ## Current stage
 
-**M3.6 development run recorded** in
-[`docs/results/m3_development.md`](docs/results/m3_development.md).
-Trial 1 (`20260906-203830-…`) is the CHKAQ accounting invalidation. Trial 2
-(`20260907-154935-xsec-momentum-donchian`) is the measurement: 687 trades,
-`mean_r` 0.064 R, inverted calibration, CAGR 0.81%. Do not tune. Do not
-start M3.7 / holdout / M4. Fast labeling is now `scout label` (checkpoints
-in `data/labels`); the slow sibling modules are gone.
+**M3.7 holdout recorded — STOP.** Write-up:
+[`docs/results/m3_holdout.md`](docs/results/m3_holdout.md).
+Lockbox evaluation 1 of 3 (`20260908-085154-xsec-momentum-donchian`): 411
+trades, `mean_r` 0.084 R, bootstrap 90% CI (−0.0015, 0.170), inverted
+calibration, zero shorts. Criterion 2 failed. Do not start M4. Do not
+add sentiment/ML/crypto to rescue the baseline. Change the hypothesis.
 New chats: paste the handoff block in
 [`docs/17-IMPLEMENTER_GUIDE.md` §8](docs/17-IMPLEMENTER_GUIDE.md#8-starting-a-new-chat).
 
