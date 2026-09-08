@@ -541,6 +541,32 @@ def test_engine_warmup_is_warm_false() -> None:
     assert not bool((cold_atr == 0).any())
 
 
+def test_emit_from_matches_full_panel_after_cut() -> None:
+    n = 80
+    panel, bench, snaps = _engine_bundle(n, ["AAA", "BBB"])
+    cfg = FeaturesConfig()
+    full = compute_features(panel, bench, snaps, cfg).frame
+    cut_ts = panel.timestamps[n // 2]
+    emitted = compute_features(
+        panel, bench, snaps, cfg, emit_from=cut_ts.to_pydatetime()
+    ).frame
+    assert emitted["ts"].min() >= pd.Timestamp(cut_ts)
+    expected = (
+        full.loc[full["ts"] >= cut_ts]
+        .sort_values(["ts", "symbol"], kind="mergesort")
+        .reset_index(drop=True)
+    )
+    got = emitted.sort_values(["ts", "symbol"], kind="mergesort").reset_index(drop=True)
+    pd.testing.assert_frame_equal(expected, got, check_categorical=False)
+
+
+def test_emit_from_rejects_naive_datetime() -> None:
+    panel, bench, snaps = _engine_bundle(20, ["AAA"])
+    naive = datetime(2015, 1, 2)  # noqa: DTZ001  the point of this test
+    with pytest.raises(ValueError, match="timezone-aware"):
+        compute_features(panel, bench, snaps, FeaturesConfig(), emit_from=naive)
+
+
 def test_engine_cross_sectional_truncation() -> None:
     n = 400
     drop = 100

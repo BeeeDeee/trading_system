@@ -156,6 +156,7 @@ class BacktestEngine:
                 snapshots_frame,
                 self.cfg.features,
                 on_progress=_print_feature_progress,
+                emit_from=self.cfg.period.warmup_end,
             )
             print("stage=compute_features done", flush=True)
         self._session_pos = {_as_utc(t): i for i, t in enumerate(panel.timestamps)}

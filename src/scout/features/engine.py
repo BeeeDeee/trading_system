@@ -6,6 +6,7 @@ Called once before the backtest loop, for the whole history. Not per bar.
 from __future__ import annotations
 
 from collections.abc import Callable
+from datetime import datetime
 
 import numpy as np
 import pandas as pd  # type: ignore[import-untyped]
@@ -57,6 +58,13 @@ def _utc_ns(values: object) -> pd.DatetimeIndex:
     return pd.DatetimeIndex(pd.to_datetime(values, utc=True)).as_unit("ns")
 
 
+def _aware_utc(value: datetime) -> pd.Timestamp:
+    ts = pd.Timestamp(value)
+    if ts.tzinfo is None:
+        raise ValueError("emit_from must be timezone-aware UTC")
+    return ts.tz_convert("UTC")
+
+
 def compute_features(
     panel: MarketPanel,
     benchmark: BenchmarkPanel,
@@ -64,12 +72,17 @@ def compute_features(
     cfg: FeaturesConfig,
     *,
     on_progress: Callable[[int, int], None] | None = None,
+    emit_from: datetime | None = None,
 ) -> FeaturePanel:
     """Compute all FeatureRow columns for every (ts, asset_id) in `panel`.
 
     Value at (ts, symbol) depends only on bars with close_time <= ts for that
     symbol, plus SPY/VIX bars with close_time <= ts for market and beta columns.
     Cross-sectional ranks use only symbols eligible at ts.
+
+    Per-symbol indicators still see the full group. `emit_from` drops earlier
+    rows after that, so a holdout run does not materialise 1998-2017 features
+    it will never trade.
     """
     regime_cfg = RegimeConfig()
     market_cfg = MarketRegimeConfig()
@@ -77,14 +90,21 @@ def compute_features(
     if frame.empty:
         return FeaturePanel(_empty_feature_frame())
 
+    emit_ts = _aware_utc(emit_from) if emit_from is not None else None
     spy_close = _benchmark_close(benchmark)
     parts: list[pd.DataFrame] = []
     grouped = frame.groupby("symbol", sort=False, observed=True)
     n_symbols = int(grouped.ngroups)
     for i, (_, group) in enumerate(grouped, start=1):
-        parts.append(_symbol_features(group, spy_close, cfg, regime_cfg))
+        part = _symbol_features(group, spy_close, cfg, regime_cfg)
+        if emit_ts is not None:
+            part = part.loc[part["ts"] >= emit_ts]
+        if not part.empty:
+            parts.append(part)
         if on_progress is not None and (i == 1 or i == n_symbols or i % 200 == 0):
             on_progress(i, n_symbols)
+    if not parts:
+        return FeaturePanel(_empty_feature_frame())
     per_symbol = pd.concat(parts, ignore_index=True)
 
     snaps = _snapshots_for_panel(snapshots, frame["symbol"])

@@ -177,7 +177,17 @@ def run(args: argparse.Namespace) -> int:
     benchmark = _load_benchmark(Path(cfg.data.processed_dir))
     _boot_progress(status="compute_features", note="cross-sectional features; no asset counter yet")
     print("stage=compute_features", flush=True)
-    features = compute_features(panel, benchmark, snapshots, cfg.features)
+
+    def _feature_progress(done: int, total: int) -> None:
+        print(f"stage=compute_features symbols={done}/{total}", flush=True)
+
+    features = compute_features(
+        panel,
+        benchmark,
+        snapshots,
+        cfg.features,
+        on_progress=_feature_progress,
+    )
     calendar = _load_calendar(cfg)
     tickers = load_tickers(Path(cfg.data.raw_dir))
     is_etf = _etf_map(tickers)

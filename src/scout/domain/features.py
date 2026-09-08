@@ -121,14 +121,19 @@ def _normalize_feature_frame(frame: pd.DataFrame) -> pd.DataFrame:
         raise ValueError(
             f"FeaturePanel columns must equal FeatureRow fields in order; got {cols}"
         )
-    out = frame.copy()
-    dtype = out["ts"].dtype
+    dtype = frame["ts"].dtype
     if not isinstance(dtype, pd.DatetimeTZDtype):
         raise ValueError("ts must be timezone-aware UTC")
-    out["ts"] = out["ts"].dt.tz_convert("UTC")
-    out["symbol"] = out["symbol"].astype("category")
-    out = out.sort_values(["ts", "symbol"], kind="mergesort").reset_index(drop=True)
-    return out
+    # A full deep copy of ~46M object columns OOMs on the holdout panel.
+    # Categorise symbol first; sort_values allocates new blocks anyway.
+    symbol = frame["symbol"]
+    if str(symbol.dtype) != "category":
+        symbol = symbol.astype("category")
+    ts = frame["ts"]
+    if str(ts.dtype) != "datetime64[ns, UTC]":
+        ts = ts.dt.tz_convert("UTC")
+    out = frame.assign(ts=ts, symbol=symbol)
+    return out.sort_values(["ts", "symbol"], kind="mergesort").reset_index(drop=True)
 
 
 def _build_ts_index(frame: pd.DataFrame) -> tuple[pd.DatetimeIndex, list[int]]:
