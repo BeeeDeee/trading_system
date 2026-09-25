@@ -36,7 +36,7 @@ Z toho plynou tři pravidla, která mají přednost před ostatními:
 | Pozice | **[D]** Long-only, zlomkové akcie povoleny, žádná záporná hotovost ani páka. |
 | Signál a fill | **[D]** Signál po close `t`, fill na open nejbližší obchodní seance `t+1`. |
 | Intradenní SL/TP | **[D]** Mimo v1. |
-| Kombinace strategií | **[D]** Ansámbl K strategií, K ∈ {1..5}. Pár 50/50 je jedna z testovaných variant. |
+| Kombinace strategií | **[D]** Primárně pár (K = 2, 50/50); K = 3 (EW) jako předem registrovaná sekundární varianta vyhodnocená ve stejném běhu. |
 | ML | **[D]** Volitelná poslední fáze za bránou. Musí porazit jednoduché pravidlové overlaye. |
 | Úrok z hotovosti | **[N]** 3M T-bill (FRED `DTB3`), posunutý o 1 den. Sharpe se počítá z výnosu nad touto sazbou. |
 
@@ -319,9 +319,14 @@ Funkce smí číst jen řádky matice `R` do `T` včetně. Vynucuje se tím, že
 Nad tréninkovým oknem kandidát vypadne, pokud:
 - průměrný počet pozic < 8,
 - roční obrat > 2000 %,
-- maximální drawdown > 60 %,
+- maximální drawdown > 45 % **[D]** (viz poznámka pod seznamem),
 - Sharpe (nad T-bill) < 0,
 - méně než 60 % tréninkových let s kladným výnosem nad T-bill.
+
+Poznámka k drawdownu: SPY měl v letech 2007–09 propad ~55 % a 2000–02 ~49 %. Plně investovaná
+long-only strategie bez overlaye tedy limit 45 % typicky nesplní, jakmile tréninkové okno obsahuje
+rok 2008. Limit v praxi upřednostní strategie s trend filtrem, volatility targetingem nebo defenzivním
+výběrem. To je zamýšlený důsledek, ne chyba. Report výběru uvádí, kolik kandidátů limit vyřadil.
 
 ### 9.5 Ranking a dedup (uvnitř `select`)
 
@@ -335,10 +340,14 @@ tréninkovém okně, řez na `ρ = 0,85` **[N]**. Ze shluku postupuje kandidát 
 shluků ze všech kandidátů = **efektivní počet kandidátů `N_eff`** (diagnostika in-sample výběru a
 DSR jednotlivých kandidátů).
 
-**Ansámbl:** z top reprezentantů shluků vybrat K ∈ {1..5} a vážení ∈ {EW, inverse-vol 126d}; rebalance
-měsíčně, pozice přes strategie se **netují** (stejný titul v A i B = jedna pozice s součtem vah).
-Pár 50/50 = K=2, EW. Volba K a vážení se dělá také uvnitř `select` podle tréninkového skóre, nebo se
-zmrazí předem jako pevné K=3, EW **[N]**. Předem zmrazené K je méně pokusů; doporučuji ho.
+**Ansámbl [D]:** dvě předem registrované varianty, obě vyhodnocené ve stejném běhu:
+- **primární:** K = 2, váhy 50/50,
+- **sekundární:** K = 3, váhy 1/3.
+
+Členové = K nejlépe hodnocených reprezentantů různých shluků. Rebalance vah měsíčně, pozice přes
+strategie se **netují** (stejný titul v A i B = jedna pozice se součtem vah). Obě varianty se počítají
+do `N_meth` (= 2). Finální závěr projektu stojí na primární variantě; sekundární se reportuje vedle ní
+a v holdoutu se mezi nimi nevybírá. Další K (např. 4) je nový pokus v registru.
 
 ### 9.6 Statistické testy a overfitting
 
@@ -650,10 +659,10 @@ jemné: hustší mřížka zvyšuje počet pokusů, ale nepřidává informaci.
 
 | Hodnota | Návrh | Otázka, kterou odpovídá |
 |---|---|---|
-| Max. drawdown kandidáta | 60 % | Jaký propad je pro tebe nepřijatelný i u výzkumné strategie? |
+| Max. drawdown kandidáta | **45 % [D]** | Rozhodnutí uživatele; důsledky v §9.4 |
 | Max. roční obrat | 2000 % | Pojistka proti strategiím žijícím z nákladového modelu |
 | Min. průměrný počet pozic | 8 | Pojistka proti koncentraci |
-| Ansámbl | pevně K = 3, EW | Méně pokusů než ladit K |
+| Ansámbl | **K = 2 (50/50) primárně, K = 3 sekundárně [D]** | Rozhodnutí uživatele; obě varianty předem registrované |
 | Brána Fáze 2 | PBO ≤ 0,30 | Jak velkou pravděpodobnost přeučení tolerujeme |
 | Brána Fáze 3 | DSR ≥ 0,90 a CI rozdílu vůči `EW_UNIV` > 0 | Jak silný důkaz chceme, než pokračujeme |
 | ML brána | §11.5 | Totéž pro ML |
@@ -671,3 +680,5 @@ jemné: hustší mřížka zvyšuje počet pokusů, ale nepřidává informaci.
 | 2026-09-25 | DSR metodiky se deflatuje počtem variant metodiky (`N_meth`), ne počtem kandidátů | Poskládané WFO OOS je mimo vzorek vůči výběru kandidátů; oprava chyby ve v2.0 |
 | 2026-09-25 | Projekt v `ccode/strategy_backtester_2026_sep/`, repo `trading_system`, branch `strategy_backtester_2026_sep`; `/home/kapo` bez gitu | Rozhodnutí uživatele |
 | 2026-09-25 | Fáze 0 bez reálných dat; Sharadar dump je vstupní podmínkou až Fáze 1 | Práce nečeká na přenos dat; engine se nejdřív ověří na syntetice |
+| 2026-09-25 | Max. drawdown kandidáta 45 % | Rozhodnutí uživatele; upřednostní strategie s řízením rizika |
+| 2026-09-25 | Ansámbl: K = 2 primárně, K = 3 sekundárně, obě předem registrované | Rozhodnutí uživatele; zkoušet K = 3 až po výsledcích K = 2 by byl pokus podmíněný výsledkem |
