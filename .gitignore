@@ -1,12 +1,16 @@
-# Project artifacts
-data/
-!data/**/.gitkeep
-results/
-!results/**/.gitkeep
-logs/
+# Project artifacts (repo-root only — do not ignore src/scout/data/)
+/data/
+!/data/**/.gitkeep
+/results/
+!/results/**/.gitkeep
+/logs/
 *.csv
 *.parquet
 *.h5
+
+# Research integrity record — MUST be committed. See docs/ADR/011-holdout-lockbox.md
+!experiments/registry.csv
+!experiments/holdout_lockbox.json
 
 # Secrets / env
 .env
@@ -21,7 +25,6 @@ __pycache__/
 *.egg-info/
 dist/
 build/
-backend/.venv/
 .venv/
 venv/
 

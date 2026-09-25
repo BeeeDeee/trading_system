@@ -4,10 +4,10 @@ venv/
 __pycache__/
 *.pyc
 
-# Data, logs, and artifacts (especially heavy in trading/ML)
-data/
-results/
-logs/
+# Data, logs, and artifacts (repo-root only — do not ignore src/scout/data/)
+/data/
+/results/
+/logs/
 *.csv
 *.parquet
 *.h5
@@ -33,4 +33,3 @@ build/
 docker/backups/
 backend/.ruff_cache/
 backend/.venv/
-
