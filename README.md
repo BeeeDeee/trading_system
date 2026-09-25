@@ -3,7 +3,7 @@
 Lokální výzkumný framework pro vývoj a poctivé vyhodnocení long-only strategií na denních datech
 US akcií (Sharadar).
 
-Stav: specifikace, bez implementace. Další krok: Fáze 0 (přenos dat a datový audit).
+Stav: specifikace, bez implementace. Další krok: Fáze 0 (základ a enginy na syntetických datech). Sharadar data jsou potřeba až od Fáze 1.
 
 ## Dokumenty
 

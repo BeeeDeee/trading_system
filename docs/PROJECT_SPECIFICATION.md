@@ -4,7 +4,7 @@ Verze: 2.1-draft · Datum: 2026-09-25 · Nahrazuje: `archive/PROJECT_SPECIFICATI
 
 Značky u rozhodnutí:
 - **[D]** potvrzené rozhodnutí,
-- **[N]** navržený default; zmrazí se na konci Fáze 0 po datovém auditu,
+- **[N]** navržený default; zmrazí se na konci Fáze 1 po datovém auditu (přehled v §19),
 - **[A]** musí ověřit datový audit.
 
 ---
@@ -127,7 +127,7 @@ Poslední platný close = `P_last`. Terminální výnos se připíše v den deli
 Povinná citlivostní analýza: scénáře „optimistický" (vše 0 %) a „pesimistický" (neznámé −50 %,
 výkonnostní −100 %). Pokud se závěr mezi scénáři liší, report to musí uvést.
 
-### 4.6 Datový audit (výstup Fáze 0)
+### 4.6 Datový audit (výstup Fáze 1)
 
 Report `audit/<snapshot_id>/` obsahuje:
 - inventář tabulek, sloupců, rozsahů dat a počtů řádků,
@@ -205,7 +205,7 @@ různé skórovací a výstupní funkce.
 - Plná mřížka nebo Sobolova sekvence nad parametry z §6.1 a §6.2. Náhodné vzorkování ne; potřebujeme
   okolí bodů pro analýzu citlivosti.
 - Předpokládaná velikost: ~1–3 tisíce kandidátů celkem **[N]**. Konkrétní mřížka se zmrazí na konci
-  Fáze 0 a každá pozdější změna je nový záznam v registru pokusů.
+  Fáze 1 a každá pozdější změna je nový záznam v registru pokusů.
 - `candidate_id` = hash kanonické konfigurace.
 
 ---
@@ -547,10 +547,13 @@ Viz §4.6 (rekonstrukce vs. SPY/RSP).
 
 ## 15. Fáze a brány
 
+**Vstupní podmínka dat:** Sharadar dump na serveru v `data/raw/` je potřeba až od Fáze 1. Fáze 0 se
+dělá celá na syntetických datech a nečeká na přenos dat.
+
 | Fáze | Obsah | Brána (podmínka pokračování) |
 |---|---|---|
-| **0 – Setup a audit** | Repozitář, stack, přenos dat, raw → Parquet, datový audit, uzavření [A] a [N] hodnot | Audit bez nevysvětlených anomálií; sanity check SPY v toleranci; `frozen_defaults.yaml` |
-| **1 – Datová vrstva a enginy** | Normalizace, univerzum, delisting politika, oba enginy, náklady, benchmarky, test úniku, parita | Parita enginů; test úniku zelený; `EW_UNIV` a `SPY_TR` vypadají rozumně |
+| **0 – Základ bez dat** | Repozitář, stack, konfigurační modely, generátor syntetických dat (splity, dividendy, halty, delistingy), vektorový i ledger engine, nákladový model, test úniku, paritní test, statistická knihovna (DSR, PBO, bootstrap), registr pokusů, mechanika vaultu, kostra reportu | Golden testy, test úniku a parita enginů zelené na syntetických datech |
+| **1 – Data a audit** | raw → Parquet, datový audit (§4.6), normalizace, univerzum, politika delistingu, benchmarky, sanity check SPY, uzavření [A], zmrazení [N] do `frozen_defaults.yaml` | Audit bez nevysvětlených anomálií; sanity check SPY v toleranci; parita enginů na reálných datech |
 | **2 – Strategie a matice R** | Bloky, 6 rodin, grid, vektorový běh, metriky, PBO | Aspoň jedna rodina má medián Sharpe nad T-bill > 0 napříč okolím; PBO ≤ 0,30 |
 | **3 – WFO a ansámbl** | `select`, filtry, ranking, dedup, ansámbl, poskládaný OOS, DSR, reporty | DSR ≥ 0,90 **a** dolní hranice CI rozdílu vůči `EW_UNIV` > 0. Jinak STOP s negativním reportem (Fáze 5 se spustí s negativním závěrem) |
 | **4 – ML overlay** (volitelná) | Features, labely, modely, baseline overlaye | §11.5 |
@@ -583,7 +586,7 @@ holdout výsledek je informace, ne ztráta času.
 
 ## 17. Otevřené body
 
-Uzavřou se ve Fázi 0 (vše, co je výše označeno [A] nebo [N]):
+Uzavřou se ve Fázi 1 (vše, co je výše označeno [A] nebo [N]):
 
 - přesný seznam tabulek, koncové datum dumpu a kde je VIX,
 - chování `closeadj` v ex-div den a u spinoffů,
@@ -599,6 +602,62 @@ Doladí se ve Fázi 2 (před implementací rodin):
   musí projít testem úniku stejně jako skóre.
 - Výkon vektorového enginu na dostupném HW určí reálnou velikost mřížky.
 
+## 19. Přehled navržených hodnot [N]
+
+Hodnoty mají čtyři druhy původu. Jen poslední skupina je věc preference; ostatní určují data nebo
+zavedená praxe. Podstatné je, že se **zmrazí dřív, než se uvidí výsledky strategií**. Předem pevný
+a „dost dobrý" práh má větší hodnotu než „optimální" práh zvolený po pohledu na výsledky.
+
+**Určí je data (audit, Fáze 1)**
+
+| Hodnota | Návrh | Co ji může změnit |
+|---|---|---|
+| Warm-up | 1998–1999 | Skutečný začátek pokrytí |
+| Vývojové období | 2000–2019 | Kvalita dat na začátku (pokud je 1998–2001 řídké, začátek se posune) |
+| Holdout | 2020 → konec dat | Koncové datum dumpu; cíl je holdout alespoň 5 let |
+| Kategorie akcií, typy delistingů, VIX | viz §4.2, §4.5 | Skutečné hodnoty v tabulkách |
+| Tolerance sanity checku SPY | ~1 p.b. ročně | Pokud rozdíl vysvětlí dokumentovaná vlastnost dat |
+
+**Zavedená praxe (měnit jen s důvodem)**
+
+| Hodnota | Návrh | Zdůvodnění |
+|---|---|---|
+| Min. cena | 5 USD (neupravená) | Běžný filtr penny stocks v akademické literatuře |
+| Univerzum | top 1000 podle 63d mediánu dollar volume | Likvidní trh, nezávislé na inflaci, vejde se do paměti |
+| Delisting bez údaje | −30 % | Shumway (1997) |
+| Náklady | max(5 bps, polovina odhadnutého spreadu), citlivost ×2/×3 | Konzervativní pro likvidní US akcie |
+| WFO | expanding, min. 5 let, refit a test po 12 měsících, 15 foldů | Dost foldů na stabilitu, dost dat na výběr |
+| Embargo | 21 obchodních dní | Nejdelší label v ML (≈ 1 měsíc) |
+| Dedup | korelace výnosů ≥ 0,85 = duplicita | Běžný řez; citlivost ověřit na 0,80/0,90 |
+| Úrok z hotovosti | 3M T-bill (FRED `DTB3`) | Standard |
+
+**Parametry strategií (mřížka)**
+
+| Blok | Hodnoty | Počet |
+|---|---|---|
+| Signál | xs_momentum 6, ts_trend 3, breakout 6, st_reversal 3, low_vol 3 | 21 |
+| Počet titulů N | 10, 20, 30, 50 | 4 |
+| Vážení | EW, inverse-vol | 2 |
+| Rebalance | týdně, měsíčně | 2 |
+| Hystereze | 1; 1,5; 2 | 3 |
+| Overlay | žádný, trend filtr, vol targeting | 3 |
+| **Celkem** | 21 × 144 + 3 (regime_market) | **≈ 3 000 kandidátů** |
+
+Rozsahy odpovídají běžně publikovaným variantám (např. momentum 12-1 měsíců, SMA 200). Záměrně nejsou
+jemné: hustší mřížka zvyšuje počet pokusů, ale nepřidává informaci.
+
+**Preference a brány (tady je tvůj hlas nejvíc relevantní)**
+
+| Hodnota | Návrh | Otázka, kterou odpovídá |
+|---|---|---|
+| Max. drawdown kandidáta | 60 % | Jaký propad je pro tebe nepřijatelný i u výzkumné strategie? |
+| Max. roční obrat | 2000 % | Pojistka proti strategiím žijícím z nákladového modelu |
+| Min. průměrný počet pozic | 8 | Pojistka proti koncentraci |
+| Ansámbl | pevně K = 3, EW | Méně pokusů než ladit K |
+| Brána Fáze 2 | PBO ≤ 0,30 | Jak velkou pravděpodobnost přeučení tolerujeme |
+| Brána Fáze 3 | DSR ≥ 0,90 a CI rozdílu vůči `EW_UNIV` > 0 | Jak silný důkaz chceme, než pokračujeme |
+| ML brána | §11.5 | Totéž pro ML |
+
 ## 18. Rozhodovací log
 
 | Datum | Rozhodnutí | Zdůvodnění |
@@ -611,3 +670,4 @@ Doladí se ve Fázi 2 (před implementací rodin):
 | 2026-09-25 | Benchmark rozšířen o `SPY_TR` a `EW_UNIV`; `BH_UNIV` zachován | Různé otázky potřebují různé benchmarky; SPY slouží i jako kontrola dat |
 | 2026-09-25 | DSR metodiky se deflatuje počtem variant metodiky (`N_meth`), ne počtem kandidátů | Poskládané WFO OOS je mimo vzorek vůči výběru kandidátů; oprava chyby ve v2.0 |
 | 2026-09-25 | Projekt v `ccode/strategy_backtester_2026_sep/`, repo `trading_system`, branch `strategy_backtester_2026_sep`; `/home/kapo` bez gitu | Rozhodnutí uživatele |
+| 2026-09-25 | Fáze 0 bez reálných dat; Sharadar dump je vstupní podmínkou až Fáze 1 | Práce nečeká na přenos dat; engine se nejdřív ověří na syntetice |
