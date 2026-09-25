@@ -1,0 +1,42 @@
+# Data a výstupy běhů (nikdy do gitu)
+data/
+runs/
+audit/
+*.parquet
+*.csv
+*.zip
+*.duckdb
+*.duckdb.wal
+*.sqlite
+*.db
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.ipynb_checkpoints/
+*.egg-info/
+build/
+dist/
+
+# Secrets a lokální konfigurace
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.credentials*
+.claude/settings.local.json
+
+# Editor / OS
+.vscode/
+.idea/
+.cursor/
+*.swp
+.DS_Store
+Thumbs.db
