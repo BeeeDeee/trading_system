@@ -113,3 +113,16 @@ def test_grid():
     a = next(c for c in grid if c.family == "xs_momentum")
     near = [c for c in grid if neighbours(a, c, GRID)]
     assert a in near and 1 < len(near) < 30
+
+
+def test_market_helpers_match_panel_features(panel):
+    from qlab.features.basic import trailing_volatility, sma_ratio
+    from qlab.strategies.signals import market_trend, market_vol_scale
+    a = 3
+    vol = trailing_volatility(panel, 63)[:, a] * np.sqrt(252)
+    expected = np.where(np.isfinite(vol) & (vol > 0), np.minimum(1, 0.15 / vol), 1.0)
+    ok = np.isfinite(vol)
+    np.testing.assert_allclose(market_vol_scale(panel, a)[ok], expected[ok], rtol=1e-6)
+    trend = sma_ratio(panel, 50)[:, a]
+    ok = np.isfinite(trend)
+    np.testing.assert_array_equal(market_trend(panel, a, 50)[ok], (trend[ok] > 0).astype(float))

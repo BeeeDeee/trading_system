@@ -66,13 +66,20 @@ def build_signal(panel: Panel, family: str, params: dict) -> Signal:
     raise ValueError(f"unknown family {family!r}")
 
 
+def _column_index(panel: Panel, asset: int) -> np.ndarray:
+    return np.cumprod((1.0 + panel.ret_co[:, asset]) * (1.0 + panel.ret_oc[:, asset]))
+
+
 def market_trend(panel: Panel, asset: int, window: int) -> np.ndarray:
     """1.0 on days the asset's TR index is above its `window`-day SMA, else 0.0 (point in time)."""
-    idx = tr_index(panel)[:, asset]
+    idx = _column_index(panel, asset)
     return (idx > rolling_mean(idx[:, None], window)[:, 0]).astype(float)
 
 
 def market_vol_scale(panel: Panel, asset: int, target: float = 0.15, window: int = 63) -> np.ndarray:
     """min(1, target / realized annualized vol of the asset); 1.0 before enough history."""
-    vol = trailing_volatility(panel, window)[:, asset] * np.sqrt(252)
+    r = (1.0 + panel.ret_co[:, asset]) * (1.0 + panel.ret_oc[:, asset]) - 1.0
+    m1 = rolling_mean(r[:, None], window)[:, 0]
+    m2 = rolling_mean((r * r)[:, None], window)[:, 0]
+    vol = np.sqrt(np.maximum(m2 - m1 * m1, 0.0) * window / (window - 1) * 252)
     return np.where(np.isfinite(vol) & (vol > 0), np.minimum(1.0, target / vol), 1.0)
