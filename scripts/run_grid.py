@@ -1,6 +1,6 @@
 """Run the candidate grid on the development period -> matrix R[day x candidate] (spec §7.2, §9).
 
-Usage: python scripts/run_grid.py sharadar_YYYY-MM-DD [--limit N] [--families a,b]
+Usage: python scripts/run_grid.py sharadar_YYYY-MM-DD [--limit N] [--families a,b] [--universe sp500] [--delisting optimistic|pessimistic]
 Output: data/derived/<snapshot>/candidates/<grid_hash>/{R,turnover,costs,exposure,n_pos}.npy,
         candidates.parquet, done.npy, meta.json. Resumable: finished columns are skipped.
 Only data up to the vault boundary is used. The run is recorded in the trial registry.
@@ -24,9 +24,12 @@ ap = argparse.ArgumentParser()
 ap.add_argument("snapshot")
 ap.add_argument("--limit", type=int, default=0, help="only the first N candidates (timing)")
 ap.add_argument("--families", default="", help="comma-separated subset")
+ap.add_argument("--universe", default="liq1000", choices=["liq1000", "sp500"])
+ap.add_argument("--delisting", default="base", choices=["base", "optimistic", "pessimistic"])
 args = ap.parse_args()
 
-setup = dev_setup(args.snapshot)
+setup = dev_setup(args.snapshot, universe=args.universe, delisting=args.delisting)
+robustness = args.universe != "liq1000" or args.delisting != "base"
 cfg, ctx, panel, start, end = setup.cfg, setup.ctx, setup.panel, setup.start, setup.end
 der = Path("data/derived") / args.snapshot
 dev_start, dev_end = cfg["periods"]["development"]
@@ -41,6 +44,8 @@ if args.limit:
 run_cfg = {"snapshot": args.snapshot, "grid": cfg["grid"], "costs": costs_cfg,
            "universe": cfg["universe"], "period": [str(dev_start), str(dev_end)],
            "candidates": [c.candidate_id for c in grid]}
+if robustness:  # keeps the base run's hash unchanged
+    run_cfg["robustness"] = {"universe": args.universe, "delisting": args.delisting}
 run_hash = config_hash(run_cfg)
 out = der / "candidates" / run_hash
 out.mkdir(parents=True, exist_ok=True)
@@ -70,7 +75,8 @@ if not (out / "candidates.parquet").exists():
          "n_candidates": n_cand, "created": str(date.today())}, indent=2))
     if not args.limit and not args.families:
         TrialRegistry(Path("runs/registry/trials.sqlite")).record(
-            "candidates", run_cfg, n_configs=n_cand, note=f"grid run {run_hash}")
+            "other" if robustness else "candidates", run_cfg, n_configs=n_cand,
+            note=f"{'robustness ' if robustness else ''}grid run {run_hash}")
 
 t0, ran = time.time(), 0
 for k, c in enumerate(grid):

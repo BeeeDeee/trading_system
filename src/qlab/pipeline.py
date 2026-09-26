@@ -1,7 +1,7 @@
 """Shared setup of the development-period context (vault-protected) for grid and WFO runs."""
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 import numpy as np
@@ -36,7 +36,37 @@ def cost_model(costs_cfg: dict, multiplier: float = 1.0) -> CostModel:
                      costs_cfg["pre_decimal_multiplier"], multiplier)
 
 
-def dev_setup(snapshot: str, cost_multiplier: float = 1.0) -> DevSetup:
+UNIVERSES = {"liq1000": "in_liq1000", "sp500": "in_sp500"}
+DELISTING_SCENARIOS = ("base", "optimistic", "pessimistic")
+
+
+def apply_delisting_scenario(panel: Panel, delistings: pl.DataFrame, scenario: str) -> Panel:
+    """Replace terminal returns on delisting rows (spec §4.5 sensitivity).
+
+    optimistic: every delisting pays the last close (0 %); pessimistic: regulatory/performance
+    delistings -100 %, delistings without any action (unknown) -50 %; everything else unchanged.
+    """
+    if scenario == "base":
+        return panel
+    ret_co = np.array(panel.ret_co)
+    t_idx, a_idx = np.nonzero(np.asarray(panel.delisting))
+    if scenario == "optimistic":
+        ret_co[t_idx, a_idx] = 0.0
+    elif scenario == "pessimistic":
+        kind = dict(zip(delistings["permaticker"].to_list(), delistings["kind"].to_list()))
+        for t, a in zip(t_idx, a_idx):
+            k = kind.get(int(panel.assets[a]), "unknown")
+            if k == "performance":
+                ret_co[t, a] = -1.0
+            elif k == "unknown":
+                ret_co[t, a] = -0.5
+    else:
+        raise ValueError(f"unknown delisting scenario {scenario!r}")
+    return replace(panel, ret_co=ret_co)
+
+
+def dev_setup(snapshot: str, cost_multiplier: float = 1.0, universe: str = "liq1000",
+              delisting: str = "base") -> DevSetup:
     cfg = load_config()
     der = Path("data/derived") / snapshot
     dev_start, dev_end = cfg["periods"]["development"]
@@ -45,10 +75,11 @@ def dev_setup(snapshot: str, cost_multiplier: float = 1.0) -> DevSetup:
     end = vault.last_visible_index(full.dates)
     panel = full.slice(end)
     vault.check_dev_only(panel.dates)
+    panel = apply_delisting_scenario(panel, pl.read_parquet(der / "delistings.parquet"), delisting)
     start = int(np.searchsorted(panel.dates, np.datetime64(dev_start)))
     spy_perm = json.loads((der / "panel_liq1000" / "special_assets.json").read_text())["SPY"]
     spy = int(np.searchsorted(panel.assets, spy_perm))
-    ctx = Context(panel, np.asarray(extra["in_liq1000"][:end]), spy, first_decision=start - 1,
+    ctx = Context(panel, np.asarray(extra[UNIVERSES[universe]][:end]), spy, first_decision=start - 1,
                   cost_rate=cost_model(cfg["costs"], cost_multiplier).rate(
                       np.asarray(extra["liq_rank"][:end]), panel.dates),
                   cash_ret=np.asarray(extra["cash_ret"][:end]))

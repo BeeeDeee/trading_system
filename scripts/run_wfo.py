@@ -1,6 +1,6 @@
 """Phase 3: walk-forward selection + stitched out-of-sample ensemble (spec §9.2-9.6).
 
-Usage: python scripts/run_wfo.py sharadar_YYYY-MM-DD <grid_run_hash>
+Usage: python scripts/run_wfo.py sharadar_YYYY-MM-DD <grid_run_hash> [--universe sp500] [--delisting optimistic|pessimistic]
 Output: data/derived/<snapshot>/wfo/<method_hash>/ (members, returns, summary.json).
 Both pre-registered variants (K=2 primary, K=3 secondary) are recorded in the trial registry as
 methodology evaluations BEFORE any result is computed.
@@ -29,9 +29,18 @@ from qlab.validation.registry import TrialRegistry, config_hash
 from qlab.validation.stats import bootstrap_ci, deflated_sharpe, sharpe, spa_pvalue
 from qlab.validation.wfo import SparseDecisions, make_folds, stitch_decisions
 
-snapshot, grid_hash = sys.argv[1], sys.argv[2]
+import argparse
+
+ap = argparse.ArgumentParser()
+ap.add_argument("snapshot")
+ap.add_argument("grid_hash")
+ap.add_argument("--universe", default="liq1000", choices=["liq1000", "sp500"])
+ap.add_argument("--delisting", default="base", choices=["base", "optimistic", "pessimistic"])
+args = ap.parse_args()
+snapshot, grid_hash = args.snapshot, args.grid_hash
+robustness = args.universe != "liq1000" or args.delisting != "base"
 t0 = time.time()
-setup = dev_setup(snapshot)
+setup = dev_setup(snapshot, universe=args.universe, delisting=args.delisting)
 cfg, ctx, panel = setup.cfg, setup.ctx, setup.panel
 der = Path("data/derived") / snapshot
 gdir = der / "candidates" / grid_hash
@@ -56,8 +65,10 @@ method = {"grid_run": grid_hash, "hard_filters": cfg["hard_filters"], "ranking":
 method_hash = config_hash(method)
 for name, k in variants.items():
     trial = {**method, "variant": name, "k": k}
-    if not registry.has(trial):
-        registry.record("methodology_eval", trial, note=f"WFO {name} K={k} ({method_hash})")
+    if not registry.has(trial):  # robustness runs evaluate the same methodology on perturbed data
+        registry.record("other" if robustness else "methodology_eval", trial,
+                        note=f"WFO {name} K={k} ({method_hash})"
+                        + (f" robustness {args.universe}/{args.delisting}" if robustness else ""))
 n_meth = registry.n_meth
 out = der / "wfo" / method_hash
 out.mkdir(parents=True, exist_ok=True)
@@ -105,7 +116,7 @@ for name, pols in policies.items():
 print(f"portfolios done ({time.time() - t0:.0f}s)")
 
 # 3. Benchmarks over the same out-of-sample years.
-members_mask = np.asarray(setup.extra["in_liq1000"][: setup.end])
+members_mask = np.asarray(ctx.universe)
 decide = period_starts(panel.dates, "M") & (np.arange(setup.end) >= first - 1)
 decide[first - 1] = True
 decide[: first - 1] = False

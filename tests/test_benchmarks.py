@@ -39,3 +39,19 @@ def test_panel_roundtrip(tmp_path):
     assert np.array_equal(q.ret_co, p.ret_co) and np.array_equal(q.dates, p.dates)
     assert extra["liq_rank"].dtype == np.float32
     assert pytest.approx(float(q.ret_co.sum())) == float(p.ret_co.sum())
+
+
+def test_delisting_scenarios():
+    import polars as pl
+    from qlab.pipeline import apply_delisting_scenario
+    ret_co = np.zeros((3, 3))
+    delisting = np.zeros((3, 3), bool)
+    delisting[1] = True
+    ret_co[1] = [0.2, -0.3, 0.0]  # acquisition, performance, unknown (no record)
+    p = make_panel(ret_co, np.zeros((3, 3)), delisting)
+    dl = pl.DataFrame({"permaticker": [0, 1], "kind": ["acquisition", "performance"]})
+    assert apply_delisting_scenario(p, dl, "base") is p
+    np.testing.assert_array_equal(apply_delisting_scenario(p, dl, "optimistic").ret_co[1], [0, 0, 0])
+    np.testing.assert_array_equal(apply_delisting_scenario(p, dl, "pessimistic").ret_co[1],
+                                  [0.2, -1.0, -0.5])
+    assert p.ret_co[1, 1] == -0.3  # original untouched
