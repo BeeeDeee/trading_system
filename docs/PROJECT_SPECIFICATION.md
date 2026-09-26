@@ -696,3 +696,6 @@ jemné: hustší mřížka zvyšuje počet pokusů, ale nepřidává informaci.
 | 2026-09-26 | Náklady podle pořadí likvidity (tiers) místo odhadu spreadu z OHLC | Estimátor Abdi–Ranaldo je pro likvidní tituly šum (ověřeno simulací i na AAPL/MSFT) |
 | 2026-09-26 | Kalendář = data SEP, bez `exchange_calendars` | Audit: shoda se SPY na všech 7 228 dnech |
 | 2026-09-26 | Výchozí hodnoty zmrazeny v `configs/frozen_defaults.yaml` (konec Fáze 1) | Spec §15; změny od teď = nový pokus v registru |
+| 2026-09-26 | Rebalance po prvním obchodním dni týdne/měsíce (místo posledního) | Test úniku: poslední den periody vyžaduje znát zítřejší datum |
+| 2026-09-26 | SPY v panelu jako neuniverzové aktivum s nejvyšší likviditní úrovní nákladů | Regime strategie a trend overlay; bez pořadí likvidity dostával nejvyšší sazbu |
+| 2026-09-26 | Vol-target overlay: cíl 15 % p.a. na realizované 63d volatilitě SPY; trend filtr SPY nad SMA200 | Upřesnění §6.1 (spec neurčovala parametry) |

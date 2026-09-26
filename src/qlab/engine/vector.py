@@ -94,7 +94,7 @@ def simulate(panel: Panel, targets: "np.ndarray | Decisions", cost_rate: np.ndar
             cash += -sells.sum() - sell_cost
             buys = np.maximum(delta, 0.0)
             need = (buys * (1.0 + cost_rate[t])).sum()
-            if need > cash:
+            if need > 0.0 and need > cash:  # cash can be -1e-17 after rounding
                 buys *= max(cash, 0.0) / need
             buy_cost = (buys * cost_rate[t]).sum()
             v += buys

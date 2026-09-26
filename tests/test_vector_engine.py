@@ -145,3 +145,14 @@ def test_sparse_decisions_equal_dense():
     np.testing.assert_array_equal(a.nav, b.nav)
     with pytest.raises(ValueError):
         simulate(p, Decisions(np.array([5, 5]), w[:2]), 0.0)
+
+
+def test_repeated_full_investment_stays_finite():
+    # Regression: fully invested, then the same target again -> no buys needed while rounding may
+    # leave cash at -1e-17; must not produce 0/0.
+    rng = np.random.default_rng(3)
+    p = make_panel(rng.normal(0, 0.01, (400, 1)), rng.normal(0, 0.01, (400, 1)))
+    targets = hold(400, 1)
+    targets[::5] = 1.0
+    r = simulate(p, targets, 0.0025, np.full(400, 1e-4))
+    assert np.isfinite(r.nav).all()

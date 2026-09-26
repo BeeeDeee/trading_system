@@ -91,6 +91,7 @@ ranks = con.sql(f"""
     WHERE permaticker IN (SELECT permaticker FROM assets)""").pl()
 t, n = index(ranks)
 mats["extra_liq_rank"][t, n] = ranks["liq_rank"].to_numpy()
+mats["extra_liq_rank"][:, int(np.searchsorted(assets, spy_perm))] = 1  # SPY: most liquid tier
 t, n = index(liq)
 mats["extra_in_liq1000"][t, n] = True
 sp_in = sp.filter(asset_filter)
