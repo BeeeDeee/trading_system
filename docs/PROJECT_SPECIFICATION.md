@@ -699,3 +699,5 @@ jemné: hustší mřížka zvyšuje počet pokusů, ale nepřidává informaci.
 | 2026-09-26 | Rebalance po prvním obchodním dni týdne/měsíce (místo posledního) | Test úniku: poslední den periody vyžaduje znát zítřejší datum |
 | 2026-09-26 | SPY v panelu jako neuniverzové aktivum s nejvyšší likviditní úrovní nákladů | Regime strategie a trend overlay; bez pořadí likvidity dostával nejvyšší sazbu |
 | 2026-09-26 | Vol-target overlay: cíl 15 % p.a. na realizované 63d volatilitě SPY; trend filtr SPY nad SMA200 | Upřesnění §6.1 (spec neurčovala parametry) |
+| 2026-09-26 | Brána Fáze 3: CI se počítá pro rozdíl **Sharpe** metodika − EW_UNIV (90 %, stationary bootstrap, blok 21 d); rozdíl CAGR jen reportován. DSR metodiky: N = N_meth z registru, rozptyl SR nulové hypotézy 1/T | Zapsáno před prvním WFO během |
+| 2026-09-26 | Ansámbl: členové = nejlepší reprezentanti různých korelačních shluků mezi kandidáty, kteří projdou filtry; každý 1/K kapitálu, chybějící člen = hotovost. Pozice členů se sčítají (netují) a portfolio běží jedním enginem; změna členů na hranici foldu stojí plné náklady na čistý rozdíl pozic | Upřesnění §9.3/§9.5 před během |
