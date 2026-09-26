@@ -1,9 +1,7 @@
 # Předběžná zjištění o datech Sharadar
 
-Datum: 2026-09-26 · Snapshot: `data/raw/sharadar_2026-09-25/` · Stav: **předběžné**. Formální
-datový audit (spec §4.6) je součástí Fáze 1; tento dokument shrnuje, co víme z dokumentace Sharadaru
-a z malých tabulek (tickers, actions, sp500, events, metrics, descriptions). Cenové tabulky
-(stocks, funds, daily) zatím analyzované nejsou.
+Datum: 2026-09-26 · Snapshot: `data/raw/sharadar_2026-09-25/` · Formální audit (čísla):
+[`docs/audit/sharadar_2026-09-25.md`](audit/sharadar_2026-09-25.md), závěry v §6.
 
 ## 1. Snapshot
 
@@ -136,7 +134,7 @@ Poznámky:
 4. VIX a indexy potvrzeny (§4.2).
 5. `metrics` vyřazeno.
 
-## 5. Otevřené pro formální audit (Fáze 1)
+## 5. Původně otevřené body (vyřešeno v §6)
 
 - Cenová data: pokrytí po letech, duplicity, `open = 0`, extrémní výnosy, chování `closeadj/close`
   v ex-div den, soulad posledního obchodního dne s datem delistingu.
@@ -144,3 +142,22 @@ Poznámky:
 - Stabilita kategorie `Primary/Secondary Class` v čase (je to snapshot).
 - Sanity check: rekonstruovaný cap-weighted index (z `daily`) vs. SPY a `^GSPC`.
 - Rozhodnutí, jak naložit s 1 156 delistingy bez důvodu (podle poslední ceny a tržní kapitalizace).
+
+## 6. Závěry formálního auditu (Fáze 1.2)
+
+| Kontrola | Výsledek | Verdikt |
+|---|---|---|
+| Neplatné ceny, duplicity | 0 nulových/záporných cen, 0 duplicit `(ticker, date)` v 45,4 mil. řádků | OK |
+| Nulový objem | 2,2 mil. řádků, z toho 97,6 % kopie předchozího dne (výplň dnů bez obchodu) | Normalizace je značí `no_open` (neobchodovatelné, výnos 0); HALTED řádky proto nevznikají |
+| Kalendář | SEP a SPY mají shodných 7 228 dní; mimořádné uzávěry NYSE v datech nejsou | Kalendář = data SEP; `exchange_calendars` není potřeba |
+| Párování delistingů | Všech 11 355 delistingových akcí padá přesně na poslední obchodní den | OK |
+| Delistingy bez akce | 93 titulů (normalizace: `unknown`) | Malý dopad |
+| Protihodnota akvizic | medián +0,09 %, 90 % v ±4 % od poslední ceny; 51 nevěrohodných (>50 %) → 0 % | OK |
+| Bankroty | medián poslední ceny 0,13 USD; jen 51 z 2 681 končí nad 5 USD | Politika −100 % má malý dopad na likvidní univerzum |
+| Likvidace SPAC | 448 případů přeřazeno z „bankrot" na výplatu trustu | Oprava by jinak zkreslila výsledky |
+| Extrémní výnosy | 36 596 dní s \|r\| > 50 %, z toho 2 544 u likvidních titulů; namátková kontrola = skutečné události (KOSS, KODK, DWAC, de-SPAC) | Žádná systematická chyba úprav |
+| Složení S&P 500 | Rekonstrukce z událostí se shoduje se všemi 114 kvartálními snímky (57 194 členství) | Použitelné jako PIT univerzum `SP500_PIT` |
+| **Sanity check vs. SPY** | Cap-weighted S&P 500 z našich dat: největší roční odchylka 0,95 p.b., průměr +0,15 p.b. (≈ poplatek SPY) | **Splněno** (tolerance ~1 p.b.) |
+| EW S&P 500 vs. RSP | průměr +0,9 p.b./rok (denní vs. kvartální rebalance, poplatek RSP) | Očekávané |
+
+Závěr: data i normalizace jsou vhodné pro Fázi 1.3 (univerzum) a dál.
