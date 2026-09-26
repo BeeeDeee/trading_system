@@ -3,7 +3,7 @@
 Lokální výzkumný framework pro vývoj a poctivé vyhodnocení long-only strategií na denních datech
 US akcií (Sharadar).
 
-Stav: Fáze 0–3 hotové (`docs/PHASE0_PLAN.md`, `docs/PHASE1_REPORT.md`, `docs/PHASE2_REPORT.md`, `docs/PHASE3_REPORT.md`). Další krok: rozhodnutí o Fázi 4 (ML) a robustnostní běhy před holdoutem.
+Stav: **uzavřeno negativním výsledkem** – metodika v holdoutu 2020–2026 neobstála (CAGR 2,4 % vs. SPY 15,5 %). Viz `docs/FINAL_REPORT.md`.
 
 Testy: `uv run pytest`
 
@@ -15,6 +15,8 @@ Testy: `uv run pytest`
 - [`docs/PHASE1_REPORT.md`](docs/PHASE1_REPORT.md) – Fáze 1: pipeline dat, audit, benchmarky
 - [`docs/PHASE2_REPORT.md`](docs/PHASE2_REPORT.md) – Fáze 2: 3 027 kandidátů, výsledky rodin, PBO/DSR
 - [`docs/PHASE3_REPORT.md`](docs/PHASE3_REPORT.md) – Fáze 3: walk-forward 2005–2019, brána, interpretace
+- [`docs/FINAL_REPORT.md`](docs/FINAL_REPORT.md) – **závěr: finální holdout 2020–2026, verdikt a doporučení**
+- [`docs/final/`](docs/final/) – záznam trezoru, zmrazení metodiky, souhrn a roční výnosy
 - [`configs/frozen_defaults.yaml`](configs/frozen_defaults.yaml) – zmrazené výchozí hodnoty metodiky
 - [`docs/DATA_FINDINGS.md`](docs/DATA_FINDINGS.md) – předběžná zjištění o datech Sharadar
 - [`docs/archive/PROJECT_SPECIFICATION_v1.md`](docs/archive/PROJECT_SPECIFICATION_v1.md) – původní specifikace
