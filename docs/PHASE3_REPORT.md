@@ -63,3 +63,27 @@ Roky (primární vs. SPY): 2008 **−2,3 %** vs. −36,8 %; 2011 +10,0 % vs. +1,
 - Robustnost na univerzu `SP500_PIT` a citlivost na politiku delistingu (optimistická /
   pesimistická) – spustit na zmrazené metodice ve vývojovém období, ne na holdoutu.
 - Rozhodnutí o Fázi 4 (ML overlay) – musí padnout **před** otevřením holdoutu.
+
+## Robustnostní běhy (stejná zmrazená metodika, vývojové období, 2026-09-26)
+
+Každý běh = celá mřížka 3 027 kandidátů + walk-forward 2005–2019. V registru vedeny jako
+citlivostní analýzy (`other`), N_meth zůstává 2. Skript: `runs/robustness.sh`.
+
+| Běh | CAGR | Volatilita | Sharpe | Max. propad | ΔSharpe vs. EW univerza [90% CI] | ΔSharpe vs. SPY [90% CI] | Brána |
+|---|---|---|---|---|---|---|---|
+| **Základ (LIQ1000)** | 9,2 % | 8,5 % | 0,93 | 9,6 % | +0,50 [+0,07; +0,91] | +0,44 [+0,03; +0,81] | ✔ |
+| Delisting optimistický | 9,3 % | 8,5 % | 0,94 | 9,6 % | +0,52 [+0,08; +0,92] | +0,45 [+0,05; +0,82] | ✔ |
+| Delisting pesimistický | 10,0 % | 8,7 % | 0,98 | 9,6 % | +0,56 [+0,13; +0,97] | +0,50 [+0,10; +0,87] | ✔ |
+| **Univerzum S&P 500** | 8,7 % | 10,3 % | 0,73 | 14,6 % | +0,24 [−0,16; +0,63] | +0,25 [−0,14; +0,61] | ✘ |
+
+EW benchmark v univerzu S&P 500: CAGR 9,7 %, Sharpe 0,49, propad 60,6 % (silnější než EW LIQ1000).
+
+Závěry:
+- **Politika delistingu výsledek neovlivňuje** – low-vol v likvidním univerzu téměř nedrží tituly,
+  které končí bankrotem nebo regulatorním delistingem.
+- **Na S&P 500 efekt slábne a přestává být statisticky prokazatelný.** Směr zůstává (vyšší Sharpe,
+  čtvrtinový propad), ale CI rozdílu Sharpe zahrnuje nulu. Část výhody v LIQ1000 tedy pochází
+  z titulů mimo S&P 500 (menší utility, REIT a podobné defenzivní tituly). Nejde o selhání
+  (spec §5.2 hledá případ „funguje jen v LIQ1000 a v S&P 500 selže"), ale je to důležité omezení
+  síly důkazu.
+- Ve S&P 500 výběr občas sáhl i po ts_trend a st_reversal (4 z 30 členů), jinak low_vol.
