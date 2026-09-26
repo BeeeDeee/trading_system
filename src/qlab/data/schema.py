@@ -28,7 +28,7 @@ DELISTINGS_SCHEMA = {
     "permaticker": pl.Int64,
     "last_date": pl.Date,           # last trading day
     "kind": pl.Utf8,                # see qlab.data.normalize.DELISTING_KINDS
-    "cash_per_share": pl.Float64,   # acquisition consideration, unadjusted USD per share (nullable)
+    "consideration_per_share": pl.Float64,  # acquisition: cash + stock value, unadjusted USD/share
 }
 
 # Normalized bars. Prices and volume are unadjusted; returns are total returns.

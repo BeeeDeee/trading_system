@@ -12,7 +12,7 @@ import polars as pl
 from qlab.data.schema import (ACTIVE, BARS_SCHEMA, DELISTED, DELISTINGS_SCHEMA, HALTED, NO_OPEN,
                               PRICES_SCHEMA, validate)
 
-ACQUISITION = "acquisition"             # merger/acquisition; cash_per_share if known
+ACQUISITION = "acquisition"             # merger/acquisition; consideration_per_share if known
 SPAC_LIQUIDATION = "spac_liquidation"   # trust returned to holders
 BANKRUPTCY = "bankruptcy"               # bankruptcy or liquidation of an operating company
 PERFORMANCE = "performance"             # regulatory / exchange-driven delisting
@@ -21,15 +21,15 @@ UNKNOWN = "unknown"
 DELISTING_KINDS = (ACQUISITION, SPAC_LIQUIDATION, BANKRUPTCY, PERFORMANCE, VOLUNTARY, UNKNOWN)
 
 
-def terminal_return(kind: str, last_close_u: float, cash_per_share: float | None = None,
+def terminal_return(kind: str, last_close_u: float, consideration_per_share: float | None = None,
                     performance_ret: float = -0.30, low_price: float = 1.0) -> float:
     """Return realized by a holder from the last close to the delisting payout (spec §4.5)."""
     if kind not in DELISTING_KINDS:
         raise ValueError(f"unknown delisting kind {kind!r}")
     if kind == ACQUISITION:
-        if cash_per_share is None or not np.isfinite(cash_per_share):
+        if consideration_per_share is None or not np.isfinite(consideration_per_share):
             return 0.0
-        return cash_per_share / last_close_u - 1.0
+        return consideration_per_share / last_close_u - 1.0
     if kind == BANKRUPTCY:
         return -1.0
     if kind == PERFORMANCE or (kind == UNKNOWN and last_close_u < low_price):
@@ -101,8 +101,8 @@ def normalize_prices(prices: pl.DataFrame, delistings: pl.DataFrame,
                   .agg(last_close_u=pl.col("closeunadj").last()))
     terms = delisted.join(last_close, on="permaticker").select(
         "permaticker",
-        terminal_ret=pl.struct("kind", "last_close_u", "cash_per_share").map_elements(
-            lambda r: terminal_return(r["kind"], r["last_close_u"], r["cash_per_share"]),
+        terminal_ret=pl.struct("kind", "last_close_u", "consideration_per_share").map_elements(
+            lambda r: terminal_return(r["kind"], r["last_close_u"], r["consideration_per_share"]),
             return_dtype=pl.Float64))
     df = (df.join(terms, on="permaticker", how="left")
           .with_columns(
