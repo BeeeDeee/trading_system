@@ -3,12 +3,15 @@
 Lokální výzkumný framework pro vývoj a poctivé vyhodnocení long-only strategií na denních datech
 US akcií (Sharadar).
 
-Stav: specifikace, bez implementace. Další krok: Fáze 0 (základ a enginy na syntetických datech). Sharadar data jsou potřeba až od Fáze 1.
+Stav: Fáze 0 hotová (viz `docs/PHASE0_PLAN.md`). Další krok: Fáze 1 – datový audit a normalizace reálných dat.
+
+Testy: `uv run pytest`
 
 ## Dokumenty
 
 - [`docs/PROJECT_SPECIFICATION.md`](docs/PROJECT_SPECIFICATION.md) – aktuální specifikace (v2)
 - [`docs/SPEC_REVIEW.md`](docs/SPEC_REVIEW.md) – revize v1 a zdůvodnění změn
+- [`docs/PHASE0_PLAN.md`](docs/PHASE0_PLAN.md) – plán a výsledky Fáze 0
 - [`docs/DATA_FINDINGS.md`](docs/DATA_FINDINGS.md) – předběžná zjištění o datech Sharadar
 - [`docs/archive/PROJECT_SPECIFICATION_v1.md`](docs/archive/PROJECT_SPECIFICATION_v1.md) – původní specifikace
 
