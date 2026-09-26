@@ -34,7 +34,7 @@ def random_case(seed, n_days=400, n_assets=25):
         if w.sum() > 0:
             w = w / w.sum() * rng.uniform(0.5, 1.0)
         targets[t] = w
-    cost = CostModel().rate(rng.uniform(1, 300, shape))
+    cost = CostModel().rate(rng.uniform(1, 2000, shape))
     cash_ret = rng.uniform(0, 2e-4, n_days)
     return panel, targets, cost, cash_ret
 
@@ -58,7 +58,7 @@ def test_parity_on_synthetic_market():
     for t in range(0, p.shape[0], 5):
         ok = p.tradable[t] & ~p.delisting[t]
         targets[t] = ok / max(ok.sum(), 1)
-    cost = CostModel().rate(np.full(p.shape, 20.0))
+    cost = CostModel().rate(np.full(p.shape, 700.0))
     v = simulate(p, targets, cost)
     ledger = simulate_ledger(p, targets, cost)
     np.testing.assert_allclose(ledger.sim.returns, v.returns, atol=1e-10)

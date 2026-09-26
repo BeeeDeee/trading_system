@@ -108,12 +108,13 @@ Tabulka `bars` v long formátu, klíč `(permaticker, date)`:
 | `ret_co` | Overnight výnos close `t−1` → open `t` (TR) |
 | `ret_oc` | Intradenní výnos open `t` → close `t` (TR) |
 | `dollar_volume` | `close_u × volume_u` |
-| `spread_est` | Odhad spreadu z OHLC (Abdi–Ranaldo, 21denní okno) |
 | `tradable` | bool (open > 0, volume > 0, titul je listovaný) |
-| `status` | `active`, `ipo_warmup`, `halted`, `delisting_day`, `delisted` |
+| `status` | `active`, `no_open` (bez použitelného open, vč. výplňových dní s nulovým objemem), `halted`, `delisted` |
 | `terminal_ret` | Terminální výnos v den delistingu (§4.5), jinak null |
 
-Obchodní kalendář: NYSE (`exchange_calendars`). Den bez záznamu pro listovaný titul = `halted`.
+Obchodní kalendář: data SEP (audit: shodné se SPY, 7 228 dní, bez mimořádných uzávěr). Den bez
+záznamu pro listovaný titul = `halted`; Sharadar však dny bez obchodu vyplňuje kopií ceny s nulovým
+objemem, ty jsou `no_open`.
 Nic se nedoplňuje budoucími hodnotami; forward-fill je povolen jen pro zobrazení, nikdy pro výnos.
 
 ### 4.5 Politika delistingu [N]
@@ -247,16 +248,19 @@ historii; strategie s pevnými parametry nezávisí na foldu.
 shodují v toleranci (např. |Δ| < 1 bp denně, drift CAGR < 0,1 p.b.) **[N]**. Parita je akceptační
 kritérium (§16).
 
-### 7.3 Nákladový model [N]
+### 7.3 Nákladový model [D]
 
 Pro každý obchod titulu `i`:
 
 ```
-cost_i = |Δw_i| × ( commission_bps + max(slip_floor_bps, k × spread_est_i / 2) )
+cost_i = |Δw_i| × ( commission_bps + max(floor_bps, half_spread(rank_i, t)) )
 ```
 
-- `commission_bps = 0`, `slip_floor_bps = 5`, `k = 1`.
-- `spread_est` z OHLC, oříznutý do intervalu [2, 200] bps.
+- `rank_i` = pořadí 63denního mediánu dollar volume titulu mezi všemi titulů daného dne.
+- `half_spread`: rank ≤ 200 → 3 bps, ≤ 500 → 6 bps, ≤ 1000 → 12 bps, jinak 25 bps; před
+  decimalizací (do 2001-04-09) × 2,5. `commission_bps = 0`, `floor_bps = 5`.
+- Původně navržený odhad spreadu z OHLC (Abdi–Ranaldo) byl ověřen a zamítnut: pod ~30 bps ho
+  přehluší volatilita (AAPL/MSFT vycházely 0–50 bps), viz `DATA_FINDINGS.md` §7.
 - Povinné citlivostní běhy: náklady × 2 a × 3.
 - **Kapacita (diagnostika):** maximální kapitál, při kterém žádný obchod nepřekročí 1 % 21denního
   mediánu dollar volume. Výzkumný projekt nepotřebuje kapacitu 10 USD mil., ale strategie s kapacitou
@@ -689,3 +693,6 @@ jemné: hustší mřížka zvyšuje počet pokusů, ale nepřidává informaci.
 | 2026-09-25 | Ansámbl: K = 2 primárně, K = 3 sekundárně, obě předem registrované | Rozhodnutí uživatele; zkoušet K = 3 až po výsledcích K = 2 by byl pokus podmíněný výsledkem |
 | 2026-09-26 | Stažen kompletní Sharadar bundle (snapshot 2026-09-25) + FRED `DTB3`; předběžná zjištění v `DATA_FINDINGS.md` | Předplatné končí; data dostupná dřív, než je Fáze 1 potřebuje |
 | 2026-09-26 | Univerzum bez SPAC a sekundárních tříd; delisting akvizic podle skutečné protihodnoty; likvidace SPAC ≠ bankrot | Zjištění z dat (P10–P13) |
+| 2026-09-26 | Náklady podle pořadí likvidity (tiers) místo odhadu spreadu z OHLC | Estimátor Abdi–Ranaldo je pro likvidní tituly šum (ověřeno simulací i na AAPL/MSFT) |
+| 2026-09-26 | Kalendář = data SEP, bez `exchange_calendars` | Audit: shoda se SPY na všech 7 228 dnech |
+| 2026-09-26 | Výchozí hodnoty zmrazeny v `configs/frozen_defaults.yaml` (konec Fáze 1) | Spec §15; změny od teď = nový pokus v registru |

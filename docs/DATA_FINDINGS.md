@@ -161,3 +161,15 @@ Poznámky:
 | EW S&P 500 vs. RSP | průměr +0,9 p.b./rok (denní vs. kvartální rebalance, poplatek RSP) | Očekávané |
 
 Závěr: data i normalizace jsou vhodné pro Fázi 1.3 (univerzum) a dál.
+
+## 7. Odhad spreadu z OHLC (zamítnuto)
+
+Spec původně počítala s odhadem spreadu Abdi–Ranaldo (2017) z high/low/close. Ověření:
+
+- **Simulace** (mid jako random walk, obchody na bid/ask, denní volatilita 2 %): při skutečném spreadu
+  2–20 bps vychází odhad 0–35 bps i po zprůměrování 30 titulů × 250 dní; spolehlivý je až od
+  ~100 bps.
+- **Reálná data**: AAPL, MSFT, JPM, XOM (skutečný spread ~1–3 bps) vycházejí náhodně 0 nebo 20–55 bps.
+
+Pro likvidní univerzum je estimátor šum. Náklady proto určuje transparentní model podle pořadí
+likvidity (spec §7.3, `configs/frozen_defaults.yaml`) s povinnou citlivostí ×2 a ×3.

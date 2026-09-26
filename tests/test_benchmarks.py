@@ -1,0 +1,47 @@
+import numpy as np
+import pytest
+
+from qlab.benchmarks import buy_and_hold_returns, equal_weight_targets, month_ends
+from qlab.data.panel import Panel, load_panel, save_panel
+
+
+def make_panel(ret_co, ret_oc, delisting=None):
+    ret_co, ret_oc = np.asarray(ret_co, float), np.asarray(ret_oc, float)
+    shape = ret_co.shape
+    return Panel(np.arange(shape[0]).astype("datetime64[D]"), np.arange(shape[1]), ret_co, ret_oc,
+                 np.ones(shape, bool), np.ones(shape, bool),
+                 np.zeros(shape, bool) if delisting is None else np.asarray(delisting),
+                 np.full(shape, 10.0), np.full(shape, 1e6))
+
+
+def test_month_ends():
+    d = np.array(["2020-01-30", "2020-01-31", "2020-02-03", "2020-02-28", "2020-03-02"],
+                 dtype="datetime64[D]")
+    assert month_ends(d).tolist() == [False, True, False, True, True]
+
+
+def test_equal_weight_targets():
+    members = np.array([[1, 1, 0], [1, 0, 0], [0, 0, 0]], bool)
+    t = equal_weight_targets(members, np.array([True, False, True]))
+    assert t[0].tolist() == [0.5, 0.5, 0.0] and np.isnan(t[1]).all() and t[2].tolist() == [0, 0, 0]
+
+
+def test_buy_and_hold_reinvests_delisting_pro_rata():
+    # Two assets; asset 1 delists on day 2 with +50 % payout that goes into asset 0.
+    ret_co = np.array([[0, 0], [0.0, 0.0], [0.0, 0.5], [0.1, 0.0]])
+    ret_oc = np.array([[0.0, 0.0], [0.1, -0.1], [0.0, 0.0], [0.0, 0.0]])
+    delisting = np.zeros((4, 2), bool)
+    delisting[2, 1] = True
+    r = buy_and_hold_returns(make_panel(ret_co, ret_oc, delisting), np.array([1, 1]), start=0)
+    # day 1: 0.5*1.1 + 0.5*0.9 = 1.0 ; day 2: asset 1 pays 0.45*1.5=0.675 -> total 1.225
+    # day 3: everything in asset 0, +10 %
+    np.testing.assert_allclose(np.cumprod(1 + r), [1.0, 1.0, 1.225, 1.3475])
+
+
+def test_panel_roundtrip(tmp_path):
+    p = make_panel(np.random.default_rng(0).normal(size=(5, 3)), np.zeros((5, 3)))
+    save_panel(p, tmp_path / "p", extra={"liq_rank": np.ones((5, 3), np.float32)})
+    q, extra = load_panel(tmp_path / "p")
+    assert np.array_equal(q.ret_co, p.ret_co) and np.array_equal(q.dates, p.dates)
+    assert extra["liq_rank"].dtype == np.float32
+    assert pytest.approx(float(q.ret_co.sum())) == float(p.ret_co.sum())

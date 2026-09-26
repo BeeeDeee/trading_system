@@ -109,17 +109,20 @@ def test_equal_weight_portfolio_survives_delistings():
     for t in range(0, p.shape[0], 21):
         eligible = p.tradable[t] & ~p.delisting[t]
         targets[t] = eligible / eligible.sum()
-    r = simulate(p, targets, CostModel().rate(np.full(p.shape, 10.0)))
+    r = simulate(p, targets, CostModel().rate(np.full(p.shape, 300.0)))
     assert np.isfinite(r.nav).all() and (r.nav > 0).all()
     assert (r.exposure <= 1 + 1e-12).all() and (r.exposure >= 0).all()
     assert r.costs.sum() > 0
 
 
 def test_cost_model():
-    cm = CostModel(commission_bps=1.0, slip_floor_bps=5.0)
-    np.testing.assert_allclose(cm.rate(np.array([4.0, 30.0, 1000.0, np.nan])),
-                               np.array([6.0, 16.0, 101.0, 101.0]) / 1e4)
-    np.testing.assert_allclose(CostModel(multiplier=3).rate(np.array([0.0])), [15e-4])
+    cm = CostModel(commission_bps=1.0)
+    ranks = np.array([1.0, 350.0, 900.0, 5000.0, np.nan])
+    np.testing.assert_allclose(cm.rate(ranks), np.array([6.0, 7.0, 13.0, 26.0, 26.0]) / 1e4)
+    dates = np.array(["2000-06-01", "2010-06-01"], dtype="datetime64[D]")
+    both = cm.rate(np.array([[1.0, 900.0], [1.0, 900.0]]), dates)
+    np.testing.assert_allclose(both, np.array([[8.5, 31.0], [6.0, 13.0]]) / 1e4)
+    np.testing.assert_allclose(CostModel(multiplier=3).rate(np.array([1.0])), [15e-4])
 
 
 def test_cash_returns_use_previous_rate_act_360():

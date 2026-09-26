@@ -1,6 +1,7 @@
 """Dense date x asset matrices built from `bars`; the input format of the engines."""
 
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 import polars as pl
@@ -32,7 +33,28 @@ class Panel:
 _MATRICES = ("ret_co", "ret_oc", "tradable", "listed", "delisting", "close_u", "dollar_volume")
 
 
-def panel_from_bars(bars: pl.DataFrame, calendar) -> Panel:
+def save_panel(panel: Panel, directory: Path, extra: dict[str, np.ndarray] | None = None) -> None:
+    """One .npy per matrix, so a panel can be memory-mapped instead of loaded (small machines)."""
+    directory.mkdir(parents=True, exist_ok=True)
+    np.save(directory / "dates.npy", panel.dates)
+    np.save(directory / "assets.npy", panel.assets)
+    for name in _MATRICES:
+        np.save(directory / f"{name}.npy", getattr(panel, name))
+    for name, matrix in (extra or {}).items():
+        np.save(directory / f"extra_{name}.npy", matrix)
+
+
+def load_panel(directory: Path, mmap: bool = True) -> tuple[Panel, dict[str, np.ndarray]]:
+    mode = "r" if mmap else None
+    load = lambda name: np.load(directory / f"{name}.npy", mmap_mode=mode)  # noqa: E731
+    panel = Panel(np.load(directory / "dates.npy"), np.load(directory / "assets.npy"),
+                  *(load(name) for name in _MATRICES))
+    extra = {f.stem.removeprefix("extra_"): np.load(f, mmap_mode=mode)
+             for f in sorted(directory.glob("extra_*.npy"))}
+    return panel, extra
+
+
+def panel_from_bars(bars: pl.DataFrame, calendar, price_dtype=np.float64) -> Panel:
     validate(bars, BARS_SCHEMA, "bars")
     dates = np.asarray(pl.Series(calendar, dtype=pl.Date).unique().sort().to_numpy(),
                        dtype="datetime64[D]")
@@ -58,6 +80,6 @@ def panel_from_bars(bars: pl.DataFrame, calendar) -> Panel:
         tradable=dense(bars["tradable"].to_numpy(), False, bool),
         listed=dense(True, False, bool),
         delisting=dense((bars["status"] == DELISTED).to_numpy(), False, bool),
-        close_u=dense(bars["close_u"].to_numpy(), np.nan, np.float64),
-        dollar_volume=dense(bars["dollar_volume"].to_numpy(), np.nan, np.float64),
+        close_u=dense(bars["close_u"].to_numpy(), np.nan, price_dtype),
+        dollar_volume=dense(bars["dollar_volume"].to_numpy(), np.nan, price_dtype),
     )
