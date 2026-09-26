@@ -7,9 +7,10 @@ Stav: **uzavřeno negativním výsledkem** – metodika v holdoutu 2020–2026 n
 
 Testy: `uv run pytest`
 
-## Výzkum 2 (rozpracováno)
+## Výzkum 2 – uzavřeno negativně
 
-Multi-asset alokace s trendovým filtrem: [`docs/research2/PREREGISTRATION.md`](docs/research2/PREREGISTRATION.md).
+Multi-asset alokace s trendovým filtrem nepřekonala 60/40 (2010–2026: Sharpe 0,52 vs. 0,85).
+[`docs/research2/REPORT.md`](docs/research2/REPORT.md) · [`PREREGISTRATION.md`](docs/research2/PREREGISTRATION.md) · [`DATA_AUDIT.md`](docs/research2/DATA_AUDIT.md)
 
 ## Dokumenty (výzkum 1)
 
