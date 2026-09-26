@@ -60,3 +60,4 @@ praktické shrnutí.
 | Datum | Rozhodnutí | Zdůvodnění |
 |---|---|---|
 | 2026-09-26 | Pre-registrace v1.0 | Volba uživatele (možnost 2 po výzkumu 2) |
+| 2026-09-26 | Výsledky v `REPORT.md`: rebalance/typ dluhopisů/mezinárodní diverzifikace bez významného rozdílu; zlato 5–10 % významně vyšší Sharpe (s výhradou období) | – |

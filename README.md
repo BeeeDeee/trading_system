@@ -12,6 +12,10 @@ Testy: `uv run pytest`
 Multi-asset alokace s trendovým filtrem nepřekonala 60/40 (2010–2026: Sharpe 0,52 vs. 0,85).
 [`docs/research2/REPORT.md`](docs/research2/REPORT.md) · [`PREREGISTRATION.md`](docs/research2/PREREGISTRATION.md) · [`DATA_AUDIT.md`](docs/research2/DATA_AUDIT.md)
 
+## Výzkum 3 – pravidla pasivního portfolia
+
+Rebalance, podíl akcií, mezinárodní akcie, typ dluhopisů, zlato: [`docs/research3/REPORT.md`](docs/research3/REPORT.md).
+
 ## Dokumenty (výzkum 1)
 
 - [`docs/PROJECT_SPECIFICATION.md`](docs/PROJECT_SPECIFICATION.md) – aktuální specifikace (v2)
