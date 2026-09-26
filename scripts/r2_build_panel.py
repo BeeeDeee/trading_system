@@ -1,4 +1,4 @@
-"""Research 2 / R1: ETF panel from Sharadar funds (total return from closeadj).
+"""Research 2-3: ETF panel from Sharadar funds (total return from closeadj).
 
 Usage: python scripts/r2_build_panel.py sharadar_YYYY-MM-DD
 Output: data/derived/<snapshot>/panel_etf/ (+ extra_cash_ret, tickers.json)
@@ -18,11 +18,12 @@ from qlab.engine.costs import cash_returns
 
 MAIN = ["SPY", "EFA", "EEM", "IEF", "TLT", "TIP", "GLD", "DBC", "VNQ"]
 ALTERNATIVES = ["VEU", "VWO", "AGG", "IAU", "GSG", "IYR"]
+EXTRA = ["SHY"]  # research 3
 
 snapshot = sys.argv[1]
 src = Path("data/parquet") / snapshot
 out = Path("data/derived") / snapshot / "panel_etf"
-tickers = MAIN + ALTERNATIVES
+tickers = MAIN + ALTERNATIVES + EXTRA
 
 calendar = (pl.read_parquet(src / "funds.parquet", columns=["ticker", "date"])
             .filter(pl.col("ticker") == "SPY")["date"].sort().to_list())
