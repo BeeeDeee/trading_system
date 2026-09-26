@@ -113,3 +113,5 @@ Celkem 4 × 5 × 5 = 100 kandidátů. Overlay celého portfolia se nepoužívá 
 | Datum | Rozhodnutí | Zdůvodnění |
 |---|---|---|
 | 2026-09-26 | Pre-registrace v1.0 | Výzkum 1 uzavřen negativně; nová otázka schválena uživatelem, čistý výzkum |
+| 2026-09-26 | R1: panel 15 ETF, audit v `DATA_AUDIT.md` | Bez výsledků strategií |
+| 2026-09-26 | Upřesnění před R2 (žádný výsledek strategie ještě nespočten): (a) rozhodnutí po close prvního obchodního dne měsíce (jako výzkum 1); ETF je způsobilé až po 252 dnech historie → první rozhodnutí 2007-03-01; (b) pořadí kroků: způsobilost → relativní momentum (top-k) → základní váhy mezi vybranými (EW / inverzní vol.) → strop 40 % s přerozdělením → trendový filtr (neprojde-li ETF, jeho váha jde do hotovosti); (c) H2 tvrdé filtry = výzkum 1 kromě min. počtu pozic (zde 1); dedup 0,85; K = 2; (d) okolí v mřížce: liší se jedna dimenze o jeden krok v pořadí z §5; (e) registr pokusů výzkumu 2 je samostatný (`runs/registry/research2.sqlite`) | Pre-registrace tyto detaily nepokrývala |
