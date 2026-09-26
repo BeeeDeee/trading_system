@@ -14,14 +14,11 @@ from pathlib import Path
 
 import numpy as np
 import polars as pl
-import yaml
 
-from qlab.data.panel import load_panel
-from qlab.engine.costs import CostModel
+from qlab.pipeline import dev_setup
 from qlab.strategies.grid import build_grid
-from qlab.strategies.run import Context, run_candidate
+from qlab.strategies.run import run_candidate
 from qlab.validation.registry import TrialRegistry, config_hash
-from qlab.validation.vault import Vault
 
 ap = argparse.ArgumentParser()
 ap.add_argument("snapshot")
@@ -29,26 +26,11 @@ ap.add_argument("--limit", type=int, default=0, help="only the first N candidate
 ap.add_argument("--families", default="", help="comma-separated subset")
 args = ap.parse_args()
 
-cfg = yaml.safe_load(Path("configs/frozen_defaults.yaml").read_text())
+setup = dev_setup(args.snapshot)
+cfg, ctx, panel, start, end = setup.cfg, setup.ctx, setup.panel, setup.start, setup.end
 der = Path("data/derived") / args.snapshot
-dev_end = cfg["periods"]["development"][1]
-dev_start = cfg["periods"]["development"][0]
-vault = Vault(dev_end, Path("runs/vault/frozen.lock"), Path("runs/vault/vault.log"))
-
-full, extra = load_panel(der / "panel_liq1000")
-end = vault.last_visible_index(full.dates)
-panel = full.slice(end)
-vault.check_dev_only(panel.dates)
-start = int(np.searchsorted(panel.dates, np.datetime64(dev_start)))
-spy_perm = json.loads((der / "panel_liq1000" / "special_assets.json").read_text())["SPY"]
-spy = int(np.searchsorted(panel.assets, spy_perm))
+dev_start, dev_end = cfg["periods"]["development"]
 costs_cfg = cfg["costs"]
-cost_model = CostModel(costs_cfg["commission_bps"], costs_cfg["floor_bps"],
-                       tuple(tuple(t) for t in costs_cfg["tiers"]), costs_cfg["default_bps"],
-                       costs_cfg["pre_decimal_multiplier"])
-ctx = Context(panel, np.asarray(extra["in_liq1000"][:end]), spy, first_decision=start - 1,
-              cost_rate=cost_model.rate(np.asarray(extra["liq_rank"][:end]), panel.dates),
-              cash_ret=np.asarray(extra["cash_ret"][:end]))
 
 grid = build_grid(cfg["grid"])
 if args.families:

@@ -66,6 +66,12 @@ class TrialRegistry:
                  kind, n_configs, note))
             return int(cur.lastrowid)
 
+    def has(self, config) -> bool:
+        """True if a trial with this exact configuration was already recorded."""
+        with self._connect() as con:
+            return con.execute("SELECT 1 FROM trials WHERE config_hash = ? LIMIT 1",
+                               (config_hash(config),)).fetchone() is not None
+
     def total_configs(self, kind: str | None = None) -> int:
         """Number of configurations tried (sum of n_configs), optionally for one kind."""
         query = "SELECT COALESCE(SUM(n_configs), 0) FROM trials"

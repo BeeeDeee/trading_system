@@ -111,3 +111,25 @@ def bootstrap_ci(data: np.ndarray, stat: Callable[[np.ndarray], float], n_boot: 
                       for _ in range(n_boot)])
     lo, hi = np.quantile(boots, [alpha / 2, 1 - alpha / 2])
     return float(stat(x)), float(lo), float(hi)
+
+
+def spa_pvalue(excess: np.ndarray, n_boot: int = 2000, mean_block: float = 21.0,
+               seed: int = 0) -> float:
+    """Hansen (2005) SPA_c p-value for H0: no column of `excess` has a positive mean.
+
+    `excess` is T x k: daily returns of k strategies minus the benchmark.
+    """
+    d = np.asarray(excess, dtype=float)
+    d = d[:, None] if d.ndim == 1 else d
+    n = len(d)
+    rng = np.random.default_rng(seed)
+    means = d.mean(axis=0)
+    boot_means = np.array([d[stationary_bootstrap_indices(n, mean_block, rng)].mean(axis=0)
+                           for _ in range(n_boot)])
+    sd = np.sqrt(n) * boot_means.std(axis=0)
+    sd = np.where(sd > 0, sd, np.inf)
+    t_obs = max(float(np.max(np.sqrt(n) * means / sd)), 0.0)
+    threshold = -np.sqrt(2 * np.log(np.log(n)))
+    recentred = np.where(np.sqrt(n) * means / sd >= threshold, means, 0.0)
+    t_boot = np.maximum(np.max(np.sqrt(n) * (boot_means - recentred) / sd, axis=1), 0.0)
+    return float((t_boot >= t_obs).mean())

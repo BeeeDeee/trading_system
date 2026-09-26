@@ -104,3 +104,10 @@ def test_metrics():
     assert s["cagr"] == pytest.approx(1.0004 ** 252 - 1)
     assert s["max_drawdown"] == 0 and s["turnover_annual"] == pytest.approx(2.52)
     assert s["costs_bps_annual"] == pytest.approx(25.2)
+
+
+def test_spa_pvalue():
+    from qlab.validation.stats import spa_pvalue
+    rng = np.random.default_rng(9)
+    assert spa_pvalue(rng.normal(0.002, 0.01, (2000, 2)), n_boot=300) < 0.05
+    assert spa_pvalue(rng.normal(0.0, 0.01, (2000, 3)), n_boot=300) > 0.1
