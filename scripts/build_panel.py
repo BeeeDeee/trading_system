@@ -5,6 +5,7 @@ Output: data/derived/<snapshot>/panel_liq1000/*.npy (+ extra_liq_rank, extra_in_
 extra_in_sp500, extra_cash_ret)
 """
 
+import json
 import sys
 import time
 from pathlib import Path
@@ -13,7 +14,8 @@ import duckdb
 import numpy as np
 import polars as pl
 
-from qlab.data.schema import DELISTED
+from qlab.data.normalize import normalize_prices
+from qlab.data.schema import DELISTED, DELISTINGS_SCHEMA, PRICES_SCHEMA
 from qlab.engine.costs import cash_returns
 
 snapshot = sys.argv[1]
@@ -23,7 +25,11 @@ t0 = time.time()
 
 liq = pl.read_parquet(der / "universe_liq1000.parquet")
 sp = pl.read_parquet(der / "universe_sp500.parquet")
-assets = np.sort(liq["permaticker"].unique().to_numpy())
+# SPY (from funds) is added as an extra, non-universe asset: regime strategy and trend overlay.
+snap_dir = Path("data/parquet") / snapshot
+spy_perm = int(pl.read_parquet(snap_dir / "tickers.parquet").filter(
+    (pl.col("table") == "SFP") & (pl.col("ticker") == "SPY"))["permaticker"].cast(pl.Int64).item())
+assets = np.sort(np.append(liq["permaticker"].unique().to_numpy(), spy_perm))
 con = duckdb.connect()
 con.execute("SET memory_limit='1200MB'; SET threads=2; SET preserve_insertion_order=false")
 dates = np.array([d for (d,) in con.sql(
@@ -63,6 +69,16 @@ for part in sorted((der / "bars").glob("part-*.parquet")):
     mats["delisting"][t, n] = (b["status"] == DELISTED).to_numpy()
     mats["close_u"][t, n] = b["close_u"].to_numpy()
     mats["dollar_volume"][t, n] = b["dollar_volume"].to_numpy()
+
+spy_px = (pl.read_parquet(snap_dir / "funds.parquet").filter(pl.col("ticker") == "SPY")
+          .with_columns(permaticker=pl.lit(spy_perm, dtype=pl.Int64))
+          .select([pl.col(c).cast(t) for c, t in PRICES_SCHEMA.items()]).sort("date"))
+spy_bars = normalize_prices(spy_px, pl.DataFrame(schema=DELISTINGS_SCHEMA), dates.tolist())
+t, n = index(spy_bars)
+for name in ("ret_co", "ret_oc", "tradable", "close_u", "dollar_volume"):
+    mats[name][t, n] = spy_bars[name].to_numpy()
+mats["listed"][t, n] = True
+(out / "special_assets.json").write_text(json.dumps({"SPY": spy_perm}))
 
 # Liquidity rank among all securities with trading volume (for the cost tiers).
 con.register("assets", pl.DataFrame({"permaticker": assets}))

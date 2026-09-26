@@ -13,11 +13,12 @@ from pathlib import Path
 import numpy as np
 import polars as pl
 
-from qlab.benchmarks import buy_and_hold_returns, equal_weight_targets, month_ends
+from qlab.benchmarks import buy_and_hold_returns, equal_weight_targets
 from qlab.data.panel import load_panel
 from qlab.engine.costs import CostModel
 from qlab.engine.ledger import simulate_ledger
 from qlab.engine.vector import simulate
+from qlab.schedule import period_starts
 from qlab.validation.metrics import summary
 from qlab.validation.vault import Vault
 
@@ -35,7 +36,8 @@ members = np.asarray(extra["in_liq1000"][:end])
 cost = CostModel().rate(np.asarray(extra["liq_rank"][:end]), dates)
 
 t0 = time.time()
-decide = month_ends(dates) & (np.arange(end) >= start - 1)
+decide = period_starts(dates, "M") & (np.arange(end) >= start - 1)
+decide[start - 1] = True
 ew_targets = equal_weight_targets(members, decide)
 ew = simulate(panel, ew_targets, cost, rf)
 t_vec = time.time() - t0

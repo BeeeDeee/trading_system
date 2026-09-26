@@ -14,7 +14,7 @@ import numpy as np
 import polars as pl
 
 from qlab.data.panel import Panel
-from qlab.engine.vector import SimResult, check_targets
+from qlab.engine.vector import Decisions, SimResult, as_decisions
 
 
 @dataclass(frozen=True)
@@ -40,11 +40,12 @@ def _unit_prices(panel: Panel) -> tuple[np.ndarray, np.ndarray]:
     return prev_close * growth_co, close
 
 
-def simulate_ledger(panel: Panel, targets: np.ndarray, cost_rate: np.ndarray | float,
+def simulate_ledger(panel: Panel, targets: "np.ndarray | Decisions", cost_rate: np.ndarray | float,
                     cash_ret: np.ndarray | None = None,
                     config: LedgerConfig = LedgerConfig()) -> LedgerResult:
     n_days, n_assets = panel.shape
-    check_targets(targets, panel.shape)
+    decisions = as_decisions(targets, panel.shape)
+    row_of = decisions.row()
     cost_rate = np.broadcast_to(np.asarray(cost_rate, dtype=float), panel.shape)
     cash_ret = np.zeros(n_days) if cash_ret is None else np.asarray(cash_ret, dtype=float)
     p_open, p_close = _unit_prices(panel)
@@ -118,8 +119,8 @@ def simulate_ledger(panel: Panel, targets: np.ndarray, cost_rate: np.ndarray | f
         nav[t] = cash + invested
         exposure[t] = invested / nav[t]
         n_pos[t] = len(units)
-        if not np.isnan(targets[t]).all():
-            pending = targets[t]
+        if t in row_of:
+            pending = decisions.weights[row_of[t]]
 
     prev = np.concatenate(([config.capital], nav[:-1]))
     sim = SimResult(panel.dates, nav, nav / prev - 1.0, turnover, costs, exposure, n_pos)

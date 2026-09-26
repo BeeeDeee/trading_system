@@ -64,3 +64,17 @@ def test_features_are_correct(panel):
     vol = trailing_volatility(panel, 30)
     assert vol[t, a] == pytest.approx(np.std(r[t - 29: t + 1], ddof=1))
     assert np.isnan(mom[5]).all()
+
+
+def test_rolling_helpers_match_naive():
+    from qlab.features.basic import rolling_max, rolling_mean, rolling_min
+    x = np.random.default_rng(0).normal(size=(300, 3))
+    for w in (1, 2, 5, 55, 126):
+        naive_max = np.array([x[max(0, t - w + 1): t + 1].max(axis=0) for t in range(300)])
+        naive_min = np.array([x[max(0, t - w + 1): t + 1].min(axis=0) for t in range(300)])
+        naive_mean = np.array([x[t - w + 1: t + 1].mean(axis=0) if t >= w - 1 else [np.nan] * 3
+                               for t in range(300)])
+        np.testing.assert_allclose(rolling_max(x, w)[w - 1:], naive_max[w - 1:])
+        np.testing.assert_allclose(rolling_min(x, w)[w - 1:], naive_min[w - 1:])
+        np.testing.assert_allclose(rolling_mean(x, w), naive_mean)
+        assert np.isnan(rolling_max(x, w)[: w - 1]).all()

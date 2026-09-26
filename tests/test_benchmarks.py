@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from qlab.benchmarks import buy_and_hold_returns, equal_weight_targets, month_ends
+from qlab.benchmarks import buy_and_hold_returns, equal_weight_targets
 from qlab.data.panel import Panel, load_panel, save_panel
 
 
@@ -12,12 +12,6 @@ def make_panel(ret_co, ret_oc, delisting=None):
                  np.ones(shape, bool), np.ones(shape, bool),
                  np.zeros(shape, bool) if delisting is None else np.asarray(delisting),
                  np.full(shape, 10.0), np.full(shape, 1e6))
-
-
-def test_month_ends():
-    d = np.array(["2020-01-30", "2020-01-31", "2020-02-03", "2020-02-28", "2020-03-02"],
-                 dtype="datetime64[D]")
-    assert month_ends(d).tolist() == [False, True, False, True, True]
 
 
 def test_equal_weight_targets():

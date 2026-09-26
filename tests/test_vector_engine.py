@@ -130,3 +130,18 @@ def test_cash_returns_use_previous_rate_act_360():
     rate_dates = np.array(["2024-01-04", "2024-01-08"], dtype="datetime64[D]")
     r = cash_returns(dates, rate_dates, np.array([3.6, 7.2]))
     np.testing.assert_allclose(r, [0.0, 0.036 * 3 / 360, 0.072 / 360])
+
+
+def test_sparse_decisions_equal_dense():
+    from qlab.engine.vector import Decisions
+    rng = np.random.default_rng(0)
+    p = make_panel(rng.normal(0, 0.01, (50, 4)), rng.normal(0, 0.01, (50, 4)))
+    dense = hold(50, 4)
+    days = np.array([0, 7, 20, 33])
+    w = rng.dirichlet(np.ones(4), size=4) * 0.9
+    dense[days] = w
+    a = simulate(p, dense, 0.001)
+    b = simulate(p, Decisions(days, w), 0.001)
+    np.testing.assert_array_equal(a.nav, b.nav)
+    with pytest.raises(ValueError):
+        simulate(p, Decisions(np.array([5, 5]), w[:2]), 0.0)

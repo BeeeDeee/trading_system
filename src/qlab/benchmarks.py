@@ -1,6 +1,6 @@
 """Benchmarks (spec §8).
 
-- EW_UNIV: equal weight of the universe, rebalanced on the last trading day of each month, run
+- EW_UNIV: equal weight of the universe, rebalanced after the first trading day of each month, run
   through the engine with the same cost model as strategies.
 - BH_UNIV: buy-and-hold of the universe members at the start, equal initial weights, never
   rebalanced; delisting proceeds are reinvested pro rata into the remaining positions.
@@ -10,12 +10,6 @@
 import numpy as np
 
 from qlab.data.panel import Panel
-
-
-def month_ends(dates: np.ndarray) -> np.ndarray:
-    """True on the last trading day of each calendar month."""
-    months = np.asarray(dates, dtype="datetime64[M]")
-    return np.append(months[1:] != months[:-1], True)
 
 
 def equal_weight_targets(members: np.ndarray, decision_days: np.ndarray) -> np.ndarray:
