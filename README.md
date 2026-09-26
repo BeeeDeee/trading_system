@@ -7,7 +7,11 @@ Stav: **uzavřeno negativním výsledkem** – metodika v holdoutu 2020–2026 n
 
 Testy: `uv run pytest`
 
-## Dokumenty
+## Výzkum 2 (rozpracováno)
+
+Multi-asset alokace s trendovým filtrem: [`docs/research2/PREREGISTRATION.md`](docs/research2/PREREGISTRATION.md).
+
+## Dokumenty (výzkum 1)
 
 - [`docs/PROJECT_SPECIFICATION.md`](docs/PROJECT_SPECIFICATION.md) – aktuální specifikace (v2)
 - [`docs/SPEC_REVIEW.md`](docs/SPEC_REVIEW.md) – revize v1 a zdůvodnění změn
