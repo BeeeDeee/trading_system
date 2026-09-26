@@ -76,7 +76,7 @@ Seznam vychází ze známé struktury Sharadar Core US Equities Bundle; audit ho
 | `DAILY` | ticker, date, marketcap, ev, pe, pb, ... | Denní market cap (filtr velikosti, sanity check) |
 | `SP500` | date, action, ticker | Historické složení S&P 500 → alternativní PIT univerzum |
 | `SF1` | ticker, dimension, datekey, reportperiod, ... | Fundamenty. **Ve v1 se nepoužívají**, jen audit dostupnosti. |
-| VIX | **[A]** kde a v jaké podobě | Feature režimu pro ML |
+| `funds` kategorie IDX | `^VIX`, `^GSPC`, `^RUT`, `^IXIC`, `^DJI` (od 1997-12-31) | VIX pro ML, indexy pro sanity check |
 | mimo Sharadar | FRED `DTB3` | Bezriziková sazba |
 
 ### 4.3 Známé pasti a povinná opatření
@@ -88,7 +88,11 @@ Seznam vychází ze známé struktury Sharadar Core US Equities Bundle; audit ho
 | P3 | TICKERS jsou snapshot k dnešku | Pole `exchange`, `isdelisted`, `lastpricedate`, `scalemarketcap`, `sector` se nesmí použít jako filtr historického univerza ani jako feature. Výjimka: `category` pro vyřazení ne-akciových instrumentů, s auditem stability. |
 | P4 | Recyklované tickery | Primární klíč `permaticker`. Ticker jen jako popisek. |
 | P5 | Chybí delisting return | Politika terminálního výnosu (§4.5) |
-| P6 | Spinoffy nemusí být v `closeadj` | Audit: jednodenní výnosy < −30 % vs. ACTIONS `spinoff`. Pokud nejsou upraveny, korekce faktorem z `value`. |
+| P6 | ~~Spinoffy nemusí být v `closeadj`~~ | **Vyřešeno:** `closeadj` spinoffy obsahuje (viz `DATA_FINDINGS.md` §2). |
+| P10 | SPAC schránky: cena ~10 USD, nulová volatilita; jejich likvidace je v ACTIONS jako `bankruptcyliquidation` | Vyloučit z univerza (SIC 6770 k datu `t`); likvidace SPAC = výplata poslední ceny (§4.5) |
+| P11 | Dvě třídy akcií jedné firmy (Primary/Secondary Class) | V univerzu jen Primary Class |
+| P12 | `metrics` je jen aktuální snapshot | Nepoužívat |
+| P13 | ACTIONS obsahuje budoucí data (ohlášené splity) | Ignorovat akce po posledním obchodním dni snapshotu |
 | P7 | Open = 0 / chybí | Den je pro daný titul neobchodovatelný. |
 | P8 | Zpětné opravy dat | Řeší se neměnným snapshotem. |
 | P9 | SF1 `MR*` dimenze jsou restatované | Pokud se v budoucnu použijí fundamenty: jen `AR*`, dostupnost od `datekey` + zpoždění. |
@@ -118,9 +122,10 @@ Poslední platný close = `P_last`. Terminální výnos se připíše v den deli
 
 | Typ z ACTIONS | Terminální výnos vůči `P_last` |
 |---|---|
-| Akvizice / fúze s udanou hodnotou (`value`) | `value / P_last − 1` (akcie/cash dle záznamu; akciová protihodnota se převede na hodnotu k datu) |
-| Akvizice / fúze bez hodnoty | 0 % |
-| Bankrot / likvidace | −100 % |
+| Akvizice / fúze s `acquisitioncash` a/nebo `acquisitionstock` | `(cash + stock_ratio × P_acquirer) / P_last − 1`, kde `P_acquirer` je close kupujícího v den delistingu. Pole `value` u delistingových akcí je tržní kapitalizace, ne výplata. |
+| Akvizice / fúze bez údaje o protihodnotě | 0 % |
+| Likvidace SPAC (SIC 6770 k datu delistingu) | 0 % (výplata hodnoty trustu ≈ poslední cena) |
+| Bankrot / likvidace (ostatní) | −100 % |
 | Regulatorní / výkonnostní delisting, nebo neznámý typ při `P_last < 1 USD` | −30 % (Shumway 1997) |
 | Ostatní / neznámý | 0 % |
 
@@ -147,8 +152,9 @@ Report `audit/<snapshot_id>/` obsahuje:
 ### 5.1 Primární univerzum „LIQ1000" [N]
 
 V každém rebalančním dni `t` (point-in-time):
-1. `category` = domácí kmenové akcie (**[A]** přesné hodnoty); vyřadit ETF, ETN, CEF, preferred,
-   warranty, units, práva, ADR.
+1. `category` ∈ {`Domestic Common Stock`, `Domestic Common Stock Primary Class`}; tím se vyřadí
+   ETF/fondy (jsou v jiné tabulce), preferred, ADR, kanadské akcie a sekundární třídy akcií.
+   Vyřadit SPAC: SIC kód 6770 platný k datu `t` (z `tickers` + historie `sicchangefrom/to`).
 2. `close_u(t) ≥ 5 USD`.
 3. Alespoň 252 obchodních dní historie (kvůli lookbackům).
 4. Seřadit podle mediánu `dollar_volume` za 63 dní a vzít **top 1000**.
@@ -597,9 +603,8 @@ holdout výsledek je informace, ne ztráta času.
 
 Uzavřou se ve Fázi 1 (vše, co je výše označeno [A] nebo [N]):
 
-- přesný seznam tabulek, koncové datum dumpu a kde je VIX,
-- chování `closeadj` v ex-div den a u spinoffů,
-- hodnoty `category` pro domácí kmenové akcie a jejich stabilita v čase,
+- chování `closeadj` v ex-div den (spinoffy potvrzeny, viz `DATA_FINDINGS.md`),
+- stabilita `category` (Primary/Secondary Class je snapshot) v čase,
 - typy delistingů v ACTIONS a jejich mapování na §4.5,
 - finální mřížka parametrů a počet kandidátů podle rychlosti enginu na dostupném HW,
 - případná úprava hranice holdoutu podle koncového data dat.
@@ -682,3 +687,5 @@ jemné: hustší mřížka zvyšuje počet pokusů, ale nepřidává informaci.
 | 2026-09-25 | Fáze 0 bez reálných dat; Sharadar dump je vstupní podmínkou až Fáze 1 | Práce nečeká na přenos dat; engine se nejdřív ověří na syntetice |
 | 2026-09-25 | Max. drawdown kandidáta 45 % | Rozhodnutí uživatele; upřednostní strategie s řízením rizika |
 | 2026-09-25 | Ansámbl: K = 2 primárně, K = 3 sekundárně, obě předem registrované | Rozhodnutí uživatele; zkoušet K = 3 až po výsledcích K = 2 by byl pokus podmíněný výsledkem |
+| 2026-09-26 | Stažen kompletní Sharadar bundle (snapshot 2026-09-25) + FRED `DTB3`; předběžná zjištění v `DATA_FINDINGS.md` | Předplatné končí; data dostupná dřív, než je Fáze 1 potřebuje |
+| 2026-09-26 | Univerzum bez SPAC a sekundárních tříd; delisting akvizic podle skutečné protihodnoty; likvidace SPAC ≠ bankrot | Zjištění z dat (P10–P13) |

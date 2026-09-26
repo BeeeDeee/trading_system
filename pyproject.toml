@@ -1,0 +1,14 @@
+[project]
+name = "qlab"
+version = "0.0.1"
+description = "Research framework for long-only US equity strategies (Sharadar)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "polars>=1.0",
+    "duckdb>=1.0",
+    "pyarrow>=15",
+    "numpy>=1.26",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
