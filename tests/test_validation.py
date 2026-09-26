@@ -111,3 +111,14 @@ def test_spa_pvalue():
     rng = np.random.default_rng(9)
     assert spa_pvalue(rng.normal(0.002, 0.01, (2000, 2)), n_boot=300) < 0.05
     assert spa_pvalue(rng.normal(0.0, 0.01, (2000, 3)), n_boot=300) > 0.1
+
+
+def test_vault_final_session(tmp_path):
+    v = Vault(date(2019, 12, 31), tmp_path / "frozen.lock", tmp_path / "vault.log")
+    v.freeze("m1")
+    with pytest.raises(VaultError):
+        v.check_final_session("m1", "snap", "c1")   # not opened yet
+    v.open_final("m1", "snap", "c1")
+    v.check_final_session("m1", "snap", "c1")
+    with pytest.raises(VaultError):
+        v.check_final_session("m1", "snap", "c2")   # different code

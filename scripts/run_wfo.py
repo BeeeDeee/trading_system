@@ -36,11 +36,13 @@ ap.add_argument("snapshot")
 ap.add_argument("grid_hash")
 ap.add_argument("--universe", default="liq1000", choices=["liq1000", "sp500"])
 ap.add_argument("--delisting", default="base", choices=["base", "optimistic", "pessimistic"])
+ap.add_argument("--final", action="store_true", help="folds through the holdout (vault session)")
+ap.add_argument("--replicate", default="", help="final mode: dev-period WFO hash to reproduce")
 args = ap.parse_args()
 snapshot, grid_hash = args.snapshot, args.grid_hash
-robustness = args.universe != "liq1000" or args.delisting != "base"
+robustness = args.universe != "liq1000" or args.delisting != "base" or args.final
 t0 = time.time()
-setup = dev_setup(snapshot, universe=args.universe, delisting=args.delisting)
+setup = dev_setup(snapshot, universe=args.universe, delisting=args.delisting, final=args.final)
 cfg, ctx, panel = setup.cfg, setup.ctx, setup.panel
 der = Path("data/derived") / snapshot
 gdir = der / "candidates" / grid_hash
@@ -55,8 +57,8 @@ grid = [by_id[i] for i in cands["candidate_id"]]
 neigh = neighbour_lists(grid, cfg["grid"])
 
 w = cfg["wfo"]
-folds = make_folds(panel.dates, w["first_test_year"], w["last_test_year"], setup.start,
-                   w["embargo_days"])
+last_year = int(str(panel.dates[-1])[:4]) if args.final else w["last_test_year"]
+folds = make_folds(panel.dates, w["first_test_year"], last_year, setup.start, w["embargo_days"])
 variants = {"primary": cfg["ensemble"]["primary"]["k"], "secondary": cfg["ensemble"]["secondary"]["k"]}
 
 registry = TrialRegistry(Path("runs/registry/trials.sqlite"))
@@ -68,8 +70,9 @@ for name, k in variants.items():
     if not registry.has(trial):  # robustness runs evaluate the same methodology on perturbed data
         registry.record("other" if robustness else "methodology_eval", trial,
                         note=f"WFO {name} K={k} ({method_hash})"
-                        + (f" robustness {args.universe}/{args.delisting}" if robustness else ""))
-n_meth = registry.n_meth
+                        + (" final holdout" if args.final else
+                           f" robustness {args.universe}/{args.delisting}" if robustness else ""))
+n_meth = registry.n_meth  # robustness/final runs are "other" trials and do not add to it
 out = der / "wfo" / method_hash
 out.mkdir(parents=True, exist_ok=True)
 
@@ -136,22 +139,49 @@ def cagr_diff(x):
     return float(g[0] - g[1])
 
 
-stats = {}
-for name in variants:
-    r = series[name]
-    ex = r - rf
-    s = {"metrics": summary(r, rf, results[name].turnover[oos], results[name].costs[oos],
-                            results[name].exposure[oos]),
-         "dsr": deflated_sharpe(ex, n_meth, 1.0 / len(ex)),
-         "n_meth": n_meth}
+def segment_stats(sl: slice) -> dict:
+    """Metrics and tests on rows `sl` of the out-of-sample series."""
+    rf_s = rf[sl]
+    out_stats = {}
+    for name in variants:
+        r = series[name][sl]
+        ex = r - rf_s
+        glob = slice(first + sl.start, first + sl.stop)
+        st = {"metrics": summary(r, rf_s, results[name].turnover[glob], results[name].costs[glob],
+                                 results[name].exposure[glob]),
+              "dsr": deflated_sharpe(ex, n_meth, 1.0 / len(ex)), "n_meth": n_meth}
+        for bench in ("EW_UNIV", "SPY_TR"):
+            x = np.column_stack([r, series[bench][sl], rf_s])
+            st[f"sharpe_diff_vs_{bench}"] = bootstrap_ci(x, sharpe_diff, n_boot=1000, mean_block=21)
+            st[f"cagr_diff_vs_{bench}"] = bootstrap_ci(x, cagr_diff, n_boot=1000, mean_block=21)
+            st[f"spa_p_vs_{bench}"] = spa_pvalue((r - series[bench][sl])[:, None], n_boot=1000)
+        out_stats[name] = st
     for bench in ("EW_UNIV", "SPY_TR"):
-        x = np.column_stack([r, series[bench], rf])
-        s[f"sharpe_diff_vs_{bench}"] = bootstrap_ci(x, sharpe_diff, n_boot=1000, mean_block=21)
-        s[f"cagr_diff_vs_{bench}"] = bootstrap_ci(x, cagr_diff, n_boot=1000, mean_block=21)
-        s[f"spa_p_vs_{bench}"] = spa_pvalue((r - series[bench])[:, None], n_boot=1000)
-    stats[name] = s
-for bench in ("EW_UNIV", "SPY_TR"):
-    stats[bench] = {"metrics": summary(series[bench], rf)}
+        out_stats[bench] = {"metrics": summary(series[bench][sl], rf_s)}
+    out_stats["period"] = [str(panel.dates[first + sl.start]), str(panel.dates[first + sl.stop - 1])]
+    return out_stats
+
+
+n_oos = last - first
+stats = segment_stats(slice(0, n_oos))
+segments = {}
+if args.final:
+    h0 = int(np.searchsorted(panel.dates, np.datetime64(cfg["periods"]["holdout"][0]))) - first
+    segments = {"development_oos": segment_stats(slice(0, h0)),
+                "holdout": segment_stats(slice(h0, n_oos))}
+    # Consistency (spec §9.6): holdout Sharpe vs. the yearly Sharpe ratios of the WFO years.
+    yrs = np.asarray(panel.dates[first:first + h0], dtype="datetime64[Y]")
+    yearly_sr = []
+    for y in np.unique(yrs):
+        k = yrs == y
+        yearly_sr.append(float(col_sharpe(series["primary"][:h0][k][:, None], rf[:h0][k])[0]))
+    hold_sr = segments["holdout"]["primary"]["metrics"]["sharpe"]
+    segments["consistency"] = {"yearly_sharpe_dev": yearly_sr, "holdout_sharpe": hold_sr,
+                               "holdout_percentile": float(np.mean(np.array(yearly_sr) <= hold_sr))}
+    if args.replicate:  # the dev part must reproduce the pre-registered Phase 3 run exactly
+        ref = np.load(der / "wfo" / args.replicate / "returns.npy")
+        segments["replication_max_abs_diff"] = float(
+            np.abs(ref[:, 0] - series["primary"][: len(ref)]).max())
 
 years = np.asarray(panel.dates[oos], dtype="datetime64[Y]").astype(int) + 1970
 yearly = pl.DataFrame([{"year": int(y), **{k: float(np.prod(1 + v[years == y]) - 1)
@@ -165,7 +195,7 @@ gate_ci = p["sharpe_diff_vs_EW_UNIV"][1] > cfg["gates"]["phase3_ci_vs_ew_univ_lo
 result = {"method_hash": method_hash, "grid_run": grid_hash,
           "oos_period": [str(panel.dates[first]), str(panel.dates[last - 1])],
           "folds": len(folds), "n_meth": n_meth, "ledger_parity_primary": parity,
-          "ledger_orders_primary": n_orders, "stats": stats,
+          "ledger_orders_primary": n_orders, "stats": stats, "segments": segments,
           "gate": {"dsr": bool(gate_dsr), "ci_sharpe_vs_ew": bool(gate_ci),
                    "passed": bool(gate_dsr and gate_ci)},
           "seconds": round(time.time() - t0)}

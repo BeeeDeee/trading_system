@@ -57,6 +57,13 @@ class Vault:
                                 "snapshot_id": snapshot_id, "commit": commit,
                                 "methodology_hash": methodology_hash}) + "\n")
 
+    def check_final_session(self, methodology_hash: str, snapshot_id: str, commit: str) -> None:
+        """Allow a process to read holdout data only inside the one logged final evaluation."""
+        if not any(e["snapshot_id"] == snapshot_id and e["methodology_hash"] == methodology_hash
+                   and e["commit"] == commit for e in self.log()):
+            raise VaultError("no final evaluation of this methodology/commit is open for "
+                             f"snapshot {snapshot_id}")
+
     def log(self) -> list[dict]:
         if not self.log_path.exists():
             return []

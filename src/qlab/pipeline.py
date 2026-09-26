@@ -1,6 +1,7 @@
 """Shared setup of the development-period context (vault-protected) for grid and WFO runs."""
 
 import json
+import os
 from dataclasses import dataclass, replace
 from pathlib import Path
 
@@ -11,7 +12,10 @@ import yaml
 from qlab.data.panel import Panel, load_panel
 from qlab.engine.costs import CostModel
 from qlab.strategies.run import Context
+from qlab.validation.registry import current_commit
 from qlab.validation.vault import Vault
+
+FINAL_ENV = "QLAB_FINAL_METHODOLOGY"  # set by scripts/final_evaluation.py
 
 CONFIG = Path("configs/frozen_defaults.yaml")
 
@@ -65,16 +69,28 @@ def apply_delisting_scenario(panel: Panel, delistings: pl.DataFrame, scenario: s
     return replace(panel, ret_co=ret_co)
 
 
+def vault_for(cfg: dict) -> Vault:
+    return Vault(cfg["periods"]["development"][1], Path("runs/vault/frozen.lock"),
+                 Path("runs/vault/vault.log"))
+
+
 def dev_setup(snapshot: str, cost_multiplier: float = 1.0, universe: str = "liq1000",
-              delisting: str = "base") -> DevSetup:
+              delisting: str = "base", final: bool = False) -> DevSetup:
+    """Development-period setup; with `final=True` the whole history including the holdout,
+    allowed only inside the logged final evaluation (spec §9.7)."""
     cfg = load_config()
     der = Path("data/derived") / snapshot
-    dev_start, dev_end = cfg["periods"]["development"]
-    vault = Vault(dev_end, Path("runs/vault/frozen.lock"), Path("runs/vault/vault.log"))
+    dev_start = cfg["periods"]["development"][0]
+    vault = vault_for(cfg)
     full, extra = load_panel(der / "panel_liq1000")
-    end = vault.last_visible_index(full.dates)
-    panel = full.slice(end)
-    vault.check_dev_only(panel.dates)
+    if final:
+        vault.check_final_session(os.environ.get(FINAL_ENV, ""), snapshot, current_commit())
+        end = full.shape[0]
+        panel = full
+    else:
+        end = vault.last_visible_index(full.dates)
+        panel = full.slice(end)
+        vault.check_dev_only(panel.dates)
     panel = apply_delisting_scenario(panel, pl.read_parquet(der / "delistings.parquet"), delisting)
     start = int(np.searchsorted(panel.dates, np.datetime64(dev_start)))
     spy_perm = json.loads((der / "panel_liq1000" / "special_assets.json").read_text())["SPY"]

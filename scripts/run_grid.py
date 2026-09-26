@@ -26,13 +26,17 @@ ap.add_argument("--limit", type=int, default=0, help="only the first N candidate
 ap.add_argument("--families", default="", help="comma-separated subset")
 ap.add_argument("--universe", default="liq1000", choices=["liq1000", "sp500"])
 ap.add_argument("--delisting", default="base", choices=["base", "optimistic", "pessimistic"])
+ap.add_argument("--final", action="store_true", help="whole history incl. holdout (vault session)")
 args = ap.parse_args()
 
-setup = dev_setup(args.snapshot, universe=args.universe, delisting=args.delisting)
-robustness = args.universe != "liq1000" or args.delisting != "base"
+setup = dev_setup(args.snapshot, universe=args.universe, delisting=args.delisting,
+                  final=args.final)
+robustness = args.universe != "liq1000" or args.delisting != "base" or args.final
 cfg, ctx, panel, start, end = setup.cfg, setup.ctx, setup.panel, setup.start, setup.end
 der = Path("data/derived") / args.snapshot
 dev_start, dev_end = cfg["periods"]["development"]
+if args.final:
+    dev_end = panel.dates[-1]
 costs_cfg = cfg["costs"]
 
 grid = build_grid(cfg["grid"])
@@ -46,6 +50,8 @@ run_cfg = {"snapshot": args.snapshot, "grid": cfg["grid"], "costs": costs_cfg,
            "candidates": [c.candidate_id for c in grid]}
 if robustness:  # keeps the base run's hash unchanged
     run_cfg["robustness"] = {"universe": args.universe, "delisting": args.delisting}
+if args.final:
+    run_cfg["final"] = True
 run_hash = config_hash(run_cfg)
 out = der / "candidates" / run_hash
 out.mkdir(parents=True, exist_ok=True)
@@ -76,7 +82,7 @@ if not (out / "candidates.parquet").exists():
     if not args.limit and not args.families:
         TrialRegistry(Path("runs/registry/trials.sqlite")).record(
             "other" if robustness else "candidates", run_cfg, n_configs=n_cand,
-            note=f"{'robustness ' if robustness else ''}grid run {run_hash}")
+            note=f"{'final ' if args.final else 'robustness ' if robustness else ''}grid run {run_hash}")
 
 t0, ran = time.time(), 0
 for k, c in enumerate(grid):
