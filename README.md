@@ -1,43 +1,94 @@
 # strategy_backtester_2026_sep
 
-Lokální výzkumný framework pro vývoj a poctivé vyhodnocení long-only strategií na denních datech
-US akcií (Sharadar).
+Lokální výzkumný framework pro poctivé vyhodnocení systematických long-only strategií na denních
+datech amerických akcií a ETF (Sharadar, snapshot 2026-09-25).
 
-Stav: **uzavřeno negativním výsledkem** – metodika v holdoutu 2020–2026 neobstála (CAGR 2,4 % vs. SPY 15,5 %). Viz `docs/FINAL_REPORT.md`.
+**Stav: projekt uzavřen (2026-09-27).** Tři pre-registrované výzkumy, dva negativní výsledky
+a jedna sada praktických závěrů pro pasivní portfolio.
 
-Testy: `uv run pytest`
+## Závěr v jedné větě
 
-## Výzkum 2 – uzavřeno negativně
+Žádná z testovaných aktivních strategií po nákladech a pod poctivou validací nepřekonala
+jednoduché pasivní portfolio; u pasivního portfolia na většině pravidel prakticky nezáleží –
+rozhoduje zvolený podíl akcií, nízké náklady a disciplína.
 
-Multi-asset alokace s trendovým filtrem nepřekonala 60/40 (2010–2026: Sharpe 0,52 vs. 0,85).
-[`docs/research2/REPORT.md`](docs/research2/REPORT.md) · [`PREREGISTRATION.md`](docs/research2/PREREGISTRATION.md) · [`DATA_AUDIT.md`](docs/research2/DATA_AUDIT.md)
+## Výsledky
 
-## Výzkum 3 – pravidla pasivního portfolia
+| Výzkum | Otázka | Výsledek |
+|---|---|---|
+| **1 – výběr akcií** | Překoná ansámbl strategií nad likvidními US akciemi (momentum, trend, breakout, reversal, low-vol, režim trhu; 3 027 kandidátů, walk-forward výběr) pasivní investici? | **Ne.** Ve vývoji (2005–2019) low-vol ansámbl Sharpe 0,93 vs. SPY 0,49, ale na předem uzamčeném holdoutu **2020–2026 CAGR 2,4 % vs. SPY 15,5 %**, Sharpe 0,01. Hypotéza zamítnuta. |
+| **2 – třídy aktiv** | Překoná alokace přes 9 ETF (inverzní volatilita + trendový filtr na každé třídě) portfolio 60/40? | **Ne.** 2010–2026 Sharpe 0,52 vs. 0,85, rozdíl statisticky významně záporný; robustní na náklady, záměnu ETF i délku trendu. |
+| **3 – pasivní pravidla** | Záleží na frekvenci rebalance, podílu akcií, zahraničních akciích, typu dluhopisů, zlatu? | Rebalance, typ dluhopisů a zahraničí: **bez významného rozdílu**. Podíl akcií: věc rizikové preference. Zlato 5–10 %: **významně vyšší Sharpe** (+0,04–0,07), s výhradou mimořádného období pro zlato. |
 
-Rebalance, podíl akcií, mezinárodní akcie, typ dluhopisů, zlato: [`docs/research3/REPORT.md`](docs/research3/REPORT.md).
+Podrobně: [výzkum 1](docs/FINAL_REPORT.md) · [výzkum 2](docs/research2/REPORT.md) ·
+[výzkum 3](docs/research3/REPORT.md).
 
-## Dokumenty (výzkum 1)
+## Co jsme se naučili
 
-- [`docs/PROJECT_SPECIFICATION.md`](docs/PROJECT_SPECIFICATION.md) – aktuální specifikace (v2)
-- [`docs/SPEC_REVIEW.md`](docs/SPEC_REVIEW.md) – revize v1 a zdůvodnění změn
-- [`docs/PHASE0_PLAN.md`](docs/PHASE0_PLAN.md) – plán a výsledky Fáze 0
-- [`docs/PHASE1_REPORT.md`](docs/PHASE1_REPORT.md) – Fáze 1: pipeline dat, audit, benchmarky
-- [`docs/PHASE2_REPORT.md`](docs/PHASE2_REPORT.md) – Fáze 2: 3 027 kandidátů, výsledky rodin, PBO/DSR
-- [`docs/PHASE3_REPORT.md`](docs/PHASE3_REPORT.md) – Fáze 3: walk-forward 2005–2019, brána, interpretace
-- [`docs/FINAL_REPORT.md`](docs/FINAL_REPORT.md) – **závěr: finální holdout 2020–2026, verdikt a doporučení**
-- [`docs/final/`](docs/final/) – záznam trezoru, zmrazení metodiky, souhrn a roční výnosy
-- [`configs/frozen_defaults.yaml`](configs/frozen_defaults.yaml) – zmrazené výchozí hodnoty metodiky
-- [`docs/DATA_FINDINGS.md`](docs/DATA_FINDINGS.md) – předběžná zjištění o datech Sharadar
-- [`docs/archive/PROJECT_SPECIFICATION_v1.md`](docs/archive/PROJECT_SPECIFICATION_v1.md) – původní specifikace
+1. **Vývojové výsledky přeceňují.** Low-vol ansámbl prošel všemi branami (DSR 0,999, CI vůči
+   benchmarku > 0) a přesto na holdoutu selhal. Statistika počítá jen formální pokusy, ne volbu
+   rodin strategií podle známé literatury ani to, že období 2000–2019 jim přálo.
+2. **Robustnostní testy varují dřív.** Slabší výsledek na univerzu S&P 500 byl první signál.
+3. **Časování trhu podle zpožděných signálů (volatilita, klouzavé průměry) škodí při rychlých
+   odrazech** (březen–červen 2020) a v klidných býčích letech.
+4. **Náklady rozhodují:** krátkodobé strategie (reversal, breakout, týdenní rebalance) po nákladech
+   ztrácely prakticky vše.
+5. **Pasivní 60/40 bylo v letech 2010–2026 mimořádně silné** – laťka, kterou je těžké překonat.
+6. **Pre-registrace a trezor fungují:** holdout zůstal čistý do posledního běhu a negativní výsledek
+   je proto důvěryhodný.
+
+## Framework
+
+Znovupoužitelný, otestovaný (`uv run pytest`, 100 testů), běží na stroji s 3 GB RAM.
+
+| Oblast | Modul | Co umí |
+|---|---|---|
+| Data | `qlab.data` | Sharadar → normalizované bars (total return, delistingy s protihodnotou akvizic, SPAC, třídy akcií), syntetický trh se známou pravdou |
+| Univerza | `qlab.universe` | LIQ-N podle likvidity k datu, S&P 500 k datu |
+| Enginy | `qlab.engine` | vektorový (rychlý screening) a ledger (USD, příkazy, poplatky); shoda 10⁻¹⁵ |
+| Strategie | `qlab.strategies` | 6 rodin akciových strategií, multi-asset alokace, mřížky, rozvrhy bez nahlížení do budoucnosti |
+| Výběr | `qlab.selection` | tvrdé filtry, robustní skóre podle okolí, korelační deduplikace, `select()` |
+| Validace | `qlab.validation` | test úniku budoucnosti, walk-forward, PSR/DSR, PBO, bootstrap, SPA, registr pokusů, trezor na holdout |
+
+Klíčové skripty:
+
+```
+scripts/download_sharadar.sh                      # stažení snapshotu (vyžaduje předplatné)
+uv run python scripts/raw_to_parquet.py data/raw/sharadar_<datum>
+uv run python scripts/build_bars.py data/parquet/sharadar_<datum>
+uv run python scripts/audit_sharadar.py sharadar_<datum>
+uv run python scripts/build_universe.py sharadar_<datum>
+uv run python scripts/build_panel.py sharadar_<datum>
+uv run python scripts/run_grid.py sharadar_<datum>          # výzkum 1: mřížka kandidátů
+uv run python scripts/run_wfo.py sharadar_<datum> <grid>    # výzkum 1: walk-forward
+uv run python scripts/final_evaluation.py sharadar_<datum>  # jednorázový holdout přes trezor
+uv run python scripts/r2_build_panel.py sharadar_<datum>    # výzkum 2–3: panel ETF
+uv run python scripts/r2_evaluate.py sharadar_<datum>
+uv run python scripts/r3_evaluate.py sharadar_<datum>
+```
+
+## Kdyby se projekt otevíral znovu
+
+- **Holdout 2020–2026 je spotřebovaný** pro všechny tři výzkumy. Novou hypotézu lze poctivě
+  ověřit jen forward testem na datech po 2026-09-25 (framework to umí; data ETF jsou volně
+  dostupná, akcie vyžadují obnovu předplatného Sharadaru).
+- Nevyužitá data: fundamenty `SF1` (point-in-time), insideři, institucionální držby.
+- Začít pre-registrací v `docs/`, commitnout před prvním výpočtem, vést registr pokusů.
+
+## Dokumentace
+
+- Výzkum 1: [specifikace](docs/PROJECT_SPECIFICATION.md), [revize původní spec](docs/SPEC_REVIEW.md),
+  [data](docs/DATA_FINDINGS.md), [audit dat](docs/audit/sharadar_2026-09-25.md),
+  fáze [0](docs/PHASE0_PLAN.md) · [1](docs/PHASE1_REPORT.md) · [2](docs/PHASE2_REPORT.md) ·
+  [3](docs/PHASE3_REPORT.md) · [finální holdout](docs/FINAL_REPORT.md) ·
+  [záznam trezoru a výsledky](docs/final/), [zmrazená konfigurace](configs/frozen_defaults.yaml)
+- Výzkum 2: [pre-registrace](docs/research2/PREREGISTRATION.md), [audit ETF](docs/research2/DATA_AUDIT.md),
+  [report](docs/research2/REPORT.md), [výsledky](docs/research2/results/)
+- Výzkum 3: [pre-registrace](docs/research3/PREREGISTRATION.md), [report](docs/research3/REPORT.md),
+  [výsledky](docs/research3/results/)
+- Archiv: [původní specifikace v1](docs/archive/PROJECT_SPECIFICATION_v1.md)
 
 ## Data
 
-Sharadar dump patří do `data/raw/<snapshot_id>/` a nikdy do gitu (viz `.gitignore` a spec §4.1).
-
-Aktuální snapshot `sharadar_2026-09-25` je na serveru. Znovu stáhnout (vyžaduje aktivní předplatné,
-klíč v `~/.config/sharadar/api_key` nebo `$SHARADAR_API_KEY`):
-
-```
-scripts/download_sharadar.sh                 # všechny tabulky do data/raw/sharadar_<dnes>/
-uv run python scripts/raw_to_parquet.py data/raw/sharadar_<datum>   # → data/parquet/<snapshot>/
-```
+Data nejsou v gitu. Snapshot `sharadar_2026-09-25` (raw zipy, Parquet, odvozená data) leží na
+serveru v `data/`; API klíč mimo repozitář v `~/.config/sharadar/api_key`.
