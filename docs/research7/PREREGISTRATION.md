@@ -59,3 +59,4 @@ Práh VIX 20 a 30, rukáv bez brány VIX, vstup open *t*+2, max. propad a beta k
 | Datum | Rozhodnutí | Důvod |
 |---|---|---|
 | 2026-09-27 | Pre-registrace v1.0 | – |
+| 2026-09-27 | Vyhodnoceno: 0 ze 4 kritérií, zamítnuto, forward test se nespouští | `REPORT.md` |
