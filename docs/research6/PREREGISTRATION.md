@@ -64,3 +64,4 @@ Náklady ×3, vstup open *t*+2, prahy 20/30/relativní, sekundární konfigurace
 | Datum | Rozhodnutí | Důvod |
 |---|---|---|
 | 2026-09-27 | Pre-registrace v1.0 | – |
+| 2026-09-27 | Vyhodnoceno: 5 ze 6 kritérií, C6 (DSR 0,0006) zamítá. Forward test se podle §7 nespouští. | `REPORT.md` |
