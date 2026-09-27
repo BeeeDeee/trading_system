@@ -77,7 +77,8 @@ CostFn = Callable[[int, int], float]
 def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, start: int,
              end: int, entry_cost: CostFn, exit_cost: CostFn,
              exit_signal: np.ndarray | None = None, allow_entry: np.ndarray | None = None,
-             cash_ret: np.ndarray | None = None) -> SimOutput:
+             cash_ret: np.ndarray | None = None,
+             cash_ret_oc: np.ndarray | None = None) -> SimOutput:
     """Simulate days [start, end). Decisions from the close of `start`; nothing is held before.
 
     `exit_signal` is a (T, N) array whose value > 0 on the close of t means "exit" (e.g. the TR
@@ -169,6 +170,8 @@ def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, 
 
         if t in pending_buy:
             buy(t, pending_buy.pop(t), fill_at_close=False)
+        if cash_ret_oc is not None:
+            cash *= 1.0 + cash_ret_oc[t]
 
         for p_a, p in pos.items():
             p.value *= 1.0 + ret_oc[p_a]

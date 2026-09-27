@@ -37,6 +37,8 @@ class Config:
     cost_mult: float = 1.0
     exclude_earnings: bool = False  # 8-K Item 2.02 in [t-2, t]
     vix_gate: str | None = None     # research 6: "abs<level>" (VIX close > level) or "rel80"
+    core: str | None = None         # research 7: "spy" = idle capital held in SPY
+    core_cost_bps: float = 2.0      # per side, for every SPY trade that funds a position
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -209,8 +211,21 @@ def run(ctx: Context, cfg: Config, cands: Candidates | None = None) -> SimOutput
     spec = SimSpec(cfg.max_positions, cfg.max_hold, cfg.entry_delay, cfg.capital,
                    vol_target=cfg.vol_target)
     cash = np.asarray(ctx.extra["cash_ret"][:ctx.end]) if cfg.cash == "tbill" else None
+    cash_oc = None
+    if cfg.core == "spy":
+        cash = np.asarray(ctx.panel.ret_co[:, ctx.spy])
+        cash_oc = np.asarray(ctx.panel.ret_oc[:, ctx.spy])
+        extra_cost = cfg.core_cost_bps * cfg.cost_mult / 1e4
+        entry_cost = _plus(entry_cost, extra_cost)
+        exit_cost = _plus(exit_cost, extra_cost)
+    elif cfg.core is not None:
+        raise ValueError(f"unknown core {cfg.core!r}")
     return simulate(ctx.panel, cands, spec, ctx.extra["adv20"], ctx.start, ctx.end, entry_cost,
-                    exit_cost, exit_m, allow, cash)
+                    exit_cost, exit_m, allow, cash, cash_oc)
+
+
+def _plus(fn, extra: float):
+    return lambda t, a: fn(t, a) + extra
 
 
 def vix_gate(vix: np.ndarray, rule: str, window: int = 252) -> np.ndarray:

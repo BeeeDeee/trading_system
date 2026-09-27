@@ -285,3 +285,24 @@ def test_vix_gate_is_point_in_time():
             noisy[t + 1:] = rng.uniform(0, 80, len(vix) - t - 1)
             np.testing.assert_array_equal(vix_gate(noisy, rule)[: t + 1], full[: t + 1])
     np.testing.assert_array_equal(vix_gate(vix, "abs25"), np.nan_to_num(vix) > 25)
+
+
+def test_cash_core_follows_spy_and_trades_swap_out_of_it(panel):
+    """Research 7: with cash carrying an asset's overnight/intraday returns, no trades = that asset's
+    total return; a trade earns the position instead of the core only while it is held."""
+    core = int(np.flatnonzero(panel.listed.all(axis=0) & ~panel.delisting.any(axis=0))[0])
+    co, oc = panel.ret_co[:, core], panel.ret_oc[:, core]
+    empty = Candidates(np.array([], int), np.array([], int), np.array([]))
+    none = simulate(panel, empty, SimSpec(1, 5), np.full(panel.shape, np.inf), 0, panel.shape[0],
+                    ZERO, ZERO, cash_ret=co, cash_ret_oc=oc)
+    np.testing.assert_allclose(none.nav, tr_index(panel)[:, core], rtol=1e-12)
+    a = next(int(x) for x in np.flatnonzero(panel.listed[0] & ~panel.delisting.any(axis=0))
+             if x != core)
+    one = simulate(panel, forced([(30, a)]), SimSpec(2, 4), np.full(panel.shape, np.inf), 0,
+                   panel.shape[0], ZERO, ZERO, cash_ret=co, cash_ret_oc=oc)
+    idx = tr_index(panel)
+    open_ = lambda t, j: idx[t - 1, j] * (1 + panel.ret_co[t, j])  # noqa: E731
+    half = 0.5 * open_(31, core)  # half of NAV moved into the position at the open of 31
+    expected = (half * open_(35, a) / open_(31, a) * idx[-1, core] / open_(35, core)
+                + half * idx[-1, core] / open_(31, core))
+    assert one.nav[-1] == pytest.approx(expected, rel=1e-12)
