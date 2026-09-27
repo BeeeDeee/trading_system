@@ -189,3 +189,4 @@ paper tradingu na nových datech, porovnání realizované slippage s modelem §
 | 2026-09-27 | Pre-registrace v1.0 | – |
 | 2026-09-27 | Mřížka §8 má 972 konfigurací, ne 648. Hodnoty parametrů beze změny, opraven jen počet. Před prvním výpočtem strategie. | Test `test_grid_and_neighbors` |
 | 2026-09-27 | Validační běh spadl (typ sloupce `year`) po zápisu do registru a před uložením či zobrazením výsledku. Oprava typu a jeden opakovaný běh, zapsaný v registru jako „rerun after crash“. | Bez vlivu na metodiku |
+| 2026-09-27 | R5.3–R5.4 hotovo: zamítnuto (K2, K4, K5, K7), forward test se nespouští | `REPORT.md` |
