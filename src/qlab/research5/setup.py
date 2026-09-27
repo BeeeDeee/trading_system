@@ -11,6 +11,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 import numpy as np
+import polars as pl
 
 from qlab.data.panel import load_panel
 from qlab.research5.strategy import Context
@@ -50,6 +51,26 @@ def load_stage(snapshot: str, stage: str) -> Context:
     spy_perm = json.loads((der / "panel_r5" / "special_assets.json").read_text())["SPY"]
     return Context(panel, extra, start, der / "r5_cache" / stage,
                    int(np.searchsorted(panel.assets, spy_perm)))
+
+
+def vix_close(snapshot: str, dates: np.ndarray) -> np.ndarray:
+    """(T,) ^VIX close on the panel dates (NaN where missing)."""
+    v = (pl.read_parquet(Path("data/parquet") / snapshot / "funds.parquet",
+                         columns=["ticker", "date", "close"])
+         .filter(pl.col("ticker") == "^VIX").select("date", "close"))
+    return (pl.DataFrame({"date": pl.Series(dates).cast(pl.Date)})
+            .join(v, on="date", how="left")["close"].to_numpy().astype(float))
+
+
+def load_full(snapshot: str, first: date = date(1999, 1, 4)) -> Context:
+    """Whole history without the vault: only for studies that declare all history as already
+    seen (research 6 pre-registration §2). Extras include `vix`."""
+    der = Path("data/derived") / snapshot
+    panel, extra = load_panel(der / "panel_r5")
+    extra = dict(extra, vix=vix_close(snapshot, panel.dates))
+    spy_perm = json.loads((der / "panel_r5" / "special_assets.json").read_text())["SPY"]
+    return Context(panel, extra, int(np.searchsorted(panel.dates, np.datetime64(first))),
+                   der / "r5_cache" / "full", int(np.searchsorted(panel.assets, spy_perm)))
 
 
 def registry() -> TrialRegistry:

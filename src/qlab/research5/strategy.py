@@ -36,6 +36,7 @@ class Config:
     cost: str = "period"           # period | tiers
     cost_mult: float = 1.0
     exclude_earnings: bool = False  # 8-K Item 2.02 in [t-2, t]
+    vix_gate: str | None = None     # research 6: "abs<level>" (VIX close > level) or "rel80"
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -202,11 +203,35 @@ def run(ctx: Context, cfg: Config, cands: Candidates | None = None) -> SimOutput
     entry_cost, exit_cost = cost_fns(ctx, cfg)
     exit_m = _Signed(ctx.feature(f"sma{cfg.exit_sma}"), 1.0 if cfg.side == "long" else -1.0)
     allow = market_trend(ctx.panel, ctx.spy, 200) > 0 if cfg.market_filter else None
+    if cfg.vix_gate is not None:
+        gate = vix_gate(np.asarray(ctx.extra["vix"][:ctx.end]), cfg.vix_gate)
+        allow = gate if allow is None else allow & gate
     spec = SimSpec(cfg.max_positions, cfg.max_hold, cfg.entry_delay, cfg.capital,
                    vol_target=cfg.vol_target)
     cash = np.asarray(ctx.extra["cash_ret"][:ctx.end]) if cfg.cash == "tbill" else None
     return simulate(ctx.panel, cands, spec, ctx.extra["adv20"], ctx.start, ctx.end, entry_cost,
                     exit_cost, exit_m, allow, cash)
+
+
+def vix_gate(vix: np.ndarray, rule: str, window: int = 252) -> np.ndarray:
+    """(T,) bool: new entries allowed after the close of t (research 6 §3), point in time.
+
+    "abs25": VIX close of t > 25; "rel80": VIX close of t above the 80th percentile of the last
+    `window` closes including t. Missing VIX blocks entries.
+    """
+    v = np.asarray(vix, dtype=float)
+    if rule.startswith("abs"):
+        with np.errstate(invalid="ignore"):
+            return np.isfinite(v) & (v > float(rule[3:]))
+    if rule.startswith("rel"):
+        q = float(rule[3:]) / 100.0
+        out = np.zeros(len(v), bool)
+        for t in range(window - 1, len(v)):
+            w = v[t - window + 1:t + 1]
+            w = w[np.isfinite(w)]
+            out[t] = np.isfinite(v[t]) and len(w) > window // 2 and v[t] > np.quantile(w, q)
+        return out
+    raise ValueError(f"unknown VIX gate {rule!r}")
 
 
 def eligible_pool(ctx: Context, cfg: Config, t: int) -> np.ndarray:

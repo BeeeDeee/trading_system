@@ -16,7 +16,8 @@ from qlab.features.basic import tr_index
 from qlab.research5.costs import period_cost
 from qlab.research5.signals import atr_fraction, ibs, rsi, sma_gap, z_reversal
 from qlab.research5.sim import Candidates, SimSpec, simulate
-from qlab.research5.strategy import Config, Context, candidates, grid_configs, neighbors
+from qlab.research5.strategy import (Config, Context, candidates, grid_configs, neighbors,
+                                     vix_gate)
 from qlab.validation.leakage import assert_point_in_time, check_point_in_time
 
 ZERO = lambda t, a: 0.0  # noqa: E731
@@ -269,3 +270,18 @@ def test_candidates_ranked_filtered_and_earnings_excluded(panel, bars, tmp_path)
 def replace_cfg(cfg, **kw):
     from dataclasses import replace
     return replace(cfg, **kw)
+
+
+def test_vix_gate_is_point_in_time():
+    rng = np.random.default_rng(0)
+    vix = 15 + 10 * np.abs(rng.standard_normal(600))
+    vix[100] = np.nan
+    for rule in ("abs25", "rel80"):
+        full = vix_gate(vix, rule)
+        assert not full[100]
+        for t in (260, 400, 598):
+            np.testing.assert_array_equal(vix_gate(vix[: t + 1], rule), full[: t + 1])
+            noisy = vix.copy()
+            noisy[t + 1:] = rng.uniform(0, 80, len(vix) - t - 1)
+            np.testing.assert_array_equal(vix_gate(noisy, rule)[: t + 1], full[: t + 1])
+    np.testing.assert_array_equal(vix_gate(vix, "abs25"), np.nan_to_num(vix) > 25)
