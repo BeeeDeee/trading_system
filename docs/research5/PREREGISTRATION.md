@@ -118,7 +118,7 @@ Doplňková citlivost: model výzkumu 1 (tiery podle pořadí likvidity; hlásí
 | `max_positions` | 10 | 10 · 20 |
 | `min_adv` (mil. USD) | 20 | 5 · 20 · 100 |
 
-Celkem 648 konfigurací. **Pravidlo výběru, pevné předem.** Okolí konfigurace tvoří ona sama a
+Celkem **972** konfigurací (3·3·2·3·3·2·3; zadání uvádí 648, což je početní chyba, viz §13). **Pravidlo výběru, pevné předem.** Okolí konfigurace tvoří ona sama a
 sousedé, kteří se liší o jeden krok v jednom parametru. Skóre = medián Sharpe (po nákladech,
 vývoj) přes okolí. Vybírá se konfigurace s nejvyšším skóre. Při shodě na 2 desetinná místa
 rozhoduje menší počet parametrů odlišných od defaultu. Default konfigurace se hlásí vždy vedle vybrané.
@@ -187,3 +187,4 @@ paper tradingu na nových datech, porovnání realizované slippage s modelem §
 | Datum | Rozhodnutí | Důvod |
 |---|---|---|
 | 2026-09-27 | Pre-registrace v1.0 | – |
+| 2026-09-27 | Mřížka §8 má 972 konfigurací, ne 648. Hodnoty parametrů beze změny, opraven jen počet. Před prvním výpočtem strategie. | Test `test_grid_and_neighbors` |
