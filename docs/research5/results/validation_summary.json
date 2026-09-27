@@ -1,0 +1,114 @@
+{
+  "stage": "validation",
+  "selected": {
+    "entry_z": 2.0,
+    "lookback_ret": 5,
+    "trend_sma": 200,
+    "exit_sma": 3,
+    "max_hold": 10,
+    "max_positions": 10,
+    "min_adv": 100000000.0,
+    "signal": "z",
+    "side": "long",
+    "entry_delay": 1,
+    "market_filter": false,
+    "atr_stop": null,
+    "vol_target": null,
+    "capital": 1000000.0,
+    "cash": "zero",
+    "cost": "period",
+    "cost_mult": 1.0,
+    "exclude_earnings": false
+  },
+  "methodology_hash": "a44f7964b5ae951b",
+  "period": [
+    "2015-01-02",
+    "2019-12-31"
+  ],
+  "stats": {
+    "cagr": 0.026450701841208568,
+    "total_return": 0.13920136095882163,
+    "volatility": 0.09612000591495803,
+    "sharpe": 0.3197156155003695,
+    "sortino": 0.4517125631938284,
+    "max_drawdown": 0.1836647950205752,
+    "max_drawdown_days": 665.0,
+    "calmar": 0.14401617815894116,
+    "cvar_5": 0.01579604678258669,
+    "turnover_annual": 60.75176690157217,
+    "costs_bps_annual": 486.0141352125774,
+    "avg_exposure": 0.29839028833440506,
+    "time_in_cash": 0.294912559618442,
+    "t_stat": 0.7143382388001058,
+    "avg_positions": 3.0079491255961845,
+    "beta": 0.3886053339842499,
+    "corr_spy": 0.5425476631151297,
+    "alpha_annual": -0.015383837943438722,
+    "n_trades": 1516,
+    "win_rate": 0.5976253298153035,
+    "gross_bps": 25.96027865331176,
+    "net_bps": 9.93694478088078,
+    "median_net_bps": 34.73587617930929,
+    "cost_bps": 16.01538431660627,
+    "gross_to_cost": 1.620958831839813,
+    "avg_hold": 2.4940633245382586,
+    "exit_exit_signal": 0.9947229551451188,
+    "exit_time_stop": 0.004617414248021108,
+    "exit_stop": 0.0,
+    "exit_delisted": 0.0006596306068601583
+  },
+  "cost_x2": {
+    "cagr": -0.02225431958530344,
+    "total_return": -0.1062684241891213,
+    "volatility": 0.09615916829872302,
+    "sharpe": -0.1858986211831616,
+    "sortino": -0.2555511115402109,
+    "max_drawdown": 0.271690120710976,
+    "max_drawdown_days": 665.0,
+    "calmar": -0.08191066913683472,
+    "cvar_5": 0.016215358540062303,
+    "turnover_annual": 60.77008459970867,
+    "costs_bps_annual": 972.3213535953386,
+    "avg_exposure": 0.2985696872271361,
+    "time_in_cash": 0.294912559618442,
+    "t_stat": -0.4153519165572138,
+    "avg_positions": 3.0079491255961845
+  },
+  "yearly": [
+    {
+      "year": 2015,
+      "ret": 0.16487270900711182,
+      "log_ret": 0.1526118183932256,
+      "sharpe": 1.7257194232522715
+    },
+    {
+      "year": 2016,
+      "ret": 0.07449740560393003,
+      "log_ret": 0.07185302258279173,
+      "sharpe": 0.9867574893862812
+    },
+    {
+      "year": 2017,
+      "ret": 0.006858496414525295,
+      "log_ret": 0.0068350839167188055,
+      "sharpe": 0.13013141865430103
+    },
+    {
+      "year": 2018,
+      "ret": -0.12029922018488548,
+      "log_ret": -0.12817345226816196,
+      "sharpe": -0.8632127016715079
+    },
+    {
+      "year": 2019,
+      "ret": 0.027574307709624435,
+      "log_ret": 0.027200983712171254,
+      "sharpe": 0.35228974223614345
+    }
+  ],
+  "kill": {
+    "K2_validation_sharpe_lt_0_7": true,
+    "K4_gt_50pct_from_1999_2002": true
+  },
+  "share_1999_2002": 0.5295127439258004
+}

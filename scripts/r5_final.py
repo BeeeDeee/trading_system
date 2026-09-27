@@ -19,7 +19,7 @@ import numpy as np
 import polars as pl
 
 from qlab.research5.report import portfolio_stats, spy_returns, trade_stats, yearly
-from qlab.research5.setup import FINAL_ENV, load_stage, log_experiment, once, vault
+from qlab.research5.setup import FINAL_ENV, load_stage, log_experiment, once, registry, vault
 from qlab.research5.strategy import Config, run
 from qlab.validation.registry import config_hash, current_commit
 
@@ -42,7 +42,13 @@ if stage == "late":
 elif stage != "validation":
     sys.exit(f"unknown stage {stage!r}")
 
-once(stage, asdict(selected))
+if os.environ.get("R5_RERUN_AFTER_CRASH") == stage:
+    # A previous attempt crashed after registering and before any result was saved or shown;
+    # the rerun is recorded in the append-only registry and in the pre-registration log.
+    registry().record("other", {"stage": stage, "rerun_after_crash": asdict(selected)}, 1,
+                      f"research5 {stage} rerun after crash, no result seen")
+else:
+    once(stage, asdict(selected))
 ctx = load_stage(snapshot, stage)
 spy = spy_returns(ctx)
 out = run(ctx, selected)
@@ -54,8 +60,8 @@ result = {"stage": stage, "selected": asdict(selected), "methodology_hash": meth
           "cost_x2": portfolio_stats(x2), "yearly": yr.to_dicts()}
 
 if stage == "validation":
-    dev_years = pl.DataFrame(dev["yearly"]).select("year", "log_ret")
-    all_years = pl.concat([dev_years, yr.select("year", "log_ret")])
+    dev_years = pl.DataFrame(dev["yearly"]).select(pl.col("year").cast(pl.Int32), "log_ret")
+    all_years = pl.concat([dev_years, yr.select(pl.col("year").cast(pl.Int32), "log_ret")])
     total = all_years["log_ret"].sum()
     early = all_years.filter(pl.col("year") <= 2002)["log_ret"].sum()
     share = float(early / total) if total > 0 else None
