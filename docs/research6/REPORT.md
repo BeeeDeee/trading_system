@@ -20,10 +20,9 @@ reálně** (viz níže) a je to nejsilnější nález výzkumů 5–6.
 
 ## Co to znamená
 
-> **Výhrada z výzkumu 7:** Kritérium C4 srovnávalo s hotovostí. Když idle kapitál drží SPY,
+> **Výhrada z výzkumu 7:** Tento výzkum měřil výnos proti hotovosti. Když idle kapitál drží SPY,
 > přínos rukávu zmizí (Sharpe 0,686 vs. 0,685, viz [výzkum 7](../research7/REPORT.md)).
 > Velká část +54 bps na obchod je odraz celého trhu po vysokém VIX, ne výběr akcií.
-
 
 **Efekt:** Stejné pravidlo bez brány prodělává (−2 bps čistě na obchod, Sharpe −0,04). S bránou
 VIX > 25 vydělává +54 bps na obchod, a to ve všech třech podúsecích, i při dvojnásobných nákladech
