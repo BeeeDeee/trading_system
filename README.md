@@ -3,7 +3,7 @@
 Lokální výzkumný framework pro poctivé vyhodnocení systematických long-only strategií na denních
 datech amerických akcií a ETF (Sharadar, snapshot 2026-09-25).
 
-**Stav: projekt uzavřen (2026-09-27).** Tři pre-registrované výzkumy, dva negativní výsledky
+**Stav: projekt uzavřen (2026-09-27).** Čtyři pre-registrované výzkumy, tři negativní výsledky
 a jedna sada praktických závěrů pro pasivní portfolio.
 
 ## Závěr v jedné větě
@@ -19,9 +19,10 @@ rozhoduje zvolený podíl akcií, nízké náklady a disciplína.
 | **1 – výběr akcií** | Překoná ansámbl strategií nad likvidními US akciemi (momentum, trend, breakout, reversal, low-vol, režim trhu; 3 027 kandidátů, walk-forward výběr) pasivní investici? | **Ne.** Ve vývoji (2005–2019) low-vol ansámbl Sharpe 0,93 vs. SPY 0,49, ale na předem uzamčeném holdoutu **2020–2026 CAGR 2,4 % vs. SPY 15,5 %**, Sharpe 0,01. Hypotéza zamítnuta. |
 | **2 – třídy aktiv** | Překoná alokace přes 9 ETF (inverzní volatilita + trendový filtr na každé třídě) portfolio 60/40? | **Ne.** 2010–2026 Sharpe 0,52 vs. 0,85, rozdíl statisticky významně záporný; robustní na náklady, záměnu ETF i délku trendu. |
 | **3 – pasivní pravidla** | Záleží na frekvenci rebalance, podílu akcií, zahraničních akciích, typu dluhopisů, zlatu? | Rebalance, typ dluhopisů a zahraničí: **bez významného rozdílu**. Podíl akcií: věc rizikové preference. Zlato 5–10 %: **významně vyšší Sharpe** (+0,04–0,07), s výhradou mimořádného období pro zlato. |
+| **4 – aktivace rodin** | Dokáže meta-vrstva (režimy, momentum strategií, LightGBM, ridge) nad 87 strategiemi z 25 rodin poznat, kterou rodinu kdy aktivovat, a překonat trh i držení všech rodin najednou? | **Ne.** 2006–2026 primární LightGBM Sharpe 0,52 vs SPY 0,56 (CAGR 13,5 % vs 11,1 %, ale propad 73 %); veškerý náskok jen v 2020–2026, 2006–2019 výrazně pod SPY. Rank IC 0,034, k překonání trhu by bylo potřeba ~0,05, k „výraznému“ ~0,12. Oracle top-5 má Sharpe 3,4, ale tento potenciál je nepředvídatelný. |
 
 Podrobně: [výzkum 1](docs/FINAL_REPORT.md) · [výzkum 2](docs/research2/REPORT.md) ·
-[výzkum 3](docs/research3/REPORT.md).
+[výzkum 3](docs/research3/REPORT.md) · [výzkum 4](docs/research4/REPORT.md).
 
 ## Co jsme se naučili
 
@@ -39,7 +40,7 @@ Podrobně: [výzkum 1](docs/FINAL_REPORT.md) · [výzkum 2](docs/research2/REPOR
 
 ## Framework
 
-Znovupoužitelný, otestovaný (`uv run pytest`, 100 testů), běží na stroji s 3 GB RAM.
+Znovupoužitelný, otestovaný (`uv run pytest`, 107 testů), běží na stroji s 3 GB RAM.
 
 | Oblast | Modul | Co umí |
 |---|---|---|
@@ -65,6 +66,9 @@ uv run python scripts/final_evaluation.py sharadar_<datum>  # jednorázový hold
 uv run python scripts/r2_build_panel.py sharadar_<datum>    # výzkum 2–3: panel ETF
 uv run python scripts/r2_evaluate.py sharadar_<datum>
 uv run python scripts/r3_evaluate.py sharadar_<datum>
+uv run python scripts/r4_build_panel.py sharadar_<datum>  # výzkum 4: panel akcie + 24 ETF
+uv run python scripts/r4_sleeves.py sharadar_<datum>      # výzkum 4: 87 rukávů
+uv run python scripts/r4_evaluate.py sharadar_<datum>     # výzkum 4: meta-vrstva, statistika
 ```
 
 ## Kdyby se projekt otevíral znovu
@@ -86,6 +90,8 @@ uv run python scripts/r3_evaluate.py sharadar_<datum>
   [report](docs/research2/REPORT.md), [výsledky](docs/research2/results/)
 - Výzkum 3: [pre-registrace](docs/research3/PREREGISTRATION.md), [report](docs/research3/REPORT.md),
   [výsledky](docs/research3/results/)
+- Výzkum 4: [pre-registrace](docs/research4/PREREGISTRATION.md), [report](docs/research4/REPORT.md),
+  [výsledky](docs/research4/results/)
 - Archiv: [původní specifikace v1](docs/archive/PROJECT_SPECIFICATION_v1.md)
 
 ## Data
