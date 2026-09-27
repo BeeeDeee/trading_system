@@ -151,3 +151,4 @@ obnovené předplatné Sharadaru.
 | Datum | Rozhodnutí | Zdůvodnění |
 |---|---|---|
 | 2026-09-27 | Pre-registrace v1.0 | Uživatel chce otestovat původní záměr: více rodin + rozpoznání, kdy kterou aktivovat. Registr výzkumu 4: `runs/registry/research4.sqlite` |
+| 2026-09-27 | R4.1–R4.2 hotovo: panel `panel_r4` (4 604 sloupců), 87 rukávů 2000–2026. Upřesnění před prvním během meta-vrstvy (žádný výsledek metody ještě nespočten): (a) rukáv je „dostupný" od prvního rozhodnutí s nějakou pozicí (lt_reversal a insider zpočátku nic nedrží) + 252 dní historie; (b) EW_ALL / EW_STOCK používají stejné pravidlo dostupnosti jako metody; (c) robustnost „jen akcie / jen ETF" používá stejná skóre modelů, jen omezí množinu kandidátů; (d) T-bill jako příznak = DTB3 publikovaná přede dnem rozhodnutí; VIX = `^VIX` close; šíře = podíl LIQ1000 s cenou nad SMA 200; rozptyl = průřezová směrodatná odchylka 21denních výnosů LIQ1000 | Pre-registrace tyto detaily nepokrývala |
