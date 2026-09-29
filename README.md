@@ -53,8 +53,9 @@ nutná, je to vždy nový release, ne úprava za běhu:
 2. Zápis do `CHANGELOG.md`.
 3. `python tools/pin_prompt.py vX.Y.Z` (aktualizuje `VERSION`, `MANIFEST.sha256` a připnutí v zadání).
 4. `python tools/verify_manifest.py`, commit, `git tag vX.Y.Z`, `git push` (tag je jen označení; kód se připíná otisky, ne tagem).
-5. Obsah `task/task_prompt.md` vložit do naplánované úlohy.
-6. V dashboardu je u každého dne vidět, který tag ho spočítal, a v analýze se výsledky před a po změně nesmí míchat.
+5. **Záloha v databázi:** `pin_prompt.py` vytvoří `build/db_mirror_engine.json`; nahraj ho do databáze deníku (`engine/main`, akce `update`). Repo je soukromé, takže když klon v úloze selže, bere se engine odtud, a bez aktuální kopie by běh selhal na kontrole otisku.
+6. Obsah `task/task_prompt.md` vložit do naplánované úlohy.
+7. V dashboardu je u každého dne vidět, který tag ho spočítal, a v analýze se výsledky před a po změně nesmí míchat.
 
 ## Poznámky k datům
 

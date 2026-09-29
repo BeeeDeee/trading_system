@@ -4,11 +4,12 @@
   python tools/pin_prompt.py v1.1.0      # hashes are taken from the working tree
   python tools/verify_manifest.py        # afterwards: MANIFEST.sha256 matches
 
-Release procedure: edit -> tests -> CHANGELOG -> pin_prompt.py (writes VERSION, MANIFEST.sha256
-and the pins in the prompt) -> verify_manifest.py -> commit -> git tag -> push -> paste
-task/task_prompt.md into the scheduled task.
+Release procedure: edit -> tests -> CHANGELOG -> pin_prompt.py (writes VERSION, MANIFEST.sha256,
+the pins in the prompt and build/db_mirror_engine.json) -> verify_manifest.py -> commit -> git tag
+-> push -> upload build/db_mirror_engine.json to database engine/main -> paste task/task_prompt.md
+into the scheduled task.
 """
-import hashlib, pathlib, re, sys
+import hashlib, json, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 tag = sys.argv[1]
@@ -22,5 +23,12 @@ f.write_text(s)
 (ROOT / "VERSION").write_text(tag.lstrip("v") + "\n")
 lines = "".join(f"{sha(p)}  {p}\n" for p in ("engine/engine.py", "config/config.json"))
 (ROOT / "MANIFEST.sha256").write_text(lines)
+# Fallback copy for the scheduled task (used when `git clone` fails, e.g. private repo).
+# Upload to the journal database with ArtifactData action "update" (merge): collection engine, doc main.
+mirror = {"filename": "engine.py", "sha256": sha("engine/engine.py"),
+          "source": (ROOT / "engine" / "engine.py").read_text()}
+(ROOT / "build").mkdir(exist_ok=True)
+(ROOT / "build" / "db_mirror_engine.json").write_text(json.dumps(mirror, ensure_ascii=False))
 print(lines, end="")
 print("pinned", tag)
+print("NEXT: upload build/db_mirror_engine.json to database engine/main (update), else the db-mirror fallback fails the hash check")
