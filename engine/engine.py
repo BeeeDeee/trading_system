@@ -22,6 +22,7 @@ OUT of plan  = {"day": <days/<date> document>, "trades": [<trades documents>]}
 import json, math, os, random, sys
 
 LENSES = ("trend", "mr", "news")
+STALE_SCORE_DAYS = 2   # held ticker without a score for this many consecutive plans is sold
 HIST_LEN = 80
 
 
@@ -358,7 +359,7 @@ def entry_ok(v, s):
         return False
     if v["signal"] == "consensus":
         pos, neg, _ = lens_counts(s)
-        return pos >= 2
+        return pos >= 2 and neg <= v.get("max_neg_lenses", 0)
     if v["signal"] == "conviction":
         return True
     return (s.get(v["signal"]) or 0) >= 1
@@ -440,18 +441,27 @@ def plan_top_n(v, pf, scores, cfg):
     pool = allowed(v, scores)
     ranked = sorted(pool, key=lambda t: composite(pool[t]), reverse=not v.get("invert"))
     rank = {t: i for i, t in enumerate(ranked)}
-    held = [p["ticker"] for p in pf["positions"]]
-    keep = []
-    for t in held:
+    keep, sold = [], set()
+    for p in pf["positions"]:
+        t = p["ticker"]
         s = scores.get(t, {})
-        if t in rank and rank[t] >= v.get("hysteresis_rank", 10):
+        p["no_score_days"] = 0 if t in scores else p.get("no_score_days", 0) + 1
+        if p["no_score_days"] >= STALE_SCORE_DAYS:
+            orders.append({"ticker": t, "side": "SELL", "exit_reason": "Bez skóre", "reason": f"Titul {p['no_score_days']} dny bez skóre."})
+            decisions.append({"ticker": t, "action": "SELL", "conviction": None, "reason": f"Bez skóre {p['no_score_days']} dny, uzavřeno."})
+            sold.add(t)
+        elif t in rank and rank[t] >= v.get("hysteresis_rank", 10):
             orders.append({"ticker": t, "side": "SELL", "exit_reason": "Vypadl z top výběru", "reason": f"Pořadí {rank[t] + 1}."})
             decisions.append({"ticker": t, "action": "SELL", "conviction": s.get("conviction"), "reason": f"Vypadl z top {v.get('hysteresis_rank', 10)}, pořadí {rank[t] + 1}."})
+            sold.add(t)
         else:
             keep.append(t)
             decisions.append({"ticker": t, "action": "HOLD", "conviction": s.get("conviction"), "reason": f"Pořadí {rank.get(t, -1) + 1} podle složeného skóre."})
+    if blocked(v, pf, cfg):
+        decisions.append({"ticker": "—", "action": "SKIP", "conviction": 0, "reason": "Denní limit ztráty překročen, žádné nové nákupy."})
+        return orders, decisions
     slots = v["max_positions"] - len(keep)
-    for t in [t for t in ranked if t not in keep][:max(slots, 0)]:
+    for t in [t for t in ranked if t not in keep and t not in sold][:max(slots, 0)]:
         s = scores[t]
         orders.append({"ticker": t, "side": "BUY", "weight_pct": v["weight_pct"], "stop_pct": v.get("stop_pct"),
                        "conviction": s.get("conviction"), "reason": auto_reason(v, s)})
@@ -516,7 +526,11 @@ def plan(settled, scores_doc, free, cfg):
     rcfg = cfg.get("random_baseline", {"max_positions": 5, "weight_pct": 20, "stop_pct": 7, "max_hold_days": 10, "mirror": "zaklad"})
     rpf = day["variants"]["nahoda"]
     ref = day["variants"].get(rcfg.get("mirror", "zaklad"), {}).get("orders", [])
-    rpf["orders"], rpf["decisions"] = plan_random(ref, rpf, rcfg, cfg["universe"], day["date"])
+    if blocked(rcfg, rpf, cfg):
+        rpf["orders"] = []
+        rpf["decisions"] = [{"ticker": "—", "action": "SKIP", "conviction": 0, "reason": "Denní limit ztráty překročen, žádné nové nákupy."}]
+    else:
+        rpf["orders"], rpf["decisions"] = plan_random(ref, rpf, rcfg, cfg["universe"], day["date"])
     rpf["plan_equity"] = rpf["equity"]
     return {"day": day, "trades": trades}
 

@@ -24,3 +24,14 @@ Jen robustnost, žádná změna pravidel: na platných vstupech dává výsledky
 - Zápis JSON je atomický, CLI kontroluje počet argumentů.
 - Nové testy: gap-stop, trailing stop, max. doba držení, denní limit, tržní filtr, doplnění zpětně,
   špatný vstup, split, atomický zápis. Nový nástroj `tools/analyze.py`.
+
+## v1.1.0 (2026-09-29)
+Změna pravidel, provedená po prvním (startovním) dni, kdy ještě neexistovaly žádné obchody. Pokyny vytvořené
+v1.0.x večer 28. 9. se vykonají 29. 9. na openu (settle se nemění); pravidla v1.1.0 platí pro všechny plány od 29. 9.
+- `consensus`: vstup vyžaduje aspoň 2 kladné pohledy a **žádný záporný** (`max_neg_lenses`, výchozí 0).
+  Dřív prošlo i (+1, +1, −2). Týká se 10 variant.
+- Denní limit ztráty platí i pro `top_n` varianty (`plne`, `top3`, `rotace`, `kontrarian`) a náhodnou baseline.
+- `top_n`: držený titul bez skóre 2 plány po sobě se prodá (dřív se držel navždy); prodaný titul
+  se týž den nekupuje zpět.
+- Zadání: věta o zkrácených obchodních dnech.
+- Nástroj `tools/random_null.py`, pravidla vyhodnocení předem v README.

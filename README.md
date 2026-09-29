@@ -17,6 +17,7 @@ Bez skutečných peněz a bez brokera.
 | `tools/simulate.py` | Syntetický trh přes skutečný engine, generuje ukázková data |
 | `tools/build_dashboard.py` | Vloží ukázková data do dashboardu, výsledek je `dashboard/dashboard.html` |
 | `tools/pin_prompt.py`, `tools/verify_manifest.py` | Připnutí release a kontrola konzistence |
+| `tools/random_null.py` | Vlastní nulové rozdělení pro každou variantu: stejná aktivita, náhodné tituly (skill vs štěstí) |
 | `tools/analyze.py` | Má některý pohled informaci? Rank IC a rozdíly skóre s bootstrap intervaly přes dny |
 | `tests/test_engine.py` | Testy invariantů (hotovost, ocenění, náklady, podmnožiny titulů, determinismus, kontrola dat) |
 | `MANIFEST.sha256`, `VERSION`, `CHANGELOG.md` | Otisky a historie verzí |
@@ -39,7 +40,8 @@ varianty „Claude volně“. Všechno ostatní je engine.
 python tests/test_engine.py          # invarianty
 python tools/simulate.py             # ukázková data pro dashboard
 python tools/build_dashboard.py      # dashboard/dashboard.html
-python tools/analyze.py export.json  # jsou pohledy lepší než šum? (--demo pro ukázku)
+python tools/analyze.py export.json      # jsou pohledy lepší než šum? (--demo pro ukázku)
+python tools/random_null.py export.json  # je varianta lepší než náhodný výběr? (--demo)
 ```
 
 ## Release (změna pravidel nebo enginu)
@@ -60,10 +62,23 @@ nutná, je to vždy nový release, ne úprava za běhu:
 - Backtest se záměrně nedělá: LLM zná historii, takže by jeho skóre před datem znalostí
   byla zatížená lookahead biasem. Jediný platný test je dopředný (tento pokus).
 
-## Známá omezení (záměrně neměněno za běhu)
+## Pravidla vyhodnocení (zapsáno předem, před prvními výsledky)
 
-- Varianty `plne`, `top3`, `rotace`, `kontrarian` (`top_n`) a náhodná baseline neuplatňují denní limit ztráty ani tržní filtr, jen `plan_signal` je má. Jsou to jiné typy pravidel; sjednocení by byla změna pravidel = nový pokus.
-- `consensus` vstup stačí `>= 2` kladné pohledy (třetí může být klidně −2).
-- Ceny jsou bez dividend (price return), stejně jako SPY a univerzum. Porovnání je konzistentní, ale TLT/ETF s dividendou jsou mírně znevýhodněné.
-- 19 vzájemně korelovaných variant za ~40 dní má malou sílu: na výsledky variant se dívej jen jako na hrubý test. Statisticky nosnější je `tools/analyze.py` (20 skóre denně).
-- Náhodná baseline je jedna cesta (zrcadlí počet nákupů varianty `zaklad`), takže sama má velký rozptyl.
+Aby po dvou měsících nešlo vybrat vítěze zpětně (z 19 variant vždy nějaká vyhraje):
+
+1. **Pohled (trend / mr / news / přesvědčení) má edge**, jen když 95% interval spolehlivosti
+   rank IC na horizontu 5 dní (`tools/analyze.py`) neobsahuje 0 **a** znaménko je stejné v první
+   i druhé polovině pokusu.
+2. **Varianta má edge**, jen když její výnos leží nad 95. percentilem vlastního nulového
+   rozdělení (`tools/random_null.py`) **a** je nad SPY. Při 19 variantách čekej jednu
+   „výhru“ náhodou; jedna izolovaná varianta nad 95 % nic nedokazuje, důležitější je vzor
+   (např. souhlasí pořadí `plne` vs `kontrarian` s IC složeného skóre?).
+3. Sloupec „vs náhoda“ v dashboardu je jedna náhodná cesta a slouží jen orientačně.
+4. Výsledky před a po případném release se nemíchají.
+
+## Známá omezení
+
+- Ceny jsou bez dividend (price return), stejně jako SPY a univerzum. Porovnání je konzistentní, ale TLT a dividendové ETF jsou mírně znevýhodněné.
+- 19 vzájemně korelovaných variant za ~40 dní má malou sílu; na výsledky variant se dívej jen jako na hrubý test.
+- Chyba ceny jednoho tickeru zastaví celý den (záměr: nikdy neobchodovat na špatných datech). Chybějící den se doplní zpětně.
+- Náhodná baseline v enginu je jedna cesta; skutečné srovnání dělá `tools/random_null.py`.

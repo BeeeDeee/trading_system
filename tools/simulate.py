@@ -52,7 +52,7 @@ def run(cfg, days=16, seed=11, start=datetime.date(2026, 9, 7), warmup=60):
             px[t] = c
 
     dates = trading_days(start, days)
-    prev, out_days, trades, scores_l, prices_l, runs_l = None, [], [], [], [], []
+    prev, out_days, trades, scores_l, prices_l, runs_l, ohlc_l = None, [], [], [], [], [], []
     drift = {t: 0.0 for t in U}
     for i, dt in enumerate(dates):
         mkt = rng.gauss(0.0005, 0.008)
@@ -99,12 +99,13 @@ def run(cfg, days=16, seed=11, start=datetime.date(2026, 9, 7), warmup=60):
         trades += planned["trades"]
         scores_l.append(scores_doc)
         prices_l.append({"date": dt, "close": c})
+        ohlc_l.append(today)
         warn = ["NVDA: velký pohyb +13,2 %, ověř"] if i == 12 else []
         runs_l.append({"date": dt, "status": "warning" if warn else "ok", "finished_at": dt + "T20:31:00Z",
                        "source": "simulace", "checks": {**chk, "warnings": chk["warnings"] + warn},
                        "spy_crosscheck": {"diff_pct": 0.02},
                        "message": "Simulovaný běh."})
-    return {"days": out_days, "trades": trades, "scores": scores_l, "prices": prices_l, "runs": runs_l, "history": hist}
+    return {"days": out_days, "trades": trades, "scores": scores_l, "prices": prices_l, "runs": runs_l, "history": hist, "ohlc": ohlc_l}
 
 
 def dashboard_sample(sim, cfg):

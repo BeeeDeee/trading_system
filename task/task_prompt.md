@@ -11,8 +11,8 @@ RELIABILITY RULES (most important):
 - The code version is PINNED (see "Pinned release" below). Never use a different version, never "fix" code, and always record which version produced the results.
 
 ## Pinned release
-TAG = v1.0.1
-ENGINE_SHA256 = e2163feda06e572f94d9b62c598e8cd07a0d0301bd800a8c9131193192c57373
+TAG = v1.1.0
+ENGINE_SHA256 = 892195e434a9557d877e2f4bb43ed4905198252527456d6b50e429c98eb9bf00
 CONFIG_SHA256 = c2be59cd1435eb7a4a40e8fe7fe77c0ca519558f7f070570479092d18d02fa9b
 REPO = https://github.com/BeeeDeee/trading_system
 BRANCH = paper-trading-bot
@@ -31,6 +31,7 @@ Changing the rules or the engine means: commit in the repo, update this block (T
 - Read history/main if it exists ("data" field = {ticker: [[date, open, high, low, close], ...]}) -> history.json.
 - Read the latest document in "days" (query, order_by date desc, limit 1) -> prev.json (only the document's data). None on the very first run; then pass "-" as PREV.
 - Today = current date in New York. If today is a weekend or NYSE holiday: write runs/<today> = {status "closed", message "Burza zavřená"} and stop. If days/<today> already exists, stop without writing anything.
+  On an early-close day (day after Thanksgiving, Dec 24; NYSE closes 13:00 ET) the data is valid: run as usual, but put "Zkrácený obchodní den" into out.day.notes and make sure the fetched row is really today's (pages update later on such days).
 
 ## 1. Catch up missed trading days (only if needed)
 If prev.json's date is older than the previous NYSE trading day, some evenings were missed. For each missed trading day D in order (oldest first):

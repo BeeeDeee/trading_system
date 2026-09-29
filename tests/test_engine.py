@@ -212,6 +212,43 @@ try:
 except SystemExit:
     pass
 
+# ---------------------------------------------------------------- v1.1.0 rules
+# consensus needs >= 2 lenses for AND none against
+zk = next(v for v in CFG["variants"] if v["id"] == "zaklad")
+check(E.entry_ok(zk, {"trend": 1, "mr": 1, "news": 0, "conviction": 3}), "clean consensus rejected")
+check(not E.entry_ok(zk, {"trend": 1, "mr": 1, "news": -1, "conviction": 3}), "consensus with dissent accepted")
+check(not E.entry_ok(zk, {"trend": 2, "mr": 2, "news": -2, "conviction": 5}), "consensus with strong dissent accepted")
+
+# daily loss limit now applies to top_n and to the random baseline too
+allpos = {"scores": {t: {"trend": 2, "mr": 2, "news": 2, "conviction": 5, "event": False} for t in UNI}}
+d = day1()
+for vid in ("plne", "top3", "rotace", "kontrarian", "nahoda", "zaklad"):
+    d["variants"][vid]["prev_equity"], d["variants"][vid]["equity"] = 10000, 9000
+pl = E.plan({"day": d, "trades": []}, allpos, None, CFG)["day"]["variants"]
+check(all(not pl[v]["orders"] for v in ("plne", "top3", "rotace", "kontrarian", "nahoda", "zaklad")), "loss limit missed a variant")
+pl = E.plan({"day": day1(), "trades": []}, allpos, None, CFG)["day"]["variants"]
+check(all(pl[v]["orders"] for v in ("plne", "top3", "rotace", "kontrarian")), "top_n stopped buying without a loss")
+
+# top_n: a held ticker without a score is sold after 2 plans, and never re-bought the same day
+d = with_order(day1(), "plne", "AAPL")
+h = E.settle(CFG, d, flat(date="2026-10-02"))["day"]
+sc_wo = {"scores": {t: {"trend": 1, "mr": 0, "news": 0, "conviction": 3, "event": False} for t in UNI if t != "AAPL"}}
+p1 = E.plan({"day": json.loads(json.dumps(h)), "trades": []}, sc_wo, None, CFG)["day"]["variants"]["plne"]
+check(not any(o["side"] == "SELL" for o in p1["orders"]), "sold after a single missing score")
+h2 = json.loads(json.dumps(h)); h2["variants"]["plne"]["positions"] = p1["positions"]
+p2 = E.plan({"day": h2, "trades": []}, sc_wo, None, CFG)["day"]["variants"]["plne"]
+check(any(o["side"] == "SELL" and o["ticker"] == "AAPL" for o in p2["orders"]), "stale position not sold")
+check(not any(o["side"] == "BUY" and o["ticker"] == "AAPL" for o in p2["orders"]), "sold ticker re-bought same day")
+sc_ok = {"scores": {t: {"trend": 1, "mr": 0, "news": 0, "conviction": 3, "event": False} for t in UNI}}
+p3 = E.plan({"day": json.loads(json.dumps(h)), "trades": []}, sc_ok, None, CFG)["day"]["variants"]["plne"]
+check(p3["positions"][0]["no_score_days"] == 0, "no_score_days not reset")
+
+# random_null reproduces the engine and orders sanely
+import random_null
+nul = random_null.null_returns(CFG, sim["days"], sim["ohlc"], "zaklad", n=20, seed=1)
+check(len(nul) == 20 and all(-50 < x < 50 for x in nul), "random null out of range")
+check(len(set(round(x, 4) for x in nul)) > 1, "random null has no variation")
+
 if fails:
     sys.exit(f"{len(fails)} test(s) failed")
 print(f"OK: {len(sim['days'])} days x {len(last)} portfolios, {len(sim['trades'])} trades, all invariants hold")
