@@ -7,6 +7,10 @@ Subcommands (all read/write JSON files, stdlib only):
   settle CONFIG PREV_DAY|- TODAY_PRICES OUT   execute yesterday's orders at today's open, stops, max-hold, mark to market
   plan CONFIG SETTLED SCORES FREE|- OUT       orders for tomorrow's open for every variant + random baseline
   check CONFIG HISTORY TODAY_PRICES OUT       sanity-check today's prices before anything else ("errors" must be empty)
+  validate CONFIG SCORES FREE|- OUT           report problems in scores/free decisions before `plan` ("errors" should be empty)
+  apply-split HISTORY PREV|- TICKER RATIO OUTH OUTP
+                                              re-base history + open positions after a verified split
+                                              (RATIO = new shares per old share: 2 for 2:1, 0.1 for 1:10)
 
 TODAY_PRICES = {"date": "YYYY-MM-DD", "open": {T: x}, "high": {...}, "low": {...}, "close": {...}}
 SCORES       = {"date": ..., "scores": {T: {"trend": -2..2, "mr": -2..2, "news": -2..2,
@@ -15,7 +19,7 @@ FREE         = {"decisions": [{"ticker", "action": BUY|SELL|HOLD|SKIP, "convicti
                 "stop_price"?, "new_stop"?, "reason", "invalidation"}]}
 OUT of plan  = {"day": <days/<date> document>, "trades": [<trades documents>]}
 """
-import json, math, random, sys
+import json, math, os, random, sys
 
 LENSES = ("trend", "mr", "news")
 HIST_LEN = 80
@@ -29,8 +33,17 @@ def load(p):
 
 
 def dump(obj, p):
-    with open(p, "w") as f:
+    tmp = p + ".tmp"          # atomic: a crash mid-write must not corrupt the input file
+    with open(tmp, "w") as f:
         json.dump(obj, f, ensure_ascii=False, indent=1)
+    os.replace(tmp, p)
+
+
+def num(x):
+    """Finite real number or None (bools and NaN/inf are not numbers here)."""
+    if isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x):
+        return None
+    return x
 
 
 def r2(x):
@@ -127,7 +140,6 @@ class Costs:
 
 def buy(pf, ticker, raw, amount, costs, date, meta, fills, log):
     price = raw * (1 + costs.slip)
-    per_share_cash = price * (1 + costs.fee)
     max_amount = pf["cash"] / (1 + costs.fee)
     if amount > max_amount:
         if max_amount < 0.25 * amount:
@@ -143,6 +155,9 @@ def buy(pf, ticker, raw, amount, costs, date, meta, fills, log):
     pf["cash"] -= notional + fee
     pf["costs_today"] += fee + slip_cost
     stop = meta.get("stop_price")
+    if stop is not None and not 0 < stop < price:
+        log.append(f"{ticker}: stop_price {stop} není pod nákupní cenou, použit standardní stop")
+        stop = None
     if stop is None and meta.get("stop_pct"):
         stop = price * (1 - meta["stop_pct"] / 100)
     pos = {"ticker": ticker, "shares": shares, "entry_price": r4(price), "entry_date": date,
@@ -246,6 +261,91 @@ def settle(cfg, prev, today):
 
 
 # ---------------------------------------------------------------- planning
+# ---------------------------------------------------------------- input validation
+def _lens_int(x, lo, hi):
+    x = num(x)
+    return None if x is None else int(max(lo, min(hi, round(x))))
+
+
+def clean_scores(scores, universe):
+    """Coerce LLM-written scores to what the rules expect. Valid input passes through unchanged.
+    Returns (clean, issues); missing tickers are NOT invented, they simply stay absent."""
+    clean, issues = {}, []
+    if not isinstance(scores, dict):
+        return clean, ["scores není objekt"]
+    for t, s in scores.items():
+        if t not in universe:
+            issues.append(f"{t}: mimo univerzum, ignorováno")
+            continue
+        if not isinstance(s, dict):
+            issues.append(f"{t}: skóre není objekt, ignorováno")
+            continue
+        c = {}
+        for k in LENSES:
+            if s.get(k) is None:
+                continue
+            v = _lens_int(s[k], -2, 2)
+            if v is None:
+                issues.append(f"{t}: {k} není číslo, ignorováno")
+            else:
+                if v != s[k]:
+                    issues.append(f"{t}: {k}={s[k]} upraveno na {v}")
+                c[k] = v
+        cv = _lens_int(s.get("conviction"), 1, 5)
+        if cv is None:
+            issues.append(f"{t}: chybí/neplatné přesvědčení, použito 3 (bez názoru)")
+            cv = 3
+        elif cv != s.get("conviction"):
+            issues.append(f"{t}: conviction={s.get('conviction')} upraveno na {cv}")
+        c["conviction"] = cv
+        c["event"] = bool(s.get("event"))
+        c["note"] = s.get("note") if isinstance(s.get("note"), str) else ""
+        clean[t] = c
+    return clean, issues
+
+
+def clean_free(free, universe):
+    """Same for the 'Claude volně' decisions: drop what cannot be executed safely."""
+    out, issues = [], []
+    decs = (free or {}).get("decisions", []) if isinstance(free, dict) or free is None else []
+    if not isinstance(decs, list):
+        return {"decisions": []}, ["decisions není seznam"]
+    for d in decs:
+        if not isinstance(d, dict) or d.get("action") not in ("BUY", "SELL", "HOLD", "SKIP") or d.get("ticker") not in universe:
+            issues.append(f"rozhodnutí ignorováno: {str(d)[:80]}")
+            continue
+        c = dict(d)
+        for k in ("conviction", "weight_pct", "stop_price", "new_stop"):
+            if k in c:
+                v = num(c[k])
+                if v is None or (k != "conviction" and v <= 0):
+                    issues.append(f"{d['ticker']}: {k} neplatné, ignorováno")
+                    del c[k]
+                else:
+                    c[k] = v
+        for k in ("reason", "invalidation"):
+            if k in c and not isinstance(c[k], str):
+                c[k] = str(c[k])
+        out.append(c)
+    return {"decisions": out}, issues
+
+
+def validate(cfg, scores_doc, free):
+    """Problems worth fixing BEFORE plan. plan() itself never crashes on them (it sanitizes)."""
+    uni = cfg["universe"]
+    raw = (scores_doc or {}).get("scores", {}) if isinstance(scores_doc, dict) else {}
+    _, issues = clean_scores(raw, uni)
+    errors = [i for i in issues if "mimo univerzum" not in i]
+    missing = [t for t in uni if t not in raw]
+    if missing:
+        errors.append(f"Chybí skóre pro: {', '.join(missing)}")
+    if "SPY" in raw and (raw["SPY"] or {}).get("trend") is None:
+        errors.append("SPY nemá trend (používá ho tržní filtr)")
+    _, fissues = clean_free(free, uni)
+    warnings = list(fissues)
+    return {"errors": errors, "warnings": warnings}
+
+
 def lens_counts(s):
     vals = [s.get(k, 0) or 0 for k in LENSES]
     return sum(v > 0 for v in vals), sum(v < 0 for v in vals), sum(vals)
@@ -367,7 +467,9 @@ def plan_free(v, pf, free, cfg):
         a, t = d.get("action"), d.get("ticker")
         dd = {k: d.get(k) for k in ("ticker", "action", "conviction", "weight_pct", "reason", "invalidation") if d.get(k) is not None}
         if a == "HOLD" and t in held and d.get("new_stop"):
-            if not held[t].get("stop") or d["new_stop"] > held[t]["stop"]:
+            if d["new_stop"] >= held[t]["last"]:
+                dd["reason"] = (dd.get("reason") or "") + " (new_stop není pod cenou, ignorován)"
+            elif not held[t].get("stop") or d["new_stop"] > held[t]["stop"]:
                 held[t]["stop"] = r4(d["new_stop"])
         if a == "SELL" and t in held:
             orders.append({"ticker": t, "side": "SELL", "exit_reason": "Rozhodnutí bota", "reason": d.get("reason", "")})
@@ -400,7 +502,8 @@ def plan_random(ref_orders, pf, rcfg, universe, date):
 
 def plan(settled, scores_doc, free, cfg):
     day, trades = settled["day"], settled["trades"]
-    scores = scores_doc.get("scores", {})
+    scores, _ = clean_scores(scores_doc.get("scores", {}), cfg["universe"])
+    free, _ = clean_free(free, cfg["universe"])
     for v in cfg["variants"]:
         pf = day["variants"][v["id"]]
         if v["mode"] == "free":
@@ -418,8 +521,45 @@ def plan(settled, scores_doc, free, cfg):
     return {"day": day, "trades": trades}
 
 
+SPLIT_RATIOS = (1.5, 2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 40, 50)
+
+
+def split_suspect(c, pc):
+    """Ratio (new shares per old share) if the price jump looks like a clean split, else None."""
+    r = pc / c
+    for k in SPLIT_RATIOS:
+        if abs(r / k - 1) < 0.04:
+            return k
+        if abs(r * k - 1) < 0.04:
+            return 1 / k
+    return None
+
+
+def apply_split(hist, prev, ticker, ratio):
+    """Re-base a ticker after a VERIFIED split: history prices, open positions, stops, baselines."""
+    if not ratio or ratio <= 0:
+        raise SystemExit("ratio must be > 0")
+    hist = {t: [list(r) for r in rows] for t, rows in (hist or {}).items()}
+    prev = json.loads(json.dumps(prev)) if prev else prev
+    hist[ticker] = [[r[0]] + [None if x is None else round(x / ratio, 4) for x in r[1:]] for r in hist.get(ticker, [])]
+    if prev:
+        for vf in prev.get("variants", {}).values():
+            for pos in vf.get("positions", []):
+                if pos["ticker"] == ticker:
+                    pos["shares"] = round(pos["shares"] * ratio, 4)
+                    for k in ("entry_price", "last", "stop"):
+                        if pos.get(k):
+                            pos[k] = r4(pos[k] / ratio)
+        b = prev.get("bases") or {}
+        if ticker in b.get("univ0", {}) and b["univ0"][ticker]:
+            b["univ0"][ticker] = b["univ0"][ticker] / ratio
+        if ticker == "SPY" and b.get("spy0"):
+            b["spy0"] = b["spy0"] / ratio
+    return hist, prev
+
+
 def check(cfg, hist, today):
-    errors, warnings = [], []
+    errors, warnings, suspects = [], [], {}
     uni = cfg["universe"]
     C, O, H, L = (today.get(k, {}) for k in ("close", "open", "high", "low"))
     missing = [t for t in uni if C.get(t) is None]
@@ -445,18 +585,28 @@ def check(cfg, hist, today):
             pc = prev[-1][4]
             ch = (c / pc - 1) * 100
             if abs(ch) > 25:
-                errors.append(f"{t}: změna {ch:+.1f} % proti předchozímu zavření, pravděpodobně chybná data nebo split")
+                sr = split_suspect(c, pc)
+                if sr:
+                    suspects[t] = sr
+                errors.append(f"{t}: změna {ch:+.1f} % proti předchozímu zavření, pravděpodobně chybná data nebo split"
+                              + (f" (poměr odpovídá splitu, RATIO {sr:g})" if sr else ""))
             elif abs(ch) > 12:
                 warnings.append(f"{t}: velký pohyb {ch:+.1f} %, ověř")
             if abs(c - pc) < 1e-9 and o == prev[-1][1]:
                 stale += 1
     if stale > 3:
         errors.append(f"{stale} titulů má stejné ceny jako předchozí den, data jsou nejspíš stará")
-    return {"errors": errors, "warnings": warnings, "tickers_ok": len(uni) - len(missing), "tickers_missing": missing}
+    return {"errors": errors, "warnings": warnings, "tickers_ok": len(uni) - len(missing), "tickers_missing": missing,
+            "split_suspects": suspects}
+
+
+ARITY = {"history-append": 5, "features": 4, "settle": 6, "check": 6, "plan": 7, "validate": 6, "apply-split": 8}
 
 
 def main(argv):
-    cmd = argv[1]
+    cmd = argv[1] if len(argv) > 1 else None
+    if cmd not in ARITY or len(argv) != ARITY[cmd]:
+        raise SystemExit(__doc__)
     if cmd == "history-append":
         dump(history_append(load(argv[2]), load(argv[3])), argv[4])
     elif cmd == "features":
@@ -469,10 +619,18 @@ def main(argv):
         res = check(load(argv[2]), load(argv[3]), load(argv[4]))
         dump(res, argv[5])
         print(json.dumps(res, ensure_ascii=False, indent=1))
+    elif cmd == "validate":
+        res = validate(load(argv[2]), load(argv[3]), load(argv[4]))
+        dump(res, argv[5])
+        print(json.dumps(res, ensure_ascii=False, indent=1))
     elif cmd == "plan":
         dump(plan(load(argv[3]), load(argv[4]), load(argv[5]), load(argv[2])), argv[6])
-    else:
-        raise SystemExit(__doc__)
+    elif cmd == "apply-split":
+        prev = load(argv[3])
+        hist, prev = apply_split(load(argv[2]), prev, argv[4], float(argv[5]))
+        dump(hist, argv[6])
+        if prev is not None:
+            dump(prev, argv[7])
 
 
 if __name__ == "__main__":

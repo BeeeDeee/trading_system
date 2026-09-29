@@ -10,13 +10,14 @@ Bez skutečných peněz a bez brokera.
 
 | Cesta | Obsah |
 |---|---|
-| `engine/engine.py` | Veškerá deterministická logika (bez závislostí): `history-append`, `features`, `check`, `settle`, `plan` |
+| `engine/engine.py` | Veškerá deterministická logika (bez závislostí): `history-append`, `features`, `check`, `validate`, `settle`, `plan`, `apply-split` |
 | `config/config.json` | Univerzum, náklady, definice všech variant a náhodné baseline |
 | `task/task_prompt.md` | Zadání naplánované úlohy (orchestrace večerního běhu), včetně připnutého release |
 | `dashboard/dashboard.src.html` | Zdroj stránky deníku (čte databázi artefaktu) |
 | `tools/simulate.py` | Syntetický trh přes skutečný engine, generuje ukázková data |
 | `tools/build_dashboard.py` | Vloží ukázková data do dashboardu, výsledek je `dashboard/dashboard.html` |
 | `tools/pin_prompt.py`, `tools/verify_manifest.py` | Připnutí release a kontrola konzistence |
+| `tools/analyze.py` | Má některý pohled informaci? Rank IC a rozdíly skóre s bootstrap intervaly přes dny |
 | `tests/test_engine.py` | Testy invariantů (hotovost, ocenění, náklady, podmnožiny titulů, determinismus, kontrola dat) |
 | `MANIFEST.sha256`, `VERSION`, `CHANGELOG.md` | Otisky a historie verzí |
 
@@ -28,7 +29,7 @@ varianty „Claude volně“. Všechno ostatní je engine.
 1. Klon větve `paper-trading-bot`, ověření SHA-256 otisků enginu a konfigurace proti připnutí v zadání (při nesouladu běh selže).
 2. Ceny z stockanalysis.com, kontrola `engine.py check`, nezávislé ověření SPY a jedné akcie.
 3. `settle`: vypořádání včerejších pokynů na openu, stopy, doba držení, ocenění.
-4. Rešerše a skóre všech 20 titulů (Claude).
+4. Rešerše a skóre všech 20 titulů (Claude), `validate` skóre.
 5. `plan`: pokyny na zítřek pro všechny varianty.
 6. Zápis do databáze deníku (`days`, `trades`, `scores`, `prices`, `history`, `runs`).
 
@@ -38,6 +39,7 @@ varianty „Claude volně“. Všechno ostatní je engine.
 python tests/test_engine.py          # invarianty
 python tools/simulate.py             # ukázková data pro dashboard
 python tools/build_dashboard.py      # dashboard/dashboard.html
+python tools/analyze.py export.json  # jsou pohledy lepší než šum? (--demo pro ukázku)
 ```
 
 ## Release (změna pravidel nebo enginu)
@@ -54,6 +56,14 @@ nutná, je to vždy nový release, ne úprava za běhu:
 
 ## Poznámky k datům
 
-- Ceny jsou neupravené (`Close`, nikdy `Adj. Close`), historie 50 dní zpět.
+- Ceny jsou neupravené (`Close`, nikdy `Adj. Close`), engine drží posledních 80 řádků historie.
 - Backtest se záměrně nedělá: LLM zná historii, takže by jeho skóre před datem znalostí
   byla zatížená lookahead biasem. Jediný platný test je dopředný (tento pokus).
+
+## Známá omezení (záměrně neměněno za běhu)
+
+- Varianty `plne`, `top3`, `rotace`, `kontrarian` (`top_n`) a náhodná baseline neuplatňují denní limit ztráty ani tržní filtr, jen `plan_signal` je má. Jsou to jiné typy pravidel; sjednocení by byla změna pravidel = nový pokus.
+- `consensus` vstup stačí `>= 2` kladné pohledy (třetí může být klidně −2).
+- Ceny jsou bez dividend (price return), stejně jako SPY a univerzum. Porovnání je konzistentní, ale TLT/ETF s dividendou jsou mírně znevýhodněné.
+- 19 vzájemně korelovaných variant za ~40 dní má malou sílu: na výsledky variant se dívej jen jako na hrubý test. Statisticky nosnější je `tools/analyze.py` (20 skóre denně).
+- Náhodná baseline je jedna cesta (zrcadlí počet nákupů varianty `zaklad`), takže sama má velký rozptyl.

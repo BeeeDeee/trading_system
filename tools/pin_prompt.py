@@ -4,9 +4,9 @@
   python tools/pin_prompt.py v1.1.0      # hashes are taken from the working tree
   python tools/verify_manifest.py        # afterwards: MANIFEST.sha256 matches
 
-Release procedure: edit -> tests -> bump VERSION + CHANGELOG -> pin_prompt.py
--> write_manifest -> commit -> git tag -> push -> paste task/task_prompt.md
-into the scheduled task.
+Release procedure: edit -> tests -> CHANGELOG -> pin_prompt.py (writes VERSION, MANIFEST.sha256
+and the pins in the prompt) -> verify_manifest.py -> commit -> git tag -> push -> paste
+task/task_prompt.md into the scheduled task.
 """
 import hashlib, pathlib, re, sys
 

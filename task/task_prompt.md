@@ -7,12 +7,12 @@ Write every human-readable text field (notes, messages, regime label/summary, sc
 RELIABILITY RULES (most important):
 - Every run ends by writing runs/<today> with its status, whatever happens (see step 8). A run that fails still writes runs/<today> with status "failed" and a Czech message saying exactly what failed.
 - Never invent or estimate prices. If data is missing or fails checks, do not trade on it.
-- Never edit engine.py or config.json. If the engine crashes, record the traceback summary in runs/<today> (status "failed") and stop.
+- Never edit engine.py or config.json (the documented `apply-split` command is the only allowed data repair). If the engine crashes, record the traceback summary in runs/<today> (status "failed") and stop.
 - The code version is PINNED (see "Pinned release" below). Never use a different version, never "fix" code, and always record which version produced the results.
 
 ## Pinned release
-TAG = v1.0.0
-ENGINE_SHA256 = a72f25b48d32192aa78e2f8a7432784c5384e7f2cd64c5d01d67012940778e34
+TAG = v1.0.1
+ENGINE_SHA256 = e2163feda06e572f94d9b62c598e8cd07a0d0301bd800a8c9131193192c57373
 CONFIG_SHA256 = c2be59cd1435eb7a4a40e8fe7fe77c0ca519558f7f070570479092d18d02fa9b
 REPO = https://github.com/BeeeDeee/trading_system
 BRANCH = paper-trading-bot
@@ -35,7 +35,7 @@ Changing the rules or the engine means: commit in the repo, update this block (T
 ## 1. Catch up missed trading days (only if needed)
 If prev.json's date is older than the previous NYSE trading day, some evenings were missed. For each missed trading day D in order (oldest first):
 - Take D's open/high/low/close for the universe from the price-history pages described in step 2 (the same pages list past days) -> today_D.json.
-- python3 engine.py check config.json history.json today_D.json check_D.json; if "errors" is non-empty, stop the catch-up and fail the run (write runs/<today> status "failed", message naming the day and errors).
+- python3 engine.py check config.json history.json today_D.json check_D.json; if "errors" is non-empty, handle a possible split (see step 2, same procedure, applied to history.json and prev.json), otherwise stop the catch-up and fail the run (write runs/<today> status "failed", message naming the day and errors).
 - python3 engine.py history-append history.json today_D.json history.json
 - python3 engine.py settle config.json prev.json today_D.json settled_D.json
 - echo '{"scores": {}}' > empty.json ; python3 engine.py plan config.json settled_D.json empty.json - out_D.json
@@ -53,6 +53,9 @@ No scores and no new decisions are made for missed days (that would use hindsigh
 - Cross-check: find today's closing price of SPY and of one individual stock (rotate daily through AAPL, MSFT, NVDA, AMZN, GOOGL, META, AVGO, TSLA, JPM) from an independent source (e.g. investing.com, finance.yahoo.com, nasdaq.com or a major news report). diff_pct = (primary_close / other_close − 1) × 100, computed in Python. If |diff_pct| > 0.3 for either, re-fetch the primary once; if it still disagrees, fail the run.
 - python3 engine.py check config.json history.json today.json check.json
   If "errors" is non-empty: try to fix the data once (re-fetch, other source). If errors remain, fail the run (runs/<today> status "failed", message = the errors) and write nothing else. Warnings are allowed: continue, and carry them into runs/<today>.
+  SPLIT EXCEPTION: prices are unadjusted, so a real stock split looks like a crash. If check.json lists the ticker in "split_suspects" (the value is the ratio = new shares per old share), and a web search confirms that exactly that split has its ex-date today, run:
+    python3 engine.py apply-split history.json prev.json <TICKER> <RATIO> history.json prev.json    (pass "-" as PREV on the very first run; then only history is re-based)
+  and repeat the check once. This re-bases history, open positions (shares x ratio, prices / ratio), stops and baselines, so value is unchanged. Record it in out.day.notes ("Split <TICKER> <RATIO>:1 přepočten"), set the run status to at least "warning". If the split is not confirmed, or the check still fails, fail the run as above. Never touch a price by hand.
 - python3 engine.py history-append history.json today.json history.json
 - python3 engine.py features history.json features.json   (prints the indicator table)
 
@@ -86,6 +89,8 @@ Using its settled positions and everything above, decide freely for tomorrow's o
 Every held position gets HOLD or SELL. A BUY needs conviction ≥ 3 and an expected move clearly above the round-trip cost (~0.2 %). Add 1–3 SKIP entries for rejected setups. Cash is fine; don't force trades.
 
 ## 7. Plan and save
+python3 engine.py validate config.json scores.json free.json validate.json
+If "errors" is non-empty (missing tickers, values out of range, missing conviction), fix scores.json / free.json ONCE (score the missing tickers properly, do not fill in defaults). "warnings" only list free decisions the engine will ignore; read them. If errors remain, continue anyway: plan clamps/ignores bad values and never invents scores, but add the remaining errors to out.day.notes and set the run status to "warning".
 python3 engine.py plan config.json settled.json scores.json free.json out.json
 Add "regime", "notes" (1 sentence: data problems or anything unusual, else "—") and "code" (see step 0) to out.day.
 Save with ArtifactData batches (max 50 writes each), days/<today> LAST:
