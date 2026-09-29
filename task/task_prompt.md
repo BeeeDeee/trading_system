@@ -14,13 +14,15 @@ RELIABILITY RULES (most important):
 TAG = v1.0.0
 ENGINE_SHA256 = a72f25b48d32192aa78e2f8a7432784c5384e7f2cd64c5d01d67012940778e34
 CONFIG_SHA256 = c2be59cd1435eb7a4a40e8fe7fe77c0ca519558f7f070570479092d18d02fa9b
-REPO = https://github.com/BeeeDeee/trading_system (branch paper-trading-bot, tag = TAG)
-Changing the rules or the engine means: commit + new tag in the repo, then update this block (TAG and both hashes). It is never done from inside a run.
+REPO = https://github.com/BeeeDeee/trading_system
+BRANCH = paper-trading-bot
+TAG is the release label recorded with every result. The code is cloned from BRANCH and accepted ONLY if its engine and config hashes equal the two pins above (tags cannot be pushed from the build environment, so the hashes are the pin).
+Changing the rules or the engine means: commit in the repo, update this block (TAG and both hashes), then update the scheduled task. It is never done from inside a run.
 
 ## 0. Setup
 - Load ArtifactData with ToolSearch ("select:ArtifactData"). Work in a fresh folder, e.g. ./run. Note the start time (UTC ISO).
 - Get the code (in this order):
-  a) Preferred: `git clone --depth 1 --branch TAG REPO code` (wait/retry once on HTTP 429). Then engine = code/engine/engine.py, config = code/config/config.json, commit = `git -C code rev-parse HEAD`. code_source = "git".
+  a) Preferred: `git clone --depth 1 --branch BRANCH REPO code` (wait/retry once on HTTP 429). Then engine = code/engine/engine.py, config = code/config/config.json, commit = `git -C code rev-parse HEAD`. code_source = "git".
   b) Fallback if the clone is impossible (no network access or no permission): read engine/main from the database -> write its "source" field to engine.py; read config/main -> config.json. code_source = "db-mirror", commit = null. The run status becomes at least "warning" with the message saying the git clone failed and why.
   In both cases compute sha256 of the engine file and of the config file and compare with ENGINE_SHA256 and CONFIG_SHA256. A mismatch = failed run (write runs/<today> with status "failed", both hashes and code_source; do nothing else).
 - Copy the verified files next to your working files as engine.py and config.json (all later commands use them).

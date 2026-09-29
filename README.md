@@ -25,7 +25,7 @@ varianty „Claude volně“. Všechno ostatní je engine.
 
 ## Denní běh (22:15 Praha, po–pá)
 
-1. Klon repozitáře na připnutém tagu, ověření otisků enginu a konfigurace.
+1. Klon větve `paper-trading-bot`, ověření SHA-256 otisků enginu a konfigurace proti připnutí v zadání (při nesouladu běh selže).
 2. Ceny z stockanalysis.com, kontrola `engine.py check`, nezávislé ověření SPY a jedné akcie.
 3. `settle`: vypořádání včerejších pokynů na openu, stopy, doba držení, ocenění.
 4. Rešerše a skóre všech 20 titulů (Claude).
@@ -48,7 +48,7 @@ nutná, je to vždy nový release, ne úprava za běhu:
 1. Změna v `engine/` nebo `config/`, `python tests/test_engine.py`.
 2. Zápis do `CHANGELOG.md`.
 3. `python tools/pin_prompt.py vX.Y.Z` (aktualizuje `VERSION`, `MANIFEST.sha256` a připnutí v zadání).
-4. `python tools/verify_manifest.py`, commit, `git tag vX.Y.Z`, `git push --follow-tags`.
+4. `python tools/verify_manifest.py`, commit, `git tag vX.Y.Z`, `git push` (tag je jen označení; kód se připíná otisky, ne tagem).
 5. Obsah `task/task_prompt.md` vložit do naplánované úlohy.
 6. V dashboardu je u každého dne vidět, který tag ho spočítal, a v analýze se výsledky před a po změně nesmí míchat.
 
