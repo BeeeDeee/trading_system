@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Invariant tests for the engine (no pytest needed):  python tests/test_engine.py"""
-import json, pathlib, sys, copy
+import json, pathlib, sys, copy, random
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
@@ -248,6 +248,17 @@ import random_null
 nul = random_null.null_returns(CFG, sim["days"], sim["ohlc"], "zaklad", n=20, seed=1)
 check(len(nul) == 20 and all(-50 < x < 50 for x in nul), "random null out of range")
 check(len(set(round(x, 4) for x in nul)) > 1, "random null has no variation")
+
+# tie-break must not depend on the order of keys in the scores JSON
+tie = {"scores": {t: {"trend": 1, "mr": 1, "news": 0, "conviction": 3, "event": False} for t in UNI}}
+rev = {"scores": dict(reversed(list(tie["scores"].items())))}
+shuf = list(tie["scores"].items()); random.Random(4).shuffle(shuf)
+def orders_of(sc):
+    r = E.plan({"day": day1(), "trades": []}, sc, {"decisions": []}, CFG)["day"]["variants"]
+    return {k: [(o["side"], o["ticker"]) for o in v["orders"]] for k, v in r.items()}
+check(orders_of(tie) == orders_of(rev) == orders_of({"scores": dict(shuf)}), "orders depend on JSON key order (tie-break)")
+picks = {orders_of(tie)["zaklad"][0][1], orders_of(tie)["plne"][0][1]}
+check(len({o[1] for o in orders_of(tie)["plne"]}) == 5, "top_n did not fill 5 slots on ties")
 
 if fails:
     sys.exit(f"{len(fails)} test(s) failed")

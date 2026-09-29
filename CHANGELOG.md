@@ -35,3 +35,10 @@ v1.0.x večer 28. 9. se vykonají 29. 9. na openu (settle se nemění); pravidla
   se týž den nekupuje zpět.
 - Zadání: věta o zkrácených obchodních dnech.
 - Nástroj `tools/random_null.py`, pravidla vyhodnocení předem v README.
+
+## v1.1.1 (2026-09-29)
+- Oprava chyby z v1.0.0: při shodě skóre rozhodovalo pořadí klíčů v JSON (tj. v jakém pořadí titul zapsal LLM),
+  takže výběr titulů nebyl reprodukovatelný a při ukládání do databáze (klíče abecedně) vycházel jinak.
+  Nově se shoda řeší deterministicky hashem z data a tickeru (bez systematické výhody písmen abecedy).
+  Týká se `signal` i `top_n` variant. Test hlídá nezávislost na pořadí klíčů.
+- Plán ze dne 28. 9. přepočten tímto enginem (viz zadání/deník); záloha původního dne v databázi (`backup/`).

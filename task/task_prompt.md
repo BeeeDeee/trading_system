@@ -11,8 +11,8 @@ RELIABILITY RULES (most important):
 - The code version is PINNED (see "Pinned release" below). Never use a different version, never "fix" code, and always record which version produced the results.
 
 ## Pinned release
-TAG = v1.1.0
-ENGINE_SHA256 = 892195e434a9557d877e2f4bb43ed4905198252527456d6b50e429c98eb9bf00
+TAG = v1.1.1
+ENGINE_SHA256 = 3659342933e61218028544a37ff909c66f73f8f4a0552edb12fd8bb35ce15899
 CONFIG_SHA256 = c2be59cd1435eb7a4a40e8fe7fe77c0ca519558f7f070570479092d18d02fa9b
 REPO = https://github.com/BeeeDeee/trading_system
 BRANCH = paper-trading-bot

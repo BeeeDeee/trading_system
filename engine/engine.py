@@ -19,7 +19,7 @@ FREE         = {"decisions": [{"ticker", "action": BUY|SELL|HOLD|SKIP, "convicti
                 "stop_price"?, "new_stop"?, "reason", "invalidation"}]}
 OUT of plan  = {"day": <days/<date> document>, "trades": [<trades documents>]}
 """
-import json, math, os, random, sys
+import hashlib, json, math, os, random, sys
 
 LENSES = ("trend", "mr", "news")
 STALE_SCORE_DAYS = 2   # held ticker without a score for this many consecutive plans is sold
@@ -347,6 +347,11 @@ def validate(cfg, scores_doc, free):
     return {"errors": errors, "warnings": warnings}
 
 
+def tiebreak(date, t):
+    """Deterministic, unbiased tie-break for equal scores: independent of JSON key order."""
+    return hashlib.sha256(f"{date}|{t}".encode()).hexdigest()
+
+
 def lens_counts(s):
     vals = [s.get(k, 0) or 0 for k in LENSES]
     return sum(v > 0 for v in vals), sum(v < 0 for v in vals), sum(vals)
@@ -408,7 +413,7 @@ def market_blocked(v, scores):
     return False
 
 
-def plan_signal(v, pf, scores, cfg):
+def plan_signal(v, pf, scores, cfg, date=""):
     orders, decisions = [], []
     held = {p["ticker"] for p in pf["positions"]}
     for p in pf["positions"]:
@@ -426,7 +431,7 @@ def plan_signal(v, pf, scores, cfg):
         return orders, decisions
     slots = v["max_positions"] - (len(held) - sum(o["side"] == "SELL" for o in orders))
     cands = sorted([t for t, s in allowed(v, scores).items() if t not in held and entry_ok(v, s)],
-                   key=lambda t: strength(v, scores[t]), reverse=True)
+                   key=lambda t: (tuple(-x for x in strength(v, scores[t])), tiebreak(date, t)))
     for t in cands[:max(slots, 0)]:
         s = scores[t]
         o = {"ticker": t, "side": "BUY", "weight_pct": v["weight_pct"], "stop_pct": v.get("stop_pct"),
@@ -436,10 +441,11 @@ def plan_signal(v, pf, scores, cfg):
     return orders, decisions
 
 
-def plan_top_n(v, pf, scores, cfg):
+def plan_top_n(v, pf, scores, cfg, date=""):
     orders, decisions = [], []
     pool = allowed(v, scores)
-    ranked = sorted(pool, key=lambda t: composite(pool[t]), reverse=not v.get("invert"))
+    sign = 1 if v.get("invert") else -1
+    ranked = sorted(pool, key=lambda t: (sign * composite(pool[t]), tiebreak(date, t)))
     rank = {t: i for i, t in enumerate(ranked)}
     keep, sold = [], set()
     for p in pf["positions"]:
@@ -519,9 +525,9 @@ def plan(settled, scores_doc, free, cfg):
         if v["mode"] == "free":
             o, d = plan_free(v, pf, free, cfg)
         elif v["mode"] == "top_n":
-            o, d = plan_top_n(v, pf, scores, cfg)
+            o, d = plan_top_n(v, pf, scores, cfg, day["date"])
         else:
-            o, d = plan_signal(v, pf, scores, cfg)
+            o, d = plan_signal(v, pf, scores, cfg, day["date"])
         pf["orders"], pf["decisions"], pf["plan_equity"] = o, d, pf["equity"]
     rcfg = cfg.get("random_baseline", {"max_positions": 5, "weight_pct": 20, "stop_pct": 7, "max_hold_days": 10, "mirror": "zaklad"})
     rpf = day["variants"]["nahoda"]
