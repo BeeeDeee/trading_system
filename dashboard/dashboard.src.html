@@ -1,0 +1,408 @@
+<title>Deník večerního bota</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F1F3F1;--surface:#FBFCFB;--ink:#18211D;--muted:#5A6760;--faint:#8A958F;--rule:#D5DBD7;--rule-soft:#E5E9E6;--line-ctx:#B9C2BD;
+  --accent:#2F6BA8;--accent-bg:#E4EDF6;--spy:#C2761B;--rnd:#8A56B8;
+  --pos:#1D7446;--pos-bg:#E3F1E8;--pos-bg2:#C4E3CF;--neg:#A8352B;--neg-bg:#F7E4E1;--neg-bg2:#EEC4BE;--warn:#8A5A0B;--warn-bg:#F6ECD8;
+  --display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#101513;--surface:#161D1A;--ink:#E3E9E5;--muted:#9AA8A1;--faint:#6F7C75;--rule:#2A3430;--rule-soft:#212A26;--line-ctx:#3C4843;
+  --accent:#4F8AD0;--accent-bg:#1A2A3B;--spy:#C4822C;--rnd:#9C6CCB;
+  --pos:#5FC08A;--pos-bg:#16301F;--pos-bg2:#1F4A2E;--neg:#E57C70;--neg-bg:#3A1C19;--neg-bg2:#5A2822;--warn:#E0B060;--warn-bg:#352812;}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#101513;--surface:#161D1A;--ink:#E3E9E5;--muted:#9AA8A1;--faint:#6F7C75;--rule:#2A3430;--rule-soft:#212A26;--line-ctx:#3C4843;
+  --accent:#4F8AD0;--accent-bg:#1A2A3B;--spy:#C4822C;--rnd:#9C6CCB;
+  --pos:#5FC08A;--pos-bg:#16301F;--pos-bg2:#1F4A2E;--neg:#E57C70;--neg-bg:#3A1C19;--neg-bg2:#5A2822;--warn:#E0B060;--warn-bg:#352812;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;padding-inline:16px;padding-block:20px 48px}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
+h1{font-size:30px;line-height:1.1}h2{font-size:19px}h3{font-size:16px}
+.label{font-family:var(--display);font-weight:500;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.num,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px;border-bottom:1.5px solid var(--ink);padding-bottom:14px}
+.sub{color:var(--muted);margin:6px 0 0;max-width:64ch}
+.status{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:6px;max-width:100%;font-family:var(--display);font-weight:500;font-size:12.5px;letter-spacing:.03em;padding:2px 9px;border-radius:999px;background:var(--rule-soft);color:var(--muted);white-space:nowrap}
+.pill.pos{background:var(--pos-bg);color:var(--pos)}.pill.neg{background:var(--neg-bg);color:var(--neg)}.pill.warn{background:var(--warn-bg);color:var(--warn)}.pill.info{background:var(--accent-bg);color:var(--accent)}
+.banner{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:10px 14px;font-size:14px}
+.health{display:flex;flex-direction:column;gap:10px}
+.hrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.hstate{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:17px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--faint)}
+.dot.ok{background:var(--pos)}.dot.warn{background:var(--warn)}.dot.bad{background:var(--neg)}
+.alert{border-radius:8px;padding:10px 14px;font-size:14px}
+.alert.bad{background:var(--neg-bg);color:var(--neg)}.alert.warn{background:var(--warn-bg);color:var(--warn)}
+.alert ul{margin:4px 0 0;padding-left:18px}
+.runs{font-size:13.5px}
+.runs td{padding:6px 8px}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:18px}
+.panel-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px;margin-bottom:12px}
+.hint{color:var(--muted);font-size:13.5px;margin:0 0 12px;max-width:72ch}
+.tablebox{overflow-x:auto;margin-inline:-4px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font-family:var(--display);font-weight:500;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 8px 8px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:8px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+td.r,th.r{text-align:right}td.num{white-space:nowrap}
+.up{color:var(--pos)}.down{color:var(--neg)}
+#board tr.v{cursor:pointer}
+#board tr.v:hover td{background:var(--rule-soft)}
+#board tr.sel td{background:var(--accent-bg)}
+#board tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+#board tr.base td{color:var(--muted)}
+#board tr.sep td{border-top:1px solid var(--rule)}
+#board .vn{font-weight:500;white-space:nowrap}
+#board .vq{font-size:12.5px;color:var(--muted);max-width:26ch}
+.bar{display:inline-block;height:6px;border-radius:3px;background:var(--line-ctx);vertical-align:middle;margin-left:6px}
+.key{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted)}
+.legend .dash{background:none;border-top:2px dashed var(--rnd);height:0}
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:hidden}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;font-size:12.5px;box-shadow:0 4px 14px rgba(0,0,0,.08);min-width:170px;opacity:0}
+.tip b{font-family:var(--display);font-weight:600}.tip .row{display:flex;justify-content:space-between;gap:12px}
+.vhead{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px}
+@media (max-width:820px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.sub-panel{border-top:1px solid var(--rule-soft);padding-top:14px}
+.dec{display:grid;grid-template-columns:56px minmax(0,1fr);gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--rule-soft)}
+.dec:last-child{border-bottom:0}
+.dec .t{font-family:var(--mono);font-weight:500}
+.dec .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dec p{margin:4px 0 0;font-size:14px}.dec .inv{color:var(--muted);font-size:13px}
+.conv{display:inline-flex;gap:3px}.conv i{width:7px;height:7px;border-radius:50%;background:var(--rule)}.conv i.on{background:var(--ink)}
+.empty{color:var(--muted);font-size:14px;padding:6px 0}
+.sc{display:inline-block;min-width:30px;text-align:center;border-radius:4px;padding:1px 4px;font-family:var(--mono);font-size:13px}
+.s2{background:var(--pos-bg2);color:var(--pos)}.s1{background:var(--pos-bg);color:var(--pos)}.s0{background:var(--rule-soft);color:var(--muted)}.sm1{background:var(--neg-bg);color:var(--neg)}.sm2{background:var(--neg-bg2);color:var(--neg)}
+.regime{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.regime p{margin:0;max-width:70ch}
+details{border-bottom:1px solid var(--rule-soft)}
+summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;padding:10px 2px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary:focus-visible,tr.v:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+summary .day{font-family:var(--mono);font-weight:500;min-width:92px}
+summary .eq{margin-left:auto;font-family:var(--mono)}
+.dbody{padding:0 2px 12px}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:4px 24px;margin:0}
+.rules div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dotted var(--rule);padding:5px 0;font-size:14px}
+.rules dt{color:var(--muted)}.rules dd{margin:0;font-family:var(--mono)}
+.universe{font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:12px;line-height:1.8;word-spacing:4px}
+footer{color:var(--faint);font-size:13px;max-width:72ch}
+@media (prefers-reduced-motion:no-preference){.tip{transition:opacity .12s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="label">Paper trading · US akcie a ETF · long only</div>
+      <h1>Deník večerního bota</h1>
+      <p class="sub">Každý obchodní den ve 22:15 Claude ohodnotí 20 titulů třemi pohledy. Z téhož skóre pak obchoduje <span id="vcount">19</span> variant s různými pravidly, každá s vlastními $10 000.</p>
+    </div>
+    <div class="status" id="status"></div>
+  </header>
+
+  <div class="banner" id="sampleBanner" hidden>Ukázková data ze simulace. Skutečné záznamy je nahradí po prvním večerním běhu.</div>
+
+  <section class="panel" id="health" aria-label="Stav večerních běhů"></section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>Žebříček variant</h2><span class="label">Klepni na řádek pro detail</span></div>
+    <div class="tablebox"><table id="board"></table></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Výnos od startu</h2>
+      <div class="legend">
+        <span><span class="key" style="background:var(--accent)"></span><span id="legSel">Vybraná varianta</span></span>
+        <span><span class="key" style="background:var(--line-ctx)"></span>Ostatní varianty</span>
+        <span><span class="key" style="background:var(--spy)"></span>SPY</span>
+        <span><span class="key dash"></span>Náhoda</span>
+      </div>
+    </div>
+    <div class="chart" id="chart"></div>
+  </section>
+
+  <section class="panel" id="detail"></section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>Kvalita signálů</h2><span class="label" id="sqN"></span></div>
+    <p class="hint">Nezávisle na obchodech: jak se titulům dařilo po tom, co dostaly kladné nebo záporné skóre. Pokud rozdíl neroste nad šum, pohled nemá edge. Věrohodné je to až po několika týdnech.</p>
+    <div class="tablebox"><table id="sq"></table></div>
+    <div class="tablebox" style="margin-top:16px"><table id="convq"></table></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>Skóre posledního večera</h2><span class="label" id="scDate"></span></div>
+    <div class="regime" id="regime"></div>
+    <div class="tablebox"><table id="scores"></table></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>Historie dní</h2><span class="label" id="histLbl"></span></div>
+    <div id="history"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>Společná pravidla</h2><span class="label">Platí pro všechny varianty i náhodu</span></div>
+    <dl class="rules" id="rules"></dl>
+    <div class="universe" id="universe"></div>
+  </section>
+
+  <footer>Náhodný výběr kupuje stejný počet titulů jako varianta Pravidla, se stejnými stopy, dobou držení a náklady, jen je vybírá generátor náhodných čísel. SPY a celé univerzum jsou buy &amp; hold bez nákladů.</footer>
+</div>
+
+<script id="sampleData" type="application/json">__SAMPLE__</script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const nf=(v,d=2)=>Number(v).toLocaleString("cs-CZ",{minimumFractionDigits:d,maximumFractionDigits:d});
+const usd=v=>(v<0?"−":"")+"$"+Math.abs(Number(v)).toLocaleString("cs-CZ",{maximumFractionDigits:0});
+const pct=(v,d=2)=>v==null||isNaN(v)?"—":(v>0?"+":v<0?"−":"")+nf(Math.abs(v),d)+" %";
+const cls=v=>v>0?"up":v<0?"down":"";
+const fmtDate=s=>{const [y,m,d]=s.split("-");return `${+d}. ${+m}. ${y}`};
+const short=s=>fmtDate(s).replace(/ \d{4}$/,"");
+const LENS={trend:"Trend",mr:"Mean-reversion",news:"Zprávy"};
+
+const SAMPLE=JSON.parse($("sampleData").textContent);
+let live={days:[],trades:[],scores:[],prices:[],runs:[],config:null};
+let selected=null;
+try{selected=localStorage.getItem("variant")}catch(e){}
+
+function data(){
+  if(!live.days.length)return {...SAMPLE,sample:true};
+  return {days:live.days,trades:live.trades,scores:live.scores,prices:live.prices,runs:live.runs,config:live.config||SAMPLE.config,sample:false};
+}
+
+function variantMeta(cfg){
+  const m={};(cfg.variants||[]).forEach(v=>m[v.id]=v);
+  m.nahoda={id:"nahoda",name:(cfg.random_baseline||{}).name||"Náhodný výběr",question:"Stejná pravidla jako Pravidla, tituly vybírá náhoda.",...(cfg.random_baseline||{}),baseline:true};
+  return m;
+}
+
+function stats(id,days,trades,start){
+  const eq=days.map(d=>d.variants?.[id]?.equity).filter(x=>x!=null);
+  if(!eq.length)return null;
+  let peak=start,mdd=0;eq.forEach(e=>{peak=Math.max(peak,e);mdd=Math.min(mdd,(e/peak-1)*100)});
+  const exp=days.map(d=>d.variants?.[id]?.exposure_pct).filter(x=>x!=null);
+  const tr=trades.filter(t=>t.variant===id);
+  const last=days[days.length-1].variants[id];
+  return {ret:(eq[eq.length-1]/start-1)*100,mdd,exp:exp.length?exp.reduce((a,b)=>a+b,0)/exp.length:0,n:tr.length,
+    win:tr.length?tr.filter(t=>t.pnl_usd>0).length/tr.length*100:null,avg:tr.length?tr.reduce((a,t)=>a+t.pnl_pct,0)/tr.length:null,
+    costs:last.costs_total||0,open:(last.positions||[]).length};
+}
+
+function render(){
+  const D=data(),cfg=D.config,days=D.days,start=cfg.start_capital||10000,meta=variantMeta(cfg);
+  $("sampleBanner").hidden=!D.sample;
+  const last=days[days.length-1];
+  const ids=Object.keys(last.variants||{});
+  $("vcount").textContent=ids.filter(i=>i!=="nahoda").length;
+  if(!selected||!ids.includes(selected))selected=ids.includes("volny")?"volny":ids[0];
+  $("status").innerHTML=`<span class="pill ${D.sample?"warn":"info"}">${D.sample?"Ukázka":"Živě"}</span><span class="pill">Den ${days.length}</span><span class="pill">Poslední běh ${fmtDate(last.date)}</span>`;
+  const spyR=(last.spy_equity/start-1)*100,uniR=(last.universe_equity/start-1)*100;
+  const rnd=stats("nahoda",days,D.trades,start);
+  const rows=ids.filter(i=>i!=="nahoda").map(i=>({id:i,s:stats(i,days,D.trades,start)})).filter(r=>r.s).sort((a,b)=>b.s.ret-a.s.ret);
+  const maxAbs=Math.max(1e-9,...rows.map(r=>Math.abs(r.s.ret)),Math.abs(spyR),Math.abs(rnd?.ret||0));
+  const bar=v=>`<span class="bar" style="width:${Math.round(Math.abs(v)/maxAbs*48)}px;background:${v>=0?"var(--pos)":"var(--neg)"};opacity:.55"></span>`;
+  const row=(id,name,q,s,isBase)=>`<tr class="${isBase?"base":""}${!isBase||id==="nahoda"?" v":""}${id===selected?" sel":""}" ${isBase&&id!=="nahoda"?"":`data-id="${id}" tabindex="0"`}>
+    <td title="${esc(q||"")}"><div class="vn">${esc(name)}</div></td>
+    <td class="r num ${cls(s.ret)}">${pct(s.ret)}${bar(s.ret)}</td>
+    <td class="r num ${cls(s.ret-spyR)}">${pct(s.ret-spyR,1)}</td>
+    <td class="r num ${rnd&&id!=="nahoda"?cls(s.ret-rnd.ret):""}">${rnd&&id!=="nahoda"&&s.mdd!=null?pct(s.ret-rnd.ret,1):"—"}</td>
+    <td class="r num">${s.mdd!=null?pct(s.mdd,1):"—"}</td>
+    <td class="r num">${s.exp!=null?nf(s.exp,0)+" %":"—"}</td>
+    <td class="r num">${s.n??"—"}</td>
+    <td class="r num">${s.win!=null?nf(s.win,0)+" %":"—"}</td>
+    <td class="r num ${cls(s.avg)}">${s.avg!=null?pct(s.avg,2):"—"}</td>
+    <td class="r num">${s.costs!=null?usd(s.costs):"—"}</td></tr>`;
+  $("board").innerHTML=`<thead><tr><th>Varianta</th><th class="r">Výnos</th><th class="r">vs SPY</th><th class="r">vs náhoda</th><th class="r">Max. propad</th><th class="r">Ø investováno</th><th class="r">Obchody</th><th class="r">Úspěšnost</th><th class="r">Ø obchod</th><th class="r">Náklady</th></tr></thead><tbody>`+
+    rows.map(r=>row(r.id,meta[r.id]?.name||r.id,meta[r.id]?.question,r.s,false)).join("")+
+    (rnd?row("nahoda",meta.nahoda.name,"Laťka pro výběr titulů",rnd,true).replace('<tr class="base','<tr class="base sep'):"")+
+    row("spy","SPY buy & hold","Laťka pro celý trh",{ret:spyR,mdd:null,exp:100,n:null,win:null,avg:null,costs:null},true)+
+    row("uni","Celé univerzum rovnoměrně","Průměr všech titulů univerza",{ret:uniR,mdd:null,exp:100,n:null,win:null,avg:null,costs:null},true)+"</tbody>";
+  $("board").querySelectorAll("tr[data-id]").forEach(tr=>{
+    const pick=()=>{selected=tr.dataset.id;try{localStorage.setItem("variant",selected)}catch(e){};render()};
+    tr.addEventListener("click",pick);tr.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick()}});
+  });
+  $("legSel").textContent=meta[selected]?.name||"Vybraná varianta";
+  drawChart(days,start,ids,meta);
+  renderHealth(D);
+  renderDetail(D,meta[selected]||{id:selected,name:selected},last,start);
+  renderSignal(D);
+  renderScores(D);
+  renderHistory(days,start,meta);
+  renderRules(cfg);
+}
+
+function drawChart(days,start,ids,meta){
+  const W=Math.max(300,$("chart").clientWidth||1000),H=W<560?250:330,m={t:14,r:W<560?96:124,b:30,l:50};
+  const pts=[null,...days];
+  const val=(p,id)=>p==null?0:id==="spy"?(p.spy_equity/start-1)*100:((p.variants?.[id]?.equity??start)/start-1)*100;
+  const all=["spy",...ids];
+  const vals=pts.flatMap(p=>all.map(id=>val(p,id)));
+  let lo=Math.min(0,...vals),hi=Math.max(0,...vals);const span=Math.max(hi-lo,1);lo-=span*.06;hi+=span*.06;
+  const step=[.5,1,2,2.5,5,10,20,25,50].find(s=>(hi-lo)/s<=6)||50;lo=Math.floor(lo/step)*step;hi=Math.ceil(hi/step)*step;
+  const n=pts.length,x=i=>m.l+(W-m.l-m.r)*(n>1?i/(n-1):0),y=v=>m.t+(H-m.t-m.b)*(1-(v-lo)/(hi-lo));
+  let g="";
+  for(let v=lo;v<=hi+1e-9;v+=step){const z=Math.abs(v)<1e-9;g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--rule)" stroke-width="${z?1.2:.6}" ${z?"":'stroke-dasharray="2 4"'}/><text x="${m.l-8}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="var(--muted)" font-family="IBM Plex Mono,monospace">${(v>0?"+":"")+nf(v,step<1?1:0)} %</text>`}
+  [0,Math.floor((n-1)/2),n-1].filter((v,i,a)=>a.indexOf(v)===i).forEach(i=>{g+=`<text x="${x(i)}" y="${H-8}" text-anchor="${i===0?"start":i===n-1?"end":"middle"}" font-size="12" fill="var(--muted)">${i===0?"Start":short(pts[i].date)}</text>`});
+  const path=id=>pts.map((p,i)=>`${i?"L":"M"}${x(i).toFixed(1)},${y(val(p,id)).toFixed(1)}`).join("");
+  let lines="";
+  ids.filter(id=>id!==selected&&id!=="nahoda").forEach(id=>lines+=`<path d="${path(id)}" fill="none" stroke="var(--line-ctx)" stroke-width="1.2"/>`);
+  const main=[["spy","SPY","var(--spy)",""],["nahoda","Náhoda","var(--rnd)","6 5"],[selected,meta[selected]?.name||selected,"var(--accent)",""]].filter(s=>s[0]==="spy"||ids.includes(s[0]));
+  const ends=[];
+  main.forEach(([id,name,c,dash])=>{lines+=`<path d="${path(id)}" fill="none" stroke="${c}" stroke-width="${id===selected?2.5:2}" stroke-linejoin="round" stroke-linecap="round" ${dash?`stroke-dasharray="${dash}"`:""}/>`;
+    const lv=val(pts[n-1],id);lines+=`<circle cx="${x(n-1)}" cy="${y(lv)}" r="4" fill="${c}" stroke="var(--surface)" stroke-width="2"/>`;ends.push({name,y:y(lv),v:lv})});
+  ends.sort((a,b)=>a.y-b.y);for(let i=1;i<ends.length;i++)if(ends[i].y-ends[i-1].y<16)ends[i].y=ends[i-1].y+16;
+  const nm=s=>s.length>14?s.slice(0,13)+"…":s;
+  const el=ends.map(e=>`<text x="${W-m.r+10}" y="${e.y+4}" font-size="12" fill="var(--ink)"><tspan font-family="IBM Plex Sans Condensed,sans-serif">${esc(W<560?"":nm(e.name)+" ")}</tspan><tspan font-family="IBM Plex Mono,monospace">${pct(e.v,1)}</tspan></text>`).join("");
+  $("chart").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Výnos variant, SPY a náhodného výběru od startu v procentech">${g}${lines}${el}<line id="xh" y1="${m.t}" y2="${H-m.b}" stroke="var(--faint)" opacity="0"/><rect id="hit" x="${m.l}" y="${m.t}" width="${W-m.l-m.r}" height="${H-m.t-m.b}" fill="transparent"/></svg><div class="tip" id="tip"></div>`;
+  const svg=$("chart").querySelector("svg"),tip=$("tip"),xh=$("xh");
+  $("hit").addEventListener("pointermove",ev=>{
+    const rc=svg.getBoundingClientRect(),sx=(ev.clientX-rc.left)*W/rc.width;
+    const i=Math.max(0,Math.min(n-1,Math.round((sx-m.l)/((W-m.l-m.r)/Math.max(n-1,1)))));
+    xh.setAttribute("x1",x(i));xh.setAttribute("x2",x(i));xh.setAttribute("opacity",1);
+    tip.innerHTML=`<b>${i?fmtDate(pts[i].date):"Start"}</b>`+main.slice().reverse().map(([id,name,c])=>`<div class="row"><span><span class="key" style="background:${c}"></span>${esc(name)}</span><span class="num">${pct(val(pts[i],id))}</span></div>`).join("");
+    const px=x(i)*rc.width/W,w=tip.offsetWidth;tip.style.left=(px+12+w>rc.width?Math.max(px-w-12,0):px+12)+"px";tip.style.top="8px";tip.style.opacity=1;
+  });
+  $("hit").addEventListener("pointerleave",()=>{tip.style.opacity=0;xh.setAttribute("opacity",0)});
+}
+
+const actionPill=a=>({BUY:'<span class="pill pos">Nákup</span>',SELL:'<span class="pill neg">Prodej</span>',HOLD:'<span class="pill info">Držet</span>',SKIP:'<span class="pill">Bez obchodu</span>'}[a]||`<span class="pill">${esc(a)}</span>`);
+const conv=n=>n?`<span class="conv" aria-label="Přesvědčení ${n} z 5">${[1,2,3,4,5].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>`:"";
+function decisionsHTML(ds){
+  if(!ds||!ds.length)return '<p class="empty">Žádné pokyny, varianta nic nemění.</p>';
+  const order={SELL:0,BUY:1,HOLD:2,SKIP:3};
+  return ds.slice().sort((a,b)=>(order[a.action]??9)-(order[b.action]??9)).map(d=>`<div class="dec"><span class="t">${esc(d.ticker)}</span><div><div class="meta">${actionPill(d.action)}${conv(d.conviction)}${d.weight_pct?`<span class="mono" style="font-size:13px;color:var(--muted)">${nf(d.weight_pct,0)} % účtu</span>`:""}</div><p>${esc(d.reason)}</p>${d.invalidation?`<p class="inv">Neplatí, pokud: ${esc(d.invalidation)}</p>`:""}</div></div>`).join("");
+}
+function renderDetail(D,v,last,start){
+  const pf=last.variants[v.id]||{},tr=D.trades.filter(t=>t.variant===v.id).sort((a,b)=>b.exit_date.localeCompare(a.exit_date));
+  const chips=[];
+  if(v.mode==="free")chips.push("Claude rozhoduje volně");else if(v.mode==="top_n")chips.push(`Vždy top ${v.max_positions} podle složeného skóre`);else if(v.signal==="consensus")chips.push("Shoda 2 ze 3 pohledů");else if(LENS[v.signal])chips.push("Signál: "+LENS[v.signal]);
+  if(v.min_conviction>1)chips.push(`Přesvědčení ≥ ${v.min_conviction}`);
+  if(v.max_positions)chips.push(`Max. ${v.max_positions} pozic`);
+  if(v.weight_pct)chips.push(`${v.weight_pct} % na pozici`);
+  chips.push(v.stop_pct?`Stop ${v.stop_pct} %`:"Bez stopu");
+  chips.push(v.max_hold_days?`Držení max. ${v.max_hold_days} dní`:"Bez limitu držení");
+  const ps=pf.positions||[];
+  const sum=tr.reduce((a,t)=>a+(t.pnl_usd||0),0);
+  $("detail").innerHTML=`<div class="vhead"><span class="label">Detail varianty</span><h2 style="font-size:24px">${esc(v.name)}</h2><p style="margin:0;color:var(--muted);max-width:70ch">${esc(v.question||"")}</p><div class="chips">${chips.map(c=>`<span class="pill">${esc(c)}</span>`).join("")}</div></div>
+  <div class="grid2"><div class="sub-panel"><div class="panel-head"><h3>Pokyny na zítřejší open</h3><span class="label">${fmtDate(last.date)}</span></div>${decisionsHTML(pf.decisions)}</div>
+  <div class="sub-panel"><div class="panel-head"><h3>Otevřené pozice</h3><span class="label">Hotovost ${usd(pf.cash||0)}</span></div><div class="tablebox"><table>${ps.length?`<thead><tr><th>Titul</th><th class="r">Vstup</th><th class="r">Poslední</th><th class="r">P/L</th><th class="r">Stop</th></tr></thead><tbody>${ps.map(p=>{const pl=(p.last/p.entry_price-1)*100;return `<tr><td><span class="mono" style="font-weight:500">${esc(p.ticker)}</span><div style="font-size:12.5px;color:var(--muted);white-space:nowrap">${nf(p.shares,p.shares%1?2:0)} ks · ${p.entry_date?short(p.entry_date):""}</div></td><td class="r num">${nf(p.entry_price)}</td><td class="r num">${nf(p.last)}</td><td class="r num ${cls(pl)}">${pct(pl,1)}</td><td class="r num">${p.stop?nf(p.stop):"—"}</td></tr>`}).join("")}</tbody>`:'<tr><td class="empty">Bez pozic, vše v hotovosti.</td></tr>'}</table></div></div></div>
+  <div class="sub-panel" style="margin-top:16px"><div class="panel-head"><h3>Uzavřené obchody</h3><span class="label">${tr.length?`${tr.length} obchodů · celkem <span class="${cls(sum)}">${sum>=0?"+":""}${usd(sum)}</span>`:""}</span></div>
+  <div class="tablebox"><table>${tr.length?`<thead><tr><th>Titul</th><th>Držení</th><th class="r">Vstup → výstup</th><th class="r">P/L</th><th>Důvod výstupu</th></tr></thead><tbody>${tr.slice(0,40).map(t=>`<tr><td class="mono" style="font-weight:500">${esc(t.ticker)}</td><td class="num" style="font-size:13px">${short(t.entry_date)} – ${short(t.exit_date)}</td><td class="r num">${nf(t.entry_price)} → ${nf(t.exit_price)}</td><td class="r num ${cls(t.pnl_pct)}">${pct(t.pnl_pct,1)}</td><td>${esc(t.exit_reason)}</td></tr>`).join("")}</tbody>`:'<tr><td class="empty">Zatím žádný uzavřený obchod.</td></tr>'}</table></div>${tr.length>40?`<p class="hint" style="margin-top:8px">Zobrazeno posledních 40.</p>`:""}</div>`;
+}
+
+function forward(D){
+  const dates=D.prices.map(p=>p.date).sort(),close={};D.prices.forEach(p=>close[p.date]=p.close);
+  const obs=[];
+  D.scores.forEach(s=>{const i=dates.indexOf(s.date);if(i<0)return;
+    Object.entries(s.scores||{}).forEach(([t,v])=>{const c0=close[s.date]?.[t];if(!c0)return;
+      const f=k=>{const d=dates[i+k];const c=d&&close[d]?.[t];return c?(c/c0-1)*100:null};
+      obs.push({...v,t,f1:f(1),f5:f(5)})})});
+  return obs;
+}
+function renderSignal(D){
+  const obs=forward(D),avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+  const days=new Set(D.scores.map(s=>s.date)).size;
+  $("sqN").textContent=`${obs.filter(o=>o.f1!=null).length} hodnocení · ${days} dní`;
+  const row=(name,key)=>{
+    const cells=["f1","f5"].map(h=>{const o=obs.filter(x=>x[h]!=null);const p=o.filter(x=>x[key]>=1).map(x=>x[h]),n=o.filter(x=>x[key]<=-1).map(x=>x[h]);
+      const nz=o.filter(x=>x[key]&&x[h]!==0),hit=nz.length?nz.filter(x=>Math.sign(x[key])===Math.sign(x[h])).length/nz.length*100:null;
+      const ap=avg(p),an=avg(n),sp=ap!=null&&an!=null?ap-an:null;
+      return `<td class="r num ${cls(ap)}">${pct(ap)}<div style="font-size:12px;color:var(--muted)">n=${p.length}</div></td><td class="r num ${cls(an)}">${pct(an)}<div style="font-size:12px;color:var(--muted)">n=${n.length}</div></td><td class="r num ${cls(sp)}" style="font-weight:500">${pct(sp)}</td><td class="r num">${hit!=null?nf(hit,0)+" %":"—"}</td>`}).join("");
+    return `<tr><td style="font-weight:500;white-space:nowrap">${name}</td>${cells}</tr>`};
+  $("sq").innerHTML=`<thead><tr><th rowspan="2">Pohled</th><th colspan="4" class="r" style="border-bottom:0">Další den</th><th colspan="4" class="r" style="border-bottom:0">Dalších 5 dní</th></tr><tr><th class="r">Skóre ≥ +1</th><th class="r">Skóre ≤ −1</th><th class="r">Rozdíl</th><th class="r">Trefa směru</th><th class="r">Skóre ≥ +1</th><th class="r">Skóre ≤ −1</th><th class="r">Rozdíl</th><th class="r">Trefa směru</th></tr></thead><tbody>${row("Trend","trend")}${row("Mean-reversion","mr")}${row("Zprávy","news")}</tbody>`;
+  const b=[1,2,3,4,5].map(c=>{const o=obs.filter(x=>x.conviction===c);return {c,n:o.length,f1:avg(o.filter(x=>x.f1!=null).map(x=>x.f1)),f5:avg(o.filter(x=>x.f5!=null).map(x=>x.f5))}});
+  $("convq").innerHTML=`<thead><tr><th>Přesvědčení</th>${b.map(x=>`<th class="r">${x.c}/5</th>`).join("")}</tr></thead><tbody><tr><td>Ø výnos další den</td>${b.map(x=>`<td class="r num ${cls(x.f1)}">${pct(x.f1)}</td>`).join("")}</tr><tr><td>Ø výnos 5 dní</td>${b.map(x=>`<td class="r num ${cls(x.f5)}">${pct(x.f5)}</td>`).join("")}</tr><tr><td style="color:var(--muted)">Počet hodnocení</td>${b.map(x=>`<td class="r num" style="color:var(--muted)">${x.n}</td>`).join("")}</tr></tbody>`;
+}
+
+const scCell=v=>v==null?'<span class="sc s0">—</span>':`<span class="sc ${v>=2?"s2":v>=1?"s1":v<=-2?"sm2":v<=-1?"sm1":"s0"}">${v>0?"+":v<0?"−":""}${Math.abs(v)}</span>`;
+function renderScores(D){
+  const s=D.scores.slice().sort((a,b)=>a.date.localeCompare(b.date)).pop();
+  if(!s){$("scores").innerHTML='<tr><td class="empty">Zatím žádné skóre.</td></tr>';return}
+  $("scDate").textContent=fmtDate(s.date);
+  const day=D.days.find(d=>d.date===s.date)||{},rg=s.regime||day.regime||{};
+  $("regime").innerHTML=`<span class="label">Režim trhu</span><strong style="font-family:var(--display);font-size:17px;font-weight:600">${esc(rg.label||"—")}</strong><p>${esc(rg.summary||"")}</p>`;
+  const comp=v=>(v.trend||0)+(v.mr||0)+(v.news||0)+0.5*((v.conviction||3)-3);
+  const rows=Object.entries(s.scores).sort((a,b)=>comp(b[1])-comp(a[1]));
+  $("scores").innerHTML=`<thead><tr><th>#</th><th>Titul</th><th class="r">Trend</th><th class="r">Reverze</th><th class="r">Zprávy</th><th class="r">Přesvědčení</th><th>Poznámka</th></tr></thead><tbody>${rows.map(([t,v],i)=>`<tr><td class="num" style="color:var(--muted)">${i+1}</td><td class="mono" style="font-weight:500">${esc(t)}${v.event?' <span class="pill warn" title="Binární událost">událost</span>':""}</td><td class="r">${scCell(v.trend)}</td><td class="r">${scCell(v.mr)}</td><td class="r">${scCell(v.news)}</td><td class="r">${conv(v.conviction)}</td><td style="color:var(--muted);font-size:13.5px;min-width:200px">${esc(v.note||"")}</td></tr>`).join("")}</tbody>`;
+}
+
+function renderHistory(days,start,meta){
+  $("histLbl").textContent="Obchody varianty "+(meta[selected]?.name||"");
+  $("history").innerHTML=days.slice().reverse().map(d=>{
+    const pf=d.variants?.[selected]||{},r=((pf.equity??start)/start-1)*100;
+    const n=(pf.fills||[]).length,ord=(pf.decisions||[]).filter(x=>x.action==="BUY"||x.action==="SELL").length;
+    return `<details><summary><span class="day">${fmtDate(d.date)}</span><span class="pill">${esc(d.regime?.label||"—")}</span><span style="font-size:13px;color:var(--muted)">${n} plnění · ${ord} pokynů</span><span class="eq ${cls(r)}">${pct(r)}</span></summary><div class="dbody"><p style="margin:0 0 6px;max-width:70ch">${esc(d.regime?.summary||"")}</p>${(pf.fills||[]).length?`<p class="inv" style="margin:0 0 6px;color:var(--muted);font-size:13.5px">Plnění: ${pf.fills.map(f=>`${f.side==="BUY"?"nákup":"prodej"} ${esc(f.ticker)} za ${nf(f.price)}${f.reason?` (${esc(f.reason)})`:""}`).join(", ")}</p>`:""}${d.notes&&d.notes!=="—"?`<p class="inv" style="margin:0 0 6px;color:var(--warn);font-size:13.5px">${esc(d.notes)}</p>`:""}${decisionsHTML(pf.decisions)}</div></details>`}).join("");
+}
+const HOLIDAYS=new Set(["2026-11-26","2026-12-25","2027-01-01","2027-01-18","2027-02-15","2027-03-26"]);
+function nyNow(){
+  const p=Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hour12:false}).formatToParts(new Date()).map(x=>[x.type,x.value]));
+  return {date:`${p.year}-${p.month}-${p.day}`,hour:+p.hour%24};
+}
+function expectedDays(start,sample,days){
+  if(sample)return days.map(d=>d.date);
+  const now=nyNow(),out=[];let d=new Date(start+"T12:00:00Z");
+  const end=new Date(now.date+"T12:00:00Z");if(now.hour<17)end.setUTCDate(end.getUTCDate()-1);
+  while(d<=end){const iso=d.toISOString().slice(0,10),w=d.getUTCDay();if(w>0&&w<6&&!HOLIDAYS.has(iso))out.push(iso);d.setUTCDate(d.getUTCDate()+1)}
+  return out;
+}
+function renderHealth(D){
+  const runs=(D.runs||[]).slice().sort((a,b)=>a.date.localeCompare(b.date)),byRun={};runs.forEach(r=>byRun[r.date]=r);
+  const have=new Set(D.days.map(d=>d.date));
+  const exp=expectedDays(D.config.start_date||D.days[0]?.date,D.sample,D.days);
+  const missing=exp.filter(d=>!have.has(d)&&byRun[d]?.status!=="closed");
+  const lastRun=runs[runs.length-1];
+  const recentWarn=runs.slice(-5).filter(r=>r.status==="warning"||r.status==="catchup");
+  const failed=runs.slice(-5).filter(r=>r.status==="failed"&&!have.has(r.date));
+  let state="ok",label="Vše v pořádku";
+  if(!D.sample&&!D.days.length){state="warn";label=exp.length?"Zatím žádný záznam":"Čeká na první běh"}
+  if(missing.length||failed.length){state="bad";label="Chybí data"}
+  else if(recentWarn.length&&state==="ok"){state="warn";label="Běží, s upozorněním"}
+  const chk=lastRun?.checks||{};
+  const facts=[];
+  if(lastRun){facts.push(`Poslední běh ${fmtDate(lastRun.date)}${lastRun.finished_at?" · "+new Date(lastRun.finished_at).toLocaleTimeString("cs-CZ",{hour:"2-digit",minute:"2-digit"}):""}`);
+    if(chk.tickers_ok!=null)facts.push(`${chk.tickers_ok}/${(D.config.universe||[]).length} titulů`);
+    if(lastRun.spy_crosscheck?.diff_pct!=null)facts.push(`SPY ověřeno druhým zdrojem, rozdíl ${nf(Math.abs(lastRun.spy_crosscheck.diff_pct),2)} %`);
+    if(lastRun.source)facts.push("Zdroj: "+lastRun.source);}
+  let alerts="";
+  if(missing.length)alerts+=`<div class="alert bad"><b>Chybí ${missing.length===1?"den":"dny"} ${missing.map(short).join(", ")}.</b> Úloha neproběhla nebo nezapsala výsledek.${missing.some(d=>byRun[d]?.message)?`<ul>${missing.filter(d=>byRun[d]?.message).map(d=>`<li>${short(d)}: ${esc(byRun[d].message)}</li>`).join("")}</ul>`:" Otevři si výsledek naplánované úlohy v aplikaci, nebo napiš Claudovi."} Další úspěšný běh chybějící dny doplní.</div>`;
+  const warnList=runs.slice(-5).flatMap(r=>[...(r.checks?.warnings||[]).map(w=>[r.date,w]),...(r.status==="catchup"?[[r.date,r.message||"Doplněno zpětně"]]:[])]);
+  if(warnList.length)alerts+=`<div class="alert warn"><b>Upozornění z posledních běhů</b><ul>${warnList.slice(-6).map(([d,w])=>`<li>${short(d)}: ${esc(w)}</li>`).join("")}</ul></div>`;
+  const stPill=r=>({ok:'<span class="pill pos">OK</span>',warning:'<span class="pill warn">Upozornění</span>',failed:'<span class="pill neg">Selhal</span>',closed:'<span class="pill">Burza zavřená</span>',catchup:'<span class="pill warn">Doplněno</span>'}[r.status]||`<span class="pill">${esc(r.status)}</span>`);
+  $("health").innerHTML=`<div class="health"><div class="panel-head" style="margin:0"><h2>Stav běhů</h2><span class="label">Kontroluje se každý večer</span></div>
+  <div class="hrow"><span class="hstate"><span class="dot ${state}"></span>${label}</span>${facts.map(f=>`<span class="pill">${esc(f)}</span>`).join("")}</div>${alerts}
+  ${runs.length?`<details><summary><span class="label">Posledních ${Math.min(runs.length,10)} běhů</span></summary><div class="tablebox"><table class="runs"><tbody>${runs.slice(-10).reverse().map(r=>`<tr><td class="num">${short(r.date)}</td><td>${stPill(r)}</td><td class="num">${r.checks?.tickers_ok??"—"} titulů</td><td style="color:var(--muted)">${esc(r.message||"")}</td></tr>`).join("")}</tbody></table></div></details>`:""}</div>`;
+}
+
+function renderRules(c){
+  const k=c.costs||{},L=[["Kapitál na variantu",usd(c.start_capital||10000)],["Plnění","open dalšího dne"],["Poplatek za plnění",k.fees_bps+" bps"],["Slippage za plnění",k.slippage_bps+" bps"],["Slippage navíc u stopu",k.stop_slippage_bps+" bps"],["Zlomkové akcie",c.fractional_shares?"ano":"ne"],["Denní limit ztráty",c.daily_loss_limit_pct+" % (stop nových nákupů)"],["Start",c.start_date?fmtDate(c.start_date):"—"]];
+  $("rules").innerHTML=L.map(([a,b])=>`<div><dt>${a}</dt><dd>${esc(b)}</dd></div>`).join("");
+  $("universe").innerHTML='<span class="label" style="margin-right:8px">Univerzum</span>'+(c.universe||[]).map(esc).join(" ");
+}
+
+render();
+let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(render,150)});
+
+(async()=>{
+  const db=await window.claude?.use?.("db");
+  if(!db)return;
+  const sub=(q,key,map)=>q.onSnapshot(s=>{live[key]=map?map(s):s.docs.map(d=>d.data());render()},()=>{});
+  sub(db.collection("days").orderBy("date","asc").limit(500),"days");
+  sub(db.collection("trades").limit(1000),"trades");
+  sub(db.collection("runs").orderBy("date","asc").limit(500),"runs");
+  sub(db.collection("scores").orderBy("date","asc").limit(500),"scores");
+  sub(db.collection("prices").orderBy("date","asc").limit(500),"prices",s=>s.docs.map(d=>{const x=d.data();return {date:x.date,close:x.close}}));
+  db.doc("config/main").onSnapshot(s=>{live.config=s.exists?s.data():null;render()},()=>{});
+})();
+})();
+</script>
