@@ -7,11 +7,25 @@ Write every human-readable text field (notes, messages, regime label/summary, sc
 RELIABILITY RULES (most important):
 - Every run ends by writing runs/<today> with its status, whatever happens (see step 8). A run that fails still writes runs/<today> with status "failed" and a Czech message saying exactly what failed.
 - Never invent or estimate prices. If data is missing or fails checks, do not trade on it.
-- Never edit engine.py. If it crashes, record the traceback summary in runs/<today> (status "failed") and stop.
+- Never edit engine.py or config.json. If the engine crashes, record the traceback summary in runs/<today> (status "failed") and stop.
+- The code version is PINNED (see "Pinned release" below). Never use a different version, never "fix" code, and always record which version produced the results.
+
+## Pinned release
+TAG = v1.0.0
+ENGINE_SHA256 = a72f25b48d32192aa78e2f8a7432784c5384e7f2cd64c5d01d67012940778e34
+CONFIG_SHA256 = c2be59cd1435eb7a4a40e8fe7fe77c0ca519558f7f070570479092d18d02fa9b
+REPO = https://github.com/BeeeDeee/trading_system (branch paper-trading-bot, tag = TAG)
+Changing the rules or the engine means: commit + new tag in the repo, then update this block (TAG and both hashes). It is never done from inside a run.
 
 ## 0. Setup
 - Load ArtifactData with ToolSearch ("select:ArtifactData"). Work in a fresh folder, e.g. ./run. Note the start time (UTC ISO).
-- Read config/main -> config.json. Read engine/main -> write its "source" field to engine.py and verify sha256 == its "sha256" field (mismatch = failed run).
+- Get the code (in this order):
+  a) Preferred: `git clone --depth 1 --branch TAG REPO code` (wait/retry once on HTTP 429). Then engine = code/engine/engine.py, config = code/config/config.json, commit = `git -C code rev-parse HEAD`. code_source = "git".
+  b) Fallback if the clone is impossible (no network access or no permission): read engine/main from the database -> write its "source" field to engine.py; read config/main -> config.json. code_source = "db-mirror", commit = null. The run status becomes at least "warning" with the message saying the git clone failed and why.
+  In both cases compute sha256 of the engine file and of the config file and compare with ENGINE_SHA256 and CONFIG_SHA256. A mismatch = failed run (write runs/<today> with status "failed", both hashes and code_source; do nothing else).
+- Copy the verified files next to your working files as engine.py and config.json (all later commands use them).
+- Mirror for the dashboard: if config/main in the database differs from config.json (compare parsed JSON), overwrite config/main with config.json.
+- Record code = {"tag": TAG, "commit": <commit or null>, "engine_sha256": ..., "config_sha256": ..., "source": code_source}. Put it into out.day["code"] before saving days/<today> and into runs/<today>["code"].
 - Read history/main if it exists ("data" field = {ticker: [[date, open, high, low, close], ...]}) -> history.json.
 - Read the latest document in "days" (query, order_by date desc, limit 1) -> prev.json (only the document's data). None on the very first run; then pass "-" as PREV.
 - Today = current date in New York. If today is a weekend or NYSE holiday: write runs/<today> = {status "closed", message "Burza zavřená"} and stop. If days/<today> already exists, stop without writing anything.
@@ -71,15 +85,15 @@ Every held position gets HOLD or SELL. A BUY needs conviction ≥ 3 and an expec
 
 ## 7. Plan and save
 python3 engine.py plan config.json settled.json scores.json free.json out.json
-Add "regime" and "notes" (1 sentence: data problems or anything unusual, else "—") to out.day.
+Add "regime", "notes" (1 sentence: data problems or anything unusual, else "—") and "code" (see step 0) to out.day.
 Save with ArtifactData batches (max 50 writes each), days/<today> LAST:
 1. trades/<variant>-<ticker>-<entry_date> for each item in out.trades.
 2. prices/<today> = today.json; scores/<today> = scores.json; history/main = {"updated": today, "data": <history.json>}.
 3. days/<today> = out.day. Re-read it once to confirm it saved.
 
 ## 8. Run status -> runs/<today> (ALWAYS, also on failure)
-{"date": today, "status": "ok" | "warning" | "failed", "started_at", "finished_at" (UTC ISO), "source": "stockanalysis.com" (plus any per-ticker fallback), "checks": <check.json or {}>, "spy_crosscheck": {"primary": x, "other": y, "other_source": "...", "diff_pct": z}, "stock_crosscheck": {"ticker": T, "primary": x, "other": y, "other_source": "...", "diff_pct": z}, "catchup_days": [...], "message": one Czech sentence}
-status "warning" when check.json has warnings, a per-ticker fallback source was used, or days were caught up. Otherwise "ok".
+{"date": today, "status": "ok" | "warning" | "failed", "started_at", "finished_at" (UTC ISO), "source": "stockanalysis.com" (plus any per-ticker fallback), "checks": <check.json or {}>, "spy_crosscheck": {"primary": x, "other": y, "other_source": "...", "diff_pct": z}, "stock_crosscheck": {"ticker": T, "primary": x, "other": y, "other_source": "...", "diff_pct": z}, "catchup_days": [...], "code": {...as above...}, "message": one Czech sentence}
+status "warning" when check.json has warnings, a per-ticker fallback source was used, days were caught up, or code_source is "db-mirror". Otherwise "ok".
 
 ## 9. Final reply (it is sent to the user as a notification)
 First line exactly one of: "OK – <date>", "UPOZORNĚNÍ – <date>", "CHYBA – <date>".

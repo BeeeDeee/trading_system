@@ -373,7 +373,8 @@ function renderHealth(D){
   if(lastRun){facts.push(`Poslední běh ${fmtDate(lastRun.date)}${lastRun.finished_at?" · "+new Date(lastRun.finished_at).toLocaleTimeString("cs-CZ",{hour:"2-digit",minute:"2-digit"}):""}`);
     if(chk.tickers_ok!=null)facts.push(`${chk.tickers_ok}/${(D.config.universe||[]).length} titulů`);
     if(lastRun.spy_crosscheck?.diff_pct!=null)facts.push(`SPY ověřeno druhým zdrojem, rozdíl ${nf(Math.abs(lastRun.spy_crosscheck.diff_pct),2)} %`);
-    if(lastRun.source)facts.push("Zdroj: "+lastRun.source);}
+    if(lastRun.source)facts.push("Zdroj: "+lastRun.source);
+    if(lastRun.code?.tag)facts.push(`Kód ${lastRun.code.tag}${lastRun.code.commit?" · "+String(lastRun.code.commit).slice(0,7):""}${lastRun.code.source==="db-mirror"?" (záloha)":""}`);}
   let alerts="";
   if(missing.length)alerts+=`<div class="alert bad"><b>Chybí ${missing.length===1?"den":"dny"} ${missing.map(short).join(", ")}.</b> Úloha neproběhla nebo nezapsala výsledek.${missing.some(d=>byRun[d]?.message)?`<ul>${missing.filter(d=>byRun[d]?.message).map(d=>`<li>${short(d)}: ${esc(byRun[d].message)}</li>`).join("")}</ul>`:" Otevři si výsledek naplánované úlohy v aplikaci, nebo napiš Claudovi."} Další úspěšný běh chybějící dny doplní.</div>`;
   const warnList=runs.slice(-5).flatMap(r=>[...(r.checks?.warnings||[]).map(w=>[r.date,w]),...(r.status==="catchup"?[[r.date,r.message||"Doplněno zpětně"]]:[])]);
