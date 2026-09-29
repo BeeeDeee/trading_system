@@ -53,7 +53,7 @@ nutná, je to vždy nový release, ne úprava za běhu:
 2. Zápis do `CHANGELOG.md`.
 3. `python tools/pin_prompt.py vX.Y.Z` (aktualizuje `VERSION`, `MANIFEST.sha256` a připnutí v zadání).
 4. `python tools/verify_manifest.py`, commit, `git tag vX.Y.Z`, `git push` (tag je jen označení; kód se připíná otisky, ne tagem).
-5. **Záloha v databázi:** `pin_prompt.py` vytvoří `build/db_mirror_engine.json`; nahraj ho do databáze deníku (`engine/main`, akce `update`). Repo je soukromé, takže když klon v úloze selže, bere se engine odtud, a bez aktuální kopie by běh selhal na kontrole otisku.
+5. **Záloha v databázi:** `pin_prompt.py` vytvoří `build/db_mirror_engine.json` a `build/db_mirror_config.json` (surový text souborů). Nahraj je do databáze deníku: `engine/main` a `engine/config`. Repo je soukromé a úloha z něj nemusí umět klonovat (GitHub vrací 403), takže běžně poběží ze zálohy. Bez aktuální kopie by běh selhal na kontrole otisku. `config/main` je jen parsovaná kopie pro dashboard a jako zdroj se nesmí použít.
 6. Obsah `task/task_prompt.md` vložit do naplánované úlohy.
 7. V dashboardu je u každého dne vidět, který tag ho spočítal, a v analýze se výsledky před a po změně nesmí míchat.
 

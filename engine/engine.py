@@ -451,10 +451,12 @@ def plan_top_n(v, pf, scores, cfg, date=""):
     for p in pf["positions"]:
         t = p["ticker"]
         s = scores.get(t, {})
-        p["no_score_days"] = 0 if t in scores else p.get("no_score_days", 0) + 1
-        if p["no_score_days"] >= STALE_SCORE_DAYS:
-            orders.append({"ticker": t, "side": "SELL", "exit_reason": "Bez skóre", "reason": f"Titul {p['no_score_days']} dny bez skóre."})
-            decisions.append({"ticker": t, "action": "SELL", "conviction": None, "reason": f"Bez skóre {p['no_score_days']} dny, uzavřeno."})
+        if scores:   # an empty score set is a catch-up day (no evening run), not a missing score
+            p["no_score_days"] = 0 if t in scores else p.get("no_score_days", 0) + 1
+        stale = p.get("no_score_days", 0)
+        if stale >= STALE_SCORE_DAYS:
+            orders.append({"ticker": t, "side": "SELL", "exit_reason": "Bez skóre", "reason": f"Titul {stale} dny bez skóre."})
+            decisions.append({"ticker": t, "action": "SELL", "conviction": None, "reason": f"Bez skóre {stale} dny, uzavřeno."})
             sold.add(t)
         elif t in rank and rank[t] >= v.get("hysteresis_rank", 10):
             orders.append({"ticker": t, "side": "SELL", "exit_reason": "Vypadl z top výběru", "reason": f"Pořadí {rank[t] + 1}."})

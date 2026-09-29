@@ -260,6 +260,14 @@ check(orders_of(tie) == orders_of(rev) == orders_of({"scores": dict(shuf)}), "or
 picks = {orders_of(tie)["zaklad"][0][1], orders_of(tie)["plne"][0][1]}
 check(len({o[1] for o in orders_of(tie)["plne"]}) == 5, "top_n did not fill 5 slots on ties")
 
+# catch-up days (empty score set) must not count as "missing score": two of them in a row keep the position
+d = with_order(day1(), "plne", "AAPL")
+h = E.settle(CFG, d, flat(date="2026-10-02"))["day"]
+for _ in range(3):
+    h = E.plan({"day": h, "trades": []}, {"scores": {}}, None, CFG)["day"]
+    check(not any(o["side"] == "SELL" for o in h["variants"]["plne"]["orders"]), "catch-up plan sold a position")
+    h["variants"]["plne"]["positions"] = h["variants"]["plne"]["positions"]
+
 if fails:
     sys.exit(f"{len(fails)} test(s) failed")
 print(f"OK: {len(sim['days'])} days x {len(last)} portfolios, {len(sim['trades'])} trades, all invariants hold")

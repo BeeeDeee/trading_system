@@ -5,9 +5,9 @@
   python tools/verify_manifest.py        # afterwards: MANIFEST.sha256 matches
 
 Release procedure: edit -> tests -> CHANGELOG -> pin_prompt.py (writes VERSION, MANIFEST.sha256,
-the pins in the prompt and build/db_mirror_engine.json) -> verify_manifest.py -> commit -> git tag
--> push -> upload build/db_mirror_engine.json to database engine/main -> paste task/task_prompt.md
-into the scheduled task.
+the pins in the prompt and build/db_mirror_{engine,config}.json) -> verify_manifest.py -> commit
+-> git tag -> push -> upload the two mirror files to database engine/main and engine/config
+-> paste task/task_prompt.md into the scheduled task.
 """
 import hashlib, json, pathlib, re, sys
 
@@ -25,10 +25,12 @@ lines = "".join(f"{sha(p)}  {p}\n" for p in ("engine/engine.py", "config/config.
 (ROOT / "MANIFEST.sha256").write_text(lines)
 # Fallback copy for the scheduled task (used when `git clone` fails, e.g. private repo).
 # Upload to the journal database with ArtifactData action "update" (merge): collection engine, doc main.
-mirror = {"filename": "engine.py", "sha256": sha("engine/engine.py"),
-          "source": (ROOT / "engine" / "engine.py").read_text()}
+# Raw TEXT of both files (the pins are byte hashes; a parsed JSON object cannot reproduce the bytes).
 (ROOT / "build").mkdir(exist_ok=True)
-(ROOT / "build" / "db_mirror_engine.json").write_text(json.dumps(mirror, ensure_ascii=False))
+for doc, path in (("engine", "engine/engine.py"), ("config", "config/config.json")):
+    mirror = {"filename": pathlib.Path(path).name, "sha256": sha(path), "source": (ROOT / path).read_bytes().decode("utf-8")}
+    (ROOT / "build" / f"db_mirror_{doc}.json").write_text(json.dumps(mirror, ensure_ascii=False))
 print(lines, end="")
 print("pinned", tag)
-print("NEXT: upload build/db_mirror_engine.json to database engine/main (update), else the db-mirror fallback fails the hash check")
+print("NEXT: upload build/db_mirror_engine.json -> database engine/main and build/db_mirror_config.json -> engine/config (set),")
+print("      else the db-mirror fallback fails the hash check (the repo is private, the run cannot always clone it)")

@@ -11,8 +11,8 @@ RELIABILITY RULES (most important):
 - The code version is PINNED (see "Pinned release" below). Never use a different version, never "fix" code, and always record which version produced the results.
 
 ## Pinned release
-TAG = v1.1.1
-ENGINE_SHA256 = 3659342933e61218028544a37ff909c66f73f8f4a0552edb12fd8bb35ce15899
+TAG = v1.1.2
+ENGINE_SHA256 = 6206c93db082eab21fb0a737d4555122ec8d9943acfeb860945d1f53f3997c5a
 CONFIG_SHA256 = c2be59cd1435eb7a4a40e8fe7fe77c0ca519558f7f070570479092d18d02fa9b
 REPO = https://github.com/BeeeDeee/trading_system
 BRANCH = paper-trading-bot
@@ -23,7 +23,7 @@ Changing the rules or the engine means: commit in the repo, update this block (T
 - Load ArtifactData with ToolSearch ("select:ArtifactData"). Work in a fresh folder, e.g. ./run. Note the start time (UTC ISO).
 - Get the code (in this order):
   a) Preferred: `git clone --depth 1 --branch BRANCH REPO code` (wait/retry once on HTTP 429). Then engine = code/engine/engine.py, config = code/config/config.json, commit = `git -C code rev-parse HEAD`. code_source = "git".
-  b) Fallback if the clone is impossible (no network access or no permission): read engine/main from the database -> write its "source" field to engine.py; read config/main -> config.json. code_source = "db-mirror", commit = null. The run status becomes at least "warning" with the message saying the git clone failed and why.
+  b) Fallback if the clone fails for ANY reason other than HTTP 429 (the repo is private; a 403 or missing credentials is expected, do not retry): read the database documents engine/main and engine/config; write the "source" field of engine/main EXACTLY (byte for byte, no re-serialisation, no added newline) to engine.py and the "source" field of engine/config EXACTLY to config.json. NEVER build config.json from config/main: that document is a parsed JSON object for the dashboard and cannot reproduce the file bytes. code_source = "db-mirror", commit = null. The hash comparison below is what makes this safe: identical hashes mean identical code, so a hash-verified db-mirror run is a NORMAL run (record code_source, do not raise the status because of it).
   In both cases compute sha256 of the engine file and of the config file and compare with ENGINE_SHA256 and CONFIG_SHA256. A mismatch = failed run (write runs/<today> with status "failed", both hashes and code_source; do nothing else).
 - Copy the verified files next to your working files as engine.py and config.json (all later commands use them).
 - Mirror for the dashboard: if config/main in the database differs from config.json (compare parsed JSON), overwrite config/main with config.json.
@@ -101,7 +101,7 @@ Save with ArtifactData batches (max 50 writes each), days/<today> LAST:
 
 ## 8. Run status -> runs/<today> (ALWAYS, also on failure)
 {"date": today, "status": "ok" | "warning" | "failed", "started_at", "finished_at" (UTC ISO), "source": "stockanalysis.com" (plus any per-ticker fallback), "checks": <check.json or {}>, "spy_crosscheck": {"primary": x, "other": y, "other_source": "...", "diff_pct": z}, "stock_crosscheck": {"ticker": T, "primary": x, "other": y, "other_source": "...", "diff_pct": z}, "catchup_days": [...], "code": {...as above...}, "message": one Czech sentence}
-status "warning" when check.json has warnings, a per-ticker fallback source was used, days were caught up, or code_source is "db-mirror". Otherwise "ok".
+status "warning" when check.json has warnings, a per-ticker fallback source was used, or days were caught up. Otherwise "ok". (code_source "db-mirror" with matching hashes does not by itself make a warning; a hash mismatch is a failed run.)
 
 ## 9. Final reply (it is sent to the user as a notification)
 First line exactly one of: "OK – <date>", "UPOZORNĚNÍ – <date>", "CHYBA – <date>".

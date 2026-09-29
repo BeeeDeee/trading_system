@@ -42,3 +42,9 @@ v1.0.x večer 28. 9. se vykonají 29. 9. na openu (settle se nemění); pravidla
   Nově se shoda řeší deterministicky hashem z data a tickeru (bez systematické výhody písmen abecedy).
   Týká se `signal` i `top_n` variant. Test hlídá nezávislost na pořadí klíčů.
 - Plán ze dne 28. 9. přepočten tímto enginem (viz zadání/deník); záloha původního dne v databázi (`backup/`).
+
+## v1.1.2 (2026-09-29)
+- Doplnění zpětně (prázdná skóre) se už nepočítá jako „bez skóre“: `top_n` varianty neprodají pozice jen proto, že večerní běh chyběl.
+- Zadání: záložní kopie kódu v databázi je surový text obou souborů (`engine/main`, `engine/config`); dřív selhala
+  kontrola otisku configu, protože `config/main` je parsovaný JSON. Běh ze zálohy s platnými otisky je normální (ne „warning“).
+- 29. 9. 2026: první pokus o běh selhal (klon soukromého repa dal 403 a záloha configu neseděla); den se doplní zpětně.
