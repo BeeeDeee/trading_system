@@ -31,11 +31,9 @@
 		Content-Security-Policy "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
 		-Server
 	}
+	# access log to the systemd journal (fail2ban reads it there): no log file, no file permissions to get wrong
 	log {
-		output file /var/log/caddy/cpb-access.log {
-			roll_size 10MiB
-			roll_keep 5
-		}
+		output stderr
 		format json
 	}
 }

@@ -102,7 +102,6 @@ step_web() {
   fi
   caddy version
   sudo install -d -o "$SVC_USER" -g "$SVC_USER" -m 755 "$WEB" "$WEB/releases"
-  sudo install -d -o caddy -g caddy -m 750 /var/log/caddy
   read -r -p "Uživatelské jméno pro dashboard: " WU
   echo "Heslo (min. 16 znaků; doporučuji z generátoru):"; HASH="$(caddy hash-password)"
   [ -n "$HASH" ] || return 1
@@ -117,7 +116,10 @@ render_caddy() {  # $1 site address, $2 tls block
       -e "s|{{USER}}|$(sudo cat /etc/caddy/cpb-user)|" -e "s|{{BCRYPT_HASH}}|$(sudo cat /etc/caddy/cpb-hash)|" \
       "$HERE/Caddyfile.tmpl" | sudo tee /etc/caddy/Caddyfile >/dev/null
   sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
-  sudo systemctl reload caddy || sudo systemctl restart caddy
+  sudo systemctl reload caddy 2>/dev/null || sudo systemctl restart caddy
+  if ! systemctl is-active --quiet caddy; then
+    echo "Caddy neběží, poslední hlášky:"; sudo journalctl -u caddy -n 20 --no-pager; return 1
+  fi
 }
 
 step_tls() {
@@ -141,8 +143,10 @@ step_fail2ban() {
   sudo apt-get install -y fail2ban >/dev/null
   sudo install -m 644 "$HERE/fail2ban/caddy-cpb-auth.conf" /etc/fail2ban/filter.d/caddy-cpb-auth.conf
   sudo install -m 644 "$HERE/fail2ban/cpb.local" /etc/fail2ban/jail.d/cpb.local
-  sudo touch /var/log/caddy/cpb-access.log
-  sudo systemctl enable --now fail2ban && sudo systemctl restart fail2ban && sudo fail2ban-client status
+  sudo systemctl enable --now fail2ban && sudo systemctl restart fail2ban
+  for i in 1 2 3 4 5 6 7 8 9 10; do sudo fail2ban-client ping >/dev/null 2>&1 && break; sleep 1; done
+  sudo fail2ban-client status
+  sudo fail2ban-client status caddy-cpb-auth
 }
 
 step_ufw() {
