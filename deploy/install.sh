@@ -49,20 +49,35 @@ step_repo() {
 }
 
 step_env() {
-  ask "Tajné hodnoty" "Zapíšu $SVC_HOME/.config/cpb/env (práva 600): COINGECKO_DEMO_KEY, CLAUDE_CODE_OAUTH_TOKEN, volitelně NTFY_TOPIC." || return 0
-  read -r -s -p "CoinGecko Demo API klíč (prázdné = jen CoinPaprika): " CG; echo
-  echo "Token Claude: jako SVŮJ uživatel spusťte 'claude setup-token' (přihlášení předplatným) a vložte výsledný token."
-  read -r -s -p "CLAUDE_CODE_OAUTH_TOKEN: " TOK; echo
-  read -r -p "ntfy téma (prázdné = bez notifikací; použijte dlouhé náhodné jméno): " NT
-  tmp="$(mktemp)"; { echo "COINGECKO_DEMO_KEY=$CG"; echo "CLAUDE_CODE_OAUTH_TOKEN=$TOK"; [ -n "$NT" ] && echo "NTFY_TOPIC=$NT"; } > "$tmp"
-  sudo install -o "$SVC_USER" -g "$SVC_USER" -m 600 "$tmp" "$SVC_HOME/.config/cpb/env"; rm -f "$tmp"
+  local F="$SVC_HOME/.config/cpb/env"
+  ask "Tajné hodnoty" "Zapíšu $F (vlastník $SVC_USER, práva 600): COINGECKO_DEMO_KEY, CLAUDE_CODE_OAUTH_TOKEN, volitelně NTFY_TOPIC.
+Enter = ponechat uloženou hodnotu, takže jednotlivé položky jde doplnit i později (stačí krok spustit znovu)." || return 0
+  sudo install -d -o "$SVC_USER" -g "$SVC_USER" -m 700 "$SVC_HOME/.config" "$SVC_HOME/.config/cpb"
+  cur() { sudo sh -c "[ -f '$F' ] && grep -E '^$1=' '$F' | tail -n1 | cut -d= -f2-" || true; }
+  state() { [ -n "$(cur "$1")" ] && echo "uloženo" || echo "zatím prázdné"; }
+  local CG TOK NT PTH
+  read -r -s -p "CoinGecko Demo API klíč [$(state COINGECKO_DEMO_KEY)]: " CG; echo
+  [ -z "$CG" ] && CG="$(cur COINGECKO_DEMO_KEY)"
+  echo "Token Claude: jako SVŮJ uživatel spusťte v jiném terminálu 'claude setup-token' a výsledný token vložte sem."
+  read -r -s -p "CLAUDE_CODE_OAUTH_TOKEN [$(state CLAUDE_CODE_OAUTH_TOKEN)]: " TOK; echo
+  [ -z "$TOK" ] && TOK="$(cur CLAUDE_CODE_OAUTH_TOKEN)"
+  read -r -p "ntfy téma [$(cur NTFY_TOPIC || true)] (prázdné = ponechat, '-' = vypnout): " NT
+  if [ "$NT" = "-" ]; then NT=""; elif [ -z "$NT" ]; then NT="$(cur NTFY_TOPIC)"; fi
+  PTH="$(cur PATH)"; [ -z "$PTH" ] && PTH="$SVC_HOME/.local/bin:/usr/local/bin:/usr/bin:/bin"
+  local tmp; tmp="$(mktemp)"; chmod 600 "$tmp"
+  { echo "COINGECKO_DEMO_KEY=$CG"; echo "CLAUDE_CODE_OAUTH_TOKEN=$TOK"; [ -n "$NT" ] && echo "NTFY_TOPIC=$NT"; echo "PATH=$PTH"; } > "$tmp"
+  sudo install -o "$SVC_USER" -g "$SVC_USER" -m 600 "$tmp" "$F"; rm -f "$tmp"
+  echo "Uloženo. Stav: CoinGecko $(state COINGECKO_DEMO_KEY), Claude token $(state CLAUDE_CODE_OAUTH_TOKEN), ntfy $( [ -n "$NT" ] && echo zapnuto || echo vypnuto )."
+  if [ -n "$CG" ]; then
+    printf 'Test CoinGecko klíče: '
+    curl -s -o /dev/null -m 15 -w '%{http_code}\n' -H "x-cg-demo-api-key: $CG" "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=1&page=1"
+  fi
 }
 
 step_claude() {
   ask "Claude Code pro uživatele služby" "Nainstaluji Claude Code CLI do $SVC_HOME/.local/bin (oficiální instalátor) a ověřím neinteraktivní běh s tokenem." || return 0
   as_svc "command -v claude >/dev/null || curl -fsSL https://claude.ai/install.sh | bash"
   as_svc "set -a; . ~/.config/cpb/env; set +a; export PATH=\$HOME/.local/bin:\$PATH; cd /tmp && claude -p 'Reply with exactly: pong' --model claude-opus-5-5 --tools '' --output-format json --no-session-persistence | head -c 300; echo"
-  echo "PATH pro službu:"; as_svc "grep -q '.local/bin' ~/.config/cpb/env || echo 'PATH=$SVC_HOME/.local/bin:/usr/local/bin:/usr/bin:/bin' >> ~/.config/cpb/env"
 }
 
 step_venv() {
