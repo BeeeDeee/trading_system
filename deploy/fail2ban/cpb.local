@@ -1,0 +1,9 @@
+[caddy-cpb-auth]
+enabled  = true
+port     = http,https
+filter   = caddy-cpb-auth
+logpath  = /var/log/caddy/cpb-access.log
+backend  = auto
+maxretry = 5
+findtime = 10m
+bantime  = 1h

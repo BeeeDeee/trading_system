@@ -1,0 +1,13 @@
+[Unit]
+Description=crypto-paper-bot daily run 00:20 UTC (retries 06:20 and 12:20 are no-ops once the day is done)
+
+[Timer]
+OnCalendar=*-*-* 00:20:00 UTC
+OnCalendar=*-*-* 06:20:00 UTC
+OnCalendar=*-*-* 12:20:00 UTC
+Persistent=true
+AccuracySec=1min
+Unit=cpb-daily.service
+
+[Install]
+WantedBy=timers.target
