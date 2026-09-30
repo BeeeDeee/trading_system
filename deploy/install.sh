@@ -59,7 +59,13 @@ Enter = ponechat uloženou hodnotu, takže jednotlivé položky jde doplnit i po
   read -r -s -p "CoinGecko Demo API klíč [$(state COINGECKO_DEMO_KEY)]: " CG; echo
   [ -z "$CG" ] && CG="$(cur COINGECKO_DEMO_KEY)"
   echo "Token Claude: jako SVŮJ uživatel spusťte v jiném terminálu 'claude setup-token' a výsledný token vložte sem."
+  echo "(Token bývá v terminálu zalomený na víc řádků: zkopírujte ho celý; mezery a zalomení se odstraní.)"
   read -r -s -p "CLAUDE_CODE_OAUTH_TOKEN [$(state CLAUDE_CODE_OAUTH_TOKEN)]: " TOK; echo
+  TOK="$(printf '%s' "$TOK" | tr -d '[:space:]')"
+  if [ -n "$TOK" ] && [ "${TOK#sk-ant-}" = "$TOK" ]; then
+    echo "POZOR: token nezačíná 'sk-ant-' (délka ${#TOK}); nejspíš se zkopíroval jiný text nebo jen část. Neukládám ho."
+    TOK=""
+  fi
   [ -z "$TOK" ] && TOK="$(cur CLAUDE_CODE_OAUTH_TOKEN)"
   read -r -p "ntfy téma [$(cur NTFY_TOPIC || true)] (prázdné = ponechat, '-' = vypnout): " NT
   if [ "$NT" = "-" ]; then NT=""; elif [ -z "$NT" ]; then NT="$(cur NTFY_TOPIC)"; fi
@@ -71,6 +77,11 @@ Enter = ponechat uloženou hodnotu, takže jednotlivé položky jde doplnit i po
   if [ -n "$CG" ]; then
     printf 'Test CoinGecko klíče: '
     curl -s -o /dev/null -m 15 -w '%{http_code}\n' -H "x-cg-demo-api-key: $CG" "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=1&page=1"
+  fi
+  if [ -n "$TOK" ] && sudo test -x "$SVC_HOME/.local/bin/claude"; then
+    printf 'Test tokenu Claude (délka %s): ' "${#TOK}"
+    as_svc "set -a; . ~/.config/cpb/env; set +a; cd /tmp && claude -p 'Reply with exactly: pong' --model claude-opus-5-5 --output-format json 2>&1" \
+      | python3 -c 'import json,sys; t=sys.stdin.read(); d=json.loads(t[t.find("{"):]) if "{" in t else {}; print("OK" if not d.get("is_error") and "pong" in str(d.get("result","")).lower() else "CHYBA: " + str(d.get("result") or t[:300]))'
   fi
 }
 
