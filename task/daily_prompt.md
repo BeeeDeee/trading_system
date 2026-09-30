@@ -7,8 +7,9 @@ Universe (exactly these {{N}} coins, quoted in USDT): {{COINS}}
 
 ## Files in this directory (read them first with Read)
 - `features.md` – indicator table for every coin (returns, returns vs BTC, SMA distances, RSI14, ATR%, volatility,
-  30d high/low distance, volume change, correlation and beta to BTC). NEVER compute or estimate indicators or prices
-  yourself; only read them from this table.
+  30d high/low distance, volume change, correlation and beta to BTC) and, when available, a second table with
+  perpetual-futures sentiment and order-book imbalance from the latest hourly data run (funding, open-interest change,
+  long/short ratio). NEVER compute or estimate indicators or prices yourself; only read them from these tables.
 - `universe.json` – coin names and market caps.
 - `claude_volne_positions.json` – current positions of the variant "Claude volně" (your free decision).
 - `scores.schema.json` – the exact output format.

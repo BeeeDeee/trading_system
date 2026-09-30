@@ -34,7 +34,13 @@ RC=$?
 [ "$RC" = 124 ] && echo "CHYBA: celkový timeout běhu" >&2
 [ "$DRY" = 1 ] && exit "$RC"
 
-"$PY" engine/engine.py report ${CPB_PUBLISH_DIR:+--publish "$CPB_PUBLISH_DIR"} || echo "UPOZORNĚNÍ: dashboard se nevygeneroval" >&2
+exec 7>"$REPO/data/.report.flock"
+flock -w 600 7 && "$PY" engine/engine.py report ${CPB_PUBLISH_DIR:+--publish "$CPB_PUBLISH_DIR"} || echo "UPOZORNĚNÍ: dashboard se nevygeneroval" >&2
+flock -u 7
+
+# commit while no hourly run is writing (it holds data/.hourly.flock for ~10 s)
+exec 8>"$REPO/data/.hourly.flock"
+flock -w 300 8 || echo "UPOZORNĚNÍ: hodinový zámek obsazený, commit i tak" >&2
 
 # one commit per run record (catch-up days first), never force-push
 msg() { "$PY" - "$1" <<'PYEOF'
@@ -49,7 +55,13 @@ print(f"run {r['date']}: {s}{extra}")
 PYEOF
 }
 git add -A runs data universe corrections public 2>/dev/null
-mapfile -t RECS < <(git diff --cached --name-only --diff-filter=A -- 'runs/*run.json' | sort)
+# hourly records first, as one commit per day of hourly runs
+mapfile -t HDAYS < <(git diff --cached --name-only --diff-filter=A -- 'runs/*/hourly/*/run.json' | cut -d/ -f2 | sort -u)
+for d in "${HDAYS[@]}"; do
+  n=$(git diff --cached --name-only --diff-filter=A -- "runs/$d/hourly/*/run.json" | wc -l)
+  git commit -q -m "hourly $d: $n hodinových záznamů" -- "runs/$d/hourly" || true
+done
+mapfile -t RECS < <(git diff --cached --name-only --diff-filter=A -- 'runs/*run.json' | grep -v '/hourly/' | sort)
 for i in "${!RECS[@]}"; do
   f="${RECS[$i]}"; d="$(dirname "$f")"
   if [ "$i" -lt $(( ${#RECS[@]} - 1 )) ]; then
@@ -59,6 +71,7 @@ for i in "${!RECS[@]}"; do
   fi
 done
 git diff --cached --quiet || git commit -q -m "data $(date -u +%FT%TZ)"
+flock -u 8
 for t in 1 2 3; do git push -q origin "HEAD:$BRANCH" && break; sleep $((t * 20)); done || echo "UPOZORNĚNÍ: push selhal" >&2
 
 TEXT="$("$PY" engine/engine.py notify --date "$TODAY")"

@@ -62,7 +62,8 @@ def write_bytes(path, data):
     with open(tmp, "wb") as f:
         f.write(data)
         f.flush()
-        os.fsync(f.fileno())
+        if not os.environ.get("CPB_NO_FSYNC"):        # simulations and tests only
+            os.fsync(f.fileno())
     os.replace(tmp, path)
 
 

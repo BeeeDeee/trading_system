@@ -336,7 +336,9 @@ def prepare_llm_dir(rc, u, feats, state):
     prompt = (tpl.replace("{{DATE}}", rc.D).replace("{{ASOF}}", rc.asof).replace("{{N}}", str(len(u["coins"])))
               .replace("{{COINS}}", ", ".join(u["coins"])).replace("{{MAX_SEARCHES}}", str(rc.cfg["llm"]["max_searches"])))
     canon.write_text(os.path.join(d, "prompt.md"), prompt)
-    canon.write_text(os.path.join(d, "features.md"), fx.table_md(feats, u["coins"], rc.asof))
+    from . import hourly as hr
+    lab, sent = hr.latest_sentiment(rc.repo, rc.D)
+    canon.write_text(os.path.join(d, "features.md"), fx.table_md(feats, u["coins"], rc.asof) + hr.sentiment_md(lab, sent))
     canon.write_json(os.path.join(d, "universe.json"), [{k: c[k] for k in ("coin", "name", "rank", "market_cap")} for c in u["coins_full"]])
     led = state["portfolios"]["claude_volne"]["base"]
     canon.write_json(os.path.join(d, "claude_volne_positions.json"),

@@ -23,7 +23,7 @@ def _runs(repo):
     return sorted(recs, key=lambda r: (r["date"], r.get("timing", {}).get("started_at") or ""))
 
 
-def collect(repo, cfg, null_paths=1000, full_replay=True):
+def collect(repo, cfg, null_paths=1000, full_replay=True, fast=False):
     runs = _runs(repo)
     good = [r for r in runs if r["status"] in ("ok", "warning", "catchup")]
     ledgers = [canon.read_json(os.path.join(r["_dir"], "ledger.json")) for r in good]
@@ -36,13 +36,18 @@ def collect(repo, cfg, null_paths=1000, full_replay=True):
         if inp.get("scores"):
             score_days.append((r["date"], inp["asof"], inp["scores"]))
     defs = {d["id"]: d for d in cfg["variants"] + cfg["benchmarks"]}
+    hvars = cfg.get("hourly", {}).get("variants", [])
     kinds = {d["id"]: ("variant" if d in cfg["variants"] else "benchmark") for d in cfg["variants"] + cfg["benchmarks"]}
+    kinds.update({d["id"]: "hourly" for d in hvars})
     data = {"generated_at": canon.ms_iso(int(time.time() * 1000)), "repo_url": REPO_URL,
             "start_capital": cfg["start_capital"], "rules_text": _rules_text(cfg),
             "portfolios": [{"id": d["id"], "name": d["name"], "kind": kinds[d["id"]], "question": d.get("question", ""),
-                            "uses_llm": d.get("uses_llm", False)} for d in cfg["variants"] + cfg["benchmarks"]]}
+                            "uses_llm": d.get("uses_llm", False)} for d in cfg["variants"] + hvars + cfg["benchmarks"]]}
+    hruns = _hourly_runs(repo)
+    hgood = [r for r in hruns if r["status"] in ("ok", "warning")]
     # chain status
     probs = chain.verify(repo)
+    full_replay = full_replay and not fast
     if full_replay and not probs:
         from . import replay
         rp, st, hi, _ = replay.replay(repo)
@@ -58,11 +63,32 @@ def collect(repo, cfg, null_paths=1000, full_replay=True):
     last_r = good[-1]
     last_any = runs[-1]
     S = A.series_from_ledgers(ledgers)
-    data["series"] = {"dates": [L["date"] for L in ledgers],
+    dates = [L["date"] for L in ledgers]
+    data["series"] = {"dates": dates,
                       "equity": {pid: {scn: [round(e, 2) for _, e in S[pid][scn]] for scn in S[pid]} for pid in S},
                       "segments": _segments(good)}
     met = A.metrics(ledgers, cfg["start_capital"])
-    nulls = _nulls(repo, cfg, good, hist, null_paths)
+    # hourly variants on the same daily axis: valued by the first successful hourly run of each day (normally 00:02)
+    hl = _hourly_daily(hgood)
+    if hl:
+        by_date = {x["date"]: x for x in hl}
+        for v in hvars:
+            if v["id"] in hl[-1]["close"]:
+                data["series"]["equity"][v["id"]] = {scn: [round(by_date[d]["close"][v["id"]][scn]["equity"], 2)
+                                                           if d in by_date and v["id"] in by_date[d]["close"] else None
+                                                           for d in dates] for scn in ("base", "stress", "gross")}
+        btc_ret = met.get("b_btc", {}).get("ret")
+        hmet = A.metrics(hl, cfg["start_capital"], btc_ret=btc_ret)
+        hnull = _hourly_nulls(repo, cfg, hgood, max(100, null_paths // 5), cached_only=fast)
+        for vid, m in hmet.items():
+            if vid in hnull:
+                m["null"] = {k: hnull[vid][k] for k in ("p05", "p50", "p95", "percentile")}
+            met[vid] = m
+    data["hourly"] = {"runs_total": len(hruns), "runs_ok": len(hgood), "last": _hourly_last(hruns),
+                      "today": [{"label": r["label"], "status": r["status"], "error": r.get("error"),
+                                 "quarantine": sorted((r.get("checks") or {}).get("quarantine") or {})}
+                                for r in hruns if r["date"] == (hruns[-1]["date"] if hruns else None)]}
+    nulls = _nulls(repo, cfg, good, hist, null_paths, cached_only=fast)
     data["null_info"] = {"as_of": next(iter(nulls.values()), {}).get("as_of"), "paths": next(iter(nulls.values()), {}).get("paths")}
     for pid, m in met.items():
         if pid in nulls:
@@ -74,6 +100,14 @@ def collect(repo, cfg, null_paths=1000, full_replay=True):
                                               "entry_date": p["entry_date"], "stop": p.get("stop")}
                                              for c, p in sorted(m["base"]["positions"].items(), key=lambda kv: -kv[1]["value"])]}
                          for pid, m in after.items()}
+    if hgood:
+        la = canon.read_json(os.path.join(hgood[-1]["_dir"], "ledger.json"))["after"]
+        for vid, m in la.items():
+            data["positions"][vid] = {"equity": m["base"]["equity"], "cash": m["base"]["cash"], "exposure": m["base"]["exposure"],
+                                      "as_of": hgood[-1]["label"],
+                                      "positions": [{"coin": c, "value": p["value"], "weight": p["value"] / m["base"]["equity"],
+                                                     "entry_date": p["entry_date"], "stop": p.get("stop")}
+                                                    for c, p in sorted(m["base"]["positions"].items(), key=lambda kv: -kv[1]["value"])]}
     ldir = last_r["_dir"]
     dec = canon.read_json(os.path.join(ldir, "decisions.json")) or {}
     data["decisions_info"] = {pid: d.get("info") for pid, d in (dec.get("portfolios") or {}).items()}
@@ -95,7 +129,55 @@ def collect(repo, cfg, null_paths=1000, full_replay=True):
     return data
 
 
-def _nulls(repo, cfg, good, hist, n_paths):
+def _hourly_runs(repo):
+    out = []
+    for p in glob.glob(os.path.join(repo, "runs", "*", "hourly", "*", "run.json")):
+        r = canon.read_json(p)
+        r["_dir"] = os.path.dirname(p)
+        out.append(r)
+    return sorted(out, key=lambda r: (r["label"], r.get("timing", {}).get("started_at") or ""))
+
+
+def _hourly_daily(hgood):
+    """Pseudo daily ledgers of the hourly variants: close marks of the first hourly run of each day, after-marks of the
+    last one (exposure)."""
+    days = {}
+    for r in hgood:
+        days.setdefault(r["date"], []).append(r)
+    out = []
+    for d in sorted(days):
+        first = canon.read_json(os.path.join(days[d][0]["_dir"], "ledger.json"))
+        last = canon.read_json(os.path.join(days[d][-1]["_dir"], "ledger.json"))
+        out.append({"date": d, "close": first["close"], "after": last["after"]})
+    return out
+
+
+def _hourly_last(hruns):
+    if not hruns:
+        return None
+    r = hruns[-1]
+    return {"label": r["label"], "status": r["status"], "error": r.get("error"), "warnings": (r.get("warnings") or [])[:5]}
+
+
+def _hourly_nulls(repo, cfg, hgood, n_paths, cached_only=False):
+    """Engine-based null of the hourly variants (weekly on Mondays, cached in data/hourly/null_cache.json)."""
+    from . import null
+    if len(hgood) < 48:
+        return {}
+    cache_p = os.path.join(repo, "data", "hourly", "null_cache.json")
+    cache = canon.read_json(cache_p)
+    last = hgood[-1]["label"]
+    if cache and cache.get("paths") == n_paths and (cache.get("as_of", "")[:10] == last[:10] or
+                                                     (canon.weekday(last[:10]) != 0 and canon.days_between(cache["as_of"][:10], last[:10]) < 7)):
+        return cache["results"]
+    if cached_only:
+        return (cache or {}).get("results", {})
+    res = null.hourly_null_percentiles(repo, hgood, cfg, n_paths)
+    canon.write_json(cache_p, {"as_of": last, "paths": n_paths, "results": res})
+    return res
+
+
+def _nulls(repo, cfg, good, hist, n_paths, cached_only=False):
     """Engine-based null distribution. Expensive, so it is recomputed on Mondays, when missing, or during the first
     4 weeks; otherwise the cached result (data/null_cache.json, labelled with its date) is shown."""
     from . import null
@@ -107,6 +189,8 @@ def _nulls(repo, cfg, good, hist, n_paths):
                                                          (canon.weekday(last) != 0 and n_dec > 28 and canon.days_between(cache["as_of"], last) < 7))
     if fresh:
         return cache["results"]
+    if cached_only:
+        return (cache or {}).get("results", {})
     days = null.load_days(repo, [(r, r["_dir"]) for r in good])
     res = null.null_percentiles(days, hist, cfg["variants"], n_paths=n_paths)
     canon.write_json(cache_p, {"as_of": last, "paths": n_paths, "results": res})
@@ -130,8 +214,8 @@ def _rules_text(cfg):
             f"Náklady: poplatek {cfg['costs']['scenarios']['base']['fee_bps']} bps + slippage dle objemu; stres {cfg['costs']['scenarios']['stress']['fee_bps']} bps a 2× slippage.")
 
 
-def build(repo, cfg, out_dir, label=None, inline=False, null_paths=1000):
-    data = collect(repo, cfg, null_paths=null_paths)
+def build(repo, cfg, out_dir, label=None, inline=False, null_paths=1000, fast=False):
+    data = collect(repo, cfg, null_paths=null_paths, fast=fast)
     if label:
         data["label"] = label
     tpl = open(os.path.join(repo, "dashboard", "template.html"), encoding="utf-8").read()

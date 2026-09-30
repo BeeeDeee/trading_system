@@ -19,6 +19,11 @@ from .pipeline import SCENARIOS  # noqa: F401  (documents that only "base" is si
 DAY_MS = 86_400_000
 
 
+def pctl(x, xs):
+    """Mid-rank percentile (ties count half), so a variant that never trades sits at 50, not 0."""
+    return (sum(r < x - 1e-12 for r in xs) + 0.5 * sum(abs(r - x) <= 1e-12 for r in xs)) / len(xs) * 100
+
+
 def load_days(repo, runs):
     """runs = [(record, dir)] chronological, good ones only -> list of day dicts."""
     out = []
@@ -132,6 +137,81 @@ def null_percentiles(days, hist, variant_defs, n_paths=1000, seed=11):
             res.append(eq[last["date"]] / capital - 1)
         res.sort()
         out[vid] = {"actual": actual, "p05": res[int(0.05 * n_paths)], "p50": res[n_paths // 2],
-                    "p95": res[int(0.95 * n_paths) - 1], "percentile": sum(r < actual for r in res) / n_paths * 100,
+                    "p95": res[int(0.95 * n_paths) - 1], "percentile": pctl(actual, res),
                     "paths": n_paths, "as_of": last["date"]}
+    return out
+
+
+# ============================================================ hourly variants
+
+def hourly_null_percentiles(repo, hgood, cfg, n_paths=200, seed=13):
+    """Null of the hourly variants: at every successful hourly run a random path holds as many coins as the variant held
+    after that run, with the same weight profile, keeping as many coins as the variant kept, traded through
+    ledger.rebalance at that run's bid/ask; trailing stops (h_breakout) on hourly candles. Measured at the last run's close."""
+    import bisect
+    from .hourly import HOUR_MS, load_hh
+    hh = load_hh(repo, days=100000)
+    closes = {c: {r[0]: r[4] for r in rows} for c, rows in hh.items()}
+    opens = {c: [r[0] for r in rows] for c, rows in hh.items()}
+    steps = []
+    for r in hgood:
+        inp = canon.read_json(os.path.join(r["_dir"], "inputs.json"))
+        led = canon.read_json(os.path.join(r["_dir"], "ledger.json"))
+        snap = inp["snapshot"]
+        actual = {vid: {c: p["value"] / m["base"]["equity"] for c, p in m["base"]["positions"].items()} for vid, m in led["after"].items()}
+        steps.append({"t_end": inp["t_end"], "label": inp["label"], "date": inp["date"], "status": inp["status"],
+                      "cfg": canon.read_json(os.path.join(r["_dir"], "config.json")),
+                      "pool": sorted(c for c in inp["universe"] if inp["status"].get(c) == "TRADING" and c in snap["prices"]
+                                     and closes.get(c, {}).get(inp["t_end"] - HOUR_MS)),
+                      "prices": snap["prices"], "quotes": snap.get("quotes"), "ts": snap["fetched_ms"], "actual": actual,
+                      "close_eq": {vid: m["base"]["equity"] for vid, m in led["close"].items()}})
+
+    def recent(c, t_end):
+        rows = hh.get(c, [])
+        i = bisect.bisect_left(opens.get(c, []), t_end)
+        return rows[max(0, i - 48):i]
+
+    def bars(c, t_end):
+        return [r[:5] for r in recent(c, t_end)]
+
+    out = {}
+    for v in cfg["hourly"]["variants"]:
+        vid = v["id"]
+        if vid not in steps[-1]["close_eq"]:
+            continue
+        capital = steps[0]["cfg"]["start_capital"]
+        stop = {"trail_pct": v["trail_pct"]} if v.get("trail_pct") else None
+        rng = random.Random(f"{seed}|{vid}")
+        res = []
+        for _ in range(n_paths):
+            led, prev = L.new_ledger(capital), set()
+            for s in steps:
+                cfg_s, t_end = s["cfg"], s["t_end"]
+                vol = {c: sum(r[5] for r in recent(c, t_end)[-24:]) for c in set(led["positions"]) | set(s["pool"])}
+                if stop and led["positions"]:
+                    L.apply_stops(led, vid, "base", cfg_s, stop, {c: bars(c, t_end) for c in led["positions"]}, vol, s["date"], s["label"], None, "null")
+                for c in sorted(led["positions"]):
+                    if s["status"].get(c, "TRADING") != "TRADING" or c not in s["prices"]:
+                        last = bars(c, t_end)[-1]
+                        L.force_sell(led, vid, "base", cfg_s, c, last[4], vol.get(c), s["date"], last[0] + HOUR_MS, "delisting",
+                                     cfg_s["costs"]["delist_extra_bps"], None, "null")
+                act = s["actual"].get(vid, {})
+                n = min(len(act), len(s["pool"]))
+                keep_n = len(set(act) & prev)
+                held_now = [c for c in sorted(led["positions"]) if c in s["pool"]]
+                rng.shuffle(held_now)
+                kept = held_now[:min(keep_n, n)]
+                rest = [c for c in s["pool"] if c not in kept]
+                chosen = kept + rng.sample(rest, n - len(kept))
+                prof = sorted(act.values(), reverse=True)[:n]
+                rng.shuffle(prof)
+                L.rebalance(led, vid, "base", cfg_s, dict(zip(chosen, prof)), {}, s["prices"], vol, s["date"], s["ts"], "null", None, s["quotes"])
+                prev = set(act)
+            last = steps[-1]
+            eq = led["cash"] + sum(p["qty"] * closes[c].get(last["t_end"] - HOUR_MS, s["prices"].get(c, 0)) for c, p in led["positions"].items())
+            res.append(eq / capital - 1)
+        res.sort()
+        actual_ret = steps[-1]["close_eq"][vid] / capital - 1
+        out[vid] = {"actual": actual_ret, "p05": res[int(0.05 * n_paths)], "p50": res[n_paths // 2], "p95": res[int(0.95 * n_paths) - 1],
+                    "percentile": pctl(actual_ret, res), "paths": n_paths, "as_of": steps[-1]["label"]}
     return out

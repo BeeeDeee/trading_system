@@ -25,7 +25,8 @@ def main(repo):
     if probs:
         print("\n".join("CHYBA: " + p for p in probs))
         return 1
-    print(f"OK: řetězec {n} záznamů neporušen, replay {len(series)} běhů reprodukuje ledger bajt po bajtu")
+    nh = len(replay.LAST_HOURLY[2])
+    print(f"OK: řetězec {n} záznamů neporušen, replay {len(series)} denních a {nh} hodinových běhů reprodukuje ledger bajt po bajtu")
     return 0
 
 

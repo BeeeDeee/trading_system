@@ -2,6 +2,7 @@
 import gzip
 import json
 import os
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -27,6 +28,7 @@ class Recorder:
         self.clock = clock
         self.entries = []
         self.secrets = secrets or {}          # header values never written to the manifest
+        self._lock = threading.Lock()         # parallel fetches share one manifest
         os.makedirs(raw_dir, exist_ok=True)
 
     def get(self, url, name, kind, meta=None, headers=None, timeout=20, retries=2, compress=False):
@@ -44,11 +46,13 @@ class Recorder:
                 status, body, err = e.code, e.read() or b"", f"HTTP {e.code}"
             except Exception as e:  # network error, timeout
                 err = f"{type(e).__name__}: {e}"
-            seq = len(self.entries) + 1
-            fname = f"{seq:04d}_{name}.json" + (".gz" if compress else "")
             data = gzip.compress(body, mtime=0) if compress else body
+            with self._lock:
+                seq = len(self.entries) + 1
+                fname = f"{seq:04d}_{name}.json" + (".gz" if compress else "")
+                self.entries.append(None)
             canon.write_bytes(os.path.join(self.raw_dir, fname), data)
-            self.entries.append({
+            self.entries[seq - 1] = ({
                 "seq": seq, "file": fname, "url": url, "kind": kind, "meta": meta or {},
                 "fetched_at": canon.ms_iso(t0), "status": status, "error": err,
                 "sha256": canon.sha256_bytes(body), "bytes": len(body), "gzip": compress,
@@ -67,7 +71,9 @@ class Recorder:
         raise FetchError(last_err)
 
     def manifest(self):
-        return {"entries": self.entries}
+        """Entries in a stable order (parallel fetches complete in any order): by kind, coin, URL, attempt."""
+        es = [e for e in self.entries if e]
+        return {"entries": sorted(es, key=lambda e: (e["kind"], str(e["meta"].get("coin", "")), e["url"], e["seq"]))}
 
 
 def read_raw(raw_dir, entry):

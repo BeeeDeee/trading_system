@@ -18,3 +18,6 @@ náhodná baseline + nulové rozdělení, rank IC s bootstrapem, pravidla vyhodn
 - Před nasazením doplněno: karanténa coinu s chybnými daty (den se zastaví jen kvůli drženému coinu, BTC nebo ETH),
   plnění za bid/ask ze snímku (bookTicker) místo poslední ceny, snímek všech obchodovatelných coinů univerza,
   nulové rozdělení počítané skutečným enginem (cpb/null.py) místo aproximace.
+- Hodinový běh (`engine.py hourly`, timer HH:02): hodinové svíčky, kniha, futures sentiment; 7 hodinových variant
+  (`h_momentum`, `h_reverze`, `h_breakout`, `h_kniha`, `funding_kontra`, `llm_nacasovani`, `seance_usa`), hodinové
+  záznamy v hash chainu a replay, hodinový dataset a IC analýza, derivátová tabulka v denních podkladech pro LLM.

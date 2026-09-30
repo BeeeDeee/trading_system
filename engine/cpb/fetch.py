@@ -24,6 +24,18 @@ def _f(x):
     return v
 
 
+def book_summary(bids, asks):
+    """bids/asks = [(price, qty)] best first."""
+    if not bids or not asks or bids[0][0] <= 0 or asks[0][0] < bids[0][0]:
+        return None
+    mid = (bids[0][0] + asks[0][0]) / 2
+    bd = sum(p * q for p, q in bids)
+    ad = sum(p * q for p, q in asks)
+    return {"mid": mid, "spread_bps": (asks[0][0] - bids[0][0]) / mid * 1e4, "bid_depth": bd, "ask_depth": ad,
+            "imbalance": (bd - ad) / (bd + ad) if bd + ad > 0 else None,
+            "range_pct": (asks[-1][0] - bids[-1][0]) / mid * 100, "levels": min(len(bids), len(asks))}
+
+
 class LiveMarket:
     simulated = False
 
@@ -47,7 +59,7 @@ class LiveMarket:
         if pairs:
             q = urllib.parse.quote(json.dumps(sorted(pairs), separators=(",", ":")))
             try:
-                data, _ = self._binance(f"/api/v3/exchangeInfo?symbols={q}", "binance_exchangeinfo", "exchange_info")
+                data, _ = self._binance(f"/api/v3/exchangeInfo?symbols={q}", "binance_exchangeinfo", "exchange_info", compress=True)
                 return {s["symbol"]: s["status"] for s in data["symbols"]}
             except FetchError:
                 pass
@@ -224,6 +236,107 @@ class LiveMarket:
         if not cands:
             raise FetchError(f"coinpaprika: {coin} not found")
         return _f(cands[0][1]), "coinpaprika"
+
+    # ------------------------------------------------------------------ hourly data
+    def hourly_candles(self, coin, pair, start_ms, end_ms):
+        """Closed 1h candles with open time in [start_ms, end_ms): [open_ms, o, h, l, c, quote_vol, taker_buy_quote_vol]."""
+        out, s = [], start_ms
+        try:
+            while s < end_ms:
+                data, _ = self._binance(f"/api/v3/klines?symbol={pair}&interval=1h&startTime={s}&endTime={end_ms - 1}&limit=1000",
+                                        f"binance_1h_{coin}", "hourly", {"coin": coin, "pair": pair}, compress=True)
+                if not data:
+                    break
+                out += [[k[0], _f(k[1]), _f(k[2]), _f(k[3]), _f(k[4]), _f(k[7]), _f(k[10])] for k in data if k[0] + 3_600_000 <= end_ms]
+                s = data[-1][0] + 3_600_000
+                if len(data) < 1000:
+                    break
+            return out, "binance"
+        except FetchError as e:
+            err = str(e)
+        # fallback OKX: no taker-buy split (None)
+        try:
+            out, after = [], end_ms
+            while after > start_ms:
+                data = self.rec.get(f"https://www.okx.com/api/v5/market/history-candles?instId={coin}-USDT&bar=1H&after={after}&limit=100",
+                                    f"okx_1h_{coin}", "hourly", {"coin": coin}, compress=True)
+                rows = data.get("data") or []
+                if not rows:
+                    break
+                for k in rows:
+                    t = int(k[0])
+                    if start_ms <= t and t + 3_600_000 <= end_ms and k[8] == "1":
+                        out.append([t, _f(k[1]), _f(k[2]), _f(k[3]), _f(k[4]), _f(k[7]), None])
+                after = int(rows[-1][0])
+            return sorted(out), "okx"
+        except (FetchError, ValueError, KeyError) as e:
+            raise FetchError(f"{coin}: no hourly data (binance: {err}; okx: {e})")
+
+    def second_hourly_close(self, coin, open_ms):
+        """Close of the 1h candle opening at open_ms from OKX, Coinbase or Kraken (first that lists the coin)."""
+        errs = []
+        try:
+            return self.okx_hourly_close(coin, open_ms)
+        except (FetchError, KeyError, ValueError) as e:
+            errs.append(f"okx: {e}")
+        try:
+            s = canon.ms_iso(open_ms)
+            e = canon.ms_iso(open_ms + 3_600_000)
+            data = self.rec.get(f"https://api.exchange.coinbase.com/products/{coin}-USD/candles?granularity=3600&start={s}&end={e}",
+                                f"coinbase_1h_check_{coin}", "crosscheck_close", {"coin": coin})
+            rows = [r for r in data if r[0] * 1000 == open_ms]
+            if rows:
+                return _f(rows[0][4]), "coinbase"
+            errs.append("coinbase: no candle")
+        except (FetchError, KeyError, ValueError, TypeError) as ex:
+            errs.append(f"coinbase: {ex}")
+        try:
+            k = {"BTC": "XBT", "DOGE": "XDG"}.get(coin, coin)
+            data = self.rec.get(f"https://api.kraken.com/0/public/OHLC?pair={k}USD&interval=60&since={open_ms // 1000 - 1}",
+                                f"kraken_1h_check_{coin}", "crosscheck_close", {"coin": coin}, compress=True)
+            res = [v for key, v in data["result"].items() if key != "last"][0]
+            rows = [r for r in res if int(r[0]) * 1000 == open_ms]
+            if rows:
+                return _f(rows[0][4]), "kraken"
+            errs.append("kraken: no candle")
+        except (FetchError, KeyError, ValueError, TypeError, IndexError) as ex:
+            errs.append(f"kraken: {ex}")
+        raise FetchError(f"{coin} {open_ms}: žádný druhý zdroj ({'; '.join(errs)})")
+
+    def okx_hourly_close(self, coin, open_ms):
+        data = self.rec.get(f"https://www.okx.com/api/v5/market/history-candles?instId={coin}-USDT&bar=1H&after={open_ms + 3_600_000}&limit=1",
+                            f"okx_1h_check_{coin}", "crosscheck_close", {"coin": coin}, compress=False)
+        rows = [k for k in data.get("data", []) if int(k[0]) == open_ms and k[8] == "1"]
+        if not rows:
+            raise FetchError(f"okx: no 1h candle {coin} {open_ms}")
+        return _f(rows[0][4]), "okx"
+
+    def book(self, coin, pair, levels=100):
+        """Order book summary of the top `levels` levels: spread, quote depth per side, imbalance."""
+        data, _ = self._binance(f"/api/v3/depth?symbol={pair}&limit={levels}", f"binance_depth_{coin}", "depth", {"coin": coin}, compress=True)
+        bids = [(_f(p), _f(q)) for p, q in data["bids"]]
+        asks = [(_f(p), _f(q)) for p, q in data["asks"]]
+        return book_summary(bids, asks)
+
+    def derivatives(self, coin):
+        """Perpetual futures sentiment (Binance USDT-M): funding rate, OI change 1h, long/short account ratio. None if no perp."""
+        sym = coin + "USDT"
+        try:
+            pi, _ = self._fapi(f"/fapi/v1/premiumIndex?symbol={sym}", f"fapi_premium_{coin}", coin)
+            oi, _ = self._fapi(f"/futures/data/openInterestHist?symbol={sym}&period=1h&limit=2", f"fapi_oi_{coin}", coin)
+            ls, _ = self._fapi(f"/futures/data/globalLongShortAccountRatio?symbol={sym}&period=1h&limit=1", f"fapi_ls_{coin}", coin)
+        except FetchError:
+            return None
+        oi_chg = (_f(oi[-1]["sumOpenInterestValue"]) / _f(oi[-2]["sumOpenInterestValue"]) - 1) if len(oi) >= 2 and _f(oi[-2]["sumOpenInterestValue"]) > 0 else None
+        return {"funding": _f(pi["lastFundingRate"]), "mark": _f(pi["markPrice"]), "oi_usd": _f(oi[-1]["sumOpenInterestValue"]) if oi else None,
+                "oi_chg_1h": oi_chg, "ls_ratio": _f(ls[0]["longShortRatio"]) if ls else None}
+
+    def _fapi(self, path, name, coin):
+        return self.rec.get("https://fapi.binance.com" + path, name, "derivatives", {"coin": coin}, retries=1), "binance-futures"
+
+    def okx_ticker_mid(self, coin):
+        (b, a), src = self.ticker_price_fallback(coin)
+        return (b + a) / 2, src
 
     # ------------------------------------------------------------------ market caps (universe)
     def market_caps(self, n):

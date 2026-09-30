@@ -2,8 +2,9 @@
 """crypto-paper-bot engine CLI (stdlib only). All times UTC.
 
   run --date YYYY-MM-DD [--dry-run]        full daily run (fetch, check, settle, claude -p, lock, snapshot, fill)
+  hourly [--dry-run]                        hourly data + hourly strategies for the hour that just closed (no LLM)
   notify --date D                           notification text of the run record (first line OK/UPOZORNĚNÍ/CHYBA)
-  report [--publish DIR]                    dashboard (public/index.html + public/data.json), optional atomic publish
+  report [--publish DIR] [--fast]           dashboard (public/index.html + public/data.json), optional atomic publish
   verify                                    MANIFEST vs pin + structural hash-chain check
   validate SCORES.json --date D             validation report of an LLM output file
   apply-redenomination COIN RATIO --effective-date D --evidence URL [--new-symbol X] [--reason TEXT]
@@ -70,6 +71,29 @@ def cmd_run(a):
     return 0 if status in ("ok", "warning") else 1
 
 
+def cmd_hourly(a):
+    from cpb import hourly as hr
+    now = dt.datetime.now(dt.timezone.utc)
+    D, H = now.date().isoformat(), now.hour
+    repo = REPO
+    if a.dry_run:
+        tmp = tempfile.mkdtemp(prefix="cpb-hdry-")
+        shutil.copytree(REPO, os.path.join(tmp, "repo"), ignore=shutil.ignore_patterns(".git", "public", "__pycache__"))
+        repo = os.path.join(tmp, "repo")
+        print(f"suchý hodinový běh v {repo}")
+    version, problems = runner.version_info(REPO, require_pin=not a.allow_unpinned)
+    if problems:
+        print("CHYBA: připnutá verze nesedí: " + "; ".join(problems))
+        return 2
+    cfg = load_cfg(repo)
+    key = os.environ.get("COINGECKO_DEMO_KEY") or None
+    with hr.HLock(repo):
+        status, rec = hr.run_hour(repo, cfg, D, H, lambda r, d: LiveMarket(r, key), pipeline.Clock(), version)
+    print(f"{rec['label']}: {status}" + (f" – {rec.get('error')}" if rec.get("error") else "") +
+          (f" ({len(rec.get('warnings') or [])} varování)" if rec.get("warnings") else ""))
+    return 0 if status in ("ok", "warning", "exists") else 1
+
+
 def cmd_notify(a):
     p = os.path.join(REPO, "runs", a.date, "run.json")
     rec = canon.read_json(p)
@@ -82,7 +106,7 @@ def cmd_notify(a):
 
 def cmd_report(a):
     from cpb import report
-    out = report.build(REPO, load_cfg(REPO), os.path.join(REPO, "public"))
+    out = report.build(REPO, load_cfg(REPO), os.path.join(REPO, "public"), fast=a.fast)
     print(f"dashboard: {out}")
     if a.publish:
         report.publish(os.path.join(REPO, "public"), a.publish)
@@ -128,8 +152,11 @@ def main(argv=None):
     p.add_argument("--allow-unpinned", action="store_true", help="jen pro vývoj/suchý běh")
     p.add_argument("--no-llm", action="store_true", help="jen se --dry-run: přeskočí claude -p (test dat a plnění)")
     p.set_defaults(f=cmd_run)
+    p = sp.add_parser("hourly"); p.add_argument("--dry-run", action="store_true"); p.add_argument("--allow-unpinned", action="store_true")
+    p.set_defaults(f=cmd_hourly)
     p = sp.add_parser("notify"); p.add_argument("--date", required=True); p.set_defaults(f=cmd_notify)
-    p = sp.add_parser("report"); p.add_argument("--publish"); p.set_defaults(f=cmd_report)
+    p = sp.add_parser("report"); p.add_argument("--publish"); p.add_argument("--fast", action="store_true", help="bez replay a přepočtu nuly (hodinová obnova)")
+    p.set_defaults(f=cmd_report)
     p = sp.add_parser("verify"); p.add_argument("--allow-unpinned", action="store_true"); p.set_defaults(f=cmd_verify)
     p = sp.add_parser("validate"); p.add_argument("scores"); p.add_argument("--date", required=True); p.set_defaults(f=cmd_validate)
     p = sp.add_parser("apply-redenomination"); p.add_argument("coin"); p.add_argument("ratio")

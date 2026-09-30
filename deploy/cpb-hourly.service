@@ -1,0 +1,27 @@
+[Unit]
+Description=crypto-paper-bot hourly data + hourly strategies (no LLM)
+Wants=network-online.target
+After=network-online.target time-sync.target
+
+[Service]
+Type=oneshot
+User=cpb
+Group=cpb
+WorkingDirectory=/home/cpb/crypto-paper-bot
+Environment=CPB_ENV=/home/cpb/.config/cpb/env
+Environment=CPB_PUBLISH_DIR=/srv/cpb
+ExecStart=/home/cpb/crypto-paper-bot/run_hourly.sh
+TimeoutStartSec=15min
+Nice=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=tmpfs
+BindPaths=/home/cpb
+ReadWritePaths=/srv/cpb
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+UMask=0022

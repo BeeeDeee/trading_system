@@ -171,7 +171,7 @@ function header(){
 // ------------------------------------------------------------------ equity chart
 function equitySection(){
   var sec = el("section", null, [el("h2",{text:"Vývoj kapitálu"}),
-    el("p",{cls:"sub", text:"Hodnota portfolií k 00:00 UTC, logaritmická osa. Barevně až 3 zvýrazněná portfolia (klepnutím v legendě nebo v tabulce), BTC HODL přerušovaně, ostatní šedě."})]);
+    el("p",{cls:"sub", text:"Hodnota portfolií k 00:00 UTC (hodinové varianty podle prvního hodinového běhu dne), logaritmická osa. Barevně až 3 zvýrazněná portfolia (klepnutím v legendě nebo v tabulce), BTC HODL přerušovaně, ostatní šedě."})]);
   var ctr = el("div",{cls:"controls"});
   var seg = el("div",{cls:"seg", role:"group", "aria-label":"Scénář nákladů"});
   Object.keys(SCN).forEach(function(k){ seg.appendChild(el("button",{"aria-pressed": String(state.scn===k), text:SCN[k], onclick:function(){ state.scn=k; render(); }})); });
@@ -207,7 +207,7 @@ function drawEquity(wrap){
   var ids = D.portfolios.map(function(p){ return p.id; }).filter(function(id){
     return S.equity[id] && (state.show === "all" || state.hl.indexOf(id) >= 0 || id.indexOf("b_") === 0); });
   var lo = Infinity, hi = -Infinity;
-  ids.forEach(function(id){ S.equity[id][state.scn].forEach(function(v){ if (v > 0){ lo = Math.min(lo, v); hi = Math.max(hi, v);} }); });
+  ids.forEach(function(id){ S.equity[id][state.scn].forEach(function(v){ if (v != null && v > 0){ lo = Math.min(lo, v); hi = Math.max(hi, v);} }); });
   lo = Math.log(lo*0.98); hi = Math.log(hi*1.02);
   var x = function(i){ return m.l + (n > 1 ? i/(n-1) : 0.5) * (W-m.l-m.r); };
   var y = function(v){ return m.t + (1 - (Math.log(v)-lo)/(hi-lo)) * (H-m.t-m.b); };
@@ -223,7 +223,8 @@ function drawEquity(wrap){
   (S.segments||[]).forEach(function(sg, k){ if (k > 0 && (sg.tag !== S.segments[k-1].tag || sg.model !== S.segments[k-1].model)){
     var xi = x(dates.indexOf(sg.date)); s.appendChild(svg("line",{x1:xi, x2:xi, y1:m.t, y2:H-m.b, stroke:css("--axis"), "stroke-dasharray":"4 3"}));
     var t = svg("text",{x:xi+4, y:m.t+10, "font-size":10, fill:css("--muted")}); t.textContent = (sg.tag||"") + " " + (sg.model||""); s.appendChild(t); } });
-  function path(vals){ return vals.map(function(v,i){ return (i ? "L" : "M") + x(i).toFixed(1) + "," + y(v).toFixed(1); }).join(""); }
+  function path(vals){ var d = "", pen = false; vals.forEach(function(v,i){ if (v == null){ pen = false; return; } d += (pen ? "L" : "M") + x(i).toFixed(1) + "," + y(v).toFixed(1); pen = true; }); return d; }
+  function lastIdx(vals){ for (var i = vals.length - 1; i >= 0; i--) if (vals[i] != null) return i; return -1; }
   var order = ids.filter(function(id){ return state.hl.indexOf(id) < 0 && id !== "b_btc"; }).concat(ids.indexOf("b_btc") >= 0 ? ["b_btc"] : []).concat(state.hl.filter(function(h){ return ids.indexOf(h) >= 0; }));
   order.forEach(function(id){
     var on = state.hl.indexOf(id) >= 0, btc = id === "b_btc";
@@ -232,8 +233,8 @@ function drawEquity(wrap){
     s.appendChild(svg("path",{d:path(S.equity[id][state.scn]), fill:"none", stroke:col, "stroke-width": on ? 2.25 : btc ? 1.75 : 1.25, "stroke-dasharray": btc && !on ? "5 4" : "", "stroke-linejoin":"round", "stroke-linecap":"round", opacity: on || btc ? 1 : 0.9}));
   });
   // direct labels for highlighted at the end
-  state.hl.forEach(function(id){ if (!S.equity[id]) return; var v = S.equity[id][state.scn][n-1];
-    s.appendChild(svg("circle",{cx:x(n-1), cy:y(v), r:3.5, fill:css(state.colorOf[id]), stroke:css("--surface"), "stroke-width":2})); });
+  state.hl.forEach(function(id){ if (!S.equity[id]) return; var vals = S.equity[id][state.scn], k = lastIdx(vals); if (k < 0) return;
+    s.appendChild(svg("circle",{cx:x(k), cy:y(vals[k]), r:3.5, fill:css(state.colorOf[id]), stroke:css("--surface"), "stroke-width":2})); });
   // crosshair + tooltip
   var cross = svg("line",{y1:m.t, y2:H-m.b, stroke:css("--axis"), "stroke-width":1, visibility:"hidden"}); s.appendChild(cross);
   var hit = svg("rect",{x:m.l, y:m.t, width:W-m.l-m.r, height:H-m.t-m.b, fill:"transparent"}); s.appendChild(hit);
@@ -243,7 +244,7 @@ function drawEquity(wrap){
     var i = Math.max(0, Math.min(n-1, Math.round((px - m.l) / (W-m.l-m.r) * (n-1))));
     cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("visibility","visible");
     tip.textContent = ""; tip.appendChild(el("div",{style:"font-weight:650;margin-bottom:4px", text: dates[i] + " (" + SCN[state.scn].toLowerCase() + ")"}));
-    var show = state.hl.concat(["b_btc"]).filter(function(id, k, a){ return S.equity[id] && a.indexOf(id) === k; });
+    var show = state.hl.concat(["b_btc"]).filter(function(id, k, a){ return S.equity[id] && a.indexOf(id) === k && S.equity[id][state.scn][i] != null; });
     show.sort(function(a,b){ return S.equity[b][state.scn][i] - S.equity[a][state.scn][i]; }).forEach(function(id){
       var v = S.equity[id][state.scn][i], col = state.colorOf[id] ? "var(" + state.colorOf[id] + ")" : "var(--ink)";
       tip.appendChild(el("div",{cls:"row"},[el("span",null,[el("i",{cls:"key", style:"border-top-color:" + col + (id === "b_btc" ? ";border-top-style:dashed" : "")}), pname(id)]), el("strong",{text: pct(v / D.start_capital - 1)})])); });
@@ -275,7 +276,8 @@ function metricsSection(){
   rows.forEach(function(r){
     var m = r.m, on = state.hl.indexOf(r.p.id) >= 0;
     var tr = el("tr",{cls: on ? "hl" : "", style: on ? "--hl:var(" + state.colorOf[r.p.id] + ")" : "", title: r.p.question, onclick:function(){ toggleHl(r.p.id); }});
-    var nm = el("td",null,[r.p.name, r.p.kind === "benchmark" ? el("span",{cls:"muted", text:" · benchmark"}) : (r.p.uses_llm ? null : el("span",{cls:"muted", text:" · bez LLM"}))]);
+    var tags = [r.p.kind === "benchmark" ? "benchmark" : null, r.p.kind === "hourly" ? "hodinová" : null, (r.p.kind !== "benchmark" && !r.p.uses_llm) ? "bez LLM" : null].filter(Boolean);
+    var nm = el("td",null,[r.p.name, tags.length ? el("span",{cls:"muted", text:" · " + tags.join(" · ")}) : null]);
     tr.appendChild(nm);
     [[m.ret,1],[m.vs_btc,1],[m.max_dd,1]].forEach(function(a){ tr.appendChild(el("td",{cls:signCls(a[0]), text:pct(a[0],a[1])})); });
     tr.appendChild(el("td",{text:num(m.sharpe)})); tr.appendChild(el("td",{text:pct0(m.vol)})); tr.appendChild(el("td",{text:pct0(m.avg_exposure)}));
@@ -286,7 +288,7 @@ function metricsSection(){
     tb.appendChild(tr);
   });
   sec.appendChild(el("div",{cls:"scroll"},[el("table",null,[el("thead",null,[thead]), tb])]));
-  sec.appendChild(el("p",{cls:"sub", style:"margin-top:8px", text:"Pravidla vyhodnocení (předem): varianta má edge jen nad 95. percentilem vlastní nuly A nad BTC HODL A po stresových nákladech. Při 18 variantách čekej ~1 „výhru“ náhodou."}));
+  sec.appendChild(el("p",{cls:"sub", style:"margin-top:8px", text:"Pravidla vyhodnocení (předem): varianta má edge jen nad 95. percentilem vlastní nuly A nad BTC HODL A po stresových nákladech. Při 25 variantách čekej 1–2 „výhry“ náhodou. Sharpe a volatilita se ukazují od 10 dní dat."}));
   return sec;
 }
 
@@ -304,6 +306,7 @@ function positionsSection(){
     ps.positions.forEach(function(x){ list.appendChild(el("span",null,[el("b",{text:x.coin}), " " + pct0(x.weight,1) + (x.stop ? " · stop " + num(x.stop, x.stop < 1 ? 5 : 2) : "")])); });
     if (ps.positions.length) list.appendChild(el("span",{cls:"muted", text:"hotovost " + pct0(1 - ps.exposure,1)}));
     var note = info.hold || info.overlay;
+    if (ps.as_of) note = (note ? note + " · " : "") + "stav po hodinovém běhu " + ps.as_of.replace("T", " ") + ":02 UTC";
     g.appendChild(el("div",{cls:"card"},[el("h3",null,[el("span",{text:p.name}), el("span",{cls:"muted", text:usd(ps.equity)})]), bar, list, note ? el("div",{cls:"muted", style:"font-size:12px;margin-top:4px", text:note}) : null]));
   });
   sec.appendChild(g);
@@ -445,6 +448,10 @@ function runSection(){
   add("Křížová kontrola close", Object.keys(cx).map(function(c){ return c + " " + (cx[c].diff_pct != null ? num(cx[c].diff_pct,3) + " % vs " + cx[c].other_source : "n/a"); }).join(" · "));
   add("Křížová kontrola snímku", Object.keys(sx).map(function(c){ return c + " " + (sx[c].diff_pct != null ? num(sx[c].diff_pct,3) + " % vs " + sx[c].other_source : "n/a"); }).join(" · "));
   var srcs = (lr.checks||{}).sources || {}, alt = Object.keys(srcs).filter(function(c){ return srcs[c] !== "binance"; });
+  var hr = D.hourly || {}, ht = hr.today || [];
+  add("Hodinové běhy (poslední den)", ht.length ? ht.filter(function(r){ return r.status !== "failed"; }).length + " v pořádku, " + ht.filter(function(r){ return r.status === "failed"; }).length + " chyb" + (hr.last ? " · poslední " + hr.last.label.replace("T", " ") + ":02 " + (STATUS[hr.last.status]||["?"])[0] + (hr.last.error ? " – " + hr.last.error : "") : "") : "zatím žádné");
+  var hq = {}; ht.forEach(function(r){ (r.quarantine||[]).forEach(function(c){ hq[c] = (hq[c]||0) + 1; }); });
+  if (Object.keys(hq).length) add("Hodinová karanténa", Object.keys(hq).map(function(c){ return c + " (" + hq[c] + "×)"; }).join(", "));
   var qu = (lr.checks||{}).quarantine || {};
   add("Karanténa (dnes neobchodováno)", Object.keys(qu).length ? Object.keys(qu).map(function(c){ return c + ": " + qu[c][0]; }).join(" · ") : "—");
   add("Zdroje dat", "Binance" + (alt.length ? "; záložní: " + alt.map(function(c){ return c + "=" + srcs[c]; }).join(", ") : ""));

@@ -9,7 +9,7 @@ import traceback
 from . import canon, chain, pipeline
 
 PINNED_PATHS = ("engine/engine.py", "engine/cpb/*.py", "config/config.json", "task/daily_prompt.md",
-                "task/scores.schema.json", "run_daily.sh", "dashboard/template.html")
+                "task/scores.schema.json", "run_daily.sh", "run_hourly.sh", "dashboard/template.html")
 
 
 def manifest_files(repo):
@@ -96,9 +96,10 @@ def _summary(cfg, marks_after, trades):
 
 def _write_record(repo, run_dir, rec):
     rec = dict(rec, files=chain.files_digest(run_dir))
-    rec = chain.seal(rec, chain.last_hash(repo))
-    canon.write_json(os.path.join(run_dir, "run.json"), rec)
-    chain.append(repo, rec["type"], rec["date"], os.path.relpath(os.path.join(run_dir, "run.json"), repo), rec["this_hash"])
+    with chain.lock(repo):
+        rec = chain.seal(rec, chain.last_hash(repo))
+        canon.write_json(os.path.join(run_dir, "run.json"), rec)
+        chain.append(repo, rec["type"], rec["date"], os.path.relpath(os.path.join(run_dir, "run.json"), repo), rec["this_hash"])
     return rec
 
 

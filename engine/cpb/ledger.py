@@ -117,10 +117,11 @@ def force_sell(led, pid, scn, cfg, coin, px, vol, date, ts_ms, reason, extra_bps
     _trade(led, pid, scn, coin, "SELL", led["positions"][coin]["qty"], px, sb, c["fee_bps"], reason, date, ts_ms, source, trades)
 
 
-def rebalance(led, pid, scn, cfg, targets, exits, prices, vol, date, ts_ms, source, trades, quotes=None):
+def rebalance(led, pid, scn, cfg, targets, exits, prices, vol, date, ts_ms, source, trades, quotes=None, keep=()):
     """Move the ledger towards target weights (fractions of equity at snapshot prices).
 
     targets: {coin: weight} or None (hold everything). exits: {coin: reason} to close regardless.
+    keep: held coins left exactly as they are (hourly strategies with a minimum holding period).
     Full exits are always executed; otherwise a coin trades only when |target - current| > band of equity.
     New positions and buys below min_trade_usd are skipped. Sells first, then buys with available cash.
     """
@@ -143,6 +144,8 @@ def rebalance(led, pid, scn, cfg, targets, exits, prices, vol, date, ts_ms, sour
     if targets is None:
         return
     for coin in sorted(led["positions"]):
+        if coin in keep:
+            continue
         p = led["positions"][coin]
         cur = p["qty"] * prices[coin]
         tgt = targets.get(coin, 0.0) * E

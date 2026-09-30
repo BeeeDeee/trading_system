@@ -1,0 +1,11 @@
+[Unit]
+Description=crypto-paper-bot hourly run at HH:02 UTC (missed hours are NOT caught up)
+
+[Timer]
+OnCalendar=*-*-* *:02:00 UTC
+Persistent=false
+AccuracySec=15s
+Unit=cpb-hourly.service
+
+[Install]
+WantedBy=timers.target

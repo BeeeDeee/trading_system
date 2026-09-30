@@ -1,8 +1,9 @@
 # Crypto paper-trading bot
 
 Denní pokus na 20 kryptoměnách: Claude (`claude -p`) jednou denně udělá online rešerši a ohodnotí univerzum,
-deterministický Python engine z toho obchoduje **18 variant pravidel** a **5 benchmarků**, každou s virtuálními
-$10 000 (kotace USDT). Žádná burza, žádné API klíče k obchodování, žádné skutečné peníze. Plánovaná délka 8–12 týdnů.
+deterministický Python engine z toho obchoduje **18 denních variant**, **7 hodinových variant** a **5 benchmarků**,
+každou s virtuálními $10 000 (kotace USDT). Vedle denního běhu sbírá engine každou hodinu hodinové svíčky, knihu
+objednávek a sentiment z futures (funding, open interest, long/short); LLM se volá dál jen jednou denně. Žádná burza, žádné API klíče k obchodování, žádné skutečné peníze. Plánovaná délka 8–12 týdnů.
 
 Hlavní produkt je **point-in-time dataset** (ceny, indikátory, skóre LLM, rozhodnutí, plnění) a férové srovnání
 proti kontrolám: `mech_momentum` (stejná pravidla bez LLM), náhodný výběr, kontrarián, BTC HODL a rovné váhy univerza.
@@ -22,6 +23,7 @@ je stejně cenný jako pozitivní.
 | Append-only, tamper-evident | Každý záznam (`run.json`, `corrections/*.json`) nese `prev_hash`, sha256 všech souborů běhu a `this_hash`; `data/chain.jsonl` je jen přidávaný. Oprava = nový záznam `correction`. |
 | Připnutá verze | `MANIFEST.sha256` (engine, config, prompt, schéma, dashboard, `run_daily.sh`) + připnutí mimo repo v `~/.config/cpb/pin.json`. Nesoulad = běh `failed`, žádné obchody. |
 | Determinismus | Seedovaná náhoda, stabilní řazení (tie-break hashem data a symbolu), kanonický JSON na každé hranici fází. `tools/verify_chain.py` přehraje celý pokus z uložených vstupů bajt po bajtu. |
+| Hodinová data | Hodinový běh nevolá LLM, nemění denní rozhodnutí a jeho selhání neovlivní denní varianty. |
 | Web je nedůvěryhodný | Prompt to říká explicitně; engine validuje schéma, ořízne rozsahy, zahodí nevalidní coin (nikdy nedoplní), odstraní řídicí znaky, pustí jen http(s) URL. Dashboard vkládá text z LLM jen přes `textContent` a má CSP s hashem jediného skriptu. |
 | Připnutý model | `config.llm.model = claude-opus-5-5`; ověřuje se proti `init` a `modelUsage` v transcriptu. Jiný model = skóre se nepoužije (LLM varianty drží). Změna modelu = nový release = nový segment. |
 
@@ -43,6 +45,26 @@ C  lock       cílové váhy všech 23 portfolií → decisions.json (locked_at)
    fill       stopy do času snímku, výstupy, rebalanc ve 3 nákladových scénářích
 D  report     run.json + hash chain, dashboard, commit + push, notifikace
 ```
+
+## Hodinový běh (vše UTC)
+
+systemd timer `cpb-hourly.timer` v HH:02 každou hodinu (zmeškané hodiny se **nedoplňují**, nikdy se nerozhoduje zpětně):
+
+```
+fetch     uzavřené hodinové svíčky (1. běh: 35 dní), top 100 úrovní knihy (spread, hloubka, nerovnováha),
+          perpetual futures Binance (funding, změna OI za 1 h, poměr long/short účtů); paralelně, raw gzip + manifest
+check     jako denně po hodinách; pohyb > 25 % za hodinu potvrzuje OKX → Coinbase → Kraken; karanténa coinu
+phase_h   trailing stopy na nových hodinových svíčkách, delisting, ocenění k HH:00, hodinové indikátory
+plan      cílové váhy 7 hodinových variant → decisions.json (zamčeno před snímkem)
+snapshot  bid/ask + čas serveru (po zámku), BTC vs OKX
+execute   stejné účetnictví a náklady jako denní varianty, 3 scénáře
+```
+
+Stav hodinových variant je oddělený (`data/hourly/state.json`, historie `data/hourly/history/<COIN>/<den>.json`),
+záznamy `runs/D/hourly/HH/` jsou v hash chainu (`type: hourly`) a replay je přehrává bajt po bajtu. Denní a hodinový
+běh mají vlastní zámky, zápis do řetězce hlídá společný krátký zámek. Commit hodinových záznamů dělá denní běh
+(jeden commit „hourly D“), rychlý dashboard se obnovuje každou hodinu. Denní tabulka pro LLM obsahuje navíc
+derivátový sentiment z posledního hodinového běhu.
 
 Když krok B selže (timeout, limit, nevalidní výstup, jiný model), varianty bez LLM a benchmarky běží normálně,
 LLM varianty drží pozice (stopy a max. doba držení platí dál) a běh má status `warning`. Skóre se nikdy nedoplňuje.
@@ -83,6 +105,24 @@ Váhy < 2 % se zahodí, max 25 % na coin (zbytek hotovost), obchod jen při odch
 | `kontrarian` | nejhorších 10 podle composite | rovné, vždy investováno | když vede, skóre je šum |
 | `nahodny` | 10 náhodných (seed = sha256(datum)) | rovné | baseline štěstí |
 
+### Hodinové varianty (bez LLM, kromě `llm_nacasovani`)
+
+Rozhodují v hodinovém běhu z dat uzavřených do HH:00 a plní se za bid/ask snímku o pár sekund později.
+
+| id | Pravidlo | Otázka |
+|---|---|---|
+| `h_momentum` | top 3 podle výnosu vs BTC za 4 h (> 0), po 1/3, pozice drží min. 4 h | přežije intradenní momentum náklady? |
+| `h_reverze` | hodinový výnos < −2,5 σ vlastní hodinové volatility (30 d) a BTC ne pod −1 %; max 3 × 15 %; prodej po 3 h nebo nad open propadové hodiny | vrací se přehnané hodinové propady? |
+| `h_breakout` | close nad maximem předchozích 24 h a objem > 3× průměr; 20 %, max 5 pozic, trailing stop 3 %, max 24 h | fungují průrazy s objemem? |
+| `h_kniha` | nerovnováha top 100 úrovní knihy > 0,25 a podíl agresivních nákupů v hodině > 55 %; top 3 × 20 %; drží min. 2 h, dokud signál trvá | předpovídá mikrostruktura příští hodiny? |
+| `funding_kontra` | v 00/08/16 UTC: 5 coinů s nejnižším fundingem pod 0,01 % (bez horních 20 % fundingu), po 20 % | je přeplněnost derivátů kontrariánský signál? |
+| `llm_nacasovani` | váhy jako `zaklad` z posledního denního rozhodnutí; nákup až při hodinovém RSI < 40 nebo ≥ 1 % pod open dne, jinak ve 23 h; prodeje hned | zlepší načasování vstup do výběru LLM? |
+| `seance_usa` | top 5 univerza podle kapitalizace jen 13–21 UTC, jinak hotovost | vzniká výnos v amerických hodinách? |
+
+`h_reverze`, `h_breakout` a `seance_usa` záměrně hodně obchodují; poplatky je nejspíš sežerou, hrubý scénář ukáže,
+jestli je v signálu něco před náklady. Nerovnováha knihy se počítá z top 100 úrovní (u BTC to je jen pár dolarů od
+středu; ±1 % hloubky by vyžadovalo 5000 úrovní na coin a hodinu).
+
 Benchmarky (stejné náklady): BTC HODL, 50/50 BTC/ETH (měsíční rebalanc), top 10 univerza vážené kapitalizací
 (týdně), **rovné váhy celého univerza** (týdně; odděluje výběr od alt-bety), hotovost.
 
@@ -105,11 +145,13 @@ Ocenění je ve středu (bid + ask) / 2, resp. za denní close. Spread nad 2 % d
 engine/engine.py         CLI: run | notify | report | verify | validate | apply-redenomination | correction
 engine/cpb/              canon (kanonický JSON), http (raw záznam), fetch (burzy), universe, check, features,
                          llm (validace + claude -p), portfolio (cílové váhy), ledger (účetnictví), pipeline (fáze),
-                         runner (život běhu, pin), chain (hash chain), replay, corrections, analytics, report
+                         runner (život běhu, pin), chain (hash chain), replay, corrections, analytics, report,
+                         hourly (hodinový běh a 7 hodinových strategií), null (nulová rozdělení přes engine)
 config/config.json       univerzum, data, náklady, pravidla, varianty, benchmarky, model
 task/daily_prompt.md     denní prompt pro claude -p;  task/scores.schema.json  formát výstupu
 dashboard/template.html  zdroj dashboardu (inline CSS/JS, grafy v SVG, bez CDN)
 run_daily.sh             orchestrace pro systemd (flock, timeout 75 min, report, commit, push, ntfy)
+run_hourly.sh            hodinový běh (flock, timeout 10 min, rychlý dashboard; necommituje)
 deploy/                  install.sh (po krocích s potvrzením), systemd unit + timer, Caddyfile, fail2ban
 tools/                   simulate, verify_chain, replay (post-hoc), export_dataset, analyze, random_null, pin, verify_manifest
 tests/test_engine.py     invarianty (python -m unittest discover -s tests)
@@ -117,7 +159,9 @@ universe/D.json          zmrazené týdenní snímky univerza (včetně vyřazen
 runs/D/                  raw/, raw_manifest.json, universe.json, check.json, features.json|md, llm/(prompt, scores,
                          transcript.jsonl, meta), validate.json, scores.json (validované), decisions.json,
                          snapshot.json, inputs.json (vše pro replay), fills.json, ledger.json, config.json, run.json
-data/                    history/<COIN>.json (denní svíčky), state.json (portfolia), chain.jsonl
+data/                    history/<COIN>.json (denní svíčky), state.json (portfolia), chain.jsonl,
+                         hourly/state.json + hourly/history/<COIN>/<den>.json, null_cache.json
+runs/D/hourly/HH/        hodinové záznamy (raw, inputs, features, decisions, snapshot, fills, ledger, run.json)
 corrections/             opravy (redenominace, poznámky) – také v hash chainu
 public/                  index.html + data.json (dashboard; nic jiného, hlídá test)
 ```
@@ -149,10 +193,12 @@ HSTS, CSP; fail2ban banuje po 5 neúspěšných přihlášeních. ufw: 22, 80, 4
 ```bash
 ./run_daily.sh                       # dnešní běh (idempotentní), report, commit, push, notifikace
 ./run_daily.sh --dry-run             # vše v dočasné kopii, včetně claude -p; nic se necommituje ani nepublikuje
+./run_hourly.sh                      # hodinový běh pro právě uzavřenou hodinu + rychlý dashboard (bez commitu)
+./run_hourly.sh --dry-run            # v dočasné kopii
 .venv/bin/python engine/engine.py run --dry-run --allow-unpinned --no-llm   # rychlý test dat a plnění bez LLM
 .venv/bin/python engine/engine.py verify           # MANIFEST vs připnutí + hash chain
 .venv/bin/python tools/verify_chain.py             # + replay celého pokusu bajt po bajtu
-systemctl list-timers cpb-daily.timer; journalctl -u cpb-daily -n 200
+systemctl list-timers 'cpb-*'; journalctl -u cpb-daily -n 200; journalctl -u cpb-hourly -n 50
 ```
 
 Rozhodovací běh jde spustit jen pro dnešek (snímek pro plnění musí být živý). Zmeškané dny doplní další běh sám.
@@ -189,14 +235,20 @@ Během pokusu se pravidla neplánují měnit. Když je změna nutná, je to vžd
    **a** nad BTC HODL **a** přežije stresové náklady (stresový výnos > 0 a stále nad BTC HODL).
 3. **LLM přidává hodnotu** jen tehdy, když LLM varianty soustavně porážejí `mech_momentum` se stejnými pravidly
    alokace (zejména `zaklad` vs `mech_momentum` a IC composite vs IC rel30).
-4. Při ~18 variantách čekej 1 „výhru“ náhodou; rozhoduje vzor (souhlasí pořadí `zaklad` vs `kontrarian` s IC
+4. Při 25 variantách čekej 1–2 „výhry“ náhodou; rozhoduje vzor (souhlasí pořadí `zaklad` vs `kontrarian` s IC
    composite? vede `mech_momentum`?), ne jednotlivý vítěz. Výsledky různých verzí a modelů se nemíchají.
-5. Post-hoc přehrání jiných pravidel (`tools/replay.py --config alt.json`) je in-sample a nikdy není důkaz.
+5. **Hodinové signály** (nerovnováha knihy, agresivní nákupy, funding, z-skóre, 4h momentum, ΔOI, L/S) se hodnotí hlavně
+   přes rank IC vs forward výnos vs BTC na 1/4/24 h (`tools/analyze.py --hourly`, průměr IC za den, bootstrap přes dny):
+   edge jen když 95% CI neobsahuje 0, znaménko sedí v obou polovinách a je aspoň 20 dní dat. Hodinová varianta má
+   edge podle stejných pravidel jako denní (bod 2), s vlastním nulovým rozdělením.
+6. Post-hoc přehrání jiných pravidel (`tools/replay.py --config alt.json`) je in-sample a nikdy není důkaz.
 
 ## Nástroje pro vytěžení dat
 
 ```bash
 python tools/export_dataset.py [--parquet]   # build/dataset/panel.csv: datum × coin × indikátory, skóre, forward výnosy 1/3/7/14 d abs i vs BTC
+python tools/export_dataset.py --hourly      # panel_hourly.csv: hodina × coin × výnosy, z-skóre, objem, agresivní nákupy, kniha, funding, ΔOI, L/S, bid/ask + forward 1/4/24 h
+python tools/analyze.py --hourly             # rank IC hodinových signálů
 python tools/analyze.py [--version vX] [--model M]   # rank IC každého pohledu, CI, poloviny, kalibrace (Brier, reliability)
 python tools/random_null.py [--paths 2000]   # percentil každé varianty ve vlastním nulovém rozdělení
 python tools/replay.py --config alt.json     # POST-HOC, in-sample
@@ -211,5 +263,8 @@ python tools/simulate.py --days 60           # syntetický trh přes skutečný 
 - **Rank IC** používá close předchozího dne (informace, kterou mělo rozhodnutí), ne cenu plnění (~1 h později).
 - Den se zastaví jen při chybě dat drženého coinu, BTC nebo ETH; ostatní coiny jdou do karantény.
 - 18 korelovaných variant za 8–12 týdnů má malou statistickou sílu; hlavní síla je v IC (20 coinů × dny).
-- Data v gitu rostou cca 0,3–1,5 MB/den (raw odpovědi, inputs.json).
+- Data v gitu rostou cca 2–4 MB/den (denní raw odpovědi a inputs ~0,3–1,5 MB, hodinové běhy ~1–3 MB; první hodinový běh ~3 MB kvůli 35 dnům historie).
+- Hodinové varianty se na denní ose grafu oceňují prvním úspěšným hodinovým během dne (normálně 00:02 = stav k 00:00); chybí-li celý den hodinových běhů, v křivce je mezera.
+- Nulové rozdělení hodinových variant kopíruje počet držených coinů, profil vah a počet výměn po každém hodinovém běhu (ne pravidla výstupu, která závisí na signálu); stopy na hodinových svíčkách.
+- Futures data jsou jen informativní vstup (sentiment); obchoduje se výhradně spot.
 - Kalibrace a IC mají smysl až po ~20 dnech s uzavřeným 7denním oknem.

@@ -139,10 +139,16 @@ step_ufw() {
 }
 
 step_timer() {
-  ask "systemd timer" "Nainstaluji cpb-daily.service + cpb-daily.timer (00:20 UTC, Persistent=true, opakování 06:20 a 12:20 jen když den chybí) a zapnu timer." || return 0
-  sudo install -m 644 "$HERE/cpb-daily.service" "$HERE/cpb-daily.timer" /etc/systemd/system/
-  sudo systemctl daemon-reload && sudo systemctl enable --now cpb-daily.timer
-  systemctl list-timers cpb-daily.timer
+  ask "systemd timery" "Nainstaluji cpb-daily (00:20 UTC, Persistent=true, opakování 06:20 a 12:20 jen když den chybí) a cpb-hourly (každou hodinu v HH:02, bez doplňování zmeškaných hodin) a oba zapnu." || return 0
+  sudo install -m 644 "$HERE/cpb-daily.service" "$HERE/cpb-daily.timer" "$HERE/cpb-hourly.service" "$HERE/cpb-hourly.timer" /etc/systemd/system/
+  sudo systemctl daemon-reload && sudo systemctl enable --now cpb-daily.timer cpb-hourly.timer
+  systemctl list-timers 'cpb-*'
+}
+
+step_hourly_only() {
+  echo "Jen hodinový timer (např. po prvním denním běhu):"
+  sudo install -m 644 "$HERE/cpb-hourly.service" "$HERE/cpb-hourly.timer" /etc/systemd/system/
+  sudo systemctl daemon-reload && sudo systemctl enable --now cpb-hourly.timer
 }
 
 STEPS=("$@"); [ ${#STEPS[@]} -eq 0 ] && STEPS=(audit user repo env claude venv pin web tls fail2ban ufw timer)

@@ -26,10 +26,25 @@ def rebase_history(hist, coin, ratio, before_date, new_coin=None):
     return out
 
 
+def rebase_hourly(hh, coin, ratio, effective_date, new_coin=None):
+    """Hourly rows opening before 00:00 of effective_date: prices / ratio (quote volumes unchanged)."""
+    cut = canon.date_ms(effective_date)
+    rows = [r if r[0] >= cut else [r[0], r[1] / ratio, r[2] / ratio, r[3] / ratio, r[4] / ratio, r[5], r[6]] for r in hh.get(coin, [])]
+    out = dict(hh)
+    out.pop(coin, None)
+    if rows or new_coin:
+        out[new_coin or coin] = rows
+    return out
+
+
 def apply_state(state, coin, ratio, effective_date, new_coin=None):
     for scns in state.get("portfolios", {}).values():
         for led in scns.values():
             L.redenominate(led, coin, ratio, new_coin)
+    for meta in state.get("meta", {}).values():          # hourly state: entry meta (ref_open is a price)
+        m = meta.pop(coin, None)
+        if m:
+            meta[new_coin or coin] = dict(m, ref_open=m["ref_open"] / ratio)
     if new_coin and coin in state.get("pairs", {}):
         state["pairs"].pop(coin)
     state.setdefault("fetch_from", {})[new_coin or coin] = effective_date
@@ -58,6 +73,19 @@ def redenomination(repo, clock, coin, ratio, effective_date, new_coin=None, evid
     _, before = value_check(state, hist, coin, ratio, new_coin, effective_date)
     hist2 = rebase_history(hist, coin, ratio, effective_date, new_coin)
     state2 = apply_state(state, coin, ratio, effective_date, new_coin)
+    from . import hourly as hr
+    hh = hr.load_hh(repo)
+    if coin in hh:
+        hh2 = rebase_hourly(hh, coin, ratio, effective_date, new_coin)
+        tgt = new_coin or coin
+        shutil_rm = os.path.join(hr.hdir(repo), "history", coin)
+        hr.save_hh(repo, hh2, {tgt: [r[0] for r in hh2[tgt]]})
+        if new_coin and os.path.isdir(shutil_rm):
+            import shutil
+            shutil.rmtree(shutil_rm)
+    hs = hr.load_hstate(repo)
+    if hs:
+        canon.write_json(os.path.join(hr.hdir(repo), "state.json"), apply_state(hs, coin, ratio, effective_date, new_coin))
     tgt = new_coin or coin
     after = {pid: scns["base"]["positions"][tgt]["qty"] * [r for r in hist2[tgt] if r[0] < effective_date][-1][4]
              for pid, scns in state2.get("portfolios", {}).items() if tgt in scns["base"]["positions"]}
@@ -74,11 +102,12 @@ def note(repo, clock, date, message, refers_to=None):
 
 
 def _write(repo, rec, state, hist, drop_coin):
-    n = len([e for e in chain.entries(repo) if e["type"] == "correction"]) + 1
-    rel = os.path.join("corrections", f"{n:04d}-{rec['kind']}-{rec['date']}.json")
-    rec = chain.seal(rec, chain.last_hash(repo))
-    canon.write_json(os.path.join(repo, rel), rec)
-    chain.append(repo, "correction", rec["date"], rel, rec["this_hash"])
+    with chain.lock(repo):
+        n = len([e for e in chain.entries(repo) if e["type"] == "correction"]) + 1
+        rel = os.path.join("corrections", f"{n:04d}-{rec['kind']}-{rec['date']}.json")
+        rec = chain.seal(rec, chain.last_hash(repo))
+        canon.write_json(os.path.join(repo, rel), rec)
+        chain.append(repo, "correction", rec["date"], rel, rec["this_hash"])
     if state is not None:
         pipeline.save_history(repo, hist)
         if drop_coin:

@@ -33,11 +33,12 @@ def max_drawdown(eq):
     return mdd
 
 
-def metrics(ledgers, start_capital, btc_id="b_btc"):
+def metrics(ledgers, start_capital, btc_id="b_btc", btc_ret=None):
     S = series_from_ledgers(ledgers)
     last = ledgers[-1]
-    btc = S.get(btc_id, {}).get("base", [])
-    btc_ret = btc[-1][1] / start_capital - 1 if btc else None
+    if btc_ret is None:
+        btc = S.get(btc_id, {}).get("base", [])
+        btc_ret = btc[-1][1] / start_capital - 1 if btc else None
     out = {}
     for pid, scns in S.items():
         eq = [e for _, e in scns["base"]]
@@ -55,8 +56,8 @@ def metrics(ledgers, start_capital, btc_id="b_btc"):
             "ret_stress": final["stress"] / start_capital - 1,
             "vs_btc": (final["base"] / start_capital - 1) - btc_ret if btc_ret is not None else None,
             "max_dd": max_drawdown(eq + [final["base"]]),
-            "vol": sd * math.sqrt(365) if sd else None,
-            "sharpe": mu / sd * math.sqrt(365) if sd else None,
+            "vol": sd * math.sqrt(365) if sd and len(rets) >= 10 else None,
+            "sharpe": mu / sd * math.sqrt(365) if sd and len(rets) >= 10 else None,     # annualized from < 10 days is noise
             "avg_exposure": sum(exps) / len(exps) if exps else 0.0,
             "turnover": b["turnover"] / avg_eq if avg_eq else 0.0,
             "costs_usd": b["fees"] + b["slippage"],
@@ -186,3 +187,59 @@ def calibration(score_days, px, field="p_outperform_btc_7d", h=7, bins=10):
         if b:
             rel.append({"bin": [lo, hi], "n": len(b), "p_mean": sum(p for p, _ in b) / len(b), "freq": sum(y for _, y in b) / len(b)})
     return {"field": field, "h": h, "n": len(pts), "brier": brier, "brier_climatology": brier_ref, "base_rate": base, "bins": rel}
+
+
+# ---------------------------------------------------------------- hourly signals
+
+HOURLY_SIGNALS = ("rel4h", "ret1h", "z1h", "vol_ratio", "taker_ratio", "book_imbalance", "funding", "oi_chg_1h", "ls_ratio", "rsi14h")
+HOURLY_HORIZONS = (1, 4, 24)
+
+
+def hourly_closes(hh):
+    """{coin: {close_time_ms: close}} (close time = candle open + 1 h)."""
+    return {c: {r[0] + 3_600_000: r[4] for r in rows} for c, rows in hh.items()}
+
+
+def fwd_rel_h(pxh, coin, t, h, btc="BTC"):
+    t2 = t + h * 3_600_000
+    a, b = pxh.get(coin, {}).get(t), pxh.get(coin, {}).get(t2)
+    ba, bb = pxh.get(btc, {}).get(t), pxh.get(btc, {}).get(t2)
+    if None in (a, b, ba, bb):
+        return None, None
+    return b / a - 1, (b / a - 1) - (bb / ba - 1)
+
+
+def hourly_ic_table(records, pxh, signals=HOURLY_SIGNALS, horizons=HOURLY_HORIZONS):
+    """records = [(date, t_end, features)]. Rank IC per hourly run, averaged per day, day-block bootstrap."""
+    rows = []
+    for h in horizons:
+        for sig in signals:
+            per_day = {}
+            for D, t, feats in records:
+                xs, ys = [], []
+                for c, f in feats.items():
+                    if not f or c == "BTC" or f.get(sig) is None:
+                        continue
+                    _, rel = fwd_rel_h(pxh, c, t, h)
+                    if rel is None:
+                        continue
+                    xs.append(f[sig])
+                    ys.append(rel)
+                if len(xs) >= 6:
+                    ic = corr(ranks(xs), ranks(ys))
+                    if ic is not None:
+                        per_day.setdefault(D, []).append(ic)
+            days = sorted(per_day)
+            vals = [sum(per_day[d]) / len(per_day[d]) for d in days]
+            if not vals:
+                rows.append({"signal": sig, "h": h, "days": 0})
+                continue
+            half = len(vals) // 2
+            lo, hi = block_bootstrap_mean(vals, block=max(1, h // 24 + 1))
+            m1 = sum(vals[:half]) / half if half else None
+            m2 = sum(vals[half:]) / (len(vals) - half)
+            sig_ok = lo is not None and (lo > 0 or hi < 0)
+            rows.append({"signal": sig, "h": h, "days": len(vals), "runs": sum(len(v) for v in per_day.values()),
+                         "ic": sum(vals) / len(vals), "ci": [lo, hi], "first_half": m1, "second_half": m2,
+                         "edge": bool(sig_ok and m1 is not None and (m1 > 0) == (m2 > 0) and len(vals) >= 20)})
+    return rows

@@ -16,6 +16,8 @@ import shutil
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.environ.setdefault("CPB_NO_FSYNC", "1")     # synthetic data: durability of every write is not needed
+os.environ.setdefault("CPB_FETCH_WORKERS", "1")  # the simulated clock advances per call: keep the call order fixed
 sys.path.insert(0, os.path.join(ROOT, "engine"))
 
 from cpb import canon, llm, runner  # noqa: E402
@@ -186,6 +188,58 @@ class SimMarket:
         m = self.w.price_at(coin, self.clock.now_ms())
         return (m * 0.9999, m * 1.0001), "okx"
 
+    # ---- hourly data (aggregated from the same 5-minute paths)
+    def _hour_rows(self, coin, d):
+        b = self.w.path(coin, d)
+        dv = self.w.daily(coin, d)[6]
+        out = []
+        for k in range(24):
+            seg = b[12 * k:12 * k + 12]
+            rng = random.Random(f"h|{coin}|{d}|{k}")
+            vq = dv / 24 * math.exp(rng.gauss(0, 0.4))
+            # taker share leans (weakly) towards the NEXT hour's direction: a planted microstructure edge
+            nxt = self.w.path(coin, d)[min(12 * k + 23, 287)][4] / seg[-1][4] - 1 if k < 23 else 0
+            tb = vq * min(0.9, max(0.1, 0.5 + 0.8 * nxt / 0.01 * 0.05 + rng.gauss(0, 0.05)))
+            out.append([seg[0][0], seg[0][1], max(x[2] for x in seg), min(x[3] for x in seg), seg[-1][4], vq, tb])
+        return out
+
+    def hourly_candles(self, coin, pair, start_ms, end_ms):
+        if not self._trading(coin, canon.ms_date(end_ms - 1)):
+            raise FetchError(f"{coin}: not trading")
+        out = []
+        for d in canon.date_range(canon.ms_date(start_ms), canon.ms_date(end_ms - 1)):
+            out += [r for r in self._hour_rows(coin, d) if start_ms <= r[0] and r[0] + 3_600_000 <= end_ms]
+        self._raw(f"1h_{coin}", "hourly", out, {"coin": coin})
+        return out, "binance"
+
+    def second_hourly_close(self, coin, open_ms):
+        return self.okx_hourly_close(coin, open_ms)
+
+    def okx_hourly_close(self, coin, open_ms):
+        return [r for r in self._hour_rows(coin, canon.ms_date(open_ms)) if r[0] == open_ms][0][4], "okx"
+
+    def book(self, coin, pair, levels=100):
+        from cpb.fetch import book_summary
+        t = self.clock.ms
+        m = self.w.price_at(coin, t)
+        rng = random.Random(f"b|{coin}|{t // 3_600_000}")
+        imb = max(-0.9, min(0.9, rng.gauss(0, 0.2)))
+        depth = self.w.vol_usd[coin] / 2000
+        s = {"mid": m, "spread_bps": 2.0, "bid_depth": depth * (1 + imb), "ask_depth": depth * (1 - imb),
+             "imbalance": imb, "range_pct": 1.0, "levels": levels}
+        self._raw(f"depth_{coin}", "depth", s, {"coin": coin})
+        return s
+
+    def derivatives(self, coin):
+        rng = random.Random(f"f|{coin}|{self.clock.ms // 3_600_000}")
+        d = {"funding": round(rng.choice([0.0001, 0.0001, 0.0001]) + rng.gauss(0, 0.00008), 8), "mark": None,
+             "oi_usd": 1e9, "oi_chg_1h": rng.gauss(0, 0.01), "ls_ratio": max(0.2, rng.gauss(1.4, 0.3))}
+        self._raw(f"fut_{coin}", "derivatives", d, {"coin": coin})
+        return d
+
+    def okx_ticker_mid(self, coin):
+        return self.w.price_at(coin, self.clock.ms), "okx"
+
     def second_close(self, coin, date):
         return self.w.daily(coin, date)[4], "okx"
 
@@ -252,13 +306,14 @@ def make_repo(out):
     os.makedirs(repo)
     for d in ("engine", "config", "task", "dashboard"):
         shutil.copytree(os.path.join(ROOT, d), os.path.join(repo, d), ignore=shutil.ignore_patterns("__pycache__"))
-    for f in ("run_daily.sh", "VERSION"):
+    for f in ("run_daily.sh", "run_hourly.sh", "VERSION"):
         if os.path.exists(os.path.join(ROOT, f)):
             shutil.copy(os.path.join(ROOT, f), os.path.join(repo, f))
     return repo
 
 
-def run(out, days=60, seed=7, start="2026-06-01", skip=(25,), llm_fail=(12,), delist_day=40, delist_coin="NEAR", report=True):
+def run(out, days=60, seed=7, start="2026-06-01", skip=(25,), llm_fail=(12,), delist_day=40, delist_coin="NEAR", report=True,
+        hourly=True, skip_hours=(), hourly_from=0):
     repo = make_repo(out)
     cfg = canon.read_json(os.path.join(repo, "config", "config.json"))
     world = World(start, days, seed)
@@ -270,13 +325,26 @@ def run(out, days=60, seed=7, start="2026-06-01", skip=(25,), llm_fail=(12,), de
     version = {"tag": "sim", "code_commit": None, "manifest_sha256": "sim", "pin_ok": True}
     llm_run = fake_llm(world, fail_dates)
     results = []
+    from cpb import hourly as hr
+    factory = lambda rec, d, _c=clock: SimMarket(world, rec, _c)
     for i, D in enumerate(dates):
         if i in skip:
             continue
+        hon = hourly and i >= hourly_from
+        if hon and i > max(0, hourly_from - 1) and (D, 0) not in skip_hours:
+            clock.set(canon.date_ms(D) + 2 * 60_000)
+            st, r = hr.run_hour(repo, cfg, D, 0, factory, clock, version)
+            results.append((f"{D}T00", st, r.get("error")))
         clock.set(canon.date_ms(D) + 20 * 60_000)
-        factory = lambda rec, d, _c=clock: SimMarket(world, rec, _c)
         status, rec = runner.execute_run(repo, cfg, D, factory, llm_run, clock, version)
         results.append((D, status, rec.get("error")))
+        if hon:
+            for H in range(1, 24):
+                if (D, H) in skip_hours:
+                    continue
+                clock.set(canon.date_ms(D) + H * 3_600_000 + 2 * 60_000)
+                st, r = hr.run_hour(repo, cfg, D, H, factory, clock, version)
+                results.append((f"{D}T{H:02d}", st, r.get("error")))
     if report:
         from cpb import report as rp
         rp.build(repo, cfg, os.path.join(repo, "public"), label="SIMULACE – syntetická data")
@@ -291,7 +359,7 @@ if __name__ == "__main__":
     a = ap.parse_args()
     repo, res, _ = run(a.out, a.days, a.seed)
     bad = [r for r in res if r[1] not in ("ok", "warning")]
-    print(f"{len(res)} běhů, {len(bad)} selhalo; repo: {repo}")
+    print(f"{len(res)} běhů (denní + hodinové), {len(bad)} selhalo; repo: {repo}")
     for r in bad:
         print("  ", r)
     print("dashboard:", os.path.join(repo, "public", "index.html"))

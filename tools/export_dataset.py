@@ -2,6 +2,8 @@
 """Point-in-time panel dataset: date x coin x (indicators, all LLM scores, forward returns). Main output of the experiment.
 
   python tools/export_dataset.py [--repo DIR] [--out build/dataset] [--parquet]
+  python tools/export_dataset.py --hourly    hodinový panel: hodina × coin × (výnosy, z-skóre, objem, agresivní nákupy,
+                                             kniha, funding, ΔOI, L/S, bid/ask) + forward výnosy 1/4/24 h abs i vs BTC
 
 One row per (run date, coin) for every coin that had features that day. Indicators are as of the close before
 the run date (the information the decision had). Forward returns are from that close: fwd_{1,3,7,14}d (absolute)
@@ -10,6 +12,7 @@ version tag + model identify the segment (results of different versions/models m
 """
 import argparse
 import csv
+import glob
 import os
 import sys
 
@@ -55,23 +58,60 @@ def rows(repo):
     return out
 
 
+HOURLY_FIELDS = ("close", "ret1h", "ret4h", "ret24h", "rel4h", "btc_ret1h", "z1h", "vol_ratio", "breakout", "rsi14h", "taker_ratio",
+                 "vol24_usd", "book_imbalance", "spread_bps", "funding", "oi_chg_1h", "ls_ratio")
+
+
+def hourly_rows(repo):
+    from cpb import hourly as hr
+    pxh = A.hourly_closes(hr.load_hh(repo, days=100000))
+    out = []
+    for p in sorted(glob.glob(os.path.join(repo, "runs", "*", "hourly", "[0-9][0-9]", "run.json"))):
+        rec = canon.read_json(p)
+        if rec["status"] not in ("ok", "warning"):
+            continue
+        rd = os.path.dirname(p)
+        inp = canon.read_json(os.path.join(rd, "inputs.json"))
+        feats = canon.read_json(os.path.join(rd, "features.json"))
+        snap = inp["snapshot"]
+        for c in sorted(feats):
+            f = feats[c]
+            if not f:
+                continue
+            r = {"label": inp["label"], "date": inp["date"], "hour": inp["hour"], "coin": c, "in_universe": c in inp["universe"],
+                 "version": (rec.get("version") or {}).get("tag")}
+            r.update({k: f.get(k) for k in HOURLY_FIELDS})
+            q = (snap.get("quotes") or {}).get(c)
+            r["snap_bid"], r["snap_ask"] = (q or [None, None])
+            for h in A.HOURLY_HORIZONS:
+                ab, rel = A.fwd_rel_h(pxh, c, inp["t_end"], h)
+                r[f"fwd_{h}h"], r[f"fwd_rel_{h}h"] = ab, rel
+            out.append(r)
+    return out
+
+
+def write_csv(path, data):
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=list(data[0].keys()))
+        w.writeheader()
+        w.writerows(data)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=ROOT)
     ap.add_argument("--out", default=os.path.join(ROOT, "build", "dataset"))
     ap.add_argument("--parquet", action="store_true")
+    ap.add_argument("--hourly", action="store_true", help="hodinový panel (hodina × coin) místo denního")
     a = ap.parse_args()
-    data = rows(a.repo)
+    data = hourly_rows(a.repo) if a.hourly else rows(a.repo)
+    name = "panel_hourly" if a.hourly else "panel"
     os.makedirs(a.out, exist_ok=True)
     if not data:
         print("žádná data")
         return
-    cols = list(data[0].keys())
-    p = os.path.join(a.out, "panel.csv")
-    with open(p, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=cols)
-        w.writeheader()
-        w.writerows(data)
+    p = os.path.join(a.out, f"{name}.csv")
+    write_csv(p, data)
     print(f"{len(data)} řádků -> {p}")
     if a.parquet:
         try:
@@ -79,8 +119,8 @@ def main():
             import pyarrow.parquet as pq
         except ImportError:
             raise SystemExit("pro Parquet: pip install -r requirements.txt (pyarrow)")
-        pq.write_table(pa.Table.from_pylist(data), os.path.join(a.out, "panel.parquet"))
-        print("-> panel.parquet")
+        pq.write_table(pa.Table.from_pylist(data), os.path.join(a.out, f"{name}.parquet"))
+        print(f"-> {name}.parquet")
 
 
 if __name__ == "__main__":

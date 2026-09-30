@@ -96,6 +96,35 @@
   {"id": "nahodny", "name": "Náhodný", "uses_llm": false, "question": "Baseline štěstí (seed = datum).",
    "select": {"source": "random", "n": 10}, "weight": "equal", "rebalance": "daily"}
  ],
+ "hourly": {
+  "history_hours": 840,
+  "overlap_hours": 3,
+  "max_hourly_move": 0.25,
+  "book_levels": 100,
+  "variants": [
+   {"id": "h_momentum", "name": "Hodinový momentum", "kind": "momentum", "uses_llm": false,
+    "question": "Přežije intradenní momentum náklady? (top 3 podle výnosu vs BTC za 4 h, držení min. 4 h)",
+    "n": 3, "min_hold_h": 4},
+   {"id": "h_reverze", "name": "Hodinová reverze", "kind": "reversal", "uses_llm": false,
+    "question": "Vrací se přehnané hodinové propady? (z < −2,5 σ, BTC ne pod −1 %, prodej po 3 h nebo nad open propadu)",
+    "z": -2.5, "btc_floor": -0.01, "max_positions": 3, "weight": 0.15, "max_hold_h": 3},
+   {"id": "h_breakout", "name": "Průraz s objemem", "kind": "breakout", "uses_llm": false,
+    "question": "Fungují „degen“ průrazy 24h maxima s 3× objemem? (trailing stop 3 %, max. 24 h)",
+    "vol_mult": 3, "weight": 0.20, "max_positions": 5, "trail_pct": 0.03, "max_hold_h": 24},
+   {"id": "h_kniha", "name": "Kniha objednávek", "kind": "book", "uses_llm": false,
+    "question": "Předpovídá nerovnováha knihy a agresivní nákupy příští hodiny? (nerovnováha > 0,25, nákupy > 55 %, držení 2 h)",
+    "imbalance": 0.25, "taker": 0.55, "n": 3, "weight": 0.20, "hold_h": 2},
+   {"id": "funding_kontra", "name": "Funding kontrarián", "kind": "funding", "uses_llm": false,
+    "question": "Je přeplněnost derivátů kontrariánský signál? (5 coinů s nejnižším fundingem pod 0,01 %, bez horních 20 %)",
+    "hours": [0, 8, 16], "n": 5, "max_funding": 0.0001, "exclude_top_pct": 0.2},
+   {"id": "llm_nacasovani", "name": "LLM + načasování", "kind": "llm_timing", "uses_llm": true,
+    "question": "Zlepší intradenní načasování vstup do výběru LLM? (váhy jako zaklad, nákup při hodinovém RSI < 40 nebo −1 % pod open dne, jinak ve 23 h)",
+    "source": "zaklad", "rsi_max": 40, "dip": 0.01, "force_hour": 23},
+   {"id": "seance_usa", "name": "Americká seance", "kind": "session", "uses_llm": false,
+    "question": "Vzniká výnos kryptoměn hlavně v amerických hodinách? (top 5 podle kapitalizace jen 13–21 UTC)",
+    "from_h": 13, "to_h": 21, "n": 5}
+  ]
+ },
  "benchmarks": [
   {"id": "b_btc", "name": "BTC HODL", "kind": "hodl", "coin": "BTC"},
   {"id": "b_btc_eth", "name": "50/50 BTC/ETH", "kind": "fixed", "weights": {"BTC": 0.5, "ETH": 0.5}, "rebalance": "monthly"},

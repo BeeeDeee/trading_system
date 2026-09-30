@@ -3,12 +3,26 @@
 this_hash = sha256(canonical JSON of the record without this_hash), and the record contains prev_hash and the
 sha256 of every file of the run. Changing any byte of any run breaks the chain from that point on.
 """
+import contextlib
+import fcntl
 import json
 import os
 
 from . import canon
 
 GENESIS = "0" * 64
+
+
+@contextlib.contextmanager
+def lock(repo):
+    """Serializes 'read last hash -> seal -> append' between the daily and the hourly run."""
+    os.makedirs(os.path.join(repo, "data"), exist_ok=True)
+    with open(os.path.join(repo, "data", ".chain.lock"), "w") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(f, fcntl.LOCK_UN)
 
 
 def chain_path(repo):
@@ -31,7 +45,9 @@ def last_hash(repo):
 def files_digest(run_dir, exclude=("run.json",)):
     out = {}
     for root, dirs, files in os.walk(run_dir):
-        dirs[:] = sorted(d for d in dirs if not d.startswith("failed-") and not d.startswith(".work"))
+        # failed attempts and hourly runs inside a day folder are separate records with their own digests
+        dirs[:] = sorted(d for d in dirs if not d.startswith("failed-") and not d.startswith(".work")
+                         and not (root == run_dir and d == "hourly"))
         for fn in sorted(files):
             rel = os.path.relpath(os.path.join(root, fn), run_dir)
             if rel in exclude:

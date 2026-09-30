@@ -37,12 +37,36 @@ def f(x, nd=3):
     return "   –  " if x is None else f"{x:+.{nd}f}"
 
 
+def hourly(a):
+    import glob
+    from cpb import hourly as hr
+    recs = []
+    for p in sorted(glob.glob(os.path.join(a.repo, "runs", "*", "hourly", "[0-9][0-9]", "run.json"))):
+        rec = canon.read_json(p)
+        if rec["status"] not in ("ok", "warning") or (a.version and (rec.get("version") or {}).get("tag") != a.version):
+            continue
+        inp = canon.read_json(os.path.join(os.path.dirname(p), "inputs.json"))
+        recs.append((inp["date"], inp["t_end"], canon.read_json(os.path.join(os.path.dirname(p), "features.json"))))
+    pxh = A.hourly_closes(hr.load_hh(a.repo, days=100000))
+    print(f"hodinových běhů: {len(recs)}, dní: {len({r[0] for r in recs})}")
+    print(f"{'h':>3} {'signál':<16}{'dní':>5}{'běhů':>6} {'rank IC':>8} {'95% CI':>20} {'1. pol.':>8} {'2. pol.':>8}  verdikt")
+    for r in A.hourly_ic_table(recs, pxh):
+        if not r["days"]:
+            print(f"{r['h']:>3} {r['signal']:<16}{0:>5}   (málo dat)")
+            continue
+        print(f"{r['h']:>3} {r['signal']:<16}{r['days']:>5}{r['runs']:>6} {f(r['ic']):>8} [{f(r['ci'][0])},{f(r['ci'][1])}] "
+              f"{f(r['first_half']):>8} {f(r['second_half']):>8}  {'EDGE' if r['edge'] else 'nelze odlišit od šumu'}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=ROOT)
     ap.add_argument("--version")
     ap.add_argument("--model")
+    ap.add_argument("--hourly", action="store_true", help="rank IC hodinových signálů (kniha, agresivní nákupy, funding, …)")
     a = ap.parse_args()
+    if a.hourly:
+        return hourly(a)
     cfg = canon.read_json(os.path.join(a.repo, "config", "config.json"))
     sd = score_days(a.repo, a.version, a.model)
     px = A.closes_by_date(pipeline.load_history(a.repo))
