@@ -11,6 +11,10 @@ import shutil
 import sys
 import tempfile
 import unittest
+import warnings
+
+# unittest turns on ResourceWarning; unclosed read-only file handles are harmless here and only flood the output
+warnings.simplefilter("ignore", ResourceWarning)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "engine"))
@@ -31,6 +35,12 @@ def sim():
                                         hourly_from=HOURLY_FROM, skip_hours=((canon.add_days(START, 27), 5),))
         _SIM.update(repo=repo, res=res, world=world, tmp=tmp)
     return _SIM
+
+
+def tearDownModule():
+    """Remove the shared simulation (100+ MB) so repeated test runs do not fill the disk."""
+    if _SIM.get("tmp"):
+        shutil.rmtree(_SIM["tmp"], ignore_errors=True)
 
 
 def run_dirs(repo, statuses=("ok", "warning", "catchup")):
