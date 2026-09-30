@@ -21,3 +21,10 @@ náhodná baseline + nulové rozdělení, rank IC s bootstrapem, pravidla vyhodn
 - Hodinový běh (`engine.py hourly`, timer HH:02): hodinové svíčky, kniha, futures sentiment; 7 hodinových variant
   (`h_momentum`, `h_reverze`, `h_breakout`, `h_kniha`, `funding_kontra`, `llm_nacasovani`, `seance_usa`), hodinové
   záznamy v hash chainu a replay, hodinový dataset a IC analýza, derivátová tabulka v denních podkladech pro LLM.
+
+## v1.0.1 (2026-09-30)
+Oprava provozu, žádná změna pravidel ani enginu (na stejných vstupech totožné výsledky).
+- `run_daily.sh`: `git add` jen pro existující složky. Dřív chybějící `corrections/` shodila celý `git add` (chyba byla
+  potlačená), takže první ostrý běh 2026-09-30 se necommitnul ani nepushnul; commitne se při dalším běhu.
+- Výpis notifikace se v journalu neopakuje dvakrát; úspěšný push se zaloguje.
+

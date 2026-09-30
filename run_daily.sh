@@ -54,7 +54,10 @@ if r["status"] == "failed":
 print(f"run {r['date']}: {s}{extra}")
 PYEOF
 }
-git add -A runs data universe corrections public 2>/dev/null
+# only paths that exist (git add aborts entirely on a missing pathspec, e.g. corrections/ before the first correction)
+for p in runs data universe corrections public; do
+  [ -e "$p" ] && { git add -A -- "$p" || echo "UPOZORNĚNÍ: git add $p selhal" >&2; }
+done
 # hourly records first, as one commit per day of hourly runs
 mapfile -t HDAYS < <(git diff --cached --name-only --diff-filter=A -- 'runs/*/hourly/*/run.json' | cut -d/ -f2 | sort -u)
 for d in "${HDAYS[@]}"; do
@@ -72,10 +75,11 @@ for i in "${!RECS[@]}"; do
 done
 git diff --cached --quiet || git commit -q -m "data $(date -u +%FT%TZ)"
 flock -u 8
-for t in 1 2 3; do git push -q origin "HEAD:$BRANCH" && break; sleep $((t * 20)); done || echo "UPOZORNĚNÍ: push selhal" >&2
+PUSHED=0
+for t in 1 2 3; do git push -q origin "HEAD:$BRANCH" && { PUSHED=1; break; }; sleep $((t * 20)); done
+[ "$PUSHED" = 1 ] && echo "push: $(git log --oneline -1)" || echo "UPOZORNĚNÍ: push selhal" >&2
 
-TEXT="$("$PY" engine/engine.py notify --date "$TODAY")"
-echo "$TEXT"
+TEXT="$("$PY" engine/engine.py notify --date "$TODAY")"   # the run itself already printed it to the journal
 if [ -n "${NTFY_TOPIC:-}" ]; then
   curl -fsS -m 20 -H "Title: $(head -n1 <<<"$TEXT")" -d "$(tail -n +2 <<<"$TEXT")" "${NTFY_SERVER:-https://ntfy.sh}/$NTFY_TOPIC" >/dev/null || true
 fi
