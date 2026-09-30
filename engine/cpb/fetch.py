@@ -173,15 +173,17 @@ class LiveMarket:
         raise FetchError(f"{coin}: no intraday data ({'; '.join(errors)})")
 
     def ticker_prices(self, pairs):
-        """Fill snapshot: last trade prices of all pairs in one call + Binance server time."""
+        """Fill snapshot: best bid/ask of all pairs in one call (bookTicker) + Binance server time.
+        Returns ({pair: (bid, ask)}, server_ms, source)."""
         q = urllib.parse.quote(json.dumps(sorted(pairs), separators=(",", ":")))
-        data, host = self._binance(f"/api/v3/ticker/price?symbols={q}", "binance_snapshot", "snapshot")
+        data, host = self._binance(f"/api/v3/ticker/bookTicker?symbols={q}", "binance_snapshot", "snapshot")
         tm, _ = self._binance("/api/v3/time", "binance_time", "server_time")
-        return {t["symbol"]: _f(t["price"]) for t in data}, int(tm["serverTime"]), "binance"
+        return {t["symbol"]: (_f(t["bidPrice"]), _f(t["askPrice"])) for t in data}, int(tm["serverTime"]), "binance"
 
     def ticker_price_fallback(self, coin):
         data = self.rec.get(f"https://www.okx.com/api/v5/market/ticker?instId={coin}-USDT", f"okx_ticker_{coin}", "snapshot", {"coin": coin})
-        return _f(data["data"][0]["last"]), "okx"
+        d = data["data"][0]
+        return (_f(d["bidPx"]), _f(d["askPx"])), "okx"
 
     # ------------------------------------------------------------------ cross-checks
     def second_close(self, coin, date):

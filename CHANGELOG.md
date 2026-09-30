@@ -15,3 +15,6 @@ náhodná baseline + nulové rozdělení, rank IC s bootstrapem, pravidla vyhodn
 - 18 variant + 5 benchmarků, 3 nákladové scénáře (čistý/stres/hrubý), stopy na 5min svíčkách, delisting, redenominace.
 - Zámek rozhodnutí před snímkem, hash chain přes běhy i opravy, replay celého pokusu bajt po bajtu.
 - Dashboard (statický HTML + JSON, CSP), systemd timer, Caddy + basic auth + fail2ban, install.sh po krocích.
+- Před nasazením doplněno: karanténa coinu s chybnými daty (den se zastaví jen kvůli drženému coinu, BTC nebo ETH),
+  plnění za bid/ask ze snímku (bookTicker) místo poslední ceny, snímek všech obchodovatelných coinů univerza,
+  nulové rozdělení počítané skutečným enginem (cpb/null.py) místo aproximace.

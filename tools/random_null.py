@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Skill or luck? For each variant a null distribution with the same activity (number of coins held, exposure,
-number of coins swapped each day), but random coins from that day's universe, equal-weighted, with base costs.
+"""Skill or luck? For each variant its own null distribution computed with the real engine (cpb/null.py):
+the same days, number of coins, weight profile, number of swaps, rules (band, stops, max hold) and costs as the
+variant, but random coins from that day's tradable universe.
 
   python tools/random_null.py [--repo DIR] [--paths 2000]
 
@@ -13,7 +14,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "engine"))
-from cpb import analytics as A, canon, pipeline, report  # noqa: E402
+from cpb import analytics as A, canon, null, pipeline, report  # noqa: E402
 
 
 def rng(r):
@@ -28,9 +29,8 @@ def main():
     cfg = canon.read_json(os.path.join(a.repo, "config", "config.json"))
     good = [r for r in report._runs(a.repo) if r["status"] in ("ok", "warning", "catchup")]
     ledgers = [canon.read_json(os.path.join(r["_dir"], "ledger.json")) for r in good]
-    universes = {r["date"]: canon.read_json(os.path.join(r["_dir"], "inputs.json"))["universe"]["coins"] for r in good}
     hist = pipeline.load_history(a.repo)
-    res = A.null_percentiles(ledgers, hist, universes, cfg, [v["id"] for v in cfg["variants"]], n_paths=a.paths)
+    res = null.null_percentiles(null.load_days(a.repo, [(r, r["_dir"]) for r in good]), hist, cfg["variants"], n_paths=a.paths)
     met = A.metrics(ledgers, cfg["start_capital"])
     print(f"{'varianta':<16}{'skutečně':>10}{'nula medián':>13}{'nula 5–95 %':>22}{'percentil':>11}{'vs BTC':>9}{'stres':>9}  edge?")
     for vid, r in res.items():

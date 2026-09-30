@@ -175,12 +175,16 @@ class SimMarket:
 
     def ticker_prices(self, pairs):
         t = self.clock.now_ms()
-        out = {p: self.w.price_at(p[:-4], t) for p in pairs}
+        out = {}
+        for p in pairs:
+            m, h = self.w.price_at(p[:-4], t), 1e-4 * (1 + COINS.index(p[:-4]) % 5)   # 1-5 bps half-spread
+            out[p] = (m * (1 - h), m * (1 + h))
         self._raw("snapshot", "snapshot", out)
         return out, t + 5, "binance"
 
     def ticker_price_fallback(self, coin):
-        return self.w.price_at(coin, self.clock.now_ms()), "okx"
+        m = self.w.price_at(coin, self.clock.now_ms())
+        return (m * 0.9999, m * 1.0001), "okx"
 
     def second_close(self, coin, date):
         return self.w.daily(coin, date)[4], "okx"

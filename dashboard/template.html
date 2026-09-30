@@ -87,7 +87,8 @@ tbody tr:hover td{background:var(--wash)}
 .legend-div span.sw{width:22px;height:10px;border-radius:3px;display:inline-block}
 .list{margin:0;padding-left:18px;font-size:13px}
 .list li{margin:3px 0}
-.kv{display:grid;grid-template-columns:max-content 1fr;gap:4px 12px;font-size:13px}
+.kv{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:4px 12px;font-size:13px}
+.kv div{min-width:0;overflow-wrap:anywhere}
 .kv div:nth-child(odd){color:var(--ink2)}
 .flag{display:inline-block;font-size:11px;padding:0 6px;border-radius:999px;border:1px solid var(--crit);color:var(--badtext);margin-left:4px}
 details summary{cursor:pointer;color:var(--ink2);font-size:13px;margin-top:8px}
@@ -265,7 +266,7 @@ function niceLogTicks(a, b){
 // ------------------------------------------------------------------ metrics table
 function metricsSection(){
   var sec = el("section", null, [el("h2",{text:"Varianty a benchmarky"}),
-    el("p",{cls:"sub", text:"Čistý = se základními náklady; hrubý = bez nákladů; stres = 40 bps poplatek a 2× slippage. Percentil = pozice vůči vlastnímu nulovému rozdělení (stejná aktivita, náhodné coiny). Klepnutím na řádek zvýrazníte portfolio v grafu."})]);
+    el("p",{cls:"sub", text:"Čistý = se základními náklady (nákup za ask, prodej za bid + slippage); hrubý = bez nákladů (střed); stres = 40 bps poplatek a 2× slippage. Percentil = pozice vůči vlastnímu nulovému rozdělení: stejná pravidla, počet coinů, výměny a náklady, ale náhodné coiny (" + ((D.null_info||{}).paths||"–") + " cest, spočteno k " + ((D.null_info||{}).as_of||"–") + "). Klepnutím na řádek zvýrazníte portfolio v grafu."})]);
   var cols = [["name","Portfolio"],["ret","Výnos"],["vs_btc","vs BTC"],["max_dd","Max DD"],["sharpe","Sharpe"],["vol","Vol"],["avg_exposure","Expozice"],["turnover","Obrat"],["costs_usd","Náklady"],["ret_gross","Hrubý"],["ret_stress","Stres"],["null","Percentil nuly"]];
   var rows = D.portfolios.filter(function(p){ return D.metrics[p.id]; }).map(function(p){ var m = D.metrics[p.id]; return {p:p, m:m, v:{name:p.name, ret:m.ret, vs_btc:m.vs_btc, max_dd:m.max_dd, sharpe:m.sharpe, vol:m.vol, avg_exposure:m.avg_exposure, turnover:m.turnover, costs_usd:m.costs_usd, ret_gross:m.ret_gross, ret_stress:m.ret_stress, null: m.null ? m.null.percentile : null}}; });
   rows.sort(function(a,b){ var x = a.v[state.sortKey], y = b.v[state.sortKey]; if (x == null) return 1; if (y == null) return -1; return (x > y ? 1 : x < y ? -1 : 0) * state.sortDir; });
@@ -444,6 +445,8 @@ function runSection(){
   add("Křížová kontrola close", Object.keys(cx).map(function(c){ return c + " " + (cx[c].diff_pct != null ? num(cx[c].diff_pct,3) + " % vs " + cx[c].other_source : "n/a"); }).join(" · "));
   add("Křížová kontrola snímku", Object.keys(sx).map(function(c){ return c + " " + (sx[c].diff_pct != null ? num(sx[c].diff_pct,3) + " % vs " + sx[c].other_source : "n/a"); }).join(" · "));
   var srcs = (lr.checks||{}).sources || {}, alt = Object.keys(srcs).filter(function(c){ return srcs[c] !== "binance"; });
+  var qu = (lr.checks||{}).quarantine || {};
+  add("Karanténa (dnes neobchodováno)", Object.keys(qu).length ? Object.keys(qu).map(function(c){ return c + ": " + qu[c][0]; }).join(" · ") : "—");
   add("Zdroje dat", "Binance" + (alt.length ? "; záložní: " + alt.map(function(c){ return c + "=" + srcs[c]; }).join(", ") : ""));
   add("Hash běhu", (lr.this_hash||"").slice(0,16) + "… (předchozí " + (lr.prev_hash||"").slice(0,12) + "…)");
   sec.appendChild(kv);

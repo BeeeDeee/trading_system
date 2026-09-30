@@ -143,7 +143,7 @@ def execute_run(repo, cfg, D, market_factory, llm_runner, clock, version, dry_ru
     status = "warning" if rc.warnings else "ok"
     rec = dict(base, status=status, mode="decision",
                timing=dict(rc.timing, finished_at=canon.ms_iso(clock.now_ms())),
-               checks={k: rc.checks.get(k) for k in ("errors", "warnings", "redenomination_suspects", "close_crosscheck", "sources")},
+               checks={k: rc.checks.get(k) for k in ("errors", "warnings", "redenomination_suspects", "quarantine", "close_crosscheck", "sources")},
                snapshot_crosscheck=canon.read_json(os.path.join(run_dir, "snapshot.json"))["crosscheck"],
                warnings=rc.warnings, catchup_days=rc.catchup_days, llm=_llm_brief(rc.llm_meta),
                summary=_summary(cfg, res["marks_after"], res["trades"]), delisted=res["delisted"],

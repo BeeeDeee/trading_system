@@ -62,7 +62,8 @@ def collect(repo, cfg, null_paths=1000, full_replay=True):
                       "equity": {pid: {scn: [round(e, 2) for _, e in S[pid][scn]] for scn in S[pid]} for pid in S},
                       "segments": _segments(good)}
     met = A.metrics(ledgers, cfg["start_capital"])
-    nulls = A.null_percentiles(ledgers, hist, universes, cfg, [v["id"] for v in cfg["variants"]], n_paths=null_paths)
+    nulls = _nulls(repo, cfg, good, hist, null_paths)
+    data["null_info"] = {"as_of": next(iter(nulls.values()), {}).get("as_of"), "paths": next(iter(nulls.values()), {}).get("paths")}
     for pid, m in met.items():
         if pid in nulls:
             m["null"] = {k: nulls[pid][k] for k in ("p05", "p50", "p95", "percentile")}
@@ -92,6 +93,24 @@ def collect(repo, cfg, null_paths=1000, full_replay=True):
                                                      "snapshot_crosscheck", "catchup_days", "summary", "version", "llm_model_pinned",
                                                      "this_hash", "prev_hash", "universe_date", "delisted")}
     return data
+
+
+def _nulls(repo, cfg, good, hist, n_paths):
+    """Engine-based null distribution. Expensive, so it is recomputed on Mondays, when missing, or during the first
+    4 weeks; otherwise the cached result (data/null_cache.json, labelled with its date) is shown."""
+    from . import null
+    cache_p = os.path.join(repo, "data", "null_cache.json")
+    cache = canon.read_json(cache_p)
+    last = good[-1]["date"]
+    n_dec = sum(1 for r in good if r["status"] != "catchup")
+    fresh = cache and cache.get("paths") == n_paths and (cache.get("as_of") == last or
+                                                         (canon.weekday(last) != 0 and n_dec > 28 and canon.days_between(cache["as_of"], last) < 7))
+    if fresh:
+        return cache["results"]
+    days = null.load_days(repo, [(r, r["_dir"]) for r in good])
+    res = null.null_percentiles(days, hist, cfg["variants"], n_paths=n_paths)
+    canon.write_json(cache_p, {"as_of": last, "paths": n_paths, "results": res})
+    return res
 
 
 def _segments(good):

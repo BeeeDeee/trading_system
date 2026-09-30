@@ -4,7 +4,9 @@ Cost scenarios share identical decisions (target weights); only execution prices
   base   = config fees and slippage
   stress = 40 bps fee, 2x slippage
   gross  = no costs
-Buy fills at snapshot * (1 + slip), sells at snapshot * (1 - slip); fees on notional.
+Buys fill at ask * (1 + slip), sells at bid * (1 - slip) (best bid/ask of the snapshot; the liquidity-tier slip
+models impact beyond the top of the book). The gross scenario trades at the mid. Positions are valued at the mid
+(snapshot) or at the daily close. Fees are charged on notional.
 """
 from . import canon
 
@@ -31,9 +33,11 @@ def equity(led, prices):
     return led["cash"] + sum(p["qty"] * prices[c] for c, p in led["positions"].items())
 
 
-def _trade(led, pid, scn, coin, side, qty, snap_px, sbps, fee_bps, reason, date, ts_ms, source, trades):
+def _trade(led, pid, scn, coin, side, qty, snap_px, sbps, fee_bps, reason, date, ts_ms, source, trades, touch=None):
+    """snap_px = reference (mid) price; touch = ask (BUY) / bid (SELL) the order executes against (default mid)."""
+    touch = snap_px if touch is None else touch
     if side == "BUY":
-        px = snap_px * (1 + sbps / 1e4)
+        px = touch * (1 + sbps / 1e4)
         notional = qty * px
         fee = notional * fee_bps / 1e4
         led["cash"] = canon.money(led["cash"] - notional - fee)
@@ -48,7 +52,7 @@ def _trade(led, pid, scn, coin, side, qty, snap_px, sbps, fee_bps, reason, date,
             led["positions"][coin] = {"qty": qty, "avg_px": px, "ref_px": snap_px, "entry_date": date, "entry_ms": ts_ms,
                                       "high": snap_px, "stop_checked_ms": ts_ms}
     else:
-        px = snap_px * (1 - sbps / 1e4)
+        px = touch * (1 - sbps / 1e4)
         notional = qty * px
         fee = notional * fee_bps / 1e4
         led["cash"] = canon.money(led["cash"] + notional - fee)
@@ -61,8 +65,10 @@ def _trade(led, pid, scn, coin, side, qty, snap_px, sbps, fee_bps, reason, date,
     led["slippage"] = canon.money(led["slippage"] + slip_usd)
     led["turnover"] = canon.money(led["turnover"] + notional)
     led["n_trades"] += 1
+    if trades is None:              # null-distribution paths do not keep a trade log
+        return
     trades.append({"portfolio": pid, "scenario": scn, "coin": coin, "side": side, "qty": qty,
-                   "snapshot_price": snap_px, "fill_price": px, "notional": canon.money(notional),
+                   "snapshot_price": snap_px, "touch_price": touch, "fill_price": px, "notional": canon.money(notional),
                    "fee_usd": canon.money(fee), "slippage_usd": canon.money(slip_usd), "slippage_bps": sbps,
                    "fee_bps": fee_bps, "reason": reason, "date": date, "price_time": canon.ms_iso(ts_ms), "source": source})
 
@@ -111,7 +117,7 @@ def force_sell(led, pid, scn, cfg, coin, px, vol, date, ts_ms, reason, extra_bps
     _trade(led, pid, scn, coin, "SELL", led["positions"][coin]["qty"], px, sb, c["fee_bps"], reason, date, ts_ms, source, trades)
 
 
-def rebalance(led, pid, scn, cfg, targets, exits, prices, vol, date, ts_ms, source, trades):
+def rebalance(led, pid, scn, cfg, targets, exits, prices, vol, date, ts_ms, source, trades, quotes=None):
     """Move the ledger towards target weights (fractions of equity at snapshot prices).
 
     targets: {coin: weight} or None (hold everything). exits: {coin: reason} to close regardless.
@@ -120,13 +126,20 @@ def rebalance(led, pid, scn, cfg, targets, exits, prices, vol, date, ts_ms, sour
     """
     c = scenario_costs(cfg, scn)
     band = cfg["rules"]["band"]
+
+    def touch(coin, side):          # gross scenario (no costs) trades at the mid
+        if not quotes or coin not in quotes or c["slip_mult"] == 0:
+            return prices[coin]
+        return quotes[coin][1] if side == "BUY" else quotes[coin][0]
+
     min_trade = cfg["costs"]["min_trade_usd"]
     E = equity(led, prices)
     fee = c["fee_bps"] / 1e4
     for coin in sorted(exits):
         if coin in led["positions"]:
             sb = slip_bps(cfg, vol.get(coin)) * c["slip_mult"]
-            _trade(led, pid, scn, coin, "SELL", led["positions"][coin]["qty"], prices[coin], sb, c["fee_bps"], exits[coin], date, ts_ms, source, trades)
+            _trade(led, pid, scn, coin, "SELL", led["positions"][coin]["qty"], prices[coin], sb, c["fee_bps"], exits[coin], date, ts_ms, source, trades,
+                   touch(coin, "SELL"))
     if targets is None:
         return
     for coin in sorted(led["positions"]):
@@ -136,9 +149,11 @@ def rebalance(led, pid, scn, cfg, targets, exits, prices, vol, date, ts_ms, sour
         sb = slip_bps(cfg, vol.get(coin)) * c["slip_mult"]
         if tgt <= 0:
             if cur >= min_trade:
-                _trade(led, pid, scn, coin, "SELL", p["qty"], prices[coin], sb, c["fee_bps"], "signal", date, ts_ms, source, trades)
+                _trade(led, pid, scn, coin, "SELL", p["qty"], prices[coin], sb, c["fee_bps"], "signal", date, ts_ms, source, trades,
+                       touch(coin, "SELL"))
         elif cur - tgt > band * E and cur - tgt >= min_trade:
-            _trade(led, pid, scn, coin, "SELL", (cur - tgt) / prices[coin], prices[coin], sb, c["fee_bps"], "rebalance", date, ts_ms, source, trades)
+            _trade(led, pid, scn, coin, "SELL", (cur - tgt) / prices[coin], prices[coin], sb, c["fee_bps"], "rebalance", date, ts_ms, source, trades,
+                   touch(coin, "SELL"))
     order = sorted(targets, key=lambda k: (-targets[k], k))
     for coin in order:
         w = targets[coin]
@@ -150,12 +165,12 @@ def rebalance(led, pid, scn, cfg, targets, exits, prices, vol, date, ts_ms, sour
         if held and diff <= band * E:
             continue
         sb = slip_bps(cfg, vol.get(coin)) * c["slip_mult"]
-        px = prices[coin] * (1 + sb / 1e4)
+        px = touch(coin, "BUY") * (1 + sb / 1e4)
         spend = min(diff, max(led["cash"], 0) / (1 + fee))        # notional at fill price
         if spend < min_trade:
             continue
         _trade(led, pid, scn, coin, "BUY", spend / px, prices[coin], sb, c["fee_bps"],
-               "rebalance" if held else "signal", date, ts_ms, source, trades)
+               "rebalance" if held else "signal", date, ts_ms, source, trades, touch(coin, "BUY"))
 
 
 def mark(led, closes):

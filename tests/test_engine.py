@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.join(ROOT, "engine"))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 
 import simulate  # noqa: E402
-from cpb import canon, chain, check, corrections, ledger as L, llm, pipeline, portfolio, replay, report, runner  # noqa: E402
+from cpb import canon, chain, check, corrections, ledger as L, llm, null, pipeline, portfolio, replay, report, runner  # noqa: E402
 
 DAYS, SKIP, LLM_FAIL, DELIST = 30, (10,), (5,), 20
 START = "2026-06-01"
@@ -192,6 +192,44 @@ class TestSimulationInvariants(unittest.TestCase):
         finally:
             shutil.rmtree(tmp)
 
+    def test_fills_at_bid_ask(self):
+        n = 0
+        for r, d in run_dirs(self.repo, ("ok", "warning")):
+            snap = canon.read_json(os.path.join(d, "snapshot.json"))
+            u = canon.read_json(os.path.join(d, "inputs.json"))["universe"]["coins"]
+            feats = canon.read_json(os.path.join(d, "features.json"))
+            self.assertTrue({c for c in u if feats.get(c)} <= set(snap["prices"]), "snímek musí mít všechny obchodovatelné coiny")
+            for t in canon.read_json(os.path.join(d, "fills.json")):
+                if t["reason"] in ("stop", "delisting"):
+                    continue
+                bid, ask = snap["quotes"][t["coin"]]
+                self.assertAlmostEqual(t["snapshot_price"], (bid + ask) / 2)
+                if t["scenario"] == "gross":
+                    self.assertAlmostEqual(t["fill_price"], t["snapshot_price"])
+                elif t["side"] == "BUY":
+                    self.assertEqual(t["touch_price"], ask)
+                    self.assertGreater(t["fill_price"], ask)
+                else:
+                    self.assertEqual(t["touch_price"], bid)
+                    self.assertLess(t["fill_price"], bid)
+                n += 1
+        self.assertGreater(n, 100)
+
+    def test_null_replicates_variant_with_actual_picks(self):
+        good = [(r, d) for r, d in run_dirs(self.repo)]
+        days = null.load_days(self.repo, good)
+        H = null.Hist(pipeline.load_history(self.repo))
+        for v in self.cfg["variants"]:
+            if v.get("stops"):
+                continue                      # stops of null paths use daily candles (documented approximation)
+            eq = null.simulate_path(v, days, H, None, self.cfg["start_capital"], replicate=True)
+            self.assertAlmostEqual(eq[days[-1]["date"]], days[-1]["close"][v["id"]], places=2, msg=v["id"])
+        res = null.null_percentiles(days, pipeline.load_history(self.repo), self.cfg["variants"][:3], n_paths=40)
+        for vid, r in res.items():
+            self.assertLessEqual(r["p05"], r["p50"])
+            self.assertLessEqual(r["p50"], r["p95"])
+            self.assertTrue(0 <= r["percentile"] <= 100)
+
     def test_public_dir_only_dashboard_files(self):
         out = tempfile.mkdtemp()
         try:
@@ -357,6 +395,45 @@ class TestFailures(unittest.TestCase):
             self.assertEqual(len(chain.entries(repo)), 2)
             st, _ = runner.execute_run(repo, cfg, START, lambda r, d: simulate.SimMarket(world, r, clock), simulate.fake_llm(world), clock, {"tag": "t"})
             self.assertEqual(st, "exists")                                              # idempotent
+        finally:
+            shutil.rmtree(tmp)
+
+    def test_quarantine_of_unheld_coin(self):
+        tmp, repo = self._repo()
+        try:
+            cfg = canon.read_json(os.path.join(repo, "config", "config.json"))
+            world = simulate.World(START, 5)
+            clock = simulate.SimClock(canon.date_ms(START) + 20 * 60_000)
+            bad = {"coin": "SOL"}
+
+            class Bad(simulate.SimMarket):
+                def daily_candles(self, coin, pair, start, end):
+                    rows, src = super().daily_candles(coin, pair, start, end)
+                    if coin == bad["coin"]:
+                        rows[-1] = rows[-1][:3] + [rows[-1][2] * 2] + rows[-1][4:]      # low > high
+                    return rows, src
+            f = lambda r, d: Bad(world, r, clock)
+            st, rec = runner.execute_run(repo, cfg, START, f, simulate.fake_llm(world), clock, {"tag": "t"})
+            self.assertEqual(st, "warning")
+            self.assertIn("SOL", rec["checks"]["quarantine"])
+            d = os.path.join(repo, "runs", START)
+            self.assertFalse([t for t in canon.read_json(os.path.join(d, "fills.json")) if t["coin"] == "SOL"])
+            self.assertIsNone(canon.read_json(os.path.join(d, "features.json"))["SOL"])
+            self.assertNotIn("SOL", pipeline.load_history(repo))                                      # bad data not stored
+            # next day SOL is fine again (re-fetched, gap filled); then a HELD coin with bad data fails the run
+            bad["coin"] = None
+            D2 = canon.add_days(START, 1)
+            clock.set(canon.date_ms(D2) + 20 * 60_000)
+            st, rec = runner.execute_run(repo, cfg, D2, f, simulate.fake_llm(world), clock, {"tag": "t"})
+            self.assertEqual(st, "ok")
+            self.assertEqual(pipeline.load_history(repo)["SOL"][-1][0], START)
+            held = pipeline.held_coins(pipeline.load_state(repo))
+            bad["coin"] = [c for c in held if c not in ("BTC", "ETH")][0]
+            D3 = canon.add_days(START, 2)
+            clock.set(canon.date_ms(D3) + 20 * 60_000)
+            st, rec = runner.execute_run(repo, cfg, D3, f, simulate.fake_llm(world), clock, {"tag": "t"})
+            self.assertEqual(st, "failed")
+            self.assertIn(bad["coin"], rec["error"])
         finally:
             shutil.rmtree(tmp)
 

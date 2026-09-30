@@ -38,13 +38,19 @@ A  fetch      univerzum (pondělí: přestavba), denní svíčky (Binance → OK
    features   indikátory → features.json + features.md (tabulka pro LLM)
 B  claude -p  rešerše + skóre → llm/scores.json + transcript; validace; při chybách 1 oprava (--resume)
 C  lock       cílové váhy všech 23 portfolií → decisions.json (locked_at)
-   snapshot   ticker Binance + čas serveru; křížová kontrola BTC + rotující coin vs CoinGecko/CoinPaprika (0,5 %)
+   snapshot   bid/ask (bookTicker) všech obchodovatelných coinů + čas serveru; křížová kontrola středu BTC + rotujícího
+              coinu vs CoinGecko/CoinPaprika (0,5 %)
    fill       stopy do času snímku, výstupy, rebalanc ve 3 nákladových scénářích
 D  report     run.json + hash chain, dashboard, commit + push, notifikace
 ```
 
 Když krok B selže (timeout, limit, nevalidní výstup, jiný model), varianty bez LLM a benchmarky běží normálně,
 LLM varianty drží pozice (stopy a max. doba držení platí dál) a běh má status `warning`. Skóre se nikdy nedoplňuje.
+
+**Karanténa coinu:** chybná data coinu, který nedrží žádné portfolio (a není to BTC ani ETH), celý den nezastaví.
+Coin jde na ten den do karantény: jeho svíčky se neuloží, nemá indikátory, nejde koupit a další běh ho stáhne znovu.
+Chybná data drženého coinu, BTC nebo ETH běh zastaví (držený coin nejde ocenit a cena se nikdy neodhaduje).
+Coin bez platné ceny ve snímku se ten den neobchoduje (jeho cílová váha zůstane v hotovosti); je-li držený, běh selže.
 
 Zmeškané dny se při dalším běhu doplní jako `catchup`: jen vypořádání (stopy, delisting) a ocenění, žádná rozhodnutí.
 Selhaný pokus se uloží do `runs/D/failed-HHMMSS/` (s raw daty a přesnou chybou), zařadí se do hash chainu a stav se
@@ -87,9 +93,10 @@ se slippage +200 bps (varování).
 ## Náklady
 
 Poplatek 10 bps/strana; slippage podle 24h objemu páru (poslední denní svíčka): ≥ $500M 5 bps, $100–500M 10 bps,
-$20–100M 25 bps, pod $20M 50 bps; stop +30 bps; delisting +200 bps. Nákup za `snapshot × (1 + slip)`, prodej
-za `snapshot × (1 − slip)`. Každé portfolio má **tři paralelní ledgery** se stejnými rozhodnutími:
-čistý (výše), **stresový** (40 bps, 2× slippage) a **hrubý** (0). Úrovně stopů se počítají z ceny snímku
+$20–100M 25 bps, pod $20M 50 bps; stop +30 bps; delisting +200 bps. Nákup za `ask × (1 + slip)`, prodej
+za `bid × (1 − slip)` (nejlepší nabídka a poptávka ve snímku; slippage podle objemu modeluje dopad nad špičku knihy).
+Ocenění je ve středu (bid + ask) / 2, resp. za denní close. Spread nad 2 % dává varování. Každé portfolio má **tři paralelní ledgery** se stejnými rozhodnutími:
+čistý (výše), **stresový** (40 bps, 2× slippage, spread jednou) a **hrubý** (0, plnění ve středu). Úrovně stopů se počítají z ceny snímku
 (před náklady), takže jsou ve všech scénářích stejné.
 
 ## Struktura
@@ -198,11 +205,11 @@ python tools/simulate.py --days 60           # syntetický trh přes skutečný 
 
 ## Známá omezení
 
-- **Plnění** je za snímek posledního obchodu (±slippage), bez modelu hloubky knihy; u malých coinů to může být optimistické (proto stresový scénář).
+- **Plnění** je za nejlepší bid/ask ± slippage podle objemu, bez skutečné hloubky knihy (na špičce bývá u menších coinů jen pár set dolarů); proto stresový scénář.
 - **Stopy** se vyhodnocují na 5min svíčkách (ne tick po ticku); v rámci svíčky se předpokládá nejhorší pořadí (nejdřív stop, pak nové maximum). Pětiminutovka, ve které proběhl nákup, se nepočítá.
-- **Nulové rozdělení** (dashboard i `random_null.py`) je aproximace: stejný počet coinů, expozice a počet výměn, rovné váhy, výnosy close-to-close mezi běhy, náklady paušálně. Není to plná simulace pásma rebalancu.
+- **Nulové rozdělení** (`engine/cpb/null.py`) běží skutečným účetním enginem: stejné dny, počet coinů, profil vah, počet výměn, pásmo rebalancu, max. držení, blokace a náklady (bid/ask snímku) jako varianta, jen náhodné coiny. Se skutečnými volbami varianty reprodukuje její výnos na cent (test). Jediná aproximace: stopy náhodných pozic se kontrolují na denních svíčkách (5min svíčky se ukládají jen pro coiny skutečné varianty `stop`). Dashboard ho přepočítává v pondělí (a denně první 4 týdny) s 1000 cestami, jinak ukazuje uložený výsledek s datem (`data/null_cache.json`).
 - **Rank IC** používá close předchozího dne (informace, kterou mělo rozhodnutí), ne cenu plnění (~1 h později).
-- Při chybě dat jednoho coinu se zastaví celý den (záměr: nikdy neobchodovat na špatných datech).
+- Den se zastaví jen při chybě dat drženého coinu, BTC nebo ETH; ostatní coiny jdou do karantény.
 - 18 korelovaných variant za 8–12 týdnů má malou statistickou sílu; hlavní síla je v IC (20 coinů × dny).
 - Data v gitu rostou cca 0,3–1,5 MB/den (raw odpovědi, inputs.json).
 - Kalibrace a IC mají smysl až po ~20 dnech s uzavřeným 7denním oknem.

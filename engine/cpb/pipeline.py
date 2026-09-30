@@ -125,9 +125,9 @@ def execute(cfg, state, hist, decisions, snapshot, intraday_c, asof, D):
                 L.apply_stops(led, pid, scn, cfg, stops[pid], intraday_c["bars"], vol, D, D, trades, intraday_c["source"])
             stopped = before - set(led["positions"])
             targets = dec["targets"]
-            if targets is not None:
-                targets = {c: w for c, w in targets.items() if c not in stopped and c not in led["blocked"]}
-            L.rebalance(led, pid, scn, cfg, targets, dec["exits"], px, vol, D, ts, src, trades)
+            if targets is not None:        # no valid quote today -> not traded (its weight stays in cash)
+                targets = {c: w for c, w in targets.items() if c not in stopped and c not in led["blocked"] and c in px}
+            L.rebalance(led, pid, scn, cfg, targets, dec["exits"], px, vol, D, ts, src, trades, snapshot.get("quotes"))
             for c, reason in dec["exits"].items():
                 if reason == "max_hold":
                     led["blocked"][c] = D
@@ -204,14 +204,20 @@ def pair_of(cfg, u, coin, extra_pairs):
 
 
 def fetch_market(rc, state, hist, u, mode):
-    """Fetch, check and cross-check daily data. Returns inputs for phase_a."""
+    """Fetch, check and cross-check daily data. Returns inputs for phase_a.
+
+    Bad data of a coin that nobody holds (and that is not BTC/ETH) puts only that coin into QUARANTINE for the day:
+    its candles are not stored, it has no indicators, it cannot be bought and the next run fetches it again.
+    Bad data of a held coin, BTC or ETH fails the whole run (it cannot be valued; prices are never estimated)."""
     cfg, D, asof = rc.cfg, rc.D, rc.asof
     held = held_coins(state)
+    critical = set(held) | {cfg["btc"], "ETH"}
     coins = sorted(set(u["coins"]) | set(held) | {cfg["btc"], "ETH"})
     pairs = {c: pair_of(cfg, u, c, state.get("pairs", {})) for c in coins}
     status_pairs = rc.market.exchange_status(sorted(pairs.values()))
     status = {c: status_pairs.get(pairs[c], "MISSING") for c in coins}
-    candles, sources, errors, warnings, suspects = {}, {}, [], [], []
+    candles, sources, warnings, suspects = {}, {}, [], []
+    coin_errors = {}
     confirm_cache = {}
 
     def confirm(coin, date, close):
@@ -238,27 +244,27 @@ def fetch_market(rc, state, hist, u, mode):
         try:
             rows, src = rc.market.daily_candles(c, pairs[c], start, asof)
         except FetchError as e:
-            errors.append(str(e))
+            coin_errors[c] = [str(e)]
             continue
         sources[c] = src
         if src != "binance":
             warnings.append(f"{c}: denní data ze záložního zdroje {src}")
         e, w, s = chk.check_coin(c, rows, stored, asof, cfg, confirm)
-        errors += e
         warnings += w
         if s:
             suspects.append(s)
-        candles[c] = rows
+        if e:
+            coin_errors[c] = e
+        else:
+            candles[c] = rows
     # cross-check closes: BTC + one rotating universe coin vs OKX
-    others = [c for c in u["coins"] if c != cfg["btc"]]
+    others = [c for c in u["coins"] if c != cfg["btc"] and c in candles]
     rot = others[canon.days_between("2026-01-01", D) % len(others)] if others else None
     xc = {}
     for c in [cfg["btc"], rot]:
         if not c or c not in candles:
             continue
         mine = [r for r in candles[c] if r[0] == asof]
-        if not mine:
-            continue
         res = None
         for attempt in range(2):
             try:
@@ -276,13 +282,19 @@ def fetch_market(rc, state, hist, u, mode):
         if res and "error" in res:
             warnings.append(f"křížová kontrola {c}: druhý zdroj nedostupný ({res['error']})")
         elif res and not res["ok"]:
-            errors.append(f"křížová kontrola close {c}: rozdíl {res['diff_pct']} % proti OKX")
-    rc.checks.update({"errors": errors, "warnings": warnings, "redenomination_suspects": suspects,
+            coin_errors.setdefault(c, []).append(f"křížová kontrola close {c}: rozdíl {res['diff_pct']} % proti OKX")
+            candles.pop(c, None)
+    fatal = [e for c in sorted(coin_errors) if c in critical for e in coin_errors[c]]
+    quarantine = {c: coin_errors[c] for c in sorted(coin_errors) if c not in critical}
+    for c, errs in quarantine.items():
+        status[c] = "QUARANTINE"
+        warnings.append(f"{c}: karanténa na dnešek (nedrží ho žádné portfolio): {errs[0]}")
+    rc.checks.update({"errors": fatal, "warnings": warnings, "redenomination_suspects": suspects, "quarantine": quarantine,
                       "close_crosscheck": xc, "sources": sources, "status": status,
                       "big_move_confirmations": {f"{c} {d}": v for (c, d), v in sorted(confirm_cache.items())}})
     rc.warnings += warnings
-    if errors:
-        raise FailRun("kontrola dat selhala: " + "; ".join(errors[:8]))
+    if fatal:
+        raise FailRun("kontrola dat selhala: " + "; ".join(fatal[:8]))
     return {"candles": candles, "status": status, "pairs": pairs}
 
 
@@ -384,50 +396,65 @@ def _read_scores(d):
         return None
 
 
-def take_snapshot(rc, coins, pairs, locked_ms):
+def take_snapshot(rc, coins, pairs, locked_ms, required):
+    """Best bid/ask for `coins` (all tradable universe coins + everything held or targeted).
+    A coin without a valid quote is dropped (it will not be traded today); if it is `required` (held), the run fails."""
     cfg = rc.cfg
     prs = {c: pairs.get(c, c + cfg["quote"]) for c in coins}
-    snap_src = {}
+    wide = cfg["data"]["max_spread"]
     for attempt in range(2):
-        prices_p, server_ms, src = rc.market.ticker_prices(sorted(set(prs.values())))
+        quotes_p, server_ms, src = rc.market.ticker_prices(sorted(set(prs.values())))
         fetched_ms = rc.clock.now_ms()
-        prices = {}
+        quotes, snap_src, bad = {}, {}, []
         for c in coins:
-            if prs[c] in prices_p:
-                prices[c] = prices_p[prs[c]]
-                snap_src[c] = src
-            else:
-                p, s2 = rc.market.ticker_price_fallback(c)
-                prices[c] = p
-                snap_src[c] = s2
-                rc.warnings.append(f"{c}: snímek ze záložního zdroje {s2}")
+            q, s2 = quotes_p.get(prs[c]), src
+            if not _valid_quote(q):
+                try:
+                    q, s2 = rc.market.ticker_price_fallback(c)
+                    rc.warnings.append(f"{c}: snímek ze záložního zdroje {s2}")
+                except FetchError:
+                    q = None
+            if not _valid_quote(q):
+                bad.append(c)
+                continue
+            if (q[1] - q[0]) / ((q[0] + q[1]) / 2) > wide:
+                rc.warnings.append(f"{c}: široký spread {q[0]}/{q[1]}")
+            quotes[c], snap_src[c] = [q[0], q[1]], s2
+        missing_req = sorted(set(bad) & set(required))
+        if missing_req:
+            raise FailRun("snímek bez platné ceny pro držené coiny: " + ", ".join(missing_req))
+        if bad:
+            rc.warnings.append("bez platné ceny ve snímku, dnes se neobchodují: " + ", ".join(sorted(bad)))
         if not (fetched_ms > locked_ms and server_ms > locked_ms):
             raise FailRun(f"lookahead: snímek {canon.ms_iso(fetched_ms)} / server {canon.ms_iso(server_ms)} není po zamčení {canon.ms_iso(locked_ms)}")
-        if any(p <= 0 for p in prices.values()):
-            raise FailRun("snímek obsahuje nekladnou cenu")
+        prices = {c: (q[0] + q[1]) / 2 for c, q in quotes.items()}
         # cross-check BTC + rotating coin against an aggregate reference price
-        others = [c for c in coins if c != cfg["btc"]]
+        others = [c for c in sorted(prices) if c != cfg["btc"]]
         rot = others[canon.days_between("2026-01-01", rc.D) % len(others)] if others else None
-        xc, bad = {}, []
+        xc, errs = {}, []
         for c in [cfg["btc"], rot]:
-            if not c:
+            if not c or c not in prices:
                 continue
             try:
                 ref, rsrc = rc.market.reference_price(c, rc.cg_ids.get(c))
                 r = dict(chk.crosscheck(prices[c], ref, cfg["data"]["crosscheck_tol"]), other_source=rsrc)
                 xc[c] = r
                 if not r["ok"]:
-                    bad.append(f"{c} {r['diff_pct']} % vs {rsrc}")
+                    errs.append(f"{c} {r['diff_pct']} % vs {rsrc}")
             except FetchError as e:
                 xc[c] = {"error": str(e)}
                 rc.warnings.append(f"křížová kontrola snímku {c}: referenční zdroj nedostupný")
-        if not bad:
+        if not errs:
             break
         if attempt == 1:
-            raise FailRun("křížová kontrola snímku selhala: " + ", ".join(bad))
-    return {"prices": dict(sorted(prices.items())), "fetched_ms": fetched_ms, "fetched_at": canon.ms_iso(fetched_ms),
-            "server_ms": server_ms, "server_time": canon.ms_iso(server_ms), "source": src, "sources": snap_src,
-            "locked_at": canon.ms_iso(locked_ms), "crosscheck": xc}
+            raise FailRun("křížová kontrola snímku selhala: " + ", ".join(errs))
+    return {"prices": dict(sorted(prices.items())), "quotes": dict(sorted(quotes.items())), "fetched_ms": fetched_ms,
+            "fetched_at": canon.ms_iso(fetched_ms), "server_ms": server_ms, "server_time": canon.ms_iso(server_ms),
+            "source": src, "sources": snap_src, "locked_at": canon.ms_iso(locked_ms), "crosscheck": xc, "unpriced": sorted(bad)}
+
+
+def _valid_quote(q):
+    return bool(q) and q[0] > 0 and q[1] >= q[0]
 
 
 def run_catchup(rc, d, state, hist, u):
@@ -503,15 +530,16 @@ def run_day(rc):
                "scores_sha256": canon.sha256_obj(scores) if scores else None, "llm_ok": scores is not None,
                "portfolios": decisions}
     canon.write_json(os.path.join(rc.work, "decisions.json"), dec_doc)
-    coins = needed_snapshot_coins(state, decisions)
-    snap = take_snapshot(rc, coins, fm["pairs"], locked_ms)
+    tradable = [c for c in uv["coins"] if feats.get(c) and fm["status"].get(c) == "TRADING"]
+    coins = sorted(set(needed_snapshot_coins(state, decisions)) | set(tradable))
+    snap = take_snapshot(rc, coins, fm["pairs"], locked_ms, held_coins(state))
     rc.timing["snapshot_at"] = snap["fetched_at"]
     canon.write_json(os.path.join(rc.work, "snapshot.json"), snap)
     starts_c = {c: max(s, canon.date_ms(D)) for c, s in intraday_window_start(cfg, state).items()}
     intr_c = fetch_intraday(rc, starts_c, snap["fetched_ms"] - snap["fetched_ms"] % 300_000, fm["pairs"])
     state, trades_c, marks_after = execute(cfg, state, hist, decisions, snap, intr_c, rc.asof, D)
     inp.update({"scores": scores, "first_run": first_run, "universe_full": u["coins"], "locked_ms": locked_ms,
-                "snapshot": {k: snap[k] for k in ("prices", "fetched_ms", "source")}, "intraday_c": intr_c})
+                "snapshot": {k: snap[k] for k in ("prices", "quotes", "fetched_ms", "source")}, "intraday_c": intr_c})
     canon.write_json(os.path.join(rc.work, "inputs.json"), inp)
     canon.write_json(os.path.join(rc.work, "raw_manifest.json"), rec.manifest())
     canon.write_json(os.path.join(rc.work, "fills.json"), trades_a + trades_c)
