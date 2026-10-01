@@ -169,7 +169,7 @@ step_ufw() {
 }
 
 step_timer() {
-  ask "systemd timery" "Nainstaluji cpb-daily (00:20 UTC, Persistent=true, opakování 06:20 a 12:20 jen když den chybí) a cpb-hourly (každou hodinu v HH:02, bez doplňování zmeškaných hodin) a oba zapnu." || return 0
+  ask "systemd timery" "Nainstaluji cpb-daily (06:00 pražského času, Persistent=true, opakování 10:00 a 14:00 jen když den chybí) a cpb-hourly (každou hodinu v HH:02, bez doplňování zmeškaných hodin) a oba zapnu." || return 0
   sudo install -m 644 "$HERE/cpb-daily.service" "$HERE/cpb-daily.timer" "$HERE/cpb-hourly.service" "$HERE/cpb-hourly.timer" /etc/systemd/system/
   sudo systemctl daemon-reload && sudo systemctl enable --now cpb-daily.timer cpb-hourly.timer
   systemctl list-timers 'cpb-*'
