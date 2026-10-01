@@ -1,0 +1,545 @@
+{
+ "after": {
+  "funding_kontra": {
+   "base": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "gross": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "stress": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   }
+  },
+  "h_breakout": {
+   "base": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "gross": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "stress": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   }
+  },
+  "h_kniha": {
+   "base": {
+    "cash": 7998.0,
+    "equity": 9995.93487888,
+    "exposure": 0.19987474,
+    "fees": 2.0,
+    "n_trades": 1,
+    "positions": {
+     "XRP": {
+      "avg_px": 1.4898884,
+      "entry_date": "2026-09-30",
+      "price": 1.48835,
+      "qty": 1342.3824227372,
+      "value": 1997.93487888
+     }
+    },
+    "slippage": 2.06512112,
+    "turnover": 2000.0
+   },
+   "gross": {
+    "cash": 8000.0,
+    "equity": 10000.0,
+    "exposure": 0.2,
+    "fees": 0.0,
+    "n_trades": 1,
+    "positions": {
+     "XRP": {
+      "avg_px": 1.48835,
+      "entry_date": "2026-09-30",
+      "price": 1.48835,
+      "qty": 1343.7699465851,
+      "value": 2000.0
+     }
+    },
+    "slippage": 0.0,
+    "turnover": 2000.0
+   },
+   "stress": {
+    "cash": 7992.0,
+    "equity": 9987.9409319,
+    "exposure": 0.19983508,
+    "fees": 8.0,
+    "n_trades": 1,
+    "positions": {
+     "XRP": {
+      "avg_px": 1.4913768,
+      "entry_date": "2026-09-30",
+      "price": 1.48835,
+      "qty": 1341.0427197205,
+      "value": 1995.9409319
+     }
+    },
+    "slippage": 4.0590681,
+    "turnover": 2000.0
+   }
+  },
+  "h_momentum": {
+   "base": {
+    "cash": 0.0,
+    "equity": 9963.93271114,
+    "exposure": 1.0,
+    "fees": 9.99000998,
+    "n_trades": 3,
+    "positions": {
+     "HYPE": {
+      "avg_px": 91.36785,
+      "entry_date": "2026-09-30",
+      "price": 91.135,
+      "qty": 36.4825628818,
+      "value": 3324.83836823
+     },
+     "LTC": {
+      "avg_px": 66.9269,
+      "entry_date": "2026-09-30",
+      "price": 66.755,
+      "qty": 49.8055838983,
+      "value": 3324.77175313
+     },
+     "XLM": {
+      "avg_px": 0.22666525,
+      "entry_date": "2026-09-30",
+      "price": 0.22605,
+      "qty": 14661.9004193011,
+      "value": 3314.32258978
+     }
+    },
+    "slippage": 26.07727887,
+    "turnover": 9990.00999002
+   },
+   "gross": {
+    "cash": 1e-06,
+    "equity": 10000.0,
+    "exposure": 1.0,
+    "fees": 0.0,
+    "n_trades": 3,
+    "positions": {
+     "HYPE": {
+      "avg_px": 91.135,
+      "entry_date": "2026-09-30",
+      "price": 91.135,
+      "qty": 36.57577586,
+      "value": 3333.333333
+     },
+     "LTC": {
+      "avg_px": 66.755,
+      "entry_date": "2026-09-30",
+      "price": 66.755,
+      "qty": 49.9338376601,
+      "value": 3333.333333
+     },
+     "XLM": {
+      "avg_px": 0.22605,
+      "entry_date": "2026-09-30",
+      "price": 0.22605,
+      "qty": 14746.0001459854,
+      "value": 3333.333333
+     }
+    },
+    "slippage": 0.0,
+    "turnover": 9999.999999
+   },
+   "stress": {
+    "cash": 0.0,
+    "equity": 9909.45126036,
+    "exposure": 1.0,
+    "fees": 39.84063745,
+    "n_trades": 3,
+    "positions": {
+     "HYPE": {
+      "avg_px": 91.5957,
+      "entry_date": "2026-09-30",
+      "price": 91.135,
+      "qty": 36.3918102378,
+      "value": 3316.56762602
+     },
+     "LTC": {
+      "avg_px": 67.0938,
+      "entry_date": "2026-09-30",
+      "price": 66.755,
+      "qty": 49.6816894109,
+      "value": 3316.50117663
+     },
+     "XLM": {
+      "avg_px": 0.2272305,
+      "entry_date": "2026-09-30",
+      "price": 0.22605,
+      "qty": 14494.0608613447,
+      "value": 3276.38245771
+     }
+    },
+    "slippage": 50.7081022,
+    "turnover": 9960.15936255
+   }
+  },
+  "h_reverze": {
+   "base": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "gross": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "stress": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   }
+  },
+  "llm_nacasovani": {
+   "base": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "gross": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "stress": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   }
+  },
+  "seance_usa": {
+   "base": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "gross": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "stress": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   }
+  }
+ },
+ "close": {
+  "funding_kontra": {
+   "base": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "gross": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "stress": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   }
+  },
+  "h_breakout": {
+   "base": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "gross": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "stress": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   }
+  },
+  "h_kniha": {
+   "base": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "gross": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "stress": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   }
+  },
+  "h_momentum": {
+   "base": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "gross": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "stress": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   }
+  },
+  "h_reverze": {
+   "base": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "gross": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "stress": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   }
+  },
+  "llm_nacasovani": {
+   "base": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "gross": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "stress": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   }
+  },
+  "seance_usa": {
+   "base": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "gross": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   },
+   "stress": {
+    "cash": 10000.0,
+    "equity": 10000.0,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 0,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 0.0
+   }
+  }
+ },
+ "label": "2026-09-30T22"
+}
