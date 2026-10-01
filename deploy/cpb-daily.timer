@@ -1,10 +1,12 @@
 [Unit]
-Description=crypto-paper-bot daily run 00:20 UTC (retries 06:20 and 12:20 are no-ops once the day is done)
+Description=crypto-paper-bot daily run 06:00 Europe/Prague (retries 10:00 and 14:00 are no-ops once the day is done)
 
 [Timer]
-OnCalendar=*-*-* 00:20:00 UTC
-OnCalendar=*-*-* 06:20:00 UTC
-OnCalendar=*-*-* 12:20:00 UTC
+# Prague local time: 04:00 UTC in summer, 05:00 UTC in winter (DST handled by systemd). The decision still uses the
+# daily candle closed at 00:00 UTC; the run date is the UTC date.
+OnCalendar=*-*-* 06:00:00 Europe/Prague
+OnCalendar=*-*-* 10:00:00 Europe/Prague
+OnCalendar=*-*-* 14:00:00 Europe/Prague
 Persistent=true
 AccuracySec=1min
 Unit=cpb-daily.service

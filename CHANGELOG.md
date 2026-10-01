@@ -35,3 +35,8 @@ Oprava provozu, žádná změna pravidel ani enginu.
   spustí až po připnutí (`tools/pin.py --install`), jinak běh odmítne pracovat.
 - 2026-10-01: denní běh (OK, první s Claude) se kvůli tomu nepushnul; data byla commitnutá na VPS a pushnou se ručně.
 
+## Provozní změny (bez release, mimo připnuté soubory)
+- 2026-10-01: denní běh přesunut z 00:20 UTC na 06:00 Europe/Prague (04:00/05:00 UTC), opakování 10:00 a 14:00.
+  Rozhodnutí stále vychází z denní svíčky uzavřené v 00:00 UTC; plnění proběhne o ~4–5 h později než v prvních dvou
+  dnech (30. 9. a 1. 10. v ~00:22 UTC). Hodinový běh beze změny (HH:02).
+

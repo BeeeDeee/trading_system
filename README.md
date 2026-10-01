@@ -29,7 +29,8 @@ je stejně cenný jako pozitivní.
 
 ## Denní běh (vše UTC)
 
-systemd timer `00:20` (po uzavření denní svíčky), `Persistent=true`, opakování `06:20` a `12:20` jen když den chybí.
+systemd timer v **06:00 pražského času** (04:00 UTC v létě, 05:00 UTC v zimě), `Persistent=true`, opakování v 10:00
+a 14:00 pražského času jen když den chybí. Rozhoduje se z denní svíčky uzavřené v 00:00 UTC; datum běhu je datum UTC.
 
 ```
 A  fetch      univerzum (pondělí: přestavba), denní svíčky (Binance → OKX → Coinbase → Kraken), stav párů
