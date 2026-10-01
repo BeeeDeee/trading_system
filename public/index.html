@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-QMtdiIxbj0pokeBcvk2GtY3RWEBAjFJvGJCdLU3xyXM='; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>Crypto paper bot</title>
+<style>
+:root{
+  color-scheme:light;
+  --page:#f9f9f7;--surface:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#898781;
+  --grid:#e1e0d9;--axis:#c3c2b7;--ring:rgba(11,11,11,.10);--wash:rgba(11,11,11,.04);
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--other:#c3c2b7;
+  --good:#0ca30c;--goodtext:#006300;--warn:#fab219;--crit:#d03b3b;--badtext:#b42323;
+  --dpos2:#2a78d6;--dpos1:#9ec5f4;--dmid:#f0efec;--dneg1:#f3b0af;--dneg2:#e34948;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --page:#0d0d0d;--surface:#1a1a19;--ink:#ffffff;--ink2:#c3c2b7;--muted:#898781;
+  --grid:#2c2c2a;--axis:#383835;--ring:rgba(255,255,255,.10);--wash:rgba(255,255,255,.05);
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--other:#4a4a46;
+  --goodtext:#0ca30c;--badtext:#e66767;
+  --dpos2:#3987e5;--dpos1:#1c5cab;--dmid:#383835;--dneg1:#8f3232;--dneg2:#e66767;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#0d0d0d;--surface:#1a1a19;--ink:#ffffff;--ink2:#c3c2b7;--muted:#898781;
+  --grid:#2c2c2a;--axis:#383835;--ring:rgba(255,255,255,.10);--wash:rgba(255,255,255,.05);
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--other:#4a4a46;
+  --goodtext:#0ca30c;--badtext:#e66767;
+  --dpos2:#3987e5;--dpos1:#1c5cab;--dmid:#383835;--dneg1:#8f3232;--dneg2:#e66767;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--page);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1180px;margin:0 auto;padding:0 16px 48px}
+h1{font-size:18px;margin:0;font-weight:650}
+h2{font-size:16px;margin:0 0 4px;font-weight:650}
+.sub{color:var(--ink2);font-size:13px;margin:0 0 12px}
+section{background:var(--surface);border:1px solid var(--ring);border-radius:12px;padding:16px;margin-top:16px}
+.top{position:sticky;top:0;z-index:5;background:var(--page);padding:10px 0 8px;border-bottom:1px solid var(--grid)}
+.toprow{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-weight:650;font-size:13px;border:1px solid var(--ring)}
+.pill i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.meta{color:var(--ink2);font-size:13px}
+.meta b{color:var(--ink);font-weight:600}
+.banner{background:var(--warn);color:#0b0b0b;border-radius:8px;padding:6px 10px;font-weight:650;margin-top:8px;font-size:13px}
+a{color:var(--s1)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--ring);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:transparent;color:var(--ink2);padding:5px 10px;font:inherit;font-size:13px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--wash);color:var(--ink);font-weight:650}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2);border:1px solid var(--ring);border-radius:999px;padding:2px 8px;background:transparent;cursor:pointer;font-family:inherit}
+.chip .key{width:14px;height:0;border-top:2px solid}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--ring);border-radius:8px;padding:6px 8px;font-size:12px;box-shadow:0 4px 16px rgba(0,0,0,.12);display:none;min-width:150px;z-index:3}
+.tip .row{display:flex;align-items:center;gap:6px;justify-content:space-between}
+.tip .row span:first-child{display:flex;align-items:center;gap:6px;color:var(--ink2)}
+.tip .key{width:12px;height:0;border-top:2px solid}
+.tip strong{font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--grid);text-align:right;white-space:nowrap}
+th{color:var(--ink2);font-weight:600;cursor:pointer;user-select:none;position:sticky;top:0;background:var(--surface)}
+td:first-child,th:first-child{text-align:left;position:sticky;left:0;background:var(--surface)}
+td{font-variant-numeric:tabular-nums}
+tr.hl td:first-child{box-shadow:inset 3px 0 0 var(--hl,transparent)}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--wash)}
+.pos{color:var(--goodtext)}.neg{color:var(--badtext)}
+.muted{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{border:1px solid var(--grid);border-radius:10px;padding:10px}
+.card h3{font-size:13px;margin:0 0 6px;display:flex;justify-content:space-between;gap:8px}
+.bar{display:flex;height:10px;border-radius:4px;overflow:hidden;background:var(--grid);gap:2px;margin:4px 0 6px}
+.bar span{background:var(--s1);height:100%}
+.bar span.cash{background:transparent}
+.plist{font-size:12px;color:var(--ink2);display:flex;flex-wrap:wrap;gap:2px 10px}
+.plist b{color:var(--ink);font-weight:600}
+.heat td.c{width:44px;text-align:center;border-radius:4px;border:2px solid var(--surface)}
+.heat td.note{text-align:left;white-space:normal;min-width:220px;color:var(--ink2);font-size:12px}
+.heat td.coin{font-weight:650}
+.legend-div{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--ink2);margin:6px 0}
+.legend-div span.sw{width:22px;height:10px;border-radius:3px;display:inline-block}
+.list{margin:0;padding-left:18px;font-size:13px}
+.list li{margin:3px 0}
+.kv{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:4px 12px;font-size:13px}
+.kv div{min-width:0;overflow-wrap:anywhere}
+.kv div:nth-child(odd){color:var(--ink2)}
+.flag{display:inline-block;font-size:11px;padding:0 6px;border-radius:999px;border:1px solid var(--crit);color:var(--badtext);margin-left:4px}
+details summary{cursor:pointer;color:var(--ink2);font-size:13px;margin-top:8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.two>div{min-width:0}
+@media (max-width:760px){.top{position:static}.two{grid-template-columns:1fr}th,td{padding:5px 6px}}
+.empty{color:var(--ink2);padding:24px 0;text-align:center}
+.srcs a{font-size:11px;margin-right:6px;word-break:break-all}
+</style>
+</head>
+<body>
+<div class="top"><main style="padding-bottom:0">
+  <div class="toprow">
+    <h1>Crypto paper bot</h1>
+    <span id="status" class="pill"></span>
+    <span class="meta" id="meta"></span>
+  </div>
+  <div id="banner"></div>
+</main></div>
+<main id="app"><p class="empty">Načítám…</p></main>
+
+<script>
+(function(){
+"use strict";
+var INLINE = null;
+var SLOTS = ["--s1","--s2","--s3"];
+var SCN = {base:"Čistý", stress:"Stresový", gross:"Hrubý"};
+var LENS = {trend:"Trend", mr:"Reverze", news:"Zprávy", conviction:"Přesvědčení", composite:"Composite", p_outperform_btc_7d:"P(překoná BTC)", expected_move_7d_pct:"Očekávaný pohyb"};
+var STATUS = {ok:["OK","var(--good)"], warning:["UPOZORNĚNÍ","var(--warn)"], catchup:["DOPLNĚNO","var(--warn)"], failed:["CHYBA","var(--crit)"]};
+var D, state = {scn:"base", hl:[], colorOf:{}, show:"all", sortKey:"ret", sortDir:-1, lens:"composite"};
+
+function el(tag, attrs, kids){
+  var e = document.createElement(tag);
+  if (attrs) for (var k in attrs){
+    if (k === "text") e.textContent = attrs[k];
+    else if (k === "cls") e.className = attrs[k];
+    else if (k === "style") e.setAttribute("style", attrs[k]);
+    else if (k.slice(0,2) === "on") e.addEventListener(k.slice(2), attrs[k]);
+    else e.setAttribute(k, attrs[k]);
+  }
+  (kids||[]).forEach(function(c){ if (c != null) e.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+  return e;
+}
+function svg(tag, attrs){ var e = document.createElementNS("http://www.w3.org/2000/svg", tag); for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+function pct(x, d){ if (x == null || isNaN(x)) return "–"; d = d == null ? 1 : d; return (x >= 0 ? "+" : "−") + Math.abs(x*100).toFixed(d).replace(".", ",") + " %"; }
+function pct0(x, d){ if (x == null || isNaN(x)) return "–"; d = d == null ? 0 : d; return (x*100).toFixed(d).replace(".", ",") + " %"; }
+function num(x, d){ if (x == null || isNaN(x)) return "–"; return x.toFixed(d == null ? 2 : d).replace(".", ",").replace("-", "−"); }
+function usd(x){ if (x == null) return "–"; return "$" + Math.round(x).toLocaleString("cs-CZ"); }
+function signCls(x){ return x == null ? "" : (x > 0 ? "pos" : x < 0 ? "neg" : ""); }
+function safeUrl(u){ return /^https?:\/\//i.test(u) ? u : null; }
+function pname(id){ var p = D.portfolios.find(function(p){ return p.id === id; }); return p ? p.name : id; }
+
+function load(){
+  if (INLINE) return Promise.resolve(INLINE);
+  return fetch("data.json", {cache:"no-store", credentials:"same-origin"}).then(function(r){ if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); });
+}
+
+function header(){
+  var lr = D.last_run || (D.runs && D.runs[D.runs.length-1]) || {};
+  var st = STATUS[lr.status] || ["?", "var(--muted)"];
+  var s = document.getElementById("status");
+  s.textContent = "";
+  s.appendChild(el("i", {style:"background:" + st[1]}));
+  s.appendChild(document.createTextNode(st[0]));
+  var m = document.getElementById("meta");
+  var v = lr.version || {};
+  var commit = v.code_commit;
+  var kids = [el("b",{text: lr.date || "–"}), " · verze " + (v.tag || "–") + " · model " + (lr.llm_model_pinned || "–") + " · řetězec "];
+  var ch = D.chain || {};
+  kids.push(el("span", {style:"color:" + (ch.ok ? "var(--goodtext)" : "var(--badtext)") + ";font-weight:650", text: ch.ok ? "✓ neporušen (" + ch.records + ")" : "✗ PORUŠEN"}));
+  if (commit) { kids.push(" · "); kids.push(el("a", {href: D.repo_url + "/commit/" + commit, rel:"noopener noreferrer", target:"_blank", text:"kód " + commit.slice(0,7)})); }
+  kids.push(" · "); kids.push(el("a", {href: D.repo_url + "/tree/crypto-paper-bot", rel:"noopener noreferrer", target:"_blank", text:"data"}));
+  m.textContent = ""; kids.forEach(function(k){ m.appendChild(typeof k === "string" ? document.createTextNode(k) : k); });
+  var b = document.getElementById("banner"); b.textContent = "";
+  if (D.label) b.appendChild(el("div", {cls:"banner", text: D.label}));
+  if (lr.status === "failed") b.appendChild(el("div", {cls:"banner", style:"background:var(--crit);color:#fff", text:"Poslední běh selhal: " + (lr.error || "")}));
+}
+
+// ------------------------------------------------------------------ equity chart
+function equitySection(){
+  var sec = el("section", null, [el("h2",{text:"Vývoj kapitálu"}),
+    el("p",{cls:"sub", text:"Hodnota portfolií k 00:00 UTC (hodinové varianty podle prvního hodinového běhu dne), logaritmická osa. Barevně až 3 zvýrazněná portfolia (klepnutím v legendě nebo v tabulce), BTC HODL přerušovaně, ostatní šedě."})]);
+  var ctr = el("div",{cls:"controls"});
+  var seg = el("div",{cls:"seg", role:"group", "aria-label":"Scénář nákladů"});
+  Object.keys(SCN).forEach(function(k){ seg.appendChild(el("button",{"aria-pressed": String(state.scn===k), text:SCN[k], onclick:function(){ state.scn=k; render(); }})); });
+  var seg2 = el("div",{cls:"seg", role:"group", "aria-label":"Zobrazit"});
+  [["all","Vše"],["hl","Jen zvýrazněné + benchmarky"]].forEach(function(o){ seg2.appendChild(el("button",{"aria-pressed": String(state.show===o[0]), text:o[1], onclick:function(){ state.show=o[0]; render(); }})); });
+  ctr.appendChild(seg); ctr.appendChild(seg2); sec.appendChild(ctr);
+  var chips = el("div",{cls:"chips"});
+  D.portfolios.forEach(function(p){
+    var on = state.hl.indexOf(p.id) >= 0, isBtc = p.id === "b_btc";
+    var col = on ? "var(" + state.colorOf[p.id] + ")" : (isBtc ? "var(--ink)" : "var(--other)");
+    chips.appendChild(el("button",{cls:"chip", "aria-pressed":String(on), style: on ? "border-color:" + col + ";color:var(--ink)" : "",
+      onclick:function(){ toggleHl(p.id); }}, [el("span",{cls:"key", style:"border-top-color:" + col + (isBtc ? ";border-top-style:dashed" : "")}), p.name]));
+  });
+  sec.appendChild(chips);
+  var wrap = el("div",{cls:"chart"}); sec.appendChild(wrap);
+  requestAnimationFrame(function(){ drawEquity(wrap); });
+  return sec;
+}
+function toggleHl(id){
+  var i = state.hl.indexOf(id);
+  if (i >= 0) { state.hl.splice(i,1); delete state.colorOf[id]; }
+  else {
+    if (state.hl.length >= 3) { var old = state.hl.shift(); delete state.colorOf[old]; }
+    var used = state.hl.map(function(h){ return state.colorOf[h]; });
+    state.colorOf[id] = SLOTS.find(function(s){ return used.indexOf(s) < 0; });
+    state.hl.push(id);
+  }
+  render();
+}
+function drawEquity(wrap){
+  var S = D.series, dates = S.dates, n = dates.length;
+  var W = Math.max(320, wrap.clientWidth), H = W < 600 ? 260 : 340, m = {l:52, r:12, t:10, b:28};
+  var ids = D.portfolios.map(function(p){ return p.id; }).filter(function(id){
+    return S.equity[id] && (state.show === "all" || state.hl.indexOf(id) >= 0 || id.indexOf("b_") === 0); });
+  var lo = Infinity, hi = -Infinity;
+  ids.forEach(function(id){ S.equity[id][state.scn].forEach(function(v){ if (v != null && v > 0){ lo = Math.min(lo, v); hi = Math.max(hi, v);} }); });
+  lo = Math.log(lo*0.98); hi = Math.log(hi*1.02);
+  var x = function(i){ return m.l + (n > 1 ? i/(n-1) : 0.5) * (W-m.l-m.r); };
+  var y = function(v){ return m.t + (1 - (Math.log(v)-lo)/(hi-lo)) * (H-m.t-m.b); };
+  var s = svg("svg",{viewBox:"0 0 " + W + " " + H, role:"img", "aria-label":"Vývoj kapitálu portfolií"});
+  // gridlines (log ticks)
+  var ticks = niceLogTicks(Math.exp(lo), Math.exp(hi));
+  ticks.forEach(function(t){ var yy = y(t);
+    s.appendChild(svg("line",{x1:m.l, x2:W-m.r, y1:yy, y2:yy, stroke:css("--grid"), "stroke-width":1}));
+    var tx = svg("text",{x:m.l-6, y:yy+4, "text-anchor":"end", "font-size":11, fill:css("--muted")}); tx.textContent = pct(t / D.start_capital - 1, 0); s.appendChild(tx); });
+  var step = Math.max(1, Math.ceil(n / (W < 600 ? 4 : 8)));
+  for (var i = 0; i < n; i += step){ var tx = svg("text",{x:x(i), y:H-8, "text-anchor":"middle", "font-size":11, fill:css("--muted")}); tx.textContent = dates[i].slice(5).split("-").reverse().join(". ") + "."; s.appendChild(tx); }
+  // segments (release/model change)
+  (S.segments||[]).forEach(function(sg, k){ if (k > 0 && (sg.tag !== S.segments[k-1].tag || sg.model !== S.segments[k-1].model)){
+    var xi = x(dates.indexOf(sg.date)); s.appendChild(svg("line",{x1:xi, x2:xi, y1:m.t, y2:H-m.b, stroke:css("--axis"), "stroke-dasharray":"4 3"}));
+    var t = svg("text",{x:xi+4, y:m.t+10, "font-size":10, fill:css("--muted")}); t.textContent = (sg.tag||"") + " " + (sg.model||""); s.appendChild(t); } });
+  function path(vals){ var d = "", pen = false; vals.forEach(function(v,i){ if (v == null){ pen = false; return; } d += (pen ? "L" : "M") + x(i).toFixed(1) + "," + y(v).toFixed(1); pen = true; }); return d; }
+  function lastIdx(vals){ for (var i = vals.length - 1; i >= 0; i--) if (vals[i] != null) return i; return -1; }
+  var order = ids.filter(function(id){ return state.hl.indexOf(id) < 0 && id !== "b_btc"; }).concat(ids.indexOf("b_btc") >= 0 ? ["b_btc"] : []).concat(state.hl.filter(function(h){ return ids.indexOf(h) >= 0; }));
+  order.forEach(function(id){
+    var on = state.hl.indexOf(id) >= 0, btc = id === "b_btc";
+    var col = on ? css(state.colorOf[id]) : btc ? css("--ink") : css("--other");
+    if (on) s.appendChild(svg("path",{d:path(S.equity[id][state.scn]), fill:"none", stroke:css("--surface"), "stroke-width":5, "stroke-linejoin":"round"}));
+    s.appendChild(svg("path",{d:path(S.equity[id][state.scn]), fill:"none", stroke:col, "stroke-width": on ? 2.25 : btc ? 1.75 : 1.25, "stroke-dasharray": btc && !on ? "5 4" : "", "stroke-linejoin":"round", "stroke-linecap":"round", opacity: on || btc ? 1 : 0.9}));
+  });
+  // direct labels for highlighted at the end
+  state.hl.forEach(function(id){ if (!S.equity[id]) return; var vals = S.equity[id][state.scn], k = lastIdx(vals); if (k < 0) return;
+    s.appendChild(svg("circle",{cx:x(k), cy:y(vals[k]), r:3.5, fill:css(state.colorOf[id]), stroke:css("--surface"), "stroke-width":2})); });
+  // crosshair + tooltip
+  var cross = svg("line",{y1:m.t, y2:H-m.b, stroke:css("--axis"), "stroke-width":1, visibility:"hidden"}); s.appendChild(cross);
+  var hit = svg("rect",{x:m.l, y:m.t, width:W-m.l-m.r, height:H-m.t-m.b, fill:"transparent"}); s.appendChild(hit);
+  var tip = el("div",{cls:"tip"});
+  function move(ev){
+    var r = s.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width;
+    var i = Math.max(0, Math.min(n-1, Math.round((px - m.l) / (W-m.l-m.r) * (n-1))));
+    cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("visibility","visible");
+    tip.textContent = ""; tip.appendChild(el("div",{style:"font-weight:650;margin-bottom:4px", text: dates[i] + " (" + SCN[state.scn].toLowerCase() + ")"}));
+    var show = state.hl.concat(["b_btc"]).filter(function(id, k, a){ return S.equity[id] && a.indexOf(id) === k && S.equity[id][state.scn][i] != null; });
+    show.sort(function(a,b){ return S.equity[b][state.scn][i] - S.equity[a][state.scn][i]; }).forEach(function(id){
+      var v = S.equity[id][state.scn][i], col = state.colorOf[id] ? "var(" + state.colorOf[id] + ")" : "var(--ink)";
+      tip.appendChild(el("div",{cls:"row"},[el("span",null,[el("i",{cls:"key", style:"border-top-color:" + col + (id === "b_btc" ? ";border-top-style:dashed" : "")}), pname(id)]), el("strong",{text: pct(v / D.start_capital - 1)})])); });
+    tip.style.display = "block";
+    var tx = (x(i) / W) * r.width; tip.style.left = Math.min(r.width - tip.offsetWidth, Math.max(0, tx + 12)) + "px"; tip.style.top = "8px";
+  }
+  hit.addEventListener("pointermove", move); hit.addEventListener("pointerdown", move);
+  hit.addEventListener("pointerleave", function(){ tip.style.display = "none"; cross.setAttribute("visibility","hidden"); });
+  wrap.textContent = ""; wrap.appendChild(s); wrap.appendChild(tip);
+}
+function niceLogTicks(a, b){
+  // ticks at round % returns from the start capital (log axis)
+  var c = D.start_capital, lo = a / c - 1, hi = b / c - 1, span = hi - lo;
+  var st = [0.01,0.02,0.05,0.1,0.2,0.25,0.5,1,2,5].find(function(s){ return span / s <= 6; }) || 10;
+  var out = [];
+  for (var r = Math.ceil(lo / st) * st; r <= hi + 1e-9; r += st) if (r > -1) out.push(c * (1 + r));
+  return out;
+}
+
+// ------------------------------------------------------------------ metrics table
+function metricsSection(){
+  var sec = el("section", null, [el("h2",{text:"Varianty a benchmarky"}),
+    el("p",{cls:"sub", text:"Čistý = se základními náklady (nákup za ask, prodej za bid + slippage); hrubý = bez nákladů (střed); stres = 40 bps poplatek a 2× slippage. Percentil = pozice vůči vlastnímu nulovému rozdělení: stejná pravidla, počet coinů, výměny a náklady, ale náhodné coiny (" + ((D.null_info||{}).paths||"–") + " cest, spočteno k " + ((D.null_info||{}).as_of||"–") + "). Klepnutím na řádek zvýrazníte portfolio v grafu."})]);
+  var cols = [["name","Portfolio"],["ret","Výnos"],["vs_btc","vs BTC"],["max_dd","Max DD"],["sharpe","Sharpe"],["vol","Vol"],["avg_exposure","Expozice"],["turnover","Obrat"],["costs_usd","Náklady"],["ret_gross","Hrubý"],["ret_stress","Stres"],["null","Percentil nuly"]];
+  var rows = D.portfolios.filter(function(p){ return D.metrics[p.id]; }).map(function(p){ var m = D.metrics[p.id]; return {p:p, m:m, v:{name:p.name, ret:m.ret, vs_btc:m.vs_btc, max_dd:m.max_dd, sharpe:m.sharpe, vol:m.vol, avg_exposure:m.avg_exposure, turnover:m.turnover, costs_usd:m.costs_usd, ret_gross:m.ret_gross, ret_stress:m.ret_stress, null: m.null ? m.null.percentile : null}}; });
+  rows.sort(function(a,b){ var x = a.v[state.sortKey], y = b.v[state.sortKey]; if (x == null) return 1; if (y == null) return -1; return (x > y ? 1 : x < y ? -1 : 0) * state.sortDir; });
+  var thead = el("tr"); cols.forEach(function(c){ thead.appendChild(el("th",{scope:"col", "aria-sort": state.sortKey===c[0] ? (state.sortDir>0?"ascending":"descending") : "none", text: c[1] + (state.sortKey===c[0] ? (state.sortDir>0?" ▲":" ▼") : ""), onclick:function(){ if (state.sortKey===c[0]) state.sortDir*=-1; else { state.sortKey=c[0]; state.sortDir=-1; } render(); }})); });
+  var tb = el("tbody");
+  rows.forEach(function(r){
+    var m = r.m, on = state.hl.indexOf(r.p.id) >= 0;
+    var tr = el("tr",{cls: on ? "hl" : "", style: on ? "--hl:var(" + state.colorOf[r.p.id] + ")" : "", title: r.p.question, onclick:function(){ toggleHl(r.p.id); }});
+    var tags = [r.p.kind === "benchmark" ? "benchmark" : null, r.p.kind === "hourly" ? "hodinová" : null, (r.p.kind !== "benchmark" && !r.p.uses_llm) ? "bez LLM" : null].filter(Boolean);
+    var nm = el("td",null,[r.p.name, tags.length ? el("span",{cls:"muted", text:" · " + tags.join(" · ")}) : null]);
+    tr.appendChild(nm);
+    [[m.ret,1],[m.vs_btc,1],[m.max_dd,1]].forEach(function(a){ tr.appendChild(el("td",{cls:signCls(a[0]), text:pct(a[0],a[1])})); });
+    tr.appendChild(el("td",{text:num(m.sharpe)})); tr.appendChild(el("td",{text:pct0(m.vol)})); tr.appendChild(el("td",{text:pct0(m.avg_exposure)}));
+    tr.appendChild(el("td",{text:num(m.turnover,1) + "×"})); tr.appendChild(el("td",{text:usd(m.costs_usd)}));
+    tr.appendChild(el("td",{cls:signCls(m.ret_gross), text:pct(m.ret_gross)})); tr.appendChild(el("td",{cls:signCls(m.ret_stress), text:pct(m.ret_stress)}));
+    var nl = m.null ? m.null.percentile : null;
+    tr.appendChild(el("td",{text: nl == null ? "–" : Math.round(nl) + ". " + (nl >= 95 ? "▲" : ""), title: m.null ? "nulové rozdělení 5–95 %: " + pct(m.null.p05) + " … " + pct(m.null.p95) : ""}));
+    tb.appendChild(tr);
+  });
+  sec.appendChild(el("div",{cls:"scroll"},[el("table",null,[el("thead",null,[thead]), tb])]));
+  sec.appendChild(el("p",{cls:"sub", style:"margin-top:8px", text:"Pravidla vyhodnocení (předem): varianta má edge jen nad 95. percentilem vlastní nuly A nad BTC HODL A po stresových nákladech. Při 25 variantách čekej 1–2 „výhry“ náhodou. Sharpe a volatilita se ukazují od 10 dní dat."}));
+  return sec;
+}
+
+// ------------------------------------------------------------------ positions
+function positionsSection(){
+  var sec = el("section", null, [el("h2",{text:"Dnešní pozice"}), el("p",{cls:"sub", text:"Váhy po dnešních obchodech (ceny snímku). Prázdný pruh = 100 % hotovost."})]);
+  var g = el("div",{cls:"grid"});
+  D.portfolios.forEach(function(p){
+    var ps = D.positions[p.id]; if (!ps) return;
+    var info = (D.decisions_info||{})[p.id] || {};
+    var bar = el("div",{cls:"bar", role:"img", "aria-label":"Expozice " + pct0(ps.exposure)});
+    ps.positions.forEach(function(x){ bar.appendChild(el("span",{style:"width:" + (x.weight*100).toFixed(2) + "%", title: x.coin + " " + pct0(x.weight,1)})); });
+    var list = el("div",{cls:"plist"});
+    if (!ps.positions.length) list.appendChild(el("span",{text:"100 % hotovost"}));
+    ps.positions.forEach(function(x){ list.appendChild(el("span",null,[el("b",{text:x.coin}), " " + pct0(x.weight,1) + (x.stop ? " · stop " + num(x.stop, x.stop < 1 ? 5 : 2) : "")])); });
+    if (ps.positions.length) list.appendChild(el("span",{cls:"muted", text:"hotovost " + pct0(1 - ps.exposure,1)}));
+    var note = info.hold || info.overlay;
+    if (ps.as_of) note = (note ? note + " · " : "") + "stav po hodinovém běhu " + ps.as_of.replace("T", " ") + ":02 UTC";
+    g.appendChild(el("div",{cls:"card"},[el("h3",null,[el("span",{text:p.name}), el("span",{cls:"muted", text:usd(ps.equity)})]), bar, list, note ? el("div",{cls:"muted", style:"font-size:12px;margin-top:4px", text:note}) : null]));
+  });
+  sec.appendChild(g);
+  var fills = (D.today||{}).fills || [];
+  if (fills.length){
+    var tb = el("tbody");
+    fills.forEach(function(t){ tb.appendChild(el("tr",null,[el("td",{text:pname(t.portfolio)}), el("td",{text:t.coin}), el("td",{text:t.side === "BUY" ? "nákup" : "prodej"}), el("td",{text:usd(t.notional)}), el("td",{text:num(t.fill_price, t.fill_price < 1 ? 6 : 2)}), el("td",{text:"$" + num(t.fee_usd + t.slippage_usd)}), el("td",{text:t.reason})])); });
+    sec.appendChild(el("details",null,[el("summary",{text:"Dnešní obchody (" + fills.length + ", čistý scénář)"}), el("div",{cls:"scroll"},[el("table",null,[el("thead",null,[el("tr",null,["Portfolio","Coin","Strana","Objem","Cena plnění","Náklady","Důvod"].map(function(h){ return el("th",{text:h}); }))]), tb])])]));
+  }
+  return sec;
+}
+
+// ------------------------------------------------------------------ LLM scores
+function divColor(v, lo, hi){
+  if (v == null) return "transparent";
+  var t = v / Math.max(Math.abs(lo), Math.abs(hi));
+  if (t >= 0.75) return "var(--dpos2)"; if (t >= 0.25) return "var(--dpos1)";
+  if (t <= -0.75) return "var(--dneg2)"; if (t <= -0.25) return "var(--dneg1)"; return "var(--dmid)";
+}
+function inkOn(v, lo, hi){ var t = Math.abs(v / Math.max(Math.abs(lo), Math.abs(hi))); return t >= 0.75 ? "#ffffff" : "var(--ink)"; }
+function scoresSection(){
+  var T = D.today || {}, sc = T.scores;
+  var sec = el("section", null, [el("h2",{text:"Skóre LLM (" + (T.date||"") + ")"})]);
+  if (!sc){ sec.appendChild(el("p",{cls:"sub", text:"Dnešní krok LLM selhal nebo neproběhl – LLM varianty drží pozice beze změn."})); return sec; }
+  sec.appendChild(el("p",{cls:"sub"},[el("b",{text:(sc.regime && sc.regime.label) || ""}), " – " + ((sc.regime && sc.regime.summary) || "")]));
+  var leg = el("div",{cls:"legend-div"},[el("span",{text:"záporné"})]);
+  ["--dneg2","--dneg1","--dmid","--dpos1","--dpos2"].forEach(function(v){ leg.appendChild(el("span",{cls:"sw", style:"background:var(" + v + ")"})); });
+  leg.appendChild(el("span",{text:"kladné · P(překoná BTC) středem 50 %"})); sec.appendChild(leg);
+  var cols = [["trend",-2,2],["mr",-2,2],["news",-2,2],["conv",-2,2],["composite",-7,7],["p",-0.25,0.25]];
+  var head = el("tr",null,[el("th",{text:"Coin"}), el("th",{text:"Trend"}), el("th",{text:"Rev."}), el("th",{text:"Zprávy"}), el("th",{text:"Přesv."}), el("th",{text:"Comp."}), el("th",{text:"P>BTC"}), el("th",{text:"ret7"}), el("th",{text:"Poznámka"})]);
+  var tb = el("tbody");
+  var top = (sc.top10||[]).map(function(t){ return t.coin; });
+  var coins = Object.keys(sc.coins).sort(function(a,b){ return compOf(sc.coins[b]) - compOf(sc.coins[a]); });
+  coins.forEach(function(c){
+    var s = sc.coins[c], f = (T.features||{})[c] || {};
+    var vals = {trend:s.trend, mr:s.mr, news:s.news, conv:s.conviction-3, composite:compOf(s), p:s.p_outperform_btc_7d-0.5};
+    var shown = {trend:s.trend, mr:s.mr, news:s.news, conv:s.conviction, composite:num(compOf(s),1), p:pct0(s.p_outperform_btc_7d)};
+    var tr = el("tr",null,[el("td",{cls:"coin"},[c, top.indexOf(c) >= 0 ? el("span",{cls:"muted", text:" #" + (top.indexOf(c)+1)}) : null, s.risk_flag ? el("span",{cls:"flag", text:"riziko"}) : null])]);
+    cols.forEach(function(k){ var v = vals[k[0]]; tr.appendChild(el("td",{cls:"c", style:"background:" + divColor(v,k[1],k[2]) + ";color:" + inkOn(v,k[1],k[2]), text:String(shown[k[0]]).replace("-", "−")})); });
+    tr.appendChild(el("td",{cls:signCls(f.ret7), text:pct(f.ret7)}));
+    var note = el("td",{cls:"note"},[s.note || ""]);
+    if (s.risk_reason) note.appendChild(el("div",{cls:"neg", text:s.risk_reason}));
+    var srcs = el("div",{cls:"srcs"}); (s.sources||[]).forEach(function(u, i){ var su = safeUrl(u); if (su) srcs.appendChild(el("a",{href:su, rel:"noopener noreferrer nofollow", target:"_blank", text:"[" + (i+1) + "] " + (su.replace(/^https?:\/\//,"").split("/")[0])})); });
+    note.appendChild(srcs); tr.appendChild(note);
+    tb.appendChild(tr);
+  });
+  sec.appendChild(el("div",{cls:"scroll"},[el("table",{cls:"heat"},[el("thead",null,[head]), tb])]));
+  var two = el("div",{cls:"two", style:"margin-top:12px"});
+  var tl = el("ol",{cls:"list"}); (sc.top10||[]).forEach(function(t){ tl.appendChild(el("li",null,[el("b",{text:t.coin}), " – " + t.reason])); });
+  two.appendChild(el("div",null,[el("h2",{text:"Top 10"}), tl]));
+  var fv = sc.claude_volne || {}, fl = el("ul",{cls:"list"});
+  if (!(fv.positions||[]).length) fl.appendChild(el("li",{text:"100 % hotovost"}));
+  (fv.positions||[]).forEach(function(p){ fl.appendChild(el("li",null,[el("b",{text:p.coin + " " + num(p.weight_pct,0) + " %"}), " – " + p.reason, el("div",{cls:"muted", text:"Neplatí, pokud: " + p.invalidation})])); });
+  two.appendChild(el("div",null,[el("h2",{text:"Claude volně"}), el("p",{cls:"sub", text:fv.comment || ""}), fl]));
+  sec.appendChild(two);
+  if ((sc.events_7d||[]).length){ var ev = el("ul",{cls:"list"}); sc.events_7d.forEach(function(e){ ev.appendChild(el("li",null,[el("b",{text:e.date}), " " + e.title + (e.type ? " (" + e.type + ")" : "")])); });
+    sec.appendChild(el("details",null,[el("summary",{text:"Události na 7 dní"}), ev])); }
+  return sec;
+}
+function compOf(s){ return s.trend + s.news + 0.5*s.mr + (s.conviction - 3); }
+
+// ------------------------------------------------------------------ analytics
+function analyticsSection(){
+  var A = D.analytics || {}, sec = el("section", null, [el("h2",{text:"Mají pohledy LLM informaci?"}),
+    el("p",{cls:"sub", text:"Rank IC = pořadová korelace skóre s výnosem vs BTC za 7 dní (bez BTC samotného), průměr přes dny, 95% interval blokovým bootstrapem. Edge jen když interval neobsahuje 0 a znaménko sedí v obou polovinách pokusu (≥ 20 dní)."})]);
+  var rows = (A.ic||[]).filter(function(r){ return r.h === 7 && r.days; });
+  if (!rows.length){ sec.appendChild(el("p",{cls:"empty", text:"Zatím málo dní s uzavřeným 7denním oknem (skóre dní: " + (A.score_days||0) + ")."})); return sec; }
+  var wrap = el("div",{cls:"chart"}); sec.appendChild(wrap);
+  requestAnimationFrame(function(){ drawIC(wrap, rows); });
+  var tb = el("tbody");
+  (A.ic||[]).filter(function(r){ return r.days; }).forEach(function(r){ tb.appendChild(el("tr",null,[el("td",{text:LENS[r.lens] || r.lens}), el("td",{text:r.h + " d"}), el("td",{text:r.days}), el("td",{cls:signCls(r.ic), text:num(r.ic,3)}), el("td",{text: r.ci[0] == null ? "–" : "[" + num(r.ci[0],3) + "; " + num(r.ci[1],3) + "]"}), el("td",{text:num(r.first_half,3) + " / " + num(r.second_half,3)}), el("td",{text: r.edge ? "✓ edge" : "nelze odlišit od šumu"})])); });
+  sec.appendChild(el("details",null,[el("summary",{text:"Tabulka všech horizontů (1/3/7/14 d)"}), el("div",{cls:"scroll"},[el("table",null,[el("thead",null,[el("tr",null,["Pohled","Horizont","Dní","Rank IC","95% CI","1./2. polovina","Verdikt"].map(function(h){ return el("th",{text:h}); }))]), tb])])]));
+  var two = el("div",{cls:"two", style:"margin-top:12px"});
+  var w2 = el("div",{cls:"chart"}), w3 = el("div",{cls:"chart"});
+  var seg = el("div",{cls:"seg", role:"group", "aria-label":"Pohled"});
+  ["composite","trend","news","mr","conviction"].forEach(function(k){ seg.appendChild(el("button",{"aria-pressed":String(state.lens===k), text:LENS[k], onclick:function(){ state.lens=k; render(); }})); });
+  two.appendChild(el("div",null,[el("h2",{text:"Denní rank IC (7 d) v čase"}), el("div",{cls:"controls"},[seg]), w2]));
+  var cal = (A.calibration||[])[0] || {};
+  two.appendChild(el("div",null,[el("h2",{text:"Kalibrace P(překoná BTC za 7 d)"}), el("p",{cls:"sub", text: cal.n ? "Brier " + num(cal.brier,3) + " vs " + num(cal.brier_climatology,3) + " (konstantní odhad), n = " + cal.n : "zatím bez dat"}), w3]));
+  sec.appendChild(two);
+  requestAnimationFrame(function(){ drawICSeries(w2); drawCal(w3, cal); });
+  return sec;
+}
+function drawIC(wrap, rows){
+  var W = Math.max(320, wrap.clientWidth), rh = 30, m = {l:130, r:16, t:8, b:26}, H = m.t + m.b + rows.length*rh;
+  var lo = -0.5, hi = 0.5; rows.forEach(function(r){ if (r.ci[0] != null){ lo = Math.min(lo, r.ci[0]); hi = Math.max(hi, r.ci[1]); } });
+  var x = function(v){ return m.l + (v-lo)/(hi-lo)*(W-m.l-m.r); };
+  var s = svg("svg",{viewBox:"0 0 " + W + " " + H, role:"img", "aria-label":"Rank IC pohledů s intervaly spolehlivosti"});
+  [-0.4,-0.2,0,0.2,0.4].forEach(function(t){ if (t < lo || t > hi) return; s.appendChild(svg("line",{x1:x(t), x2:x(t), y1:m.t, y2:H-m.b, stroke: t === 0 ? css("--axis") : css("--grid"), "stroke-width": t === 0 ? 1.5 : 1}));
+    var tx = svg("text",{x:x(t), y:H-8, "text-anchor":"middle", "font-size":11, fill:css("--muted")}); tx.textContent = num(t,1); s.appendChild(tx); });
+  rows.forEach(function(r, i){ var yy = m.t + i*rh + rh/2;
+    var t = svg("text",{x:m.l-8, y:yy+4, "text-anchor":"end", "font-size":12, fill:css("--ink2")}); t.textContent = LENS[r.lens] || r.lens; s.appendChild(t);
+    if (r.ci[0] != null) s.appendChild(svg("line",{x1:x(r.ci[0]), x2:x(r.ci[1]), y1:yy, y2:yy, stroke:css("--s1"), "stroke-width":2, "stroke-linecap":"round"}));
+    var c = svg("circle",{cx:x(r.ic), cy:yy, r:5, fill: r.edge ? css("--s1") : css("--surface"), stroke:css("--s1"), "stroke-width":2});
+    var ti = svg("title",{}); ti.textContent = (LENS[r.lens]||r.lens) + ": IC " + num(r.ic,3) + ", 95% CI [" + num(r.ci[0],3) + "; " + num(r.ci[1],3) + "], " + r.days + " dní"; c.appendChild(ti); s.appendChild(c); });
+  wrap.textContent = ""; wrap.appendChild(s);
+}
+function drawICSeries(wrap){
+  var r = ((D.analytics||{}).ic||[]).find(function(x){ return x.h === 7 && x.lens === state.lens; });
+  if (!r || !r.series || r.series.length < 2){ wrap.appendChild(el("p",{cls:"empty", text:"málo dat"})); return; }
+  var pts = r.series, W = Math.max(280, wrap.clientWidth), H = 200, m = {l:36, r:8, t:8, b:24};
+  var x = function(i){ return m.l + i/(pts.length-1)*(W-m.l-m.r); }, y = function(v){ return m.t + (1-(v+1)/2)*(H-m.t-m.b); };
+  var s = svg("svg",{viewBox:"0 0 " + W + " " + H, role:"img", "aria-label":"Denní rank IC v čase"});
+  [-1,-0.5,0,0.5,1].forEach(function(t){ s.appendChild(svg("line",{x1:m.l, x2:W-m.r, y1:y(t), y2:y(t), stroke: t === 0 ? css("--axis") : css("--grid")}));
+    var tx = svg("text",{x:m.l-4, y:y(t)+4, "text-anchor":"end", "font-size":10, fill:css("--muted")}); tx.textContent = num(t,1); s.appendChild(tx); });
+  s.appendChild(svg("path",{d: pts.map(function(p,i){ return (i?"L":"M") + x(i).toFixed(1) + "," + y(p[1]).toFixed(1); }).join(""), fill:"none", stroke:css("--s1"), "stroke-width":2, "stroke-linejoin":"round"}));
+  var cum = 0; s.appendChild(svg("path",{d: pts.map(function(p,i){ cum += p[1]; return (i?"L":"M") + x(i).toFixed(1) + "," + y(cum/(i+1)).toFixed(1); }).join(""), fill:"none", stroke:css("--ink"), "stroke-width":1.5, "stroke-dasharray":"4 3"}));
+  var tA = svg("text",{x:W-m.r, y:H-6, "text-anchor":"end", "font-size":10, fill:css("--muted")}); tA.textContent = "plná: denní IC · čárkovaná: průběžný průměr"; s.appendChild(tA);
+  wrap.textContent = ""; wrap.appendChild(s);
+}
+function drawCal(wrap, cal){
+  if (!cal.n){ return; }
+  var W = Math.max(260, Math.min(wrap.clientWidth, 420)), H = W, m = {l:36, r:10, t:10, b:30};
+  var x = function(v){ return m.l + v*(W-m.l-m.r); }, y = function(v){ return m.t + (1-v)*(H-m.t-m.b); };
+  var s = svg("svg",{viewBox:"0 0 " + W + " " + H, role:"img", "aria-label":"Kalibrační graf", style:"max-width:" + W + "px"});
+  [0,0.25,0.5,0.75,1].forEach(function(t){ s.appendChild(svg("line",{x1:x(t), x2:x(t), y1:m.t, y2:H-m.b, stroke:css("--grid")})); s.appendChild(svg("line",{x1:m.l, x2:W-m.r, y1:y(t), y2:y(t), stroke:css("--grid")}));
+    var a = svg("text",{x:x(t), y:H-12, "text-anchor":"middle", "font-size":10, fill:css("--muted")}); a.textContent = pct0(t); s.appendChild(a);
+    var b = svg("text",{x:m.l-4, y:y(t)+4, "text-anchor":"end", "font-size":10, fill:css("--muted")}); b.textContent = pct0(t); s.appendChild(b); });
+  s.appendChild(svg("line",{x1:x(0), y1:y(0), x2:x(1), y2:y(1), stroke:css("--axis"), "stroke-dasharray":"4 3"}));
+  var mx = Math.max.apply(null, cal.bins.map(function(b){ return b.n; }));
+  cal.bins.forEach(function(b){ var c = svg("circle",{cx:x(b.p_mean), cy:y(b.freq), r: 4 + 6*Math.sqrt(b.n/mx), fill:css("--s1"), stroke:css("--surface"), "stroke-width":2});
+    var t = svg("title",{}); t.textContent = "odhad " + pct0(b.p_mean) + " → skutečnost " + pct0(b.freq) + " (n = " + b.n + ")"; c.appendChild(t); s.appendChild(c); });
+  var lx = svg("text",{x:(m.l+W-m.r)/2, y:H-1, "text-anchor":"middle", "font-size":10, fill:css("--ink2")}); lx.textContent = "odhad LLM → podíl coinů, které BTC překonaly"; s.appendChild(lx);
+  wrap.textContent = ""; wrap.appendChild(s);
+}
+
+// ------------------------------------------------------------------ run detail
+function runSection(){
+  var lr = D.last_run || {}, sec = el("section", null, [el("h2",{text:"Detail běhu " + (lr.date||"")})]);
+  var t = lr.timing || {}, l = lr.llm || {}, s = lr.summary || {};
+  var kv = el("div",{cls:"kv"});
+  function add(k, v){ kv.appendChild(el("div",{text:k})); kv.appendChild(el("div",{text: v == null ? "–" : String(v)})); }
+  add("Stav", (STATUS[lr.status]||["?"])[0] + (lr.error ? " – " + lr.error : ""));
+  add("Start / konec", (t.started_at||"–") + " → " + (t.finished_at||"–"));
+  add("Rozhodnutí zamčeno", t.locked_at); add("Snímek cen", t.snapshot_at + (t.locked_at && t.snapshot_at ? (t.snapshot_at > t.locked_at ? "  ✓ po zamčení" : "  ✗ PŘED zamčením") : ""));
+  add("LLM", (l.model_init||"–") + (l.model_pinned_ok ? " ✓ připnutý model" : " ✗") + " · " + (l.wall_s||0) + " s · hledání " + (l.web_search_requests==null?"–":l.web_search_requests) + " · fetch " + (l.web_fetch_requests==null?"–":l.web_fetch_requests) + (l.repaired ? " · opraveno 1×" : ""));
+  add("Obchodů (čistý)", s.n_trades_base); add("Univerzum z", lr.universe_date); add("Doplněné dny", (lr.catchup_days||[]).join(", ") || "—");
+  var cx = (lr.checks||{}).close_crosscheck || {}, sx = lr.snapshot_crosscheck || {};
+  add("Křížová kontrola close", Object.keys(cx).map(function(c){ return c + " " + (cx[c].diff_pct != null ? num(cx[c].diff_pct,3) + " % vs " + cx[c].other_source : "n/a"); }).join(" · "));
+  add("Křížová kontrola snímku", Object.keys(sx).map(function(c){ return c + " " + (sx[c].diff_pct != null ? num(sx[c].diff_pct,3) + " % vs " + sx[c].other_source : "n/a"); }).join(" · "));
+  var srcs = (lr.checks||{}).sources || {}, alt = Object.keys(srcs).filter(function(c){ return srcs[c] !== "binance"; });
+  var hr = D.hourly || {}, ht = hr.today || [];
+  add("Hodinové běhy (poslední den)", ht.length ? ht.filter(function(r){ return r.status !== "failed"; }).length + " v pořádku, " + ht.filter(function(r){ return r.status === "failed"; }).length + " chyb" + (hr.last ? " · poslední " + hr.last.label.replace("T", " ") + ":02 " + (STATUS[hr.last.status]||["?"])[0] + (hr.last.error ? " – " + hr.last.error : "") : "") : "zatím žádné");
+  var hq = {}; ht.forEach(function(r){ (r.quarantine||[]).forEach(function(c){ hq[c] = (hq[c]||0) + 1; }); });
+  if (Object.keys(hq).length) add("Hodinová karanténa", Object.keys(hq).map(function(c){ return c + " (" + hq[c] + "×)"; }).join(", "));
+  var qu = (lr.checks||{}).quarantine || {};
+  add("Karanténa (dnes neobchodováno)", Object.keys(qu).length ? Object.keys(qu).map(function(c){ return c + ": " + qu[c][0]; }).join(" · ") : "—");
+  add("Zdroje dat", "Binance" + (alt.length ? "; záložní: " + alt.map(function(c){ return c + "=" + srcs[c]; }).join(", ") : ""));
+  add("Hash běhu", (lr.this_hash||"").slice(0,16) + "… (předchozí " + (lr.prev_hash||"").slice(0,12) + "…)");
+  sec.appendChild(kv);
+  var w = lr.warnings || [];
+  if (w.length){ var ul = el("ul",{cls:"list"}); w.forEach(function(x){ ul.appendChild(el("li",{text:x})); }); sec.appendChild(el("h2",{style:"margin-top:12px", text:"Varování"})); sec.appendChild(ul); }
+  if ((D.chain||{}).problems && D.chain.problems.length){ var pl = el("ul",{cls:"list neg"}); D.chain.problems.forEach(function(x){ pl.appendChild(el("li",{text:x})); }); sec.appendChild(pl); }
+  var tb = el("tbody");
+  (D.runs||[]).slice().reverse().slice(0,30).forEach(function(r){ var st = STATUS[r.status]||["?","var(--muted)"];
+    tb.appendChild(el("tr",null,[el("td",{text:r.date}), el("td",null,[el("span",{cls:"pill", style:"font-size:11px;padding:0 6px"},[el("i",{style:"background:" + st[1]}), st[0]])]), el("td",{text:r.tag||""}), el("td",{text:r.hash}), el("td",{style:"text-align:left;white-space:normal", text: r.error || (r.warnings||[])[0] || ""})])); });
+  sec.appendChild(el("details",null,[el("summary",{text:"Historie běhů"}), el("div",{cls:"scroll"},[el("table",null,[el("thead",null,[el("tr",null,["Datum","Stav","Verze","Hash","Poznámka"].map(function(h){ return el("th",{text:h}); }))]), tb])])]));
+  sec.appendChild(el("p",{cls:"sub", style:"margin-top:10px", text: D.rules_text || ""}));
+  sec.appendChild(el("p",{cls:"sub", text:"Vygenerováno " + D.generated_at + ". Paper trading, žádné skutečné peníze."}));
+  return sec;
+}
+
+function render(){
+  var app = document.getElementById("app"); app.textContent = "";
+  header();
+  if (D.empty){ app.appendChild(el("p",{cls:"empty", text:"Zatím žádný úspěšný běh."})); app.appendChild(runSection()); return; }
+  [equitySection(), metricsSection(), positionsSection(), scoresSection(), analyticsSection(), runSection()].forEach(function(s){ app.appendChild(s); });
+}
+
+load().then(function(d){
+  D = d;
+  ["zaklad","mech_momentum","claude_volne"].forEach(function(id){ if (D.portfolios.some(function(p){ return p.id === id; })){ state.colorOf[id] = SLOTS[state.hl.length]; state.hl.push(id); } });
+  render();
+  var t; window.addEventListener("resize", function(){ clearTimeout(t); t = setTimeout(render, 200); });
+  if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+}).catch(function(e){ document.getElementById("app").textContent = "Data se nepodařilo načíst: " + e.message; });
+})();
+</script>
+</body>
+</html>
