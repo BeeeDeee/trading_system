@@ -28,3 +28,10 @@ Oprava provozu, žádná změna pravidel ani enginu (na stejných vstupech toto�
   potlačená), takže první ostrý běh 2026-09-30 se necommitnul ani nepushnul; commitne se při dalším běhu.
 - Výpis notifikace se v journalu neopakuje dvakrát; úspěšný push se zaloguje.
 
+## v1.0.2 (2026-10-01)
+Oprava provozu, žádná změna pravidel ani enginu.
+- `run_daily.sh`: když GitHub push odmítne (větev mezitím posunul release commit), bot přeskládá svoje datové commity
+  na novější stav (`git pull --rebase --autostash`) a pushne znovu; vše pod hodinovým zámkem. Nově stažený kód se
+  spustí až po připnutí (`tools/pin.py --install`), jinak běh odmítne pracovat.
+- 2026-10-01: denní běh (OK, první s Claude) se kvůli tomu nepushnul; data byla commitnutá na VPS a pushnou se ručně.
+

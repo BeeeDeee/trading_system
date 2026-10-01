@@ -74,9 +74,16 @@ for i in "${!RECS[@]}"; do
   fi
 done
 git diff --cached --quiet || git commit -q -m "data $(date -u +%FT%TZ)"
-flock -u 8
+# push (still holding the hourly lock: a rejected push is followed by a rebase that touches the work tree).
+# If the branch moved on GitHub (e.g. a release commit), replay our data commits on top of it; data and code never
+# touch the same files. New code pulled this way only runs after it is pinned (pin check), never silently.
 PUSHED=0
-for t in 1 2 3; do git push -q origin "HEAD:$BRANCH" && { PUSHED=1; break; }; sleep $((t * 20)); done
+for t in 1 2 3; do
+  git push -q origin "HEAD:$BRANCH" && { PUSHED=1; break; }
+  git pull -q --rebase --autostash origin "$BRANCH" || { git rebase --abort 2>/dev/null; echo "UPOZORNĚNÍ: rebase selhal" >&2; }
+  sleep $((t * 10))
+done
+flock -u 8
 [ "$PUSHED" = 1 ] && echo "push: $(git log --oneline -1)" || echo "UPOZORNĚNÍ: push selhal" >&2
 
 TEXT="$("$PY" engine/engine.py notify --date "$TODAY")"   # the run itself already printed it to the journal
