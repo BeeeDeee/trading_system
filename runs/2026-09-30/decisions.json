@@ -1,0 +1,272 @@
+{
+ "date": "2026-09-30",
+ "llm_ok": false,
+ "locked_at": "2026-09-30T21:34:09.019Z",
+ "locked_ms": 1790804049019,
+ "portfolios": {
+  "b_btc": {
+   "exits": {},
+   "info": {
+    "rebalance": true
+   },
+   "kind": "benchmark",
+   "targets": {
+    "BTC": 1.0
+   }
+  },
+  "b_btc_eth": {
+   "exits": {},
+   "info": {
+    "rebalance": true
+   },
+   "kind": "benchmark",
+   "targets": {
+    "BTC": 0.5,
+    "ETH": 0.5
+   }
+  },
+  "b_cash": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_ew20": {
+   "exits": {},
+   "info": {
+    "rebalance": true
+   },
+   "kind": "benchmark",
+   "targets": {
+    "ADA": 0.05,
+    "AVAX": 0.05,
+    "BCH": 0.05,
+    "BNB": 0.05,
+    "BTC": 0.05,
+    "DOGE": 0.05,
+    "ETH": 0.05,
+    "HBAR": 0.05,
+    "HYPE": 0.05,
+    "LINK": 0.05,
+    "LTC": 0.05,
+    "NEAR": 0.05,
+    "QNT": 0.05,
+    "SOL": 0.05,
+    "SUI": 0.05,
+    "TRX": 0.05,
+    "UNI": 0.05,
+    "XLM": 0.05,
+    "XRP": 0.05,
+    "ZEC": 0.05
+   }
+  },
+  "b_mcap10": {
+   "exits": {},
+   "info": {
+    "rebalance": true
+   },
+   "kind": "benchmark",
+   "targets": {
+    "BNB": 0.0429793223,
+    "BTC": 0.707667367,
+    "DOGE": 0.006196014,
+    "ETH": 0.1378369901,
+    "HYPE": 0.0084803603,
+    "LINK": 0.0045076113,
+    "SOL": 0.0291926031,
+    "TRX": 0.0135090737,
+    "XRP": 0.0395207925,
+    "ZEC": 0.0101098659
+   }
+  },
+  "bez_brany": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "btc_filtr": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "claude_volne": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "inv_vol": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "jen_mr": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "jen_trend": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "jen_zpravy": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "kontrarian": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "mech_momentum": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "QNT",
+     "NEAR",
+     "UNI",
+     "ZEC",
+     "SUI",
+     "AVAX",
+     "HBAR",
+     "LTC",
+     "LINK",
+     "XLM"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "AVAX": 0.0792712041,
+    "HBAR": 0.0473872016,
+    "LINK": 0.0349113714,
+    "LTC": 0.0473502199,
+    "NEAR": 0.2401043871,
+    "QNT": 0.25,
+    "SUI": 0.0812080354,
+    "UNI": 0.0978883081,
+    "XLM": 0.0293024659,
+    "ZEC": 0.0925768064
+   }
+  },
+  "nahodny": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ADA",
+     "AVAX",
+     "BCH",
+     "BTC",
+     "DOGE",
+     "ETH",
+     "LTC",
+     "UNI",
+     "XRP",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1,
+    "AVAX": 0.1,
+    "BCH": 0.1,
+    "BTC": 0.1,
+    "DOGE": 0.1,
+    "ETH": 0.1,
+    "LTC": 0.1,
+    "UNI": 0.1,
+    "XRP": 0.1,
+    "ZEC": 0.1
+   }
+  },
+  "pravdepodobnost": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "rovne": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "skore_vol": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "stop": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "top3": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "tydenni": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "vol_target": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "zaklad": {
+   "exits": {},
+   "info": {
+    "hold": "krok LLM selhal – pozice beze změn"
+   },
+   "kind": "variant",
+   "targets": null
+  }
+ },
+ "scores_sha256": null
+}
