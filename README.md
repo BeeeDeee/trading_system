@@ -42,6 +42,7 @@ python tools/simulate.py             # ukázková data pro dashboard
 python tools/build_dashboard.py      # dashboard/dashboard.html
 python tools/analyze.py export.json      # jsou pohledy lepší než šum? (--demo pro ukázku)
 python tools/random_null.py export.json  # je varianta lepší než náhodný výběr? (--demo)
+python tools/prereg_eval.py export.json  # PRE-REGISTROVANÉ vyhodnocení (od 2026-12-04; --demo pro test)
 ```
 
 ## Release (změna pravidel nebo enginu)
@@ -64,6 +65,10 @@ nutná, je to vždy nový release, ne úprava za běhu:
   byla zatížená lookahead biasem. Jediný platný test je dopředný (tento pokus).
 
 ## Pravidla vyhodnocení (zapsáno předem, před prvními výsledky)
+
+> **Potvrzující vyhodnocení se řídí [`PREREGISTRATION.md`](PREREGISTRATION.md)** (zapečetěno 2026-10-02, tag
+> `prereg-v1-akcie`): 3 primární hypotézy včetně mechanické kontroly `mom20`, pevné okno 2026-09-29 – 2026-11-25,
+> vyhodnocení od 2026-12-04 skriptem `tools/prereg_eval.py`. Pravidla níže zůstávají jako orientační pohled.
 
 Aby po dvou měsících nešlo vybrat vítěze zpětně (z 19 variant vždy nějaká vyhraje):
 
