@@ -230,6 +230,11 @@ Během pokusu se pravidla neplánují měnit. Když je změna nutná, je to vžd
 
 ## Pravidla vyhodnocení (zapsáno předem, před prvními výsledky)
 
+> **Potvrzující vyhodnocení se řídí [`docs/PREREGISTRATION.md`](docs/PREREGISTRATION.md)** (zapečetěno 2026-10-02, tag
+> `prereg-v1`): 3 primární hypotézy, pevné okno 2026-10-01 – 2026-11-30, vyhodnocení od 2026-12-15 skriptem
+> `tools/prereg_eval.py`. Pravidla níže zůstávají jako orientační pohled dashboardu; bootstrap na 7/14 dnech je
+> příliš benevolentní (viz pre-registrace, bod 7).
+
 1. **Pohled/skóre má edge** jen tehdy, když 95% interval spolehlivosti rank IC (7denní výnos vs BTC,
    `tools/analyze.py`, blokový bootstrap přes dny) neobsahuje 0 **a** znaménko sedí v první i druhé polovině pokusu.
 2. **Varianta má edge** jen tehdy, když je nad 95. percentilem vlastního nulového rozdělení (`tools/random_null.py`)
@@ -254,6 +259,8 @@ python tools/analyze.py [--version vX] [--model M]   # rank IC každého pohledu
 python tools/random_null.py [--paths 2000]   # percentil každé varianty ve vlastním nulovém rozdělení
 python tools/replay.py --config alt.json     # POST-HOC, in-sample
 python tools/simulate.py --days 60           # syntetický trh přes skutečný engine → build/sim/repo/public/index.html
+python tools/prereg_eval.py                  # PRE-REGISTROVANÉ vyhodnocení (od 2026-12-15); --from/--to = jen test nástroje
+python tools/power.py                        # statistická síla pravidel na syntetických datech
 ```
 
 ## Známá omezení
