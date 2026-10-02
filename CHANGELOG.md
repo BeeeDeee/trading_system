@@ -39,6 +39,13 @@ Oprava provozu, žádná změna pravidel ani enginu.
 Jen přejmenování, žádná změna pravidel: benchmark `b_btc` se zobrazuje jako „BTC HOLD“ (dřív kryptoslang „BTC HODL“),
 interní typ `hold` (engine dál přijímá i `hodl` ze starších záznamů, replay se nemění).
 
+## v1.0.4 (2026-10-02)
+Oprava zobrazení, žádná změna pravidel ani obchodů.
+- Dashboard, sloupec „vs BTC“: výnos BTC se bral z ocenění k 00:00 UTC, výnosy portfolií z ocenění po dnešním plnění
+  (~04:00 UTC), takže všechny hodnoty byly posunuté o pohyb BTC mezi těmito časy (2. 10.: +0,85 bodu, BTC HOLD ukazoval
+  +0,85 % místo 0). Nově se BTC oceňuje ve stejném okamžiku jako porovnávané portfolio; hodinové varianty cenou BTC
+  z posledního hodinového běhu. Test hlídá, že BTC HOLD má vs BTC přesně 0.
+
 ## Provozní změny (bez release, mimo připnuté soubory)
 - 2026-10-01: denní běh přesunut z 00:20 UTC na 06:00 Europe/Prague (04:00/05:00 UTC), opakování 10:00 a 14:00.
   Rozhodnutí stále vychází z denní svíčky uzavřené v 00:00 UTC; plnění proběhne o ~4–5 h později než v prvních dvou

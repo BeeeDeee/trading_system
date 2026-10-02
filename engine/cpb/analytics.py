@@ -37,8 +37,9 @@ def metrics(ledgers, start_capital, btc_id="b_btc", btc_ret=None):
     S = series_from_ledgers(ledgers)
     last = ledgers[-1]
     if btc_ret is None:
-        btc = S.get(btc_id, {}).get("base", [])
-        btc_ret = btc[-1][1] / start_capital - 1 if btc else None
+        # BTC valued at the SAME moment as the portfolios below (after-fill snapshot if present, else the close)
+        cur_b = (last.get("after") or last["close"]).get(btc_id)
+        btc_ret = cur_b["base"]["equity"] / start_capital - 1 if cur_b else None
     out = {}
     for pid, scns in S.items():
         eq = [e for _, e in scns["base"]]

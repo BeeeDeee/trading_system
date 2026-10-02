@@ -282,6 +282,13 @@ class TestSimulationInvariants(unittest.TestCase):
         self.assertGreater(len(rows), 1000)
         self.assertTrue(any(r["fwd_rel_4h"] is not None for r in rows))
 
+    def test_vs_btc_is_zero_for_btc_hold(self):
+        d = report.collect(self.repo, self.cfg, null_paths=20, fast=True)
+        self.assertAlmostEqual(d["metrics"]["b_btc"]["vs_btc"], 0.0, places=12)
+        for pid, m in d["metrics"].items():
+            if m.get("vs_btc") is not None and pid in {v["id"] for v in self.cfg["variants"]}:
+                self.assertAlmostEqual(m["vs_btc"], m["ret"] - d["metrics"]["b_btc"]["ret"], places=12)
+
     def test_public_dir_only_dashboard_files(self):
         out = tempfile.mkdtemp()
         try:

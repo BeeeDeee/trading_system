@@ -77,8 +77,7 @@ def collect(repo, cfg, null_paths=1000, full_replay=True, fast=False):
                 data["series"]["equity"][v["id"]] = {scn: [round(by_date[d]["close"][v["id"]][scn]["equity"], 2)
                                                            if d in by_date and v["id"] in by_date[d]["close"] else None
                                                            for d in dates] for scn in ("base", "stress", "gross")}
-        btc_ret = met.get("b_btc", {}).get("ret")
-        hmet = A.metrics(hl, cfg["start_capital"], btc_ret=btc_ret)
+        hmet = A.metrics(hl, cfg["start_capital"], btc_ret=_btc_ret_at_hour(ledgers, hgood, cfg))
         hnull = _hourly_nulls(repo, cfg, hgood, max(100, null_paths // 5), cached_only=fast)
         for vid, m in hmet.items():
             if vid in hnull:
@@ -136,6 +135,20 @@ def _hourly_runs(repo):
         r["_dir"] = os.path.dirname(p)
         out.append(r)
     return sorted(out, key=lambda r: (r["label"], r.get("timing", {}).get("started_at") or ""))
+
+
+def _btc_ret_at_hour(ledgers, hgood, cfg):
+    """BTC HOLD revalued at the BTC mid of the latest hourly run, so the hourly variants are compared with BTC at the
+    same moment they are valued (the daily ledgers are valued at a different time)."""
+    last = ledgers[-1].get("after") or ledgers[-1]["close"]
+    b = last.get("b_btc", {}).get("base")
+    if not b:
+        return None
+    px = canon.read_json(os.path.join(hgood[-1]["_dir"], "inputs.json"))["snapshot"]["prices"].get(cfg["btc"])
+    pos = b["positions"].get(cfg["btc"])
+    if px is None:
+        return None
+    return (b["cash"] + (pos["qty"] * px if pos else 0)) / cfg["start_capital"] - 1
 
 
 def _hourly_daily(hgood):
