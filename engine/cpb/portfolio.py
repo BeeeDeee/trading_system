@@ -191,7 +191,7 @@ def benchmark_plan(b, ctx):
     kind = b["kind"]
     if kind == "cash":
         return {"targets": None, "exits": {}, "info": {}}
-    if kind == "hodl":
+    if kind in ("hold", "hodl"):            # "hodl" = name used by run configs before v1.0.3 (replay)
         if last:
             return {"targets": None, "exits": {}, "info": {}}
         return {"targets": {b["coin"]: 1.0}, "exits": {}, "info": {"rebalance": True}}

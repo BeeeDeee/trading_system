@@ -5,7 +5,7 @@ variant, but random coins from that day's tradable universe.
 
   python tools/random_null.py [--repo DIR] [--paths 2000]
 
-A variant has an edge only above the 95th percentile of its own null AND above BTC HODL AND under stress costs.
+A variant has an edge only above the 95th percentile of its own null AND above BTC HOLD AND under stress costs.
 With 18 variants expect ~1 above the 95th percentile by chance.
 """
 import argparse

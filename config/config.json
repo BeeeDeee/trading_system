@@ -126,7 +126,7 @@
   ]
  },
  "benchmarks": [
-  {"id": "b_btc", "name": "BTC HODL", "kind": "hodl", "coin": "BTC"},
+  {"id": "b_btc", "name": "BTC HOLD", "kind": "hold", "coin": "BTC"},
   {"id": "b_btc_eth", "name": "50/50 BTC/ETH", "kind": "fixed", "weights": {"BTC": 0.5, "ETH": 0.5}, "rebalance": "monthly"},
   {"id": "b_mcap10", "name": "Top 10 dle kapitalizace", "kind": "mcap_top", "n": 10, "rebalance": "weekly"},
   {"id": "b_ew20", "name": "Rovné váhy univerza", "kind": "equal_universe", "rebalance": "weekly"},

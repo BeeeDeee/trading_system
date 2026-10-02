@@ -6,7 +6,7 @@ každou s virtuálními $10 000 (kotace USDT). Vedle denního běhu sbírá engi
 objednávek a sentiment z futures (funding, open interest, long/short); LLM se volá dál jen jednou denně. Žádná burza, žádné API klíče k obchodování, žádné skutečné peníze. Plánovaná délka 8–12 týdnů.
 
 Hlavní produkt je **point-in-time dataset** (ceny, indikátory, skóre LLM, rozhodnutí, plnění) a férové srovnání
-proti kontrolám: `mech_momentum` (stejná pravidla bez LLM), náhodný výběr, kontrarián, BTC HODL a rovné váhy univerza.
+proti kontrolám: `mech_momentum` (stejná pravidla bez LLM), náhodný výběr, kontrarián, BTC HOLD a rovné váhy univerza.
 Altcoiny jsou z velké části beta k BTC a schopnost LLM předpovídat krátkodobé výnosy je neprokázaná; nulový výsledek
 je stejně cenný jako pozitivní.
 
@@ -124,7 +124,7 @@ Rozhodují v hodinovém běhu z dat uzavřených do HH:00 a plní se za bid/ask 
 jestli je v signálu něco před náklady. Nerovnováha knihy se počítá z top 100 úrovní (u BTC to je jen pár dolarů od
 středu; ±1 % hloubky by vyžadovalo 5000 úrovní na coin a hodinu).
 
-Benchmarky (stejné náklady): BTC HODL, 50/50 BTC/ETH (měsíční rebalanc), top 10 univerza vážené kapitalizací
+Benchmarky (stejné náklady): BTC HOLD, 50/50 BTC/ETH (měsíční rebalanc), top 10 univerza vážené kapitalizací
 (týdně), **rovné váhy celého univerza** (týdně; odděluje výběr od alt-bety), hotovost.
 
 Po maximální době držení (`jen_zpravy`, `jen_mr`) se coin v tom běhu nekupuje zpět. Coin, který vypadne z univerza,
@@ -233,7 +233,7 @@ Během pokusu se pravidla neplánují měnit. Když je změna nutná, je to vžd
 1. **Pohled/skóre má edge** jen tehdy, když 95% interval spolehlivosti rank IC (7denní výnos vs BTC,
    `tools/analyze.py`, blokový bootstrap přes dny) neobsahuje 0 **a** znaménko sedí v první i druhé polovině pokusu.
 2. **Varianta má edge** jen tehdy, když je nad 95. percentilem vlastního nulového rozdělení (`tools/random_null.py`)
-   **a** nad BTC HODL **a** přežije stresové náklady (stresový výnos > 0 a stále nad BTC HODL).
+   **a** nad BTC HOLD **a** přežije stresové náklady (stresový výnos > 0 a stále nad BTC HOLD).
 3. **LLM přidává hodnotu** jen tehdy, když LLM varianty soustavně porážejí `mech_momentum` se stejnými pravidly
    alokace (zejména `zaklad` vs `mech_momentum` a IC composite vs IC rel30).
 4. Při 25 variantách čekej 1–2 „výhry“ náhodou; rozhoduje vzor (souhlasí pořadí `zaklad` vs `kontrarian` s IC
