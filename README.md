@@ -3,7 +3,7 @@
 Lokální výzkumný framework pro poctivé vyhodnocení systematických long-only strategií na denních
 datech amerických akcií a ETF (Sharadar, snapshot 2026-09-25).
 
-**Stav: projekt uzavřen (2026-09-27).** Sedm pre-registrovaných výzkumů, šest negativních výsledků
+**Stav: projekt uzavřen (2026-09-27), výzkum 8 doplněn 2026-10-03.** Osm pre-registrovaných výzkumů, sedm negativních výsledků
 a jedna sada praktických závěrů pro pasivní portfolio.
 
 ## Závěr v jedné větě
@@ -23,9 +23,10 @@ rozhoduje zvolený podíl akcií, nízké náklady a disciplína.
 | **5 – STR-TF** | Vydělává krátkodobý reversal s trendovým filtrem (z-skóre poklesu vůči volatilitě, vstup na open, výstup nad SMA) po nákladech? | **Ne.** Vývoj 1999–2014 Sharpe 1,02, ale DSR 0,52 (N = 993) a výběr je izolovaná špička; validace 2015–2019 **Sharpe 0,32**, 53 % zisku z let 1999–2002. Zamítnuto 4 ze 7 kritérií. |
 | **6 – STR-TF při vysokém VIX** | Vydělává reversal, pokud se vstupuje jen při VIX > 25 (Nagel 2012)? | **Ne jako strategie** (DSR 0,0006, CAGR 3 %, investováno 9 % času). **Efekt ale vypadá reálně:** brána obrací čistý výnos na obchod z −2 na +54 bps, stabilně ve všech podúsecích 2003–2026 a rostoucí s prahem. Výzkum 7 ale ukázal, že jde hlavně o odraz celého trhu po vysokém VIX. |
 | **7 – SPY + VIX rukáv** | Překoná SPY portfolio, které při VIX > 25 přesune část kapitálu do reversal pozic? | **Ne.** 2003–2026 Sharpe 0,686 vs. SPY 0,685, aktivní výnos +0,25 % p. a. při tracking erroru 6 %, při nákladech ×2 −1,3 p. b. p. a. Zisk rukávu ve výzkumu 6 byl odraz trhu po vysokém VIX, ne výběr akcií. 0 ze 4 kritérií. |
+| **8 – funding carry (krypto)** | Vydělává delta-neutrální long spot + short perp na Binance po nákladech víc než T-bill (2023–2026, pre-registrováno, jednou otevřený holdout)? | **Ne.** Ve vývoji 2020–2022 +12 % nad T-bill (Sharpe 8), na holdoutu **+0,7 % (BTC+ETH vždy) a +0,3 % (s filtrem)**, 90% interval obsahuje 0, od 2024-07 záporné. Funding se po nástupu Etheny zmenšil k úrovni T-billu (2/3 kapitálu je nominál). Rotace altcoinů neprošla ani vývojem. |
 
 Podrobně: [výzkum 1](docs/FINAL_REPORT.md) · [výzkum 2](docs/research2/REPORT.md) ·
-[výzkum 3](docs/research3/REPORT.md) · [výzkum 4](docs/research4/REPORT.md) · [výzkum 5](docs/research5/REPORT.md) · [výzkum 6](docs/research6/REPORT.md) · [výzkum 7](docs/research7/REPORT.md).
+[výzkum 3](docs/research3/REPORT.md) · [výzkum 4](docs/research4/REPORT.md) · [výzkum 5](docs/research5/REPORT.md) · [výzkum 6](docs/research6/REPORT.md) · [výzkum 7](docs/research7/REPORT.md) · [výzkum 8](docs/research8/REPORT.md).
 
 ## Co jsme se naučili
 
@@ -78,6 +79,11 @@ uv run python scripts/r5_evaluate.py sharadar_<datum>     # výzkum 5: výběr, 
 uv run python scripts/r5_final.py sharadar_<datum> validation|late
 uv run python scripts/r6_evaluate.py sharadar_<datum>     # výzkum 6: reversal při vysokém VIX
 uv run python scripts/r7_evaluate.py sharadar_<datum>     # výzkum 7: jádro SPY + VIX rukáv
+uv run python scripts/r8_download.py binance_<datum>      # výzkum 8: Binance perp/spot/funding/mark (data.binance.vision)
+uv run python scripts/r8_build_panel.py binance_<datum>   # výzkum 8: panel + T-bill (FRED)
+uv run python scripts/r8_audit.py binance_<datum>         # výzkum 8: audit dat
+uv run python scripts/r8_dev.py binance_<datum>           # výzkum 8: 17 kandidátů na vývoji
+uv run python scripts/r8_final.py binance_<datum> freeze|run   # výzkum 8: jednorázový holdout
 ```
 
 ## Kdyby se projekt otevíral znovu

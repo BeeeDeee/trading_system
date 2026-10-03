@@ -9,6 +9,7 @@ Bez výnosových statistik. Sloupec `dev_days_basis_gt5pct` jen pro vývojové o
 - FTTUSDT: medián perp/spot 1.194 (špatné párování nebo multiplikátor)
 - RAYUSDT: medián perp/spot 0.399 (špatné párování nebo multiplikátor)
 - STRAXUSDT: medián perp/spot 30.449 (špatné párování nebo multiplikátor)
+- spot končí 2026-08-31, perp 2026-09-30: chybí měsíční soubory spotu
 
 ## Souhrn
 
@@ -16,6 +17,7 @@ Bez výnosových statistik. Sloupec `dev_days_basis_gt5pct` jen pro vývojové o
 - funding události mimo celou hodinu: 0
 - dny perpu bez mark-price svíčky (likvidace pak podle poslední ceny): 1064
 - delistované (perp končí před 2026-09-30): 20
+- **poslední den dat: perp 2026-09-30, spot 2026-08-31** (musí být konec holdoutu u obou)
 
 ## Po symbolech
 

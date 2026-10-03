@@ -58,6 +58,8 @@ for p, (spot, mult) in sorted(pairs.items()):
         problems.append(f"{p}: svíčky bez fundingu")
 
 df = pl.DataFrame(rows)
+if df["spot_to"].max() < df["perp_to"].max():
+    problems.append(f"spot končí {df['spot_to'].max()}, perp {df['perp_to'].max()}: chybí měsíční soubory spotu")
 out = Path("docs/research8/DATA_AUDIT.md")
 lines = [f"# Výzkum 8 – audit dat (`{snapshot}`)", "",
          f"Perpů USDT-M v historii: {man['n_perps']}, kandidátů (kdy top 40 podle objemu, se spotem): "
@@ -70,6 +72,7 @@ lines = [f"# Výzkum 8 – audit dat (`{snapshot}`)", "",
          f"- funding události mimo celou hodinu: {int(df['funding_off_hour'].sum())}",
          f"- dny perpu bez mark-price svíčky (likvidace pak podle poslední ceny): {int(df['mark_missing_days'].sum())}",
          f"- delistované (perp končí před 2026-09-30): {int((df['perp_to'] < '2026-09-30').sum())}",
+         f"- **poslední den dat: perp {df['perp_to'].max()}, spot {df['spot_to'].max()}** (musí být konec holdoutu u obou)",
          "", "## Po symbolech", "",
          "| " + " | ".join(df.columns) + " |", "|" + "---|" * len(df.columns)]
 lines += ["| " + " | ".join(str(v) for v in r.values()) + " |" for r in rows]

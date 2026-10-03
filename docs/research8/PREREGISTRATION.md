@@ -1,6 +1,6 @@
 # Výzkum 8 – funding carry na Binance (pre-registrace)
 
-Verze 1.1 · 2026-10-03 · Stav: **pre-registrace; holdout nezpočten** (v1.0 · 2026-10-03 před stažením dat).
+Verze 1.1 · 2026-10-03 · Stav: **uzavřeno, zamítnuto** (`REPORT.md`). v1.0 · 2026-10-03 před stažením dat.
 První výzkum mimo americké akcie. Navazuje na metodiku výzkumů 1–7 (registr pokusů, trezor na holdout,
 stationary bootstrap, Deflated Sharpe). Změny po commitu tohoto dokumentu = nový pokus v registru a řádek v §10.
 
@@ -156,3 +156,5 @@ funding = výnos −náklady, test bodu v čase (perturbace budoucích řádků 
 | 2026-10-03 | Vývoj v1.0 spočten (`results/dev_v1.0.json`). Obě likvidace S0 (ETH 2020-03-13, BTC 2021-07-26) způsobily wicky **poslední ceny** perpu (ETH high 323 vs mark 139; BTC 48 168 vs spot ~40 tis.). | kontrola nejhorších dnů |
 | 2026-10-03 | **v1.1: likvidace podle mark price** (data `markPriceKlines/1d`, chybějící dny → poslední cena). Chyba modelu, ne slabý výsledek: Binance likviduje podle mark price. Všech 17 kandidátů znovu jako nové pokusy, N = 34. P2 se vybírá z v1.1. | §4.1, §4.3 |
 | 2026-10-03 | Vývoj v1.1 spočten (`results/dev.json`): **P1 = S0, P2 = `S1_L30_th0`** (BTC + ETH, hedge jen při kladném 30denním fundingu). Jediná zbylá likvidace S0 (BTC 2021-07-26) padá na den bez mark svíčky → podle pravidla v1.1 rozhodla poslední cena (wick 48 168). Pravidlo se po zjištění **nemění** (bylo by to přizpůsobení výsledku); v holdoutu se hlásí počet likvidací ve dnech bez mark svíčky. | výběr P2 podle §6 |
+| 2026-10-03 | Metodika zamčena (`0ff8e850…`), holdout otevřen jednou (commit `7644423`). **P1 i P2 nesplnily kritéria 1 a 2 → zamítnuto.** | `REPORT.md`, `results/final.json` |
+| 2026-10-03 | **Post hoc:** spot za 2026-09 na Binance při stažení ještě nebyl (perp ano), simulátor proto 2026-09-01 „delistoval“ BTC a ETH. Přepočet stejné zamčené metodiky na holdoutu do 2026-08-31 (`scripts/r8_posthoc_truncated.py`, záměrně mimo trezor). Verdikt se nemění (kritéria 1 a 2 neprošla ani tak). Audit nově kontroluje konec dat u všech zdrojů. | chyba dat; transparentnost |
