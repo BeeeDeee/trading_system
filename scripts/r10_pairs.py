@@ -51,7 +51,7 @@ print(f"eligible sleeves {len(elig)}, cross-family pairs {len(pairs)}, crisis da
 reg = registry()
 cfg = {"study": "research10", "part": "A", "rule": "max 50/50 Sharpe, both SR >= 0.3", "n_pairs": len(pairs)}
 if not reg.has(cfg):
-    reg.record("pairs", cfg, n_configs=len(pairs), note="r10 A pair scan 2001-2012")
+    reg.record("other", cfg, n_configs=len(pairs), note="r10 A pair scan 2001-2012")
 
 # --- selection window: static 50/50 for every pair (chunked), single sleeves, correlations
 Rs = np.nan_to_num(R[sel])
