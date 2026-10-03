@@ -1,6 +1,6 @@
 # Výzkum 11 – ML výběr akcií z fundamentů, insiderů a toků 13F (pre-registrace)
 
-Verze 1.0 · 2026-10-03 · Stav: **pre-registrace, nic zatím spočteno**.
+Verze 1.0 · 2026-10-03 · Stav: **uzavřeno, zamítnuto** (`REPORT.md`).
 Navazuje na výzkum 4 (panel `panel_r4`, LIQ1000, point-in-time skóre, LightGBM, nákladový model) a výzkum 10
 (závěr: přepínání z minulých výnosů nefunguje, ML potřebuje nové informace a velký počet sázek).
 Změny po commitu = nový pokus v registru a řádek v §10.
@@ -116,3 +116,5 @@ Splnění = kandidát na forward test, ne důkaz (§2).
 |---|---|---|
 | 2026-10-03 | Verze 1.0 | – |
 | 2026-10-03 | Před výpočtem: `eps_surprise` z čistého zisku / tržní kapitalizace místo EPS / ceny. Sharadar zpětně upravuje EPS na splity (AAPL 2019-Q4 eps 1,26 místo vykázaných 4,99), nepřepočtená cena k datu by tak míchala budoucí splity. | únik budoucnosti |
+| 2026-10-03 | Vývoj: všechny modely pod SPY a EW (M_ALL Sharpe 0,55 vs SPY 0,92), IC 0,017–0,022. | `results/dev.json` |
+| 2026-10-03 | Finále: metodika zamčena (`f2976620…`), trezor otevřen jednou. M_ALL 0 ze 6 kritérií (ΔSharpe vs SPY −0,25, CI [−0,67; +0,12]). | `results/final.json`, `REPORT.md` |
