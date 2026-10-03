@@ -96,7 +96,8 @@ for name, cid in (("P1", "S0"), ("P2", dev["P2"])):
         yi[:h0] = False
         if yi.any():
             years[str(y)] = R.summary(base.ret[yi], p.tbill[yi], base.funding[yi], base.costs[yi])
-    hold_liq = [(str(p.dates[t]), p.symbols[j]) for t, j in base.liquidations if t >= h0]
+    hold_liq = [(str(p.dates[t]), p.symbols[j], "mark" if not np.isnan(p.m["mh"][t, j]) else "last-price fallback")
+                for t, j in base.liquidations if t >= h0]
     out["candidates"][name] = {
         "id": cid, "base": R.summary(base.ret[H], tb, base.funding[H], base.costs[H], base.turnover[H]),
         "stress": R.summary(stress.ret[H], tb), "excess_ci90": [est, lo, hi], "p_one_sided": pvals[name],

@@ -1,0 +1,710 @@
+{
+ "stage": "dev",
+ "period": [
+  "2020-01-06",
+  "2022-12-31"
+ ],
+ "candidates": {
+  "S0": {
+   "config": {
+    "family": "S0",
+    "L": 7,
+    "theta": 0.0,
+    "K": 0,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.10188775040263054,
+    "excess_ann": 0.09107219258365859,
+    "sharpe_excess": 1.5027733722701104,
+    "vol_ann": 0.06057915372676387,
+    "max_dd": -0.1023176570521177,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.13995112414313737,
+    "costs_ann": 0.005107996633155077,
+    "turnover_ann": 4.373515907510282,
+    "liquidations": 1,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": 0.0968195562464973,
+    "excess_ann": 0.08651822840210534,
+    "sharpe_excess": 1.4076461931466306,
+    "vol_ann": 0.06143982331242635,
+    "max_dd": -0.10427585113430093,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.14083750084190175,
+    "costs_ann": 0.010268030546543527,
+    "turnover_ann": 4.39956395431105,
+    "liquidations": 1,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S1_L7_th0": {
+   "config": {
+    "family": "S1",
+    "L": 7,
+    "theta": 0.0,
+    "K": 0,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.13586546792934828,
+    "excess_ann": 0.11959833890083253,
+    "sharpe_excess": 8.105093275605245,
+    "vol_ann": 0.014612614412821618,
+    "max_dd": -0.009868491235794807,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.14157489671537382,
+    "costs_ann": 0.01280594970188161,
+    "turnover_ann": 12.593732521361748,
+    "liquidations": 0,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": 0.12219436628132163,
+    "excess_ann": 0.10750681253609691,
+    "sharpe_excess": 6.659444497299311,
+    "vol_ann": 0.01600557708112533,
+    "max_dd": -0.020926299745920307,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.1423435378174345,
+    "costs_ann": 0.02565998949830832,
+    "turnover_ann": 12.61779686909095,
+    "liquidations": 0,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S1_L7_th10": {
+   "config": {
+    "family": "S1",
+    "L": 7,
+    "theta": 0.1,
+    "K": 0,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.1186518893832944,
+    "excess_ann": 0.1043372806702627,
+    "sharpe_excess": 6.651661530577016,
+    "vol_ann": 0.015569617982729066,
+    "max_dd": -0.012576089149289538,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.12986547076293864,
+    "costs_ann": 0.012805241972258845,
+    "turnover_ann": 11.82014521585083,
+    "liquidations": 1,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": 0.10464320033885044,
+    "excess_ann": 0.091756092186788,
+    "sharpe_excess": 5.348617525229551,
+    "vol_ann": 0.01705925399422607,
+    "max_dd": -0.017560394713061145,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.13013644307153704,
+    "costs_ann": 0.025640978600949722,
+    "turnover_ann": 11.834219889076383,
+    "liquidations": 1,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S1_L30_th0": {
+   "config": {
+    "family": "S1",
+    "L": 30,
+    "theta": 0.0,
+    "K": 0,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.13497446468519936,
+    "excess_ann": 0.1188040015485125,
+    "sharpe_excess": 8.41468213423321,
+    "vol_ann": 0.013958623059724689,
+    "max_dd": -0.01053621613560407,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.13471066676409194,
+    "costs_ann": 0.006689175385316413,
+    "turnover_ann": 6.62833337576813,
+    "liquidations": 0,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": 0.12803483325327925,
+    "excess_ann": 0.11267722550227967,
+    "sharpe_excess": 7.660521251824796,
+    "vol_ann": 0.014547834585299168,
+    "max_dd": -0.012107231549939867,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.13531836190782245,
+    "costs_ann": 0.013418809809129907,
+    "turnover_ann": 6.648924003200457,
+    "liquidations": 0,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S1_L30_th10": {
+   "config": {
+    "family": "S1",
+    "L": 30,
+    "theta": 0.1,
+    "K": 0,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.11949522356810927,
+    "excess_ann": 0.10506485337142939,
+    "sharpe_excess": 7.541003090804415,
+    "vol_ann": 0.013786885628492439,
+    "max_dd": -0.010947909322890914,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.11952716693605023,
+    "costs_ann": 0.006305611550481104,
+    "turnover_ann": 5.980249930794515,
+    "liquidations": 0,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": 0.1126935472076438,
+    "excess_ann": 0.09897579326986643,
+    "sharpe_excess": 6.865411561347648,
+    "vol_ann": 0.014282004631050765,
+    "max_dd": -0.014376738582990267,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.1197624679677071,
+    "costs_ann": 0.012629777748911133,
+    "turnover_ann": 5.989016135768887,
+    "liquidations": 0,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S2_K3_L7_th0": {
+   "config": {
+    "family": "S2",
+    "L": 7,
+    "theta": 0.0,
+    "K": 3,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.026109023815865662,
+    "excess_ann": 0.019796999696470596,
+    "sharpe_excess": 0.32015238059290846,
+    "vol_ann": 0.06178795959637121,
+    "max_dd": -0.14765510183607833,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.20163418176106956,
+    "costs_ann": 0.15276986959948194,
+    "turnover_ann": 89.80444502341925,
+    "liquidations": 6,
+    "delistings": 1,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": -0.11698748100717493,
+    "excess_ann": -0.12963585949145068,
+    "sharpe_excess": -1.7836734258860956,
+    "vol_ann": 0.07264896598266471,
+    "max_dd": -0.31951014727818705,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.2025239327656951,
+    "costs_ann": 0.30307948542457863,
+    "turnover_ann": 90.02297162155335,
+    "liquidations": 6,
+    "delistings": 1,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S2_K3_L7_th10": {
+   "config": {
+    "family": "S2",
+    "L": 7,
+    "theta": 0.1,
+    "K": 3,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.05749701968109955,
+    "excess_ann": 0.049816308538343256,
+    "sharpe_excess": 0.8304901592930372,
+    "vol_ann": 0.05995366553650081,
+    "max_dd": -0.09854061171433448,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.19659242372565883,
+    "costs_ann": 0.12835129500440573,
+    "turnover_ann": 73.14853699934609,
+    "liquidations": 4,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": -0.07038256625787298,
+    "excess_ann": -0.07842787082799361,
+    "sharpe_excess": -1.1245903337225724,
+    "vol_ann": 0.06973585995094618,
+    "max_dd": -0.21851117578189538,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.19745660167602475,
+    "costs_ann": 0.2574712138988657,
+    "turnover_ann": 73.33036460751555,
+    "liquidations": 4,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S2_K3_L30_th0": {
+   "config": {
+    "family": "S2",
+    "L": 30,
+    "theta": 0.0,
+    "K": 3,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.07211684999745693,
+    "excess_ann": 0.06352006718996757,
+    "sharpe_excess": 1.0679074487331874,
+    "vol_ann": 0.059430775760534744,
+    "max_dd": -0.12264097768722204,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.19893972148342287,
+    "costs_ann": 0.0887119338551503,
+    "turnover_ann": 50.81695551599925,
+    "liquidations": 7,
+    "delistings": 1,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": -0.016145935071488315,
+    "excess_ann": -0.022077662398074314,
+    "sharpe_excess": -0.3417638174338382,
+    "vol_ann": 0.0645591664996972,
+    "max_dd": -0.18733404136403742,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.19987071413387467,
+    "costs_ann": 0.17517636890333488,
+    "turnover_ann": 50.94982680761283,
+    "liquidations": 7,
+    "delistings": 1,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S2_K3_L30_th10": {
+   "config": {
+    "family": "S2",
+    "L": 30,
+    "theta": 0.1,
+    "K": 3,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.10633556685292378,
+    "excess_ann": 0.09357001198191137,
+    "sharpe_excess": 3.196291481148665,
+    "vol_ann": 0.029206430581038733,
+    "max_dd": -0.032920943988968054,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.1914485228375794,
+    "costs_ann": 0.07033585312400902,
+    "turnover_ann": 38.448684207178204,
+    "liquidations": 3,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": 0.03132765659105541,
+    "excess_ann": 0.023616702265687847,
+    "sharpe_excess": 0.6349763712717357,
+    "vol_ann": 0.0371693283419779,
+    "max_dd": -0.0718881681748813,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.19233369875623962,
+    "costs_ann": 0.14111063197286236,
+    "turnover_ann": 38.55544614828934,
+    "liquidations": 3,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S2_K5_L7_th0": {
+   "config": {
+    "family": "S2",
+    "L": 7,
+    "theta": 0.0,
+    "K": 5,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.00871151544929516,
+    "excess_ann": 0.0035981913972812692,
+    "sharpe_excess": 0.04874833797623911,
+    "vol_ann": 0.0737789892269526,
+    "max_dd": -0.1277464989107827,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.19049559509350011,
+    "costs_ann": 0.12563158349639597,
+    "turnover_ann": 71.7147548725568,
+    "liquidations": 11,
+    "delistings": 2,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": -0.10664913108169916,
+    "excess_ann": -0.11730786025757656,
+    "sharpe_excess": -1.4567764092024162,
+    "vol_ann": 0.08050474698962434,
+    "max_dd": -0.2982511566194568,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.19136271533436533,
+    "costs_ann": 0.24734190265539147,
+    "turnover_ann": 71.89704524562424,
+    "liquidations": 11,
+    "delistings": 2,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S2_K5_L7_th10": {
+   "config": {
+    "family": "S2",
+    "L": 7,
+    "theta": 0.1,
+    "K": 5,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.041199414917828525,
+    "excess_ann": 0.035315530285081366,
+    "sharpe_excess": 0.47691871754833437,
+    "vol_ann": 0.07403218964510076,
+    "max_dd": -0.11131201661283274,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.18521145784304682,
+    "costs_ann": 0.10376651168679649,
+    "turnover_ann": 58.718025935552404,
+    "liquidations": 9,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": -0.06167250858811435,
+    "excess_ann": -0.06825557409400032,
+    "sharpe_excess": -0.8547098701145209,
+    "vol_ann": 0.0798599756061903,
+    "max_dd": -0.21445222384557983,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.186043855906537,
+    "costs_ann": 0.20815388345533486,
+    "turnover_ann": 58.86469227030664,
+    "liquidations": 9,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S2_K5_L30_th0": {
+   "config": {
+    "family": "S2",
+    "L": 30,
+    "theta": 0.0,
+    "K": 5,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.05950549256487414,
+    "excess_ann": 0.05282787446831967,
+    "sharpe_excess": 0.7017945908110219,
+    "vol_ann": 0.0752537398103315,
+    "max_dd": -0.09978593062633612,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.18779899763699154,
+    "costs_ann": 0.07633422875805904,
+    "turnover_ann": 42.633943120059286,
+    "liquidations": 10,
+    "delistings": 2,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": -0.014480252676325911,
+    "excess_ann": -0.019327022564214414,
+    "sharpe_excess": -0.24679735624662727,
+    "vol_ann": 0.07829725375343434,
+    "max_dd": -0.12750285264112982,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.18877920335164627,
+    "costs_ann": 0.14946195159045692,
+    "turnover_ann": 42.752795599211936,
+    "liquidations": 10,
+    "delistings": 2,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S2_K5_L30_th10": {
+   "config": {
+    "family": "S2",
+    "L": 30,
+    "theta": 0.1,
+    "K": 5,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.07613625063924467,
+    "excess_ann": 0.06760706230835493,
+    "sharpe_excess": 1.0608481091003512,
+    "vol_ann": 0.06370607914367814,
+    "max_dd": -0.09978593062633567,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.1799637289628976,
+    "costs_ann": 0.057576914505845476,
+    "turnover_ann": 31.08346661883828,
+    "liquidations": 6,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": 0.01626812253221277,
+    "excess_ann": 0.010561304591131236,
+    "sharpe_excess": 0.15824042874318678,
+    "vol_ann": 0.06673368572227657,
+    "max_dd": -0.10062113670420336,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.1808873710262034,
+    "costs_ann": 0.11552139678669326,
+    "turnover_ann": 31.173160140154373,
+    "liquidations": 6,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S2_K10_L7_th0": {
+   "config": {
+    "family": "S2",
+    "L": 7,
+    "theta": 0.0,
+    "K": 10,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.09913811100196712,
+    "excess_ann": 0.0924404142879095,
+    "sharpe_excess": 0.8184301689167015,
+    "vol_ann": 0.11291682521566898,
+    "max_dd": -0.10619043625800229,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.16830202912222533,
+    "costs_ann": 0.08347197305003907,
+    "turnover_ann": 48.79317117309276,
+    "liquidations": 29,
+    "delistings": 4,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": 0.015238342744646083,
+    "excess_ann": 0.013210384506754477,
+    "sharpe_excess": 0.11534605689653213,
+    "vol_ann": 0.11450146022891802,
+    "max_dd": -0.17938398701933678,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.16912469849085754,
+    "costs_ann": 0.16354808222660058,
+    "turnover_ann": 48.91381691419667,
+    "liquidations": 29,
+    "delistings": 4,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S2_K10_L7_th10": {
+   "config": {
+    "family": "S2",
+    "L": 7,
+    "theta": 0.1,
+    "K": 10,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.13156376605313214,
+    "excess_ann": 0.12146251420256934,
+    "sharpe_excess": 1.0805821721432312,
+    "vol_ann": 0.11237958465481757,
+    "max_dd": -0.0551354966019012,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.1632879649566652,
+    "costs_ann": 0.06466900290443905,
+    "turnover_ann": 38.0984609789585,
+    "liquidations": 23,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": 0.06105839945553182,
+    "excess_ann": 0.057254578295926416,
+    "sharpe_excess": 0.5039571876557947,
+    "vol_ann": 0.11359347097263252,
+    "max_dd": -0.08324977048719873,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.16404250297040593,
+    "costs_ann": 0.12967866263618913,
+    "turnover_ann": 38.186076075444035,
+    "liquidations": 23,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   }
+  },
+  "S2_K10_L30_th0": {
+   "config": {
+    "family": "S2",
+    "L": 30,
+    "theta": 0.0,
+    "K": 10,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.07809184370456168,
+    "excess_ann": 0.06825230698126662,
+    "sharpe_excess": 1.5534734115990492,
+    "vol_ann": 0.04389089352957171,
+    "max_dd": -0.053684404132201546,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.16153653252562267,
+    "costs_ann": 0.05422098706365363,
+    "turnover_ann": 30.769575779757044,
+    "liquidations": 25,
+    "delistings": 2,
+    "pair_mismatch_exits": 1
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": 0.024062908596885313,
+    "excess_ann": 0.016919461430087743,
+    "sharpe_excess": 0.3687146507770556,
+    "vol_ann": 0.045854303879962977,
+    "max_dd": -0.08503285802689575,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.162484739366926,
+    "costs_ann": 0.10647702394682293,
+    "turnover_ann": 30.860308994377046,
+    "liquidations": 25,
+    "delistings": 2,
+    "pair_mismatch_exits": 1
+   }
+  },
+  "S2_K10_L30_th10": {
+   "config": {
+    "family": "S2",
+    "L": 30,
+    "theta": 0.1,
+    "K": 10,
+    "universe_n": 20,
+    "s": 0.6666666666666666,
+    "liq_price": "mark"
+   },
+   "base": {
+    "days": 1091,
+    "cagr": 0.08863641536556344,
+    "excess_ann": 0.0777546683794735,
+    "sharpe_excess": 2.0329242835422843,
+    "vol_ann": 0.038200606344648426,
+    "max_dd": -0.04940023466725829,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.15514669962927938,
+    "costs_ann": 0.041077110179186097,
+    "turnover_ann": 22.536084739328555,
+    "liquidations": 16,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   },
+   "stress": {
+    "days": 1091,
+    "cagr": 0.0453473437969496,
+    "excess_ann": 0.03724817856060323,
+    "sharpe_excess": 0.9268897844372236,
+    "vol_ann": 0.040158203620762736,
+    "max_dd": -0.050063213312982136,
+    "tbill_ann": 0.007925387925078355,
+    "funding_ann": 0.15599981656549244,
+    "costs_ann": 0.08241900964363995,
+    "turnover_ann": 22.601994624130306,
+    "liquidations": 16,
+    "delistings": 0,
+    "pair_mismatch_exits": 0
+   }
+  }
+ },
+ "P1": "S0",
+ "P2": "S1_L30_th0",
+ "sr_variance_daily": 0.02414116556097965,
+ "n_trials": 34
+}
