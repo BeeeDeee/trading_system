@@ -2,6 +2,8 @@
 Only data <= 2019-12-31; selection 2001-2012, check 2013-2019.
 
     uv run python scripts/r10_pairs.py sharadar_2026-09-25     -> docs/research10/results/pairs.json
+    uv run python scripts/r10_pairs.py sharadar_2026-09-25 posthoc2004   -> pairs_posthoc2004.json
+      (post hoc, descriptive: selection window 2004-2012 so that bond ETFs are eligible; prereg §9)
 """
 
 import itertools
@@ -20,6 +22,9 @@ ANN, ANN_M = np.sqrt(252), np.sqrt(12)
 MIN_SR = 0.3
 CRISIS_DD = 0.15
 snapshot = sys.argv[1]
+POSTHOC = len(sys.argv) > 2 and sys.argv[2] == "posthoc2004"
+if POSTHOC:
+    from qlab.research10.setup import B_SELECT as A_SELECT  # noqa: F811
 R, dates, tab = load_sleeves(snapshot)
 names, fams = tab["name"].to_list(), tab["family"].to_list()
 spy, ief = names.index("etf_SPY"), names.index("etf_IEF")
@@ -50,6 +55,8 @@ print(f"eligible sleeves {len(elig)}, cross-family pairs {len(pairs)}, crisis da
       f"{int(crisis[sel].sum())}")
 reg = registry()
 cfg = {"study": "research10", "part": "A", "rule": "max 50/50 Sharpe, both SR >= 0.3", "n_pairs": len(pairs)}
+if POSTHOC:
+    cfg = {**cfg, "window": "2004-2012 posthoc"}
 if not reg.has(cfg):
     reg.record("other", cfg, n_configs=len(pairs), note="r10 A pair scan 2001-2012")
 
@@ -157,7 +164,7 @@ for rank, i in enumerate(order[:10]):
 pa = check["pairs"][0]
 b6040, bspy = check["benchmarks"]["60/40"], check["benchmarks"]["SPY"]
 crit = {"1_sr_vs_spy": pa["sharpe"] > bspy["sharpe"], "2_sr_vs_6040": pa["sharpe"] > b6040["sharpe"],
-        "3_mdd_vs_spy": pa["max_dd"] > bspy["max_dd"],          # drawdowns are negative numbers
+        "3_mdd_vs_spy": pa["max_dd"] < bspy["max_dd"],          # max_drawdown is a positive fraction
         "4_both_subperiods_vs_6040": all(pa["subperiods_sharpe"][k] > b6040["subperiods_sharpe"][k]
                                          for k in CHECK_SUBPERIODS)}
 out = {"selection": {"period": [str(x) for x in A_SELECT], "n_eligible_sleeves": len(elig), "n_pairs": len(pairs),
@@ -167,7 +174,7 @@ out = {"selection": {"period": [str(x) for x in A_SELECT], "n_eligible_sleeves":
                      "library": lib, "dsr_P_A": float(dsr)},
        "check": {"period": [str(x) for x in A_CHECK], **check, "criteria": crit, "pass": all(crit.values())}}
 Path("docs/research10/results").mkdir(parents=True, exist_ok=True)
-Path("docs/research10/results/pairs.json").write_text(json.dumps(out, indent=1, default=float))
+Path(f"docs/research10/results/pairs{'_posthoc2004' if POSTHOC else ''}.json").write_text(json.dumps(out, indent=1, default=float))
 
 print(f"\nSPY selection SR {out['selection']['spy']['sharpe']:.2f}; pair 50/50 SR quantiles {out['selection']['pair_sr_quantiles']}")
 print("top 10 pairs (selection 2001-2012):")
