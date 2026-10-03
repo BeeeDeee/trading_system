@@ -1,0 +1,461 @@
+{
+ "claude_volne": {
+  "comment": "Zhruba 55% expozice v nejkvalitnějších trendech; zbytek v hotovosti kvůli odmítnutí BTC u 87k a slabému relativnímu výkonu altcoinů.",
+  "positions": [
+   {
+    "coin": "AVAX",
+    "invalidation": "Close pod 10,2 USD (retest zářijového maxima selže) nebo rel7 vs BTC pod −5 %.",
+    "reason": "Nejsilnější trend vs BTC a unikátní tok tokenizovaných akcií; pullback přidržet.",
+    "weight_pct": 17.0
+   },
+   {
+    "coin": "ETH",
+    "invalidation": "Close pod 2550 USD nebo obrat ETF toků do odlivu.",
+    "reason": "Velké ETF přítoky a Glamsterdam testnet, cena zatím nereagovala.",
+    "weight_pct": 10.0
+   },
+   {
+    "coin": "LINK",
+    "invalidation": "Close pod 12,8 USD (pod SMA20) nebo další týden pod BTC.",
+    "reason": "Pullback v trendu s institucionálním narativem (Swift, CCIP 2.0).",
+    "weight_pct": 12.0
+   },
+   {
+    "coin": "SOL",
+    "invalidation": "Close pod 112 USD nebo odliv z SOL ETF.",
+    "reason": "Rekordní ETF přítoky, záporný funding a blížící se Alpenglow.",
+    "weight_pct": 15.0
+   }
+  ]
+ },
+ "coins": {
+  "ADA": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Trend nad SMA drží, ale týden zaostává (rel7 −6,1); partnerství (Pacific Meta, Petrobras) jsou drobná.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.53,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptonews.net/news/analytics/33523255/"
+   ],
+   "trend": 1
+  },
+  "AVAX": {
+   "conviction": 4,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 3.0,
+   "mr": 0,
+   "news": 1,
+   "note": "Nejsilnější přítoky tokenizovaných akcií ze všech chainů (8× ostatní) a čistý trend, pullback −5,6 % za 3 dny je vstupní příležitost.",
+   "p_outperform_btc_7d": 0.56,
+   "p_up_7d": 0.57,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://tronweekly.com/avalanche-price-tokenized-stocks-12",
+    "https://coingabbar.com/en/avalanche-crypto-news-today-kenya-30-million-credentials"
+   ],
+   "trend": 2
+  },
+  "BCH": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Po −9 % za týden se stabilizuje nad SMA20, bez katalyzátoru a s klesajícím objemem.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.52,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 1
+  },
+  "BNB": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Stabilní trend s nízkou betou, ale objem padá (−27 %) a chybí katalyzátor.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.53,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 1
+  },
+  "BTC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Nad všemi SMA, rekordní ETF přítoky a slabé payrolls, ale odmítnutí u 87k ukazuje odpor.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.55,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://fortune.com/article/price-of-bitcoin-10-02-2026/",
+    "https://crypto.news/bitcoin-climbed-past-85000-as-shorts-closed-will-buyers-stay-after-the-jobs-report/",
+    "https://www.analyticsinsight.net/amp/story/news/bitcoin-etfs-draw-usd-265b-as-citi-raises-its-price-forecast"
+   ],
+   "trend": 1
+  },
+  "DOGE": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Dlouhodobě zaostává za majors (rel7 −6,6) při vysoké betě a long-heavy L/S 2,68.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://247wallst.com/investing/cryptocurrency/2026/10/02/dogecoin-fell-5-while-bitcoin-ethereum-xrp-and-solana-all-rose-why-is-dogecoin-lagging-the-majors/"
+   ],
+   "trend": 0
+  },
+  "ETH": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "upgrade",
+   "expected_move_7d_pct": 1.5,
+   "mr": 0,
+   "news": 1,
+   "note": "ETF přítoky ~690 mil. USD a Glamsterdam na Sepolii 6. 10., cena přesto ret1 −1,4 %, tedy nezcela započteno.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.55,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coincentral.com/ethereum-eth-price-analyst-says-3000-is-a-matter-of-time",
+    "https://metamask.io/price/ethereum"
+   ],
+   "trend": 1
+  },
+  "HBAR": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Pump na IBM zprávě (28. 9.) se z velké části vrátil; trend je kladný, ale zpráva je v ceně.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://finance.yahoo.com/markets/crypto/articles/hedera-jumped-27-ibm-cloud-140027313.html",
+    "https://cryptodaily.co.uk/2026/10/hbar-price-prediction-ibm-rally-support-level"
+   ],
+   "trend": 1
+  },
+  "HYPE": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "unlock",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Unlock 3,75 mil. HYPE 6. 10. jde OTC jednomu kupci a proti němu stojí nový program buybacků z výnosu USDC; efekty se zhruba ruší.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://en.bloomingbit.io/feed/news/121346",
+    "https://coinmarketcap.com/cmc-ai/hyperliquid/latest-updates/"
+   ],
+   "trend": 0
+  },
+  "LINK": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Pullback −5,6 % za 3 dny ve zdravém trendu (rel30 +14,8); CCIP 2.0 a Swift už jsou v ceně.",
+   "p_outperform_btc_7d": 0.52,
+   "p_up_7d": 0.55,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://247wallst.com/investing/cryptocurrency/2026/10/02/chainlink-surges-18-in-2026-while-bitcoin-falls-3-what-makes-link-stand-out/",
+    "https://coinpaper.com/36680/link-news-chainlink-expands-swift-partnership-into-tokenized-securities"
+   ],
+   "trend": 1
+  },
+  "LTC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 1.0,
+   "mr": -1,
+   "news": 0,
+   "note": "Silný trend (SMA20 +11 %, ret3 +4,6 %), ale RSI 69 je natažené.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.53,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 2
+  },
+  "NEAR": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "jine",
+   "expected_move_7d_pct": 1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Exploit NEAR Intents (3,8 mil. USD, aplikace, ne protokol) vyvažuje návrh na snížení emise s hlasováním ~11. 10. a přítoky do ETF.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.52,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://u.today/near-intents-breaks-silence-on-38-million-exploit-near-token-slumps-75",
+    "https://cryptobriefing.com/near-protocol-token-issuance-cut-proposal"
+   ],
+   "trend": 1
+  },
+  "QNT": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": -1,
+   "news": 0,
+   "note": "Parabolický pump na zprávě o The Clearing House (v ceně), −34 % od maxima, ATR 16 % a funding −0,07 % – extrémní volatilita oběma směry.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://thecryptobasic.com/2026/10/02/quant-qnt-eyes-1600-as-bull-flag-pattern-points-to-520-surge/",
+    "https://en.cryptonomist.ch/2026/10/01/quant-qnt-crypto-analysis-rsi/"
+   ],
+   "trend": 2
+  },
+  "SOL": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 2.0,
+   "mr": 0,
+   "news": 1,
+   "note": "Rekordní týdenní přítoky do SOL ETF a záporný funding (prostor pro short squeeze), rel7 zatím slabší.",
+   "p_outperform_btc_7d": 0.52,
+   "p_up_7d": 0.56,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptodaily.co.uk/2026/10/solana-price-prediction-etf-inflows-sol-125",
+    "https://pluang.com/en/news-feed/solana-naik-262-dalam-satu-jam-liquidasi-pendek-mencapai-77-juta"
+   ],
+   "trend": 1
+  },
+  "SUI": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "jine",
+   "expected_move_7d_pct": 1.0,
+   "mr": -1,
+   "news": 0,
+   "note": "Silný trend před Basecampem 7.–8. 10., ale +70 % od 30d minima a beta 1,75; event je známý, hrozí sell-the-news.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.52,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptoticker.io/en/sui-basecamp-tps-record-attempt/",
+    "https://tokenomist.ai/sui"
+   ],
+   "trend": 2
+  },
+  "TRX": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Pod SMA20/50 s nízkou betou, v rostoucím trhu spíše zaostává; bez nové zprávy.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coingabbar.com/en/tron-price-prediction-october-2026-triangle-apex-levels"
+   ],
+   "trend": -1
+  },
+  "UNI": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Silný 30d trend se ochlazuje (rel7 −7,6); návrh na rozšíření fee switche bez jasného termínu.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.52,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://crypto.news/uniswap-price-fee-switch-proposal-rally-2026/"
+   ],
+   "trend": 1
+  },
+  "XLM": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Solidní 30d trend, bez nové zprávy a s nízkou likviditou.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.52,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 1
+  },
+  "XRP": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "upgrade",
+   "expected_move_7d_pct": 1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Nabitý týden (XRP Seoul, upgrade XRPL, Evernorth na Nasdaqu) je známý předem; cena v pásmu 1,47–1,54.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.53,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://thecryptobasic.com/2026/10/02/xrp-has-four-major-dates-packed-into-one-week-as-october-begins/"
+   ],
+   "trend": 0
+  },
+  "ZEC": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": -1,
+   "note": "−23 % od maxima po odlivu z ETF a zprávách o praní peněz KLDR přes shielded pool; regulatorní narativ může tlačit dál.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://finance.yahoo.com/markets/crypto/articles/zcash-drops-21-recent-high-213103914.html",
+    "https://pluang.com/en/news-feed/penurunan-zcash-21-persen-dari-puncak-rally-masih-berpotensi-lanjut"
+   ],
+   "trend": 0
+  }
+ },
+ "date": "2026-10-03",
+ "events_7d": [
+  {
+   "date": "2026-10-03",
+   "title": "SUI unlock ~23,4 mil. SUI (0,6 % mcap)",
+   "type": "unlock"
+  },
+  {
+   "date": "2026-10-03",
+   "title": "Start týdne XRP (XRP Seoul, upgrade XRPL, Evernorth debut na Nasdaqu do 9. 10.)",
+   "type": "jine"
+  },
+  {
+   "date": "2026-10-06",
+   "title": "Hyperliquid unlock 3,75 mil. HYPE (~329 mil. USD, OTC prodej jednomu investorovi)",
+   "type": "unlock"
+  },
+  {
+   "date": "2026-10-06",
+   "title": "Ethereum Glamsterdam aktivace na testnetu Sepolia",
+   "type": "upgrade"
+  },
+  {
+   "date": "2026-10-07",
+   "title": "Zápis z FOMC (září)",
+   "type": "makro"
+  },
+  {
+   "date": "2026-10-07",
+   "title": "Sui Basecamp + TOKEN2049 Singapur (7.–8. 10.)",
+   "type": "jine"
+  },
+  {
+   "date": "2026-10-11",
+   "title": "NEAR – očekávané hlasování o snížení emise na 1,6 %",
+   "type": "jine"
+  }
+ ],
+ "regime": {
+  "label": "Mírně risk-on, konsolidace pod odporem",
+  "summary": "BTC drží nad SMA20/50/100 díky silným ETF přítokům a slabým payrolls (sázky na snížení sazeb), ale 2. 10. se vrátil z ~87k na 84,5k. Altcoiny za poslední týden většinou zaostávají za BTC, funding je neutrální."
+ },
+ "top10": [
+  {
+   "coin": "AVAX",
+   "reason": "Čistý trend, rel7 kladné a přítoky tokenizovaných akcií."
+  },
+  {
+   "coin": "SOL",
+   "reason": "Rekordní ETF přítoky a záporný funding."
+  },
+  {
+   "coin": "LINK",
+   "reason": "Pullback ve zdravém trendu, institucionální narativ."
+  },
+  {
+   "coin": "ETH",
+   "reason": "Silné ETF přítoky, Glamsterdam testnet 6. 10."
+  },
+  {
+   "coin": "LTC",
+   "reason": "Nejsilnější momentum mezi PoW, ale natažené RSI."
+  },
+  {
+   "coin": "SUI",
+   "reason": "Silný trend před Basecampem, riziko sell-the-news."
+  },
+  {
+   "coin": "NEAR",
+   "reason": "Silný 30d trend, hlasování o emisi; exploit aplikace v ceně."
+  },
+  {
+   "coin": "ADA",
+   "reason": "Trend nad SMA, vyšší beta při pokračování růstu."
+  },
+  {
+   "coin": "XRP",
+   "reason": "Nabitý týden událostí, cena se drží v pásmu."
+  },
+  {
+   "coin": "HBAR",
+   "reason": "Kladný trend a nízká korelace s BTC."
+  }
+ ]
+}

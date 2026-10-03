@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-QMtdiIxbj0pokeBcvk2GtY3RWEBAjFJvGJCdLU3xyXM='; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Ai4/6y+WiPjuOSXjDbNZ5S/btnwuCaY7BewcL59SgVs='; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
 <title>Crypto paper bot</title>
 <style>
 :root{
@@ -171,7 +171,7 @@ function header(){
 // ------------------------------------------------------------------ equity chart
 function equitySection(){
   var sec = el("section", null, [el("h2",{text:"Vývoj kapitálu"}),
-    el("p",{cls:"sub", text:"Hodnota portfolií k 00:00 UTC (hodinové varianty podle prvního hodinového běhu dne), logaritmická osa. Barevně až 3 zvýrazněná portfolia (klepnutím v legendě nebo v tabulce), BTC HODL přerušovaně, ostatní šedě."})]);
+    el("p",{cls:"sub", text:"Hodnota portfolií k 00:00 UTC (hodinové varianty podle prvního hodinového běhu dne), logaritmická osa. Barevně až 3 zvýrazněná portfolia (klepnutím v legendě nebo v tabulce), BTC HOLD přerušovaně, ostatní šedě."})]);
   var ctr = el("div",{cls:"controls"});
   var seg = el("div",{cls:"seg", role:"group", "aria-label":"Scénář nákladů"});
   Object.keys(SCN).forEach(function(k){ seg.appendChild(el("button",{"aria-pressed": String(state.scn===k), text:SCN[k], onclick:function(){ state.scn=k; render(); }})); });
@@ -288,7 +288,7 @@ function metricsSection(){
     tb.appendChild(tr);
   });
   sec.appendChild(el("div",{cls:"scroll"},[el("table",null,[el("thead",null,[thead]), tb])]));
-  sec.appendChild(el("p",{cls:"sub", style:"margin-top:8px", text:"Pravidla vyhodnocení (předem): varianta má edge jen nad 95. percentilem vlastní nuly A nad BTC HODL A po stresových nákladech. Při 25 variantách čekej 1–2 „výhry“ náhodou. Sharpe a volatilita se ukazují od 10 dní dat."}));
+  sec.appendChild(el("p",{cls:"sub", style:"margin-top:8px", text:"Pravidla vyhodnocení (předem): varianta má edge jen nad 95. percentilem vlastní nuly A nad BTC HOLD A po stresových nákladech. Při 25 variantách čekej 1–2 „výhry“ náhodou. Sharpe a volatilita se ukazují od 10 dní dat."}));
   return sec;
 }
 
