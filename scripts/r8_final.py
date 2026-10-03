@@ -58,7 +58,7 @@ def run(cfg, costs=Costs(), shift=0, universe_n=None):
     if universe_n:
         cfg = replace(cfg, universe_n=universe_n)
     tg = {t + shift: w for t, w in S.targets(p, cfg).items() if t >= d0 and t + shift < len(p.dates)}
-    return simulate(p, tg, s=cfg.s, costs=costs)
+    return simulate(p, tg, s=cfg.s, costs=costs, liq_price=cfg.liq_price)
 
 
 def boot_excess(ret, tb, n=1000, seed=0):

@@ -22,6 +22,7 @@ class Config:
     K: int = 0                # S2: number of coins
     universe_n: int = UNIVERSE_N
     s: float = 2 / 3
+    liq_price: str = "mark"   # prereg v1.1 (v1.0 used the last-price high: 17 earlier trials, still counted)
 
     @property
     def id(self) -> str:

@@ -28,11 +28,12 @@ for cfg in S.grid():
     tg = {t: w for t, w in S.targets(p, cfg).items() if t >= i0}
     res = {}
     for scen, c in (("base", Costs()), ("stress", Costs(mult=2.0))):
-        r = simulate(p, tg, s=cfg.s, costs=c)
+        r = simulate(p, tg, s=cfg.s, costs=c, liq_price=cfg.liq_price)
         sl = slice(i0, None)
         res[scen] = R.summary(r.ret[sl], p.tbill[sl], r.funding[sl], r.costs[sl], r.turnover[sl])
         res[scen]["liquidations"] = len([x for x in r.liquidations if x[0] >= i0])
         res[scen]["delistings"] = len([x for x in r.delistings if x[0] >= i0])
+        res[scen]["pair_mismatch_exits"] = len([x for x in r.mismatches if x[0] >= i0])
         if scen == "base":
             sr_daily[cfg.id] = sharpe(r.ret[sl] - p.tbill[sl])
     out["candidates"][cfg.id] = {"config": cfg.as_dict(), **res}

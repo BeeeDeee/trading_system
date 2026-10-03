@@ -22,11 +22,13 @@ PREFIX = {
     "funding": "data/futures/um/monthly/fundingRate/{sym}/",
     "perp_1d": "data/futures/um/monthly/klines/{sym}/1d/",
     "spot_1d": "data/spot/monthly/klines/{sym}/1d/",
+    "mark_1d": "data/futures/um/monthly/markPriceKlines/{sym}/1d/",
 }
 ROOT_PREFIX = {
     "funding": "data/futures/um/monthly/fundingRate/",
     "perp_1d": "data/futures/um/monthly/klines/",
     "spot_1d": "data/spot/monthly/klines/",
+    "mark_1d": "data/futures/um/monthly/markPriceKlines/",
 }
 MONTH_RE = re.compile(r"-(\d{4}-\d{2})\.zip$")
 
@@ -34,7 +36,7 @@ MONTH_RE = re.compile(r"-(\d{4}-\d{2})\.zip$")
 def _get(url: str, tries: int = 5) -> bytes:
     for i in range(tries):
         try:
-            with urllib.request.urlopen(url, timeout=60) as r:
+            with urllib.request.urlopen(url, timeout=20) as r:
                 return r.read()
         except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
             if isinstance(e, urllib.error.HTTPError) and e.code == 404:

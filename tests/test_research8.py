@@ -16,6 +16,7 @@ def flat_panel(T=21, N=2, price=100.0, fund=0.0, start="2024-01-01", symbols=("B
     dates = np.arange(np.datetime64(start), np.datetime64(start) + np.timedelta64(T, "D"))
     m = {k: np.full((T, N), price) for k in ("po", "ph", "pl", "pc", "so", "sc")}
     m["qv"] = np.full((T, N), 2e9)
+    m["mh"] = np.full((T, N), price)
     m["fund_hold"] = np.full((T, N), fund)
     m["fund_sig"] = np.full((T, N), fund)
     m["fund_n"] = np.full((T, N), 3.0)
@@ -58,7 +59,7 @@ def test_delta_neutral_without_costs():
 
 def test_liquidation_loses_perp_account_and_sells_spot():
     p = flat_panel(T=5)
-    p.m["ph"][2, 0] = 160.0                          # +60 % intraday, perp 2x on its collateral
+    p.m["ph"][2, 0] = p.m["mh"][2, 0] = 160.0        # +60 % intraday, perp 2x on its collateral
     r = simulate(p, {0: {0: 1.0}}, costs=ZERO)
     assert r.liquidations == [(2, 0)]
     # perp account (1/3) lost, spot (2/3) sold at the unchanged close
@@ -138,3 +139,15 @@ def test_universe_needs_valid_pair_for_30_days():
     p.m["sc"][50, 2] = 50.0
     assert 2 in S.universe(p, 45, 3)
     assert 2 not in S.universe(p, 60, 3)
+
+
+def test_liquidation_uses_mark_price_not_last_price_wick():
+    p = flat_panel(T=5)
+    p.m["ph"][2, 0] = 160.0                          # last-price wick only
+    r = simulate(p, {0: {0: 1.0}}, costs=ZERO)
+    assert not r.liquidations and np.allclose(r.nav, 1.0)
+    p.m["mh"][2, 0] = np.nan                         # no mark kline that day -> last price, conservatively
+    r = simulate(p, {0: {0: 1.0}}, costs=ZERO)
+    assert r.liquidations == [(2, 0)]
+    p.m["mh"][2, 0] = 160.0
+    assert simulate(p, {0: {0: 1.0}}, costs=ZERO, liq_price="last").liquidations == [(2, 0)]

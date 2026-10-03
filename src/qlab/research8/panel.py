@@ -4,6 +4,7 @@ Matrices (float64, NaN = no data):
   po, ph, pl, pc   perp open/high/low/close
   so, sc           spot open/close in PERP units (spot price x multiplier)
   qv               perp quote volume (USD) of the day
+  mh               mark-price high of the day (liquidation, prereg v1.1); NaN where Binance has no mark kline
   fund_hold        sum of funding rates with ts in (D 00:00, D+1 00:00]  -> earned by a short held over day D
   fund_sig         sum of funding rates with ts in [D 00:00, D+1 00:00)  -> known at D+1 00:00 for decisions
   fund_n           number of funding events in the fund_sig bucket
@@ -21,7 +22,7 @@ import polars as pl
 
 from . import data as D
 
-FIELDS = ("po", "ph", "pl", "pc", "so", "sc", "qv", "fund_hold", "fund_sig", "fund_n")
+FIELDS = ("po", "ph", "pl", "pc", "so", "sc", "qv", "mh", "fund_hold", "fund_sig", "fund_n")
 
 
 @dataclass
@@ -61,6 +62,8 @@ def build(raw: Path, pairs: dict[str, tuple[str, float]], tbill: pl.DataFrame, s
         k = D.read_klines(raw / "perp_1d" / p)
         for fld, col in (("po", "open"), ("ph", "high"), ("pl", "low"), ("pc", "close"), ("qv", "quote_volume")):
             put(fld, j, k["date"].to_list(), k[col].to_list())
+        mk = D.read_klines(raw / "mark_1d" / p)
+        put("mh", j, mk["date"].to_list(), mk["high"].to_list())
         s = D.read_klines(raw / "spot_1d" / spot)
         put("so", j, s["date"].to_list(), (s["open"] * mult).to_list())
         put("sc", j, s["date"].to_list(), (s["close"] * mult).to_list())

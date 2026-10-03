@@ -1,6 +1,6 @@
 # Výzkum 8 – funding carry na Binance (pre-registrace)
 
-Verze 1.0 · 2026-10-03 · Stav: **pre-registrace, žádná data zatím stažena ani spočtena**.
+Verze 1.1 · 2026-10-03 · Stav: **pre-registrace; holdout nezpočten** (v1.0 · 2026-10-03 před stažením dat).
 První výzkum mimo americké akcie. Navazuje na metodiku výzkumů 1–7 (registr pokusů, trezor na holdout,
 stationary bootstrap, Deflated Sharpe). Změny po commitu tohoto dokumentu = nový pokus v registru a řádek v §10.
 
@@ -57,8 +57,9 @@ krátkou stranu, dostává zaplaceno.
 - **Denní údržba:** když vlastní kapitál perp účtu (kolaterál + P&L perpu + funding) klesne pod 50 %
   nebo stoupne nad 150 % cílového kolaterálu, obě nohy se vyrovnají zpět na cílový poměr a stejný nominál
   (s náklady).
-- **Likvidace:** když denní high perpu vůči ceně při posledním vyrovnání znamená ztrátu ≥ vlastní kapitál
-  perp účtu − 0,5 % nominálu (udržovací marže), perp účet je ztracený celý. Spot se prodá na close
+- **Likvidace (v1.1):** když denní high **mark price** perpu (Binance likviduje podle mark price, ne podle
+  poslední ceny) vůči openu dne znamená ztrátu ≥ vlastní kapitál perp účtu − 0,5 % nominálu (udržovací marže),
+  perp účet je ztracený celý. Chybí-li pro den mark svíčka, použije se high poslední ceny (konzervativně). Spot se prodá na close
   téhož dne a coin je v hotovosti do dalšího rebalance. Počet likvidací se hlásí vždy.
 - Hotovost (USDT) nenese nic.
 - Měřítko: funding 10 % p. a. na nominál = **~6,7 % p. a. na kapitál** (nominál je 2/3 kapitálu), před
@@ -83,7 +84,7 @@ krátkou stranu, dostává zaplaceno.
 | `S1` | BTC + ETH po 50 %, coin zajištěn jen když `F_L > θ`, jinak hotovost | L ∈ {7, 30}, θ ∈ {0 %, 10 % p. a.} | 4 |
 | `S2` | průřez univerzem: top K podle `F_L`, jen `F_L > θ`, rovné váhy 1/K (nevyužitá místa = hotovost) | K ∈ {3, 5, 10}, L ∈ {7, 30}, θ ∈ {0 %, 10 % p. a.} | 12 |
 
-Celkem **N = 17**. Nic dalšího se na holdoutu nehodnotí. Pokud vývoj ukáže chybu v pravidlech
+Celkem **17 kandidátů**; v1.0 a v1.1 jsou dvě sady pokusů, pro Deflated Sharpe **N = 34**. Nic dalšího se na holdoutu nehodnotí. Pokud vývoj ukáže chybu v pravidlech
 (ne slabý výsledek), oprava = nová verze dokumentu a nový pokus, N roste.
 
 ### 4.4 Náklady (za stranu, každá noha zvlášť)
@@ -109,7 +110,7 @@ Loader odmítne data po 2022-12-31 mimo finální běh. Audit dat (§3) počty a
 Hodnotí se dva kandidáti, každý zvlášť (Holm přes 2 u kritéria 1):
 
 - **P1 = `S0`** (pevný, bez výběru, čistě strukturální prémie),
-- **P2 = nejlepší z 17 podle Sharpe nadvýnosu ve vývoji** (při shodě nižší obrat).
+- **P2 = nejlepší ze 17 kandidátů v1.1 podle Sharpe nadvýnosu ve vývoji** (při shodě nižší obrat).
 
 Nadvýnos = denní čistý výnos strategie − denní T-bill.
 
@@ -118,7 +119,7 @@ Nadvýnos = denní čistý výnos strategie − denní T-bill.
 2. nadvýnos > 0 v obou podúsecích holdoutu: **2023-01 → 2024-06** a **2024-07 → 2026-09** (před a po
    nástupu Etheny ve velkém),
 3. nadvýnos > 0 i při zátěžových nákladech,
-4. P1: PSR nadvýnosu ≥ 0,95. P2: Deflated Sharpe ≥ 0,95 (N = 17, rozptyl Sharpe z vývojové mřížky).
+4. P1: PSR nadvýnosu ≥ 0,95. P2: Deflated Sharpe ≥ 0,95 (N = 34, rozptyl Sharpe z vývojové mřížky v1.1).
 
 Sharpe = průměr / sm. odchylka denního nadvýnosu × √365.
 
@@ -152,3 +153,5 @@ funding = výnos −náklady, test bodu v čase (perturbace budoucích řádků 
 | 2026-10-03 | **Pravidlo platnosti páru** (před jakýmkoli výsledkem): pár je platný v den *t*, jen když closy perpu a spotu (× multiplikátor) jsou v poměru ≤ 1,2. Univerzum vyžaduje platný pár všech 30 dní lookbacku; S0/S1 platný pár včera. Držená pozice s neplatným párem včera se zavře na dnešním openu **za skutečné ceny obou nohou** + 2 % slippage (ztráta z rozjetí basis se započítá). | Audit: dlouhé nesoulady FTT, RAY, STRAX, SC, CVC, TLM (krach FTX, migrace a relisting tokenů) a jednodenní výkyvy u ~50 coinů. Simulátor předpokládá, že obě nohy jsou stejné aktivum. |
 | 2026-10-03 | Holdout se počítá jako souvislá simulace od začátku vývoje; metriky jen z výnosů 2023-01-01 → 2026-09-30 (pozice z konce 2022 se přenášejí). „Bez hlídání delistingu“ z §7 vypuštěno (bez cen nejde simulovat). | upřesnění §5, §7 |
 | 2026-10-03 | Při sestavení parseru byly vidět 4 hodnoty fundingu BTC (2 z ledna 2020, 2 z června 2025) jako kontrola formátu. | transparentnost; bez vlivu na pravidla |
+| 2026-10-03 | Vývoj v1.0 spočten (`results/dev_v1.0.json`). Obě likvidace S0 (ETH 2020-03-13, BTC 2021-07-26) způsobily wicky **poslední ceny** perpu (ETH high 323 vs mark 139; BTC 48 168 vs spot ~40 tis.). | kontrola nejhorších dnů |
+| 2026-10-03 | **v1.1: likvidace podle mark price** (data `markPriceKlines/1d`, chybějící dny → poslední cena). Chyba modelu, ne slabý výsledek: Binance likviduje podle mark price. Všech 17 kandidátů znovu jako nové pokusy, N = 34. P2 se vybírá z v1.1. | §4.1, §4.3 |

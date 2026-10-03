@@ -4,7 +4,8 @@ Day loop, order of events for day t:
   1. open:  mark both legs to the open; trades decided before (weekly targets, maintenance, delisting,
             invalid perp/spot pair at yesterday's close) are filled at the open with fee + slippage per leg
   2. day:   funding of events in (t 00:00, t+1 00:00] paid to the short on q x perp open
-  3. day:   liquidation if the loss to the day's high wipes the perp account (minus 0.5 % maintenance);
+  3. day:   liquidation if the loss to the day's MARK-price high (Binance liquidates on mark price;
+            last-price high where no mark kline exists) wipes the perp account (minus 0.5 % maintenance);
             the spot leg is then sold at the close
   4. close: mark both legs to the close; maintenance flag if the perp account left 50-150 % of target
 Units: q is in perp units on both legs (spot prices are pre-multiplied by the contract multiplier).
@@ -67,10 +68,11 @@ def qv30(p: Panel) -> np.ndarray:
 
 
 def simulate(p: Panel, targets: dict[int, dict[int, float]], s: float = 2 / 3, costs: Costs = Costs(),
-             nav0: float = 1.0) -> Result:
+             nav0: float = 1.0, liq_price: str = "mark") -> Result:
     """`targets`: day index -> {symbol index: weight}; applied at that day's open (weights sum <= 1)."""
     po, ph, pc, so, sc = (p.m[k] for k in ("po", "ph", "pc", "so", "sc"))
     fh = p.m["fund_hold"]
+    liq_hi = np.where(np.isnan(p.m["mh"]), ph, p.m["mh"]) if liq_price == "mark" else ph
     T = len(p.dates)
     vol = qv30(p)
     cash, legs = nav0, {}
@@ -151,7 +153,7 @@ def simulate(p: Panel, targets: dict[int, dict[int, float]], s: float = 2 / 3, c
         # ---- 3. liquidation at the day's high
         for j in list(legs):
             L = legs[j]
-            hi = ph[t, j]
+            hi = liq_hi[t, j]
             if not np.isnan(hi) and L.m - L.q * (hi - po[t, j]) <= MAINT_MARGIN * L.q * hi:
                 L.m = 0.0
                 q = L.q

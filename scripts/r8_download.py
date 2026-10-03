@@ -5,7 +5,7 @@
 Stages: 1) daily klines of every USDT-M perp ever listed; 2) candidate set = perps with a Binance spot
 pair that were ever in the top 40 by 30-day quote volume on a Monday (superset of the top-20
 universe and of the top-40 robustness check; volumes only, no returns); 3) funding + spot klines of
-the candidates. Idempotent: a rerun downloads only what is missing. Writes manifest.json.
+the candidates; 4) mark-price klines of the candidates (prereg v1.1). Idempotent: a rerun downloads only what is missing. Writes manifest.json.
 """
 
 import argparse
@@ -55,13 +55,14 @@ def main() -> None:
     spots = sorted({D.spot_pair(p, spot_symbols)[0] for p in cand})
     r2 = dl.fetch_many("funding", cand, raw, a.last_month, a.workers)
     r3 = dl.fetch_many("spot_1d", spots, raw, a.last_month, a.workers)
-    errors = [r for r in r1 + r2 + r3 if "error" in r]
+    r4 = dl.fetch_many("mark_1d", cand, raw, a.last_month, a.workers)     # prereg v1.1: liquidation by mark price
+    errors = [r for r in r1 + r2 + r3 + r4 if "error" in r]
     manifest = {"snapshot": a.snapshot, "last_month": a.last_month,
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "n_perps": len(perps), "n_spot_symbols": len(spot_symbols), "candidates": cand,
                 "pairs": {p: D.spot_pair(p, spot_symbols) for p in cand},
                 "files": {k: sum(r.get("files", 0) for r in rs) for k, rs in
-                          (("perp_1d", r1), ("funding", r2), ("spot_1d", r3))},
+                          (("perp_1d", r1), ("funding", r2), ("spot_1d", r3), ("mark_1d", r4))},
                 "errors": errors}
     (raw / "manifest.json").write_text(json.dumps(manifest, indent=1))
     print(json.dumps({k: manifest[k] for k in ("files",)}), f"errors: {len(errors)}")

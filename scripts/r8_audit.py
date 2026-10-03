@@ -33,6 +33,8 @@ for p, (spot, mult) in sorted(pairs.items()):
     k = D.read_klines(raw / "perp_1d" / p)
     s = D.read_klines(raw / "spot_1d" / spot)
     f = D.read_funding(raw / "funding" / p)
+    mk = D.read_klines(raw / "mark_1d" / p)
+    mark_missing = int(k.join(mk.select("date"), on="date", how="anti").height) if k.height else 0
     bad_k = int(((k["close"] <= 0) | (k["low"] <= 0) | (k["high"] < k["low"])).sum()) if k.height else 0
     bad_s = int(((s["close"] <= 0) | (s["high"] < s["low"])).sum()) if s.height else 0
     off_hour = int((f["ts"].dt.minute() != 0).sum()) if f.height else 0
@@ -48,7 +50,7 @@ for p, (spot, mult) in sorted(pairs.items()):
                  "perp_from": str(k["date"].min()) if k.height else "–", "perp_to": str(k["date"].max()) if k.height else "–",
                  "spot_from": str(s["date"].min()) if s.height else "–", "spot_to": str(s["date"].max()) if s.height else "–",
                  "perp_gaps": gaps(k["date"]) if k.height else 0, "spot_gaps": gaps(s["date"]) if s.height else 0,
-                 "bad_rows": bad_k + bad_s, "funding_events": f.height, "funding_off_hour": off_hour,
+                 "bad_rows": bad_k + bad_s, "funding_events": f.height, "mark_missing_days": mark_missing, "funding_off_hour": off_hour,
                  "ratio_median": round(med, 4), "dev_days_basis_gt5pct": big_basis_dev})
     if bad_k + bad_s:
         problems.append(f"{p}: {bad_k + bad_s} řádků s nekladnou cenou nebo high < low")
@@ -66,6 +68,7 @@ lines = [f"# Výzkum 8 – audit dat (`{snapshot}`)", "",
          "", "## Souhrn", "",
          f"- mezery v denních svíčkách perpů celkem: {int(df['perp_gaps'].sum())}, spotu: {int(df['spot_gaps'].sum())}",
          f"- funding události mimo celou hodinu: {int(df['funding_off_hour'].sum())}",
+         f"- dny perpu bez mark-price svíčky (likvidace pak podle poslední ceny): {int(df['mark_missing_days'].sum())}",
          f"- delistované (perp končí před 2026-09-30): {int((df['perp_to'] < '2026-09-30').sum())}",
          "", "## Po symbolech", "",
          "| " + " | ".join(df.columns) + " |", "|" + "---|" * len(df.columns)]
