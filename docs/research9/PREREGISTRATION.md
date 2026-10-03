@@ -104,3 +104,4 @@ jednoho obchodu.
 | Datum | Rozhodnutí | Důvod |
 |---|---|---|
 | 2026-10-03 | Pre-registrace v1.0 | – |
+| 2026-10-03 | Data: 664 spotových párů USDT (26 013 souborů, 0 chyb), panel 2017-08-01 → 2026-08-31 (`DATA_AUDIT.md`). Univerzum je ve vývoji malé (2018-04-01: 7 obchodovatelných párů; na Binance se tehdy obchodovalo hlavně proti BTC), od 2022 stovky párů. Extrémní denní pohyby (> 90 %) zkontrolovány ručně: skutečné události (DOGE 2021-01, LUNA 2022-05, pumpy malých coinů). Nový LUNA pod stejným tickerem je díky mezeře > 7 dní nový listing. Nic se nemění. | audit |
