@@ -234,6 +234,10 @@ Během pokusu se pravidla neplánují měnit. Když je změna nutná, je to vžd
 > `prereg-v1`): 3 primární hypotézy, pevné okno 2026-10-01 – 2026-11-30, vyhodnocení od 2026-12-15 skriptem
 > `tools/prereg_eval.py`. Pravidla níže zůstávají jako orientační pohled dashboardu; bootstrap na 7/14 dnech je
 > příliš benevolentní (viz pre-registrace, bod 7).
+>
+> **Forward test pomalého trendového filtru** (`trend_btc200`, BTC nad SMA200, jinak USDT) je pre-registrovaný
+> v [`docs/PREREGISTRATION_TREND.md`](docs/PREREGISTRATION_TREND.md) (tag `prereg-trend-v1`); do bota přibude
+> releasem po 2026-11-30, okno do 2028-11-30.
 
 1. **Pohled/skóre má edge** jen tehdy, když 95% interval spolehlivosti rank IC (7denní výnos vs BTC,
    `tools/analyze.py`, blokový bootstrap přes dny) neobsahuje 0 **a** znaménko sedí v první i druhé polovině pokusu.
