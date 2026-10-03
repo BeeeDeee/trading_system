@@ -3,7 +3,7 @@
 Lokální výzkumný framework pro poctivé vyhodnocení systematických long-only strategií na denních
 datech amerických akcií a ETF (Sharadar, snapshot 2026-09-25).
 
-**Stav: projekt uzavřen (2026-09-27), výzkumy 8–9 doplněny 2026-10-03.** Devět pre-registrovaných výzkumů, osm negativních výsledků
+**Stav: projekt uzavřen (2026-09-27), výzkumy 8–10 doplněny 2026-10-03.** Deset pre-registrovaných výzkumů, devět negativních výsledků
 a jedna sada praktických závěrů pro pasivní portfolio.
 
 ## Závěr v jedné větě
@@ -25,9 +25,10 @@ rozhoduje zvolený podíl akcií, nízké náklady a disciplína.
 | **7 – SPY + VIX rukáv** | Překoná SPY portfolio, které při VIX > 25 přesune část kapitálu do reversal pozic? | **Ne.** 2003–2026 Sharpe 0,686 vs. SPY 0,685, aktivní výnos +0,25 % p. a. při tracking erroru 6 %, při nákladech ×2 −1,3 p. b. p. a. Zisk rukávu ve výzkumu 6 byl odraz trhu po vysokém VIX, ne výběr akcií. 0 ze 4 kritérií. |
 | **8 – funding carry (krypto)** | Vydělává delta-neutrální long spot + short perp na Binance po nákladech víc než T-bill (2023–2026, pre-registrováno, jednou otevřený holdout)? | **Ne.** Ve vývoji 2020–2022 +12 % nad T-bill (Sharpe 8), na holdoutu **+0,7 % (BTC+ETH vždy) a +0,3 % (s filtrem)**, 90% interval obsahuje 0, od 2024-07 záporné. Funding se po nástupu Etheny zmenšil k úrovni T-billu (2/3 kapitálu je nominál). Rotace altcoinů neprošla ani vývojem. |
 | **9 – trend a momentum (krypto)** | Zlepší trendový filtr BTC + ETH Sharpe proti držení? Překoná týdenní momentum altcoinů rovné váhy likvidního univerza (2022–2026)? | **Ne.** Vybraný filtr (SMA20) Sharpe 0,36 vs 0,34, CI obsahuje 0. Všech 8 filtrů ale snížilo propad (30–48 % vs 68 %), to je jen popisné. Altcoiny 2022–2026: rovné váhy top 20 −45 % ročně, žádné momentum nemělo kladný CAGR. |
+| **10 – doplňující se strategie** | Najdou se dvě strategie, které se doplňují (jedna i short), a vyplatí se je kombinovat nebo přepínat? Akcie (dvojice z 87 rukávů, SPY + trend long/short na ETF, jen ≤ 2019) a krypto (trend se shortem přes perp). | **Ne.** Long-only akciové dvojice v krizi korelují ≥ +0,53, doplňují se jen akcie a dluhopisy (= 60/40). Oracle přepínač Sharpe 1,70 vs statická 0,54, naivní přepínače zachytí ~1–2 %. Trend long/short na ETF vydělal v roce 2008, 2010–2019 ztrácel; verze bez shortu lepší. Krypto: ΔSharpe +0,21, CI [−0,31; +0,75], DSR 0,02; efekt shortu mění znaménko mezi vývojem a holdoutem. |
 
 Podrobně: [výzkum 1](docs/FINAL_REPORT.md) · [výzkum 2](docs/research2/REPORT.md) ·
-[výzkum 3](docs/research3/REPORT.md) · [výzkum 4](docs/research4/REPORT.md) · [výzkum 5](docs/research5/REPORT.md) · [výzkum 6](docs/research6/REPORT.md) · [výzkum 7](docs/research7/REPORT.md) · [výzkum 8](docs/research8/REPORT.md) · [výzkum 9](docs/research9/REPORT.md).
+[výzkum 3](docs/research3/REPORT.md) · [výzkum 4](docs/research4/REPORT.md) · [výzkum 5](docs/research5/REPORT.md) · [výzkum 6](docs/research6/REPORT.md) · [výzkum 7](docs/research7/REPORT.md) · [výzkum 8](docs/research8/REPORT.md) · [výzkum 9](docs/research9/REPORT.md) · [výzkum 10](docs/research10/REPORT.md).
 
 ## Co jsme se naučili
 
@@ -89,6 +90,10 @@ uv run python scripts/r9_download.py binance_<datum>      # výzkum 9: všechny 
 uv run python scripts/r9_build_panel.py binance_<datum>   # výzkum 9: panel + audit
 uv run python scripts/r9_dev.py binance_<datum>           # výzkum 9: 26 kandidátů na vývoji
 uv run python scripts/r9_final.py binance_<datum> freeze|run   # výzkum 9: jednorázový holdout
+uv run python scripts/r10_pairs.py sharadar_<datum> [posthoc2004]  # výzkum 10 A: dvojice rukávů (≤ 2019)
+uv run python scripts/r10_tsmom.py sharadar_<datum>       # výzkum 10 B: SPY + TSMOM long/short (≤ 2019)
+uv run python scripts/r10_crypto_dev.py binance_<datum>   # výzkum 10 C: krypto long/short, vývoj
+uv run python scripts/r10_crypto_final.py binance_<datum> freeze|run   # výzkum 10 C: jednorázový holdout
 ```
 
 ## Kdyby se projekt otevíral znovu

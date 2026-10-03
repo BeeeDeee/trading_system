@@ -1,6 +1,6 @@
 # Výzkum 10 – doplňující se strategie a short strana (pre-registrace)
 
-Verze 1.0 · 2026-10-03 · Stav: **pre-registrace, nic zatím spočteno**.
+Verze 1.0 · 2026-10-03 · Stav: **uzavřeno, zamítnuto** (`REPORT.md`).
 Navazuje na výzkum 4 (87 rukávů, meta-vrstva), výzkum 2 (ETF panel) a výzkum 9 (krypto trend, trezor).
 Změny po commitu = nový pokus v registru a řádek v §9.
 
@@ -134,3 +134,6 @@ Splnění C = kandidát na forward test (paper bot), protože holdout není nevi
 |---|---|---|
 | 2026-10-03 | Verze 1.0 | – |
 | 2026-10-03 | Upřesnění před výpočtem: váhy `iv` se normalizují přes **všechny** způsobilé ETF (Σ 1/σ), takže `LS` má Σ\|w\| = 1 a `LO` je přesně `LS` se shorty nahrazenými hotovostí (stejně jako `eq`). | Pre-registrace u `LO` nebyla jednoznačná |
+| 2026-10-03 | A: kritérium 3 mělo obrácené znaménko (`max_drawdown` je kladné číslo); opraveno před interpretací, verdikt beze změny (kritéria 1, 2, 4 neprošla). Okno 2001–2012 vyřadilo i dluhopisové ETF (rukáv IEF/TLT od 2003), proto navíc **post hoc** popisný běh s oknem 2004–2012 (`pairs_posthoc2004.json`), zapsaný v registru jako `other`. | chyba v kódu; neočekávaný dopad pravidla způsobilosti |
+| 2026-10-03 | A: P_A zamítnuto (1 ze 4). B: P_B = LS_L3_eq zamítnuto (1 z 5). C vývoj: P_C = HS_20, všech 8 variant pod filtrem do hotovosti. | `results/pairs.json`, `tsmom.json`, `crypto_dev.json` |
+| 2026-10-03 | C: metodika zamčena (`c0c4d945…`), holdout otevřen jednou. P_C zamítnuto (3 z 5: CI obsahuje 0, DSR 0,02). | `results/crypto_final.json`, `REPORT.md` |
