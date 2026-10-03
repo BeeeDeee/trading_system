@@ -8,7 +8,7 @@ from dataclasses import asdict, dataclass
 
 import numpy as np
 
-from .panel import Panel, mondays
+from .panel import Panel, mondays, pair_ok
 
 UNIVERSE_N = 20
 MIN_LISTED_DAYS = 30
@@ -56,7 +56,7 @@ def universe(p: Panel, t: int, n: int) -> np.ndarray:
     if t < MIN_LISTED_DAYS:
         return np.array([], dtype=int)
     win = slice(t - MIN_LISTED_DAYS, t)
-    ok = (~np.isnan(p.m["pc"][win])).all(axis=0) & (~np.isnan(p.m["sc"][win])).all(axis=0)
+    ok = pair_ok(p)[win].all(axis=0)
     qv = np.where(ok, np.nanmean(p.m["qv"][win], axis=0), -np.inf)
     order = np.argsort(-qv, kind="stable")
     return np.array([j for j in order[:n] if ok[j]], dtype=int)
@@ -65,15 +65,16 @@ def universe(p: Panel, t: int, n: int) -> np.ndarray:
 def targets(p: Panel, cfg: Config) -> dict[int, dict[int, float]]:
     sym = {s: j for j, s in enumerate(p.symbols)}
     btc_eth = [sym["BTCUSDT"], sym["ETHUSDT"]]
+    ok = pair_ok(p)
     out = {}
     for t in mondays(p.dates):
         if t == 0:
             continue
         if cfg.family == "S0":
-            out[int(t)] = {j: 0.5 for j in btc_eth if not np.isnan(p.m["pc"][t - 1, j])}
+            out[int(t)] = {j: 0.5 for j in btc_eth if ok[t - 1, j]}
         elif cfg.family == "S1":
             F = trailing_funding(p, t, cfg.L)
-            out[int(t)] = {j: 0.5 for j in btc_eth if F[j] > cfg.theta}
+            out[int(t)] = {j: 0.5 for j in btc_eth if ok[t - 1, j] and F[j] > cfg.theta}
         else:
             F = trailing_funding(p, t, cfg.L)
             U = [j for j in universe(p, t, cfg.universe_n) if F[j] > cfg.theta]

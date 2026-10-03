@@ -106,6 +106,16 @@ def load(path: Path, last_day: date) -> Panel:
     return p.slice(date(2000, 1, 1), last_day)
 
 
+PAIR_TOL = 1.2      # prereg log 2026-10-03: perp and spot closes within a factor 1.2, else the pair is invalid
+
+
+def pair_ok(p: Panel) -> np.ndarray:
+    """T x N: both closes known and perp/spot within PAIR_TOL (same instrument on both legs)."""
+    with np.errstate(invalid="ignore", divide="ignore"):
+        r = np.abs(np.log(p.m["pc"] / p.m["sc"]))
+    return np.nan_to_num(r, nan=np.inf) <= np.log(PAIR_TOL)
+
+
 def mondays(dates: np.ndarray) -> np.ndarray:
     """Indices of Mondays (rebalance days) in `dates`."""
     wd = (dates.astype("datetime64[D]").view("int64") - 4) % 7      # 1970-01-01 was a Thursday

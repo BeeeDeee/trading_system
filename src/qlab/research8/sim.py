@@ -1,8 +1,8 @@
 """Delta-neutral hedge simulator (prereg §4.1, §4.4): long spot + short perp of equal notional.
 
 Day loop, order of events for day t:
-  1. open:  mark both legs to the open; trades decided before (weekly targets, maintenance, delisting)
-            are filled at the open with fee + slippage per leg
+  1. open:  mark both legs to the open; trades decided before (weekly targets, maintenance, delisting,
+            invalid perp/spot pair at yesterday's close) are filled at the open with fee + slippage per leg
   2. day:   funding of events in (t 00:00, t+1 00:00] paid to the short on q x perp open
   3. day:   liquidation if the loss to the day's high wipes the perp account (minus 0.5 % maintenance);
             the spot leg is then sold at the close
@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from .panel import Panel
+from .panel import Panel, pair_ok
 
 MAINT_MARGIN = 0.005
 DELIST_SLIP = 0.02
@@ -51,6 +51,7 @@ class Result:
     turnover: np.ndarray
     liquidations: list = field(default_factory=list)
     delistings: list = field(default_factory=list)
+    mismatches: list = field(default_factory=list)
 
 
 def qv30(p: Panel) -> np.ndarray:
@@ -79,6 +80,7 @@ def simulate(p: Panel, targets: dict[int, dict[int, float]], s: float = 2 / 3, c
     res = Result(nav, np.zeros(T), fund_d, cost_d, turn_d)
     pending_maint: set[int] = set()
     prev_nav = nav0
+    ok = pair_ok(p)
 
     def value(j: int, perp: float, spot: float) -> float:
         L = legs[j]
@@ -119,6 +121,9 @@ def simulate(p: Panel, targets: dict[int, dict[int, float]], s: float = 2 / 3, c
                 continue
             L = legs[j]
             L.m += L.q * (last_px[j][0] - po[t, j])
+            if t > 0 and not ok[t - 1, j]:                     # legs stopped being the same asset
+                close(t, j, po[t, j], so[t, j], DELIST_SLIP)
+                res.mismatches.append((t, j))
         open_nav = cash + sum(value(j, po[t, j], so[t, j]) for j in legs)
         tgt = targets.get(t)
         rebuilt: set[int] = set()

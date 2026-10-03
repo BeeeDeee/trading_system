@@ -119,3 +119,22 @@ def test_spot_pair_mapping():
     assert D.spot_pair("1000SATSUSDT", spot) == ("1000SATSUSDT", 1.0)
     assert D.spot_pair("USDCUSDT", spot) is None
     assert D.spot_pair("BTCUSDT_230331", spot) is None
+
+
+def test_invalid_pair_forces_exit_at_actual_prices():
+    p = flat_panel(T=6)
+    p.m["sc"][2, 0] = 70.0                           # spot close 30 % below perp: pair invalid on day 2
+    p.m["so"][3:, 0] = p.m["sc"][3:, 0] = 70.0       # and the spot stays there
+    r = simulate(p, {0: {0: 1.0}}, costs=ZERO)
+    assert r.mismatches == [(3, 0)]
+    # spot leg lost 30 % on 2/3 of NAV, perp unchanged, then 2 % on both legs at the next open
+    q = 2 / 3 / 100
+    assert r.nav[3] == pytest.approx(1 - 2 / 3 * 0.3 - q * 0.02 * (70 + 100))
+
+
+def test_universe_needs_valid_pair_for_30_days():
+    syms = ["BTCUSDT", "ETHUSDT", "AUSDT"]
+    p = flat_panel(T=70, N=3, symbols=syms)
+    p.m["sc"][50, 2] = 50.0
+    assert 2 in S.universe(p, 45, 3)
+    assert 2 not in S.universe(p, 60, 3)

@@ -148,3 +148,7 @@ funding = výnos −náklady, test bodu v čase (perturbace budoucích řádků 
 | Datum | Rozhodnutí | Důvod |
 |---|---|---|
 | 2026-10-03 | Pre-registrace v1.0 | – |
+| 2026-10-03 | Data: snapshot `binance_2026-10-03` (895 perpů, 389 kandidátů, 0 chyb, vše ověřeno sha256) | `DATA_AUDIT.md` |
+| 2026-10-03 | **Pravidlo platnosti páru** (před jakýmkoli výsledkem): pár je platný v den *t*, jen když closy perpu a spotu (× multiplikátor) jsou v poměru ≤ 1,2. Univerzum vyžaduje platný pár všech 30 dní lookbacku; S0/S1 platný pár včera. Držená pozice s neplatným párem včera se zavře na dnešním openu **za skutečné ceny obou nohou** + 2 % slippage (ztráta z rozjetí basis se započítá). | Audit: dlouhé nesoulady FTT, RAY, STRAX, SC, CVC, TLM (krach FTX, migrace a relisting tokenů) a jednodenní výkyvy u ~50 coinů. Simulátor předpokládá, že obě nohy jsou stejné aktivum. |
+| 2026-10-03 | Holdout se počítá jako souvislá simulace od začátku vývoje; metriky jen z výnosů 2023-01-01 → 2026-09-30 (pozice z konce 2022 se přenášejí). „Bez hlídání delistingu“ z §7 vypuštěno (bez cen nejde simulovat). | upřesnění §5, §7 |
+| 2026-10-03 | Při sestavení parseru byly vidět 4 hodnoty fundingu BTC (2 z ledna 2020, 2 z června 2025) jako kontrola formátu. | transparentnost; bez vlivu na pravidla |
