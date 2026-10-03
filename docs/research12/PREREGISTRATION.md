@@ -96,3 +96,4 @@ náklady, CAGR, Sharpe. Slouží ke kontrole implementace a odhadu obratu.
 | Datum | Změna | Důvod |
 |---|---|---|
 | 2026-10-03 | Verze 1.0 | – |
+| 2026-10-03 | Popisný historický běh (§8, `results/history.json`): hystereze snížila obrat M_ALL z 16,4× na 9,1× ročně (náklady 1,45 → 0,81 % p. a.), mění se ~18 z 50 akcií měsíčně; 2010–2026 Sharpe 0,59 vs SPY 0,86, EW 0,65. Pravidla se nemění. Forward test čeká na rozhodnutí o obnově předplatného. | informace pro rozhodnutí, ne kritérium |
