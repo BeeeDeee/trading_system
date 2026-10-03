@@ -44,7 +44,8 @@ kapitalizace), quality_gpa, quality_roe, quality_lowlev, invest_lowag, growth_re
 Nové (ART/ARQ, použitelné den po podání, max. stáří 400 dní):
 - `accruals` = −(netinc − ncfo) / assets (ART),
 - `net_issuance` = −(sharesbas / sharesbas před rokem − 1) (ART),
-- `eps_surprise` = (eps poslední kvartál − eps stejný kvartál před rokem) / cena k datu rozhodnutí (ARQ).
+- `eps_surprise` = (čistý zisk poslední kvartál − čistý zisk stejný kvartál před rokem) / tržní kapitalizace k datu
+  rozhodnutí (ARQ; viz §10).
 
 **I – insideři (5), okno 91 dní, podle data podání < den rozhodnutí:** `ins_buy` (nákupy P / tržní
 kapitalizace, z výzkumu 4), `ins_sell` (prodeje S / tržní kapitalizace), `ins_n_buyers`, `ins_n_sellers`
@@ -114,3 +115,4 @@ Splnění = kandidát na forward test, ne důkaz (§2).
 | Datum | Změna | Důvod |
 |---|---|---|
 | 2026-10-03 | Verze 1.0 | – |
+| 2026-10-03 | Před výpočtem: `eps_surprise` z čistého zisku / tržní kapitalizace místo EPS / ceny. Sharadar zpětně upravuje EPS na splity (AAPL 2019-Q4 eps 1,26 místo vykázaných 4,99), nepřepočtená cena k datu by tak míchala budoucí splity. | únik budoucnosti |
