@@ -3,7 +3,7 @@
 Lokální výzkumný framework pro poctivé vyhodnocení systematických long-only strategií na denních
 datech amerických akcií a ETF (Sharadar, snapshot 2026-09-25).
 
-**Stav: projekt uzavřen (2026-09-27), výzkum 8 doplněn 2026-10-03.** Osm pre-registrovaných výzkumů, sedm negativních výsledků
+**Stav: projekt uzavřen (2026-09-27), výzkumy 8–9 doplněny 2026-10-03.** Devět pre-registrovaných výzkumů, osm negativních výsledků
 a jedna sada praktických závěrů pro pasivní portfolio.
 
 ## Závěr v jedné větě
@@ -24,9 +24,10 @@ rozhoduje zvolený podíl akcií, nízké náklady a disciplína.
 | **6 – STR-TF při vysokém VIX** | Vydělává reversal, pokud se vstupuje jen při VIX > 25 (Nagel 2012)? | **Ne jako strategie** (DSR 0,0006, CAGR 3 %, investováno 9 % času). **Efekt ale vypadá reálně:** brána obrací čistý výnos na obchod z −2 na +54 bps, stabilně ve všech podúsecích 2003–2026 a rostoucí s prahem. Výzkum 7 ale ukázal, že jde hlavně o odraz celého trhu po vysokém VIX. |
 | **7 – SPY + VIX rukáv** | Překoná SPY portfolio, které při VIX > 25 přesune část kapitálu do reversal pozic? | **Ne.** 2003–2026 Sharpe 0,686 vs. SPY 0,685, aktivní výnos +0,25 % p. a. při tracking erroru 6 %, při nákladech ×2 −1,3 p. b. p. a. Zisk rukávu ve výzkumu 6 byl odraz trhu po vysokém VIX, ne výběr akcií. 0 ze 4 kritérií. |
 | **8 – funding carry (krypto)** | Vydělává delta-neutrální long spot + short perp na Binance po nákladech víc než T-bill (2023–2026, pre-registrováno, jednou otevřený holdout)? | **Ne.** Ve vývoji 2020–2022 +12 % nad T-bill (Sharpe 8), na holdoutu **+0,7 % (BTC+ETH vždy) a +0,3 % (s filtrem)**, 90% interval obsahuje 0, od 2024-07 záporné. Funding se po nástupu Etheny zmenšil k úrovni T-billu (2/3 kapitálu je nominál). Rotace altcoinů neprošla ani vývojem. |
+| **9 – trend a momentum (krypto)** | Zlepší trendový filtr BTC + ETH Sharpe proti držení? Překoná týdenní momentum altcoinů rovné váhy likvidního univerza (2022–2026)? | **Ne.** Vybraný filtr (SMA20) Sharpe 0,36 vs 0,34, CI obsahuje 0. Všech 8 filtrů ale snížilo propad (30–48 % vs 68 %), to je jen popisné. Altcoiny 2022–2026: rovné váhy top 20 −45 % ročně, žádné momentum nemělo kladný CAGR. |
 
 Podrobně: [výzkum 1](docs/FINAL_REPORT.md) · [výzkum 2](docs/research2/REPORT.md) ·
-[výzkum 3](docs/research3/REPORT.md) · [výzkum 4](docs/research4/REPORT.md) · [výzkum 5](docs/research5/REPORT.md) · [výzkum 6](docs/research6/REPORT.md) · [výzkum 7](docs/research7/REPORT.md) · [výzkum 8](docs/research8/REPORT.md).
+[výzkum 3](docs/research3/REPORT.md) · [výzkum 4](docs/research4/REPORT.md) · [výzkum 5](docs/research5/REPORT.md) · [výzkum 6](docs/research6/REPORT.md) · [výzkum 7](docs/research7/REPORT.md) · [výzkum 8](docs/research8/REPORT.md) · [výzkum 9](docs/research9/REPORT.md).
 
 ## Co jsme se naučili
 
@@ -84,6 +85,10 @@ uv run python scripts/r8_build_panel.py binance_<datum>   # výzkum 8: panel + T
 uv run python scripts/r8_audit.py binance_<datum>         # výzkum 8: audit dat
 uv run python scripts/r8_dev.py binance_<datum>           # výzkum 8: 17 kandidátů na vývoji
 uv run python scripts/r8_final.py binance_<datum> freeze|run   # výzkum 8: jednorázový holdout
+uv run python scripts/r9_download.py binance_<datum>      # výzkum 9: všechny spotové páry USDT
+uv run python scripts/r9_build_panel.py binance_<datum>   # výzkum 9: panel + audit
+uv run python scripts/r9_dev.py binance_<datum>           # výzkum 9: 26 kandidátů na vývoji
+uv run python scripts/r9_final.py binance_<datum> freeze|run   # výzkum 9: jednorázový holdout
 ```
 
 ## Kdyby se projekt otevíral znovu

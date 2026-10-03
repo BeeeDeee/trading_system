@@ -1,6 +1,6 @@
 # Výzkum 9 – trend a momentum v kryptu (pre-registrace)
 
-Verze 1.0 · 2026-10-03 · Stav: **pre-registrace, nic z výzkumu 9 zatím spočteno**.
+Verze 1.0 · 2026-10-03 · Stav: **uzavřeno, zamítnuto** (`REPORT.md`).
 Navazuje na výzkum 8 (data Binance, trezor, registr) a na vektorový engine výzkumů 1–4.
 Změny po commitu = nový pokus v registru a řádek v §10.
 
@@ -107,3 +107,5 @@ jednoho obchodu.
 | 2026-10-03 | Data: 664 spotových párů USDT (26 013 souborů, 0 chyb), panel 2017-08-01 → 2026-08-31 (`DATA_AUDIT.md`). Univerzum je ve vývoji malé (2018-04-01: 7 obchodovatelných párů; na Binance se tehdy obchodovalo hlavně proti BTC), od 2022 stovky párů. Extrémní denní pohyby (> 90 %) zkontrolovány ručně: skutečné události (DOGE 2021-01, LUNA 2022-05, pumpy malých coinů). Nový LUNA pod stejným tickerem je díky mezeře > 7 dní nový listing. Nic se nemění. | audit |
 | 2026-10-03 | Vývoj spočten (`results/dev.json`): **P_T = `T_sma20`**, **P_X = `X_K10_L30_mf`**, N = 26. | výběr podle §6 |
 | 2026-10-03 | Oprava kódu před zamčením: `max_drawdown` vrací kladnou velikost propadu, kritérium 4 pro P_T v `r9_final.py` porovnávalo obráceně. Pravidlo se nemění. | chyba kódu |
+| 2026-10-03 | Metodika zamčena (`c885d5d9…`), holdout otevřen (commit `1522234`). Skript spadl **po otevření** při zápisu JSON (numpy bool). Rerun téhož zamčeného skriptu přes `scripts/r9_final_rerun.py` (jen převod typů pro JSON, druhé otevření zapsané jako `rerun` ve `vault.log`). | pravidlo frameworku: pád po otevření → zalogovaný rerun |
+| 2026-10-03 | **P_T i P_X nesplnily kritéria → zamítnuto.** Forward test se nespouští. | `REPORT.md` |
