@@ -129,7 +129,7 @@ for name, cid in (("P_T", dev["P_T"]), ("P_X", dev["P_X"])):
 order = sorted(pv, key=pv.get)
 holm = {k: min(1.0, max(pv[order[i]] * (len(order) - i) for i in range(order.index(k) + 1))) for k in pv}
 for name, c in res["candidates"].items():
-    crit4 = (c["strategy"]["max_dd"] > c["benchmark"]["max_dd"]) if name == "P_T" else (c["strategy"]["cagr"] > c["benchmark"]["cagr"])
+    crit4 = (c["strategy"]["max_dd"] < c["benchmark"]["max_dd"]) if name == "P_T" else (c["strategy"]["cagr"] > c["benchmark"]["cagr"])
     c["criteria"] = {"1_sharpe_diff_ci_holm": holm[name] < 0.05 and c["ci90"][0] > 0,
                      "2_both_subperiods": all(v > 0 for v in c["subperiods_sharpe_diff"].values()),
                      "3_stress": c["stress_sharpe_diff"] > 0, "4_dd_or_cagr": bool(crit4), "5_dsr": c["dsr"] >= 0.95}

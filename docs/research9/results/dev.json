@@ -1,0 +1,579 @@
+{
+ "stage": "dev",
+ "period": [
+  "2018-04-01",
+  "2021-12-31"
+ ],
+ "benchmarks": {
+  "T_5050": {
+   "cagr": 0.8201295177874905,
+   "sharpe": 1.152840669813155,
+   "vol": 0.821968856011949,
+   "max_dd": 0.8129643481892541
+  },
+  "X_ew20": {
+   "cagr": 0.303031832426224,
+   "sharpe": 0.771329664765979,
+   "vol": 0.956130101168574,
+   "max_dd": 0.888651250953437
+  },
+  "BTC_hold": {
+   "cagr": 0.6571088433774017,
+   "sharpe": 1.0622758327153075,
+   "vol": 0.737679176299047,
+   "max_dd": 0.6743998377939984
+  }
+ },
+ "candidates": {
+  "T_sma20": {
+   "config": {
+    "family": "T",
+    "rule": "sma",
+    "n": 20,
+    "K": 0,
+    "L": 0,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.939140914144287,
+   "sharpe": 1.4924362223945913,
+   "vol": 0.5416025735952004,
+   "max_dd": 0.4428149587155221,
+   "sharpe_diff": 0.33959555258143626,
+   "stress_sharpe": 1.37562794023683,
+   "turnover_ann": 38.41147268365669,
+   "costs_ann": 0.06259876547375799,
+   "exposure": 0.5515449591852017
+  },
+  "T_sma50": {
+   "config": {
+    "family": "T",
+    "rule": "sma",
+    "n": 50,
+    "K": 0,
+    "L": 0,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.8846925939943766,
+   "sharpe": 1.4254549617987367,
+   "vol": 0.5520941968266553,
+   "max_dd": 0.5296946501711287,
+   "sharpe_diff": 0.2726142919855816,
+   "stress_sharpe": 1.3655465450505495,
+   "turnover_ann": 18.856736362039722,
+   "costs_ann": 0.03234378931444202,
+   "exposure": 0.548288922425837
+  },
+  "T_sma100": {
+   "config": {
+    "family": "T",
+    "rule": "sma",
+    "n": 100,
+    "K": 0,
+    "L": 0,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.7458242983952894,
+   "sharpe": 1.2497389383015374,
+   "vol": 0.5851543963462765,
+   "max_dd": 0.47964769141033625,
+   "sharpe_diff": 0.09689826848838234,
+   "stress_sharpe": 1.2195306225599085,
+   "turnover_ann": 11.252475903755087,
+   "costs_ann": 0.017275064008138802,
+   "exposure": 0.5764669537215906
+  },
+  "T_sma200": {
+   "config": {
+    "family": "T",
+    "rule": "sma",
+    "n": 200,
+    "K": 0,
+    "L": 0,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.6588192380570088,
+   "sharpe": 1.1281697775787496,
+   "vol": 0.6255889414694067,
+   "max_dd": 0.6357259083950786,
+   "sharpe_diff": -0.02467089223440544,
+   "stress_sharpe": 1.1127244385544863,
+   "turnover_ann": 5.914680532898896,
+   "costs_ann": 0.00982411252721501,
+   "exposure": 0.5817816379185615
+  },
+  "T_mom7": {
+   "config": {
+    "family": "T",
+    "rule": "mom",
+    "n": 7,
+    "K": 0,
+    "L": 0,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.8579729763885506,
+   "sharpe": 1.4196628588792428,
+   "vol": 0.5380257133624484,
+   "max_dd": 0.47021272379547074,
+   "sharpe_diff": 0.2668221890660878,
+   "stress_sharpe": 1.226429485384207,
+   "turnover_ann": 63.75807177513612,
+   "costs_ann": 0.10416904759958882,
+   "exposure": 0.5503383810146707
+  },
+  "T_mom14": {
+   "config": {
+    "family": "T",
+    "rule": "mom",
+    "n": 14,
+    "K": 0,
+    "L": 0,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.8528261429070985,
+   "sharpe": 1.380369582546525,
+   "vol": 0.5608231049348218,
+   "max_dd": 0.6357458205656306,
+   "sharpe_diff": 0.22752891273336995,
+   "stress_sharpe": 1.2636023232594862,
+   "turnover_ann": 39.58088240997949,
+   "costs_ann": 0.06549362897189893,
+   "exposure": 0.5619184304647238
+  },
+  "T_mom30": {
+   "config": {
+    "family": "T",
+    "rule": "mom",
+    "n": 30,
+    "K": 0,
+    "L": 0,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.9441114797452612,
+   "sharpe": 1.4420696039858443,
+   "vol": 0.5777413812675426,
+   "max_dd": 0.5742417000015206,
+   "sharpe_diff": 0.28922893417268924,
+   "stress_sharpe": 1.3697667546183212,
+   "turnover_ann": 24.376053411346287,
+   "costs_ann": 0.041744352313000006,
+   "exposure": 0.5740884040813699
+  },
+  "T_mom90": {
+   "config": {
+    "family": "T",
+    "rule": "mom",
+    "n": 90,
+    "K": 0,
+    "L": 0,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.5108728686262389,
+   "sharpe": 0.9896765008242248,
+   "vol": 0.6263119474068091,
+   "max_dd": 0.7127529446671363,
+   "sharpe_diff": -0.16316416898893027,
+   "stress_sharpe": 0.9544330436950232,
+   "turnover_ann": 12.68549028134752,
+   "costs_ann": 0.021610896235488786,
+   "exposure": 0.5894034983393261
+  },
+  "X_K3_L7": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 3,
+    "L": 7,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": -0.1924904087034074,
+   "sharpe": 0.3650363378335774,
+   "vol": 1.0942286606678997,
+   "max_dd": 0.9015714968623254,
+   "sharpe_diff": -0.40629332693240156,
+   "stress_sharpe": 0.1862003224576809,
+   "turnover_ann": 72.02803149974982,
+   "costs_ann": 0.1964851124057773,
+   "exposure": 0.8275796360272856
+  },
+  "X_K3_L7_mf": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 3,
+    "L": 7,
+    "market_filter": true,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.35349471489287154,
+   "sharpe": 0.7753172808773725,
+   "vol": 0.8631787530096362,
+   "max_dd": 0.6329901462454716,
+   "sharpe_diff": 0.003987616111393533,
+   "stress_sharpe": 0.6408109535171091,
+   "turnover_ann": 44.47810473822274,
+   "costs_ann": 0.11610947684311847,
+   "exposure": 0.5141893539410376
+  },
+  "X_K3_L30": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 3,
+    "L": 30,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": -0.25329148720670813,
+   "sharpe": 0.3351458642345036,
+   "vol": 1.1566756425618903,
+   "max_dd": 0.9499317438480258,
+   "sharpe_diff": -0.4361838005314754,
+   "stress_sharpe": 0.24510606378611016,
+   "turnover_ann": 38.6969938749886,
+   "costs_ann": 0.10444276539490768,
+   "exposure": 0.8564596294173249
+  },
+  "X_K3_L30_mf": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 3,
+    "L": 30,
+    "market_filter": true,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.16108204132533976,
+   "sharpe": 0.6116918613654785,
+   "vol": 0.9021040433705821,
+   "max_dd": 0.7649253932044641,
+   "sharpe_diff": -0.1596378034005005,
+   "stress_sharpe": 0.5351739973468577,
+   "turnover_ann": 26.784050139902476,
+   "costs_ann": 0.06900178203673697,
+   "exposure": 0.530587235822409
+  },
+  "X_K3_L90": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 3,
+    "L": 90,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.2822805141713489,
+   "sharpe": 0.7790661982833997,
+   "vol": 1.0925888433334403,
+   "max_dd": 0.7964174412046552,
+   "sharpe_diff": 0.007736533517420763,
+   "stress_sharpe": 0.7161962305557668,
+   "turnover_ann": 25.887060289443006,
+   "costs_ann": 0.06834815590160062,
+   "exposure": 0.7947535065737666
+  },
+  "X_K3_L90_mf": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 3,
+    "L": 90,
+    "market_filter": true,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.5395827104892619,
+   "sharpe": 0.9262567009053986,
+   "vol": 0.8558063166028133,
+   "max_dd": 0.699464126669,
+   "sharpe_diff": 0.1549270361394196,
+   "stress_sharpe": 0.8629716027240518,
+   "turnover_ann": 21.23208768886497,
+   "costs_ann": 0.05388137724399461,
+   "exposure": 0.5222498553798297
+  },
+  "X_K5_L7": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 5,
+    "L": 7,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.19443822526593824,
+   "sharpe": 0.6619745277838267,
+   "vol": 0.9453753524098367,
+   "max_dd": 0.782290518894182,
+   "sharpe_diff": -0.10935513698215227,
+   "stress_sharpe": 0.4863657453760945,
+   "turnover_ann": 60.88032003294436,
+   "costs_ann": 0.16538557305241947,
+   "exposure": 0.7842152569242661
+  },
+  "X_K5_L7_mf": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 5,
+    "L": 7,
+    "market_filter": true,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.7439269112804461,
+   "sharpe": 1.0995990135117726,
+   "vol": 0.7737216457709005,
+   "max_dd": 0.5834230620008845,
+   "sharpe_diff": 0.3282693487457936,
+   "stress_sharpe": 0.9712355490494441,
+   "turnover_ann": 38.272738292569514,
+   "costs_ann": 0.09905981218933935,
+   "exposure": 0.4951866368016912
+  },
+  "X_K5_L30": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 5,
+    "L": 30,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.17773225022245853,
+   "sharpe": 0.6552663488696062,
+   "vol": 0.9628969171907117,
+   "max_dd": 0.7255327721939482,
+   "sharpe_diff": -0.11606331589637275,
+   "stress_sharpe": 0.5686735440678148,
+   "turnover_ann": 31.303051199899198,
+   "costs_ann": 0.08394909010924986,
+   "exposure": 0.7859367973100342
+  },
+  "X_K5_L30_mf": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 5,
+    "L": 30,
+    "market_filter": true,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.45577762658605203,
+   "sharpe": 0.8692720224863373,
+   "vol": 0.784172432363046,
+   "max_dd": 0.6602563240229767,
+   "sharpe_diff": 0.09794235772035831,
+   "stress_sharpe": 0.7956567285320059,
+   "turnover_ann": 22.994560984468745,
+   "costs_ann": 0.05843469317820848,
+   "exposure": 0.5151045838423625
+  },
+  "X_K5_L90": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 5,
+    "L": 90,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.16465445934307965,
+   "sharpe": 0.6481611415570658,
+   "vol": 0.9454214964434006,
+   "max_dd": 0.7840361422260844,
+   "sharpe_diff": -0.12316852320891314,
+   "stress_sharpe": 0.5896832463396391,
+   "turnover_ann": 21.26324297680193,
+   "costs_ann": 0.05541303685165444,
+   "exposure": 0.7364995489413481
+  },
+  "X_K5_L90_mf": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 5,
+    "L": 90,
+    "market_filter": true,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.5369549801086393,
+   "sharpe": 0.9513277271459291,
+   "vol": 0.7385031515387547,
+   "max_dd": 0.6582890449832655,
+   "sharpe_diff": 0.17999806237995009,
+   "stress_sharpe": 0.8920012973908825,
+   "turnover_ann": 17.241370283041018,
+   "costs_ann": 0.04376676011055998,
+   "exposure": 0.5125618780230906
+  },
+  "X_K10_L7": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 10,
+    "L": 7,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.38389281748332427,
+   "sharpe": 0.81099833704053,
+   "vol": 0.7343823017182546,
+   "max_dd": 0.6988734041470752,
+   "sharpe_diff": 0.039668672274551064,
+   "stress_sharpe": 0.6435272819367893,
+   "turnover_ann": 45.34934893780191,
+   "costs_ann": 0.1228637949144805,
+   "exposure": 0.6738578002070156
+  },
+  "X_K10_L7_mf": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 10,
+    "L": 7,
+    "market_filter": true,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.6520705109857943,
+   "sharpe": 1.128415926914616,
+   "vol": 0.6090316466160488,
+   "max_dd": 0.4927173721641034,
+   "sharpe_diff": 0.3570862621486369,
+   "stress_sharpe": 1.0024560309734403,
+   "turnover_ann": 29.647270265304478,
+   "costs_ann": 0.07663127699949275,
+   "exposure": 0.43613514287788685
+  },
+  "X_K10_L30": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 10,
+    "L": 30,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.6614476371187297,
+   "sharpe": 1.0336572624149198,
+   "vol": 0.8016592186773333,
+   "max_dd": 0.6121302694065403,
+   "sharpe_diff": 0.26232759764894087,
+   "stress_sharpe": 0.9550743556036647,
+   "turnover_ann": 23.673731381045318,
+   "costs_ann": 0.0633875205823679,
+   "exposure": 0.6787050273033364
+  },
+  "X_K10_L30_mf": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 10,
+    "L": 30,
+    "market_filter": true,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.9565473502331694,
+   "sharpe": 1.3102189584306576,
+   "vol": 0.6898212000277161,
+   "max_dd": 0.40142754866734487,
+   "sharpe_diff": 0.5388892936646786,
+   "stress_sharpe": 1.2435201561961797,
+   "turnover_ann": 18.014665072258353,
+   "costs_ann": 0.046250488039473146,
+   "exposure": 0.48421521283018887
+  },
+  "X_K10_L90": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 10,
+    "L": 90,
+    "market_filter": false,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.4674360095431267,
+   "sharpe": 0.8859493778128704,
+   "vol": 0.8574148843680769,
+   "max_dd": 0.7200288601861978,
+   "sharpe_diff": 0.11461971304689145,
+   "stress_sharpe": 0.8381246538424203,
+   "turnover_ann": 15.784874173606465,
+   "costs_ann": 0.04103659134296518,
+   "exposure": 0.6494869471437243
+  },
+  "X_K10_L90_mf": {
+   "config": {
+    "family": "X",
+    "rule": "",
+    "n": 0,
+    "K": 10,
+    "L": 90,
+    "market_filter": true,
+    "universe_n": 20,
+    "study": "research9"
+   },
+   "cagr": 0.9105121080549166,
+   "sharpe": 1.2707545125437876,
+   "vol": 0.6968678488933333,
+   "max_dd": 0.5128101474991803,
+   "sharpe_diff": 0.4994248477778086,
+   "stress_sharpe": 1.2228342791227291,
+   "turnover_ann": 13.155630858970872,
+   "costs_ann": 0.03337845159374657,
+   "exposure": 0.4919666313626397
+  }
+ },
+ "P_T": "T_sma20",
+ "P_X": "X_K10_L30_mf",
+ "sr_variance_active_daily": 0.00014587794827933717,
+ "n_trials": 26
+}
