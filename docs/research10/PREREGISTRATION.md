@@ -133,3 +133,4 @@ Splnění C = kandidát na forward test (paper bot), protože holdout není nevi
 | Datum | Změna | Důvod |
 |---|---|---|
 | 2026-10-03 | Verze 1.0 | – |
+| 2026-10-03 | Upřesnění před výpočtem: váhy `iv` se normalizují přes **všechny** způsobilé ETF (Σ 1/σ), takže `LS` má Σ\|w\| = 1 a `LO` je přesně `LS` se shorty nahrazenými hotovostí (stejně jako `eq`). | Pre-registrace u `LO` nebyla jednoznačná |
