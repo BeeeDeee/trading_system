@@ -10,7 +10,7 @@ from pathlib import Path
 
 import yaml
 
-ENTRY_REQUIRED = ("id", "asset_class", "instruments", "frequency", "range", "clock", "source", "quality",
+ENTRY_REQUIRED = ("id", "loader", "asset_class", "instruments", "frequency", "range", "clock", "source", "quality",
                   "holdout_from", "known_biases", "forward_source")
 
 
@@ -33,6 +33,9 @@ def resolve(path: Path, requirements: list[dict]) -> Resolution:
         ds = datasets.get(req["dataset"])
         if ds is None:
             missing.append(req)
+            continue
+        if not ds.get("loader", False):
+            problems.append(f"{req['dataset']}: in the catalog, but the gate runner has no loader for it yet")
             continue
         period = req.get("period")
         if period and (str(period[0]) < str(ds["range"][0]) or str(period[1]) > str(ds["range"][1])):

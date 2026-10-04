@@ -121,6 +121,8 @@ def _check_data(lab: Lab, hid: str) -> str:
         lab.send("DATA_REQUEST", "system", "archivist", hid,
                  {"dataset": req["dataset"], "description": req.get("description", ""),
                   "frequency": req["frequency"], "period": [str(p) for p in req.get("period", [])]})
+    if res.problems:   # data exists but cannot be used as requested (range, no loader): the owner decides
+        lab.send("QUESTION", "system", HUMAN, hid, {"question": f"{hid} blocked: " + "; ".join(res.problems)})
     reason = "; ".join([f"missing dataset {r['dataset']}" for r in res.missing] + res.problems)
     lab.transition(hid, S.BLOCKED_DATA, "system", reason)
     return f"BLOCKED_DATA ({reason})"

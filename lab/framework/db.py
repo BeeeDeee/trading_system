@@ -134,13 +134,21 @@ CREATE TABLE IF NOT EXISTS locks (
     lease_until TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS canary_runs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    framework_sha256 TEXT NOT NULL,   -- lab/framework + lab/canaries + gates.yaml
+    ok INTEGER NOT NULL,
+    detail_json TEXT NOT NULL,
+    ts TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS counters (
     name TEXT PRIMARY KEY,
     value INTEGER NOT NULL
 );
 """
 
-APPEND_ONLY = ("transitions", "gate_results", "trials")
+APPEND_ONLY = ("transitions", "gate_results", "trials", "canary_runs")
 
 _TRIGGERS = "".join(f"""
 CREATE TRIGGER IF NOT EXISTS {t}_no_update BEFORE UPDATE ON {t}

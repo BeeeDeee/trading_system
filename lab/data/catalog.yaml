@@ -6,10 +6,12 @@
 # holdout_from: first day of the holdout (G4); dev ends the day before (PLAN §6.1, decision Q6).
 # forward_source: how G5 (paper) gets new data; null = no paper trading possible (decision Q3).
 # clock: when an observation becomes known (see market_relations `clocks`).
+# loader: the gate runner can load it (lab/framework/data.py). Without a loader a hypothesis stays BLOCKED_DATA.
 
 version: 1
 datasets:
   - id: sharadar_sep
+    loader: false
     asset_class: us_equity
     instruments: "all US common stocks incl. delisted (permaticker); ~20k securities"
     fields: [ret_co, ret_oc, close_u, dollar_volume, tradable, listed, delisting]
@@ -31,6 +33,7 @@ datasets:
       - "Consumed: 2020-2026 used as holdout by research 1-7, 10-11; all history known to the LLM."
 
   - id: sharadar_sfp
+    loader: true
     asset_class: us_etf
     instruments: "US ETFs and funds (Sharadar SFP)"
     fields: [ret_co, ret_oc, close_u, dollar_volume, tradable]
@@ -50,6 +53,7 @@ datasets:
       - "Consumed: research 2, 3, 10 and market_relations used 2010-2026."
 
   - id: sharadar_sf1
+    loader: false
     asset_class: us_equity
     instruments: "fundamentals of US stocks (ARQ/ART dimensions, point-in-time by filing date column `date`)"
     frequency: 1q
@@ -66,6 +70,7 @@ datasets:
       - "Some restatements may be backfilled into as-reported rows."
 
   - id: sharadar_insiders
+    loader: false
     asset_class: alt
     instruments: "Form 4 insider transactions"
     frequency: event
@@ -81,6 +86,7 @@ datasets:
       - "Use the filing date (`date`), not `transactiondate` (filings lag up to 2 business days, older ones more)."
 
   - id: sharadar_13f
+    loader: false
     asset_class: alt
     instruments: "institutional holdings (13F)"
     frequency: 1q
@@ -96,6 +102,7 @@ datasets:
       - "Quarter-end holdings become public up to 45 days later; the loader must lag by the filing date."
 
   - id: sharadar_sp500
+    loader: false
     asset_class: us_equity
     instruments: "S&P 500 membership history"
     frequency: event
@@ -111,6 +118,7 @@ datasets:
       - "Index changes are announced days before the effective date; using the effective date is conservative."
 
   - id: binance_spot_1d
+    loader: true
     asset_class: crypto_spot
     instruments: "all Binance spot USDT pairs (stablecoins and wrapped assets excluded by loaders)"
     fields: [ret_co, ret_oc, close, high, low, quote_volume]
@@ -131,6 +139,7 @@ datasets:
       - "Consumed: research 8, 9, 10, 13 used 2022-2026."
 
   - id: binance_perp_1d
+    loader: false
     asset_class: crypto_perp
     instruments: "Binance USD-M perpetual futures, daily klines and mark price"
     frequency: 1d
@@ -147,6 +156,7 @@ datasets:
       - "Same survivorship and venue caveats as spot."
 
   - id: binance_funding
+    loader: false
     asset_class: crypto_perp
     instruments: "Binance USD-M funding rates (8h)"
     frequency: event
@@ -162,6 +172,7 @@ datasets:
       - "Regime change after mid-2024 (Ethena and basis trade crowding compressed funding)."
 
   - id: fred_dtb3
+    loader: false
     asset_class: macro
     instruments: "3-month T-bill secondary market rate"
     frequency: 1d
@@ -177,6 +188,7 @@ datasets:
       - "Published with a one-day lag; cash_returns() uses the last value strictly before the day."
 
   - id: fred_macro
+    loader: false
     asset_class: macro
     instruments: "30 FRED series: VIX, yields, curve, real yield, breakevens, credit spreads, oil, 15 FX rates"
     frequency: 1d
@@ -193,6 +205,7 @@ datasets:
       - "Some series are revised; FRED serves the latest vintage (ALFRED has vintages) - use only unrevised market series."
 
   - id: binance_spot_1h
+    loader: false
     asset_class: crypto_spot
     instruments: "hourly klines of 105 liquid Binance spot pairs"
     frequency: 1h

@@ -71,7 +71,11 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("agent", nargs="?")
     sub.add_parser("context", help="the current agent run (staged mode)")
     s = sub.add_parser("tick", help="deterministic phase: react to messages, run due gates")
-    s.add_argument("--stub-gates", action="store_true", help="tests/demo only, needs LAB_ALLOW_STUB=1")
+    g = s.add_mutually_exclusive_group()
+    g.add_argument("--no-gates", action="store_true", help="react to messages only")
+    g.add_argument("--stub-gates", action="store_true", help="tests/demo only, needs LAB_ALLOW_STUB=1")
+    s = sub.add_parser("canaries", help="test the judge; required after every change of the framework")
+    s.add_argument("--quick", action="store_true", help="fewer bootstrap/random-entry samples")
     s = sub.add_parser("invocations", help="recent agent runs")
     s.add_argument("--limit", type=int, default=30)
     sub.add_parser("catalog", help="datasets in the catalog")
@@ -147,8 +151,22 @@ def _direct(args) -> int:
             if args.stub_gates:
                 from lab.framework.gates import StubEvaluator
                 evaluator = StubEvaluator(allow=os.environ.get("LAB_ALLOW_STUB") == "1")
+            elif not args.no_gates:
+                from lab.framework import canaries
+                from lab.framework.evaluator import QlabEvaluator
+                if not canaries.passed_for_current(lab):
+                    raise LabError("canaries have not passed for the current framework; run `lab canaries`")
+                evaluator = QlabEvaluator()
             for line in tick.tick(lab, evaluator):
                 print(line)
+        case "canaries":
+            from lab.framework import canaries
+            results = canaries.run_all(quick=args.quick)
+            for r in results:
+                print(f"{'ok  ' if r.ok else 'FAIL'} {r.name:<28} {r.detail}")
+            ok = canaries.record(lab, results)
+            print("canaries passed" if ok else "CANARIES FAILED: the judge is broken, no gate will run")
+            return 0 if ok else 1
         case "invocations":
             for r in report.invocations(lab, args.limit):
                 print(f"{r['started_at'][:19]}  {r['agent']:<10} {r['hypothesis_id'] or '-':<7} "

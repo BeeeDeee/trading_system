@@ -1,0 +1,31 @@
+title: 'Canary: 60/40 SPY/IEF replica of the benchmark'
+family: canary-replica-6040
+asset_classes:
+- us_etf
+universe:
+  kind: instruments
+  instruments:
+  - SPY
+  - IEF
+mechanism:
+  why: The benchmark itself has no edge over the benchmark; the judge must say so.
+  counterparty: none, this is a replica
+  why_not_arbitraged: nothing to arbitrage
+signal:
+  description: 'Monthly on the first trading day: 60 % SPY and 40 % IEF.'
+  params:
+    equity:
+      value: 0.6
+      grid:
+      - 0.5
+      - 0.6
+      - 0.7
+data_requirements:
+- dataset: sharadar_sfp
+  frequency: 1d
+holding_period:
+  typical_days: 30
+  rebalance: monthly
+market_exposure: long_only
+falsification_criteria:
+- Passing G1 would mean the judge rewards the benchmark itself.

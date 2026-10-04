@@ -56,7 +56,7 @@ def archivist(lab: Lab, inv: Invocation) -> int:
         src.parent.mkdir(exist_ok=True)
         src.write_text(f'"""Fetcher for {ds} (stub)."""\n\n\ndef fetch(out_dir):\n    raise NotImplementedError\n')
         entry = DEMO_DATASETS.get(ds) or {
-            "id": ds, "asset_class": "alt", "instruments": "stub", "frequency": m["payload"]["frequency"],
+            "id": ds, "loader": True, "asset_class": "alt", "instruments": "stub", "frequency": m["payload"]["frequency"],
             "range": ["2015-01-01", "2026-09-30"], "clock": "next_morning", "source": "stub",
             "quality": "stub", "holdout_from": "2023-01-01", "known_biases": ["stub dataset"],
             "forward_source": None}
@@ -107,7 +107,7 @@ def librarian(lab: Lab, inv: Invocation) -> int:
 
 DEMO_DATASETS = {
     "deribit_dvol_1d": {
-        "id": "deribit_dvol_1d", "asset_class": "crypto_spot",
+        "id": "deribit_dvol_1d", "loader": True, "asset_class": "crypto_spot",
         "instruments": "Deribit DVOL index (30-day implied volatility) for BTC and ETH",
         "frequency": "1d", "range": ["2021-03-24", "2026-10-03"], "clock": "crypto",
         "source": "Deribit public API get_volatility_index_data (free)", "quality": "stub ingest (demo)",

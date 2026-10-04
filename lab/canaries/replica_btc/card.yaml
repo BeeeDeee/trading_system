@@ -1,0 +1,30 @@
+title: 'Canary: BTC buy-and-hold replica of the benchmark'
+family: canary-replica-btc
+asset_classes:
+- crypto_spot
+universe:
+  kind: instruments
+  instruments:
+  - BTCUSDT
+mechanism:
+  why: The benchmark itself has no edge over the benchmark; the judge must say so.
+  counterparty: none, this is a replica
+  why_not_arbitraged: nothing to arbitrage
+signal:
+  description: 'Monthly on the first day: 100 % BTCUSDT.'
+  params:
+    weight:
+      value: 1.0
+      grid:
+      - 0.8
+      - 0.9
+      - 1.0
+data_requirements:
+- dataset: binance_spot_1d
+  frequency: 1d
+holding_period:
+  typical_days: 30
+  rebalance: monthly
+market_exposure: long_only
+falsification_criteria:
+- Passing G1 would mean the judge rewards the benchmark itself.

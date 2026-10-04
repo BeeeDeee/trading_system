@@ -14,6 +14,7 @@ benchmarks:
     crypto_spot: BTC_HOLD          # second benchmark: EW top-20
     crypto_perp: BTC_HOLD
     cross_asset: SIXTY_FORTY_BTC5  # 57/38/5 SPY/IEF/BTC
+    synthetic: SYN_MKT             # canaries and the positive control (synthetic market index)
   long_short: TBILL
   market_neutral: TBILL
   min_sharpe_vs_tbill: 0.5         # extra bar when the benchmark is cash
@@ -29,7 +30,7 @@ G0:   # integrity, precondition of IMPLEMENTED; a failure is not a trial
 
 G1:   # basic, dev period, full universe, primary configuration only
   min_sharpe_excess: 0.10          # Sharpe_net >= Sharpe_benchmark + 0.10
-  active_return_ci_level: 0.90     # one-sided stationary bootstrap CI of the active return > 0
+  sharpe_diff_ci_level: 0.90       # one-sided stationary bootstrap CI of Sharpe - benchmark Sharpe > 0
   bootstrap_samples: 2000
   bootstrap_mean_block_days: 20
   min_position_entries: 100
@@ -45,8 +46,8 @@ G2:   # robustness
     min_median_sharpe_ratio: 0.70  # median neighbor Sharpe / primary Sharpe
   subperiods:
     n_blocks: 3
-    min_positive_blocks: 2
-    max_block_share_of_active_pnl: 0.60
+    min_blocks_beating_benchmark: 2  # Sharpe >= benchmark Sharpe in the block
+    max_block_share_of_log_return: 0.60
   alt_universe:
     min_sharpe_ratio: 0.50         # alt-universe Sharpe / main Sharpe, and >= benchmark
   costs:
@@ -56,13 +57,14 @@ G2:   # robustness
     runs: 200
     min_percentile: 0.95
   publication_decay:
-    min_post_pre_ratio: 0.50       # post-publication / pre-publication active Sharpe, if a reference year is in dev
+    min_post_pre_ratio: 0.50       # post / pre-publication Sharpe excess over the benchmark, if a reference year is in dev
 
 G3:   # multiple testing
   literature_prior_trials: 20      # added to N when the card has references (lesson of research 1)
   min_trials: 10
   min_dsr: 0.95
-  max_pbo: 0.30
+  max_pbo: null                    # report only: with a pre-registered primary config there is no
+                                   # selection, and a robust plateau gives PBO ~0.5 by construction
   pbo_blocks: 16
 
 skeptic:
@@ -72,10 +74,10 @@ skeptic:
 G4:   # holdout, one attempt per hypothesis
   min_sharpe_vs_benchmark: 0.0     # Sharpe_net >= Sharpe_benchmark
   min_sharpe_vs_dev: 0.50
-  cost_stress_min_active_return: 0.0
+  cost_stress_min_sharpe_vs_benchmark: 0.0
   max_drawdown_vs_dev: 1.5
   family_max_attempts: 3
-  active_return_ci_levels: [0.80, 0.90, 0.93]   # tightens with the family's holdout attempts
+  sharpe_diff_ci_levels: [0.80, 0.90, 0.93]     # tightens with the family's holdout attempts
 
 G5:   # paper, forward data only
   min_months: {default: 6, crypto_spot: 4, crypto_perp: 4}

@@ -64,6 +64,7 @@
         "properties": {
           "dataset": {"type": "string"},
           "fields": {"type": "array", "items": {"type": "string"}},
+          "instruments": {"type": "array", "items": {"type": "string"}, "description": "instruments taken from this dataset; default = the universe's instruments for the first tradable dataset"},
           "frequency": {"enum": ["1m", "5m", "1h", "1d", "1w", "1mo", "1q", "event"]},
           "period": {"type": "array", "items": {"type": "string", "format": "date"}, "minItems": 2, "maxItems": 2},
           "description": {"type": "string"}
