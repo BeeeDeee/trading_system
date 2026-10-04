@@ -128,3 +128,7 @@ roku 2018, výběr má survivorship bias, proto jen popisně) s pravidly P.
 | Datum | Rozhodnutí | Důvod |
 |---|---|---|
 | 2026-10-04 | Pre-registrace v1.0 | – |
+| 2026-10-04 | Hodinový panel postaven (`scripts/r14_build_panel.py`, audit v `DATA_AUDIT.md`): BTC/ETH 127 chybějících hodin (28 mezer, nejdelší 32 h), bez duplicit, OHLC konzistentní. 43 svíček po výpadku Binance 2018-02-09 má čas posunutý o 28 min, zaokrouhlí se dolů na hodinu. Funding BTC/ETH od 2020-01-01 po 8 h. | audit (§3) |
+| 2026-10-04 | Upřesnění implementace (nemění výběr): nový vstup na stejném aktivu až v hodině > e+H (signál v hodině výstupu se ignoruje); obchod otevřený na konci fáze se uzavře za close poslední hodiny fáze; denní výnos = součet hodinových. | implementace, před výpočtem |
+| 2026-10-04 | Smoke běh vývojového skriptu (kopie ve scratchpadu, dočasný registr, 5 náhodných běhů) vypsal výsledky vývoje před ostrým během. Ostrý běh je tentýž výpočet (16 kandidátů zapsáno do registru před výpočtem), pravidla se nezměnila. | transparentnost |
+| 2026-10-04 | Vývoj spočten (`results/dev.json`): **P = `MTF_L6_z15_H48_LONG`**, Sharpe 0.68 (CAGR 16.8 %, propad 23 %, 234 obchodů, průměr 0.58 %, 90% CI [-0.07; 1.20] %). B_RND medián 0.69, p95 1.22 – P nad jen 49 % náhodných běhů. B_NOHTF Sharpe -0.89, B_HTF 1.14, B_HOLD 0.89. Kladný Sharpe má 12 z 16 kandidátů, všechny varianty `LONG` > 0. Pravidla se nemění, holdout jen přes `r14_final.py`. | výběr podle §7 |
