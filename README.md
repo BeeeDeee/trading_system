@@ -3,7 +3,7 @@
 Lokální výzkumný framework pro poctivé vyhodnocení systematických long-only strategií na denních
 datech amerických akcií a ETF (Sharadar, snapshot 2026-09-25).
 
-**Stav: projekt uzavřen (2026-09-27), výzkumy 8–11 doplněny 2026-10-03.** Jedenáct pre-registrovaných výzkumů, deset negativních výsledků
+**Stav: projekt uzavřen (2026-09-27), výzkumy 8–11 doplněny 2026-10-03, výzkum 13 2026-10-04.** Dvanáct uzavřených pre-registrovaných výzkumů (výzkum 12 čeká na forward test), jedenáct negativních výsledků
 a jedna sada praktických závěrů pro pasivní portfolio.
 
 ## Závěr v jedné větě
@@ -27,9 +27,10 @@ rozhoduje zvolený podíl akcií, nízké náklady a disciplína.
 | **9 – trend a momentum (krypto)** | Zlepší trendový filtr BTC + ETH Sharpe proti držení? Překoná týdenní momentum altcoinů rovné váhy likvidního univerza (2022–2026)? | **Ne.** Vybraný filtr (SMA20) Sharpe 0,36 vs 0,34, CI obsahuje 0. Všech 8 filtrů ale snížilo propad (30–48 % vs 68 %), to je jen popisné. Altcoiny 2022–2026: rovné váhy top 20 −45 % ročně, žádné momentum nemělo kladný CAGR. |
 | **10 – doplňující se strategie** | Najdou se dvě strategie, které se doplňují (jedna i short), a vyplatí se je kombinovat nebo přepínat? Akcie (dvojice z 87 rukávů, SPY + trend long/short na ETF, jen ≤ 2019) a krypto (trend se shortem přes perp). | **Ne.** Long-only akciové dvojice v krizi korelují ≥ +0,53, doplňují se jen akcie a dluhopisy (= 60/40). Oracle přepínač Sharpe 1,70 vs statická 0,54, naivní přepínače zachytí ~1–2 %. Trend long/short na ETF vydělal v roce 2008, 2010–2019 ztrácel; verze bez shortu lepší. Krypto: ΔSharpe +0,21, CI [−0,31; +0,75], DSR 0,02; efekt shortu mění znaménko mezi vývojem a holdoutem. |
 | **11 – ML z fundamentů a toků** | Vybere LightGBM z fundamentů, insiderů a změn držení 13F měsíčně 50 akcií LIQ1000 lépe než SPY, rovné váhy a stejný model jen z cen? | **Ne (0 ze 6).** 2020-01 → 2026-08 Sharpe 0,57 vs SPY 0,82 (CI rozdílu [−0,67; +0,12]), pod EW i pod modelem jen z cen (0,72). Rank IC ~0,025 (t ≈ 2), obrat 15× ročně. Fundamenty a 13F nepřidaly nic proti cenám. |
+| **13 – Smart Zones (krypto)** | Vydělává nákup likvidních kryptoměn v discount zóně swingového rozpětí (indikátor „Smart Zones“ z TradingView; stop pod swing low, výstup na equilibriu) víc než rovné váhy, BTC HOLD a náhodné vstupy? | **Ne (0 ze 6).** Holdout 2022-01 → 2026-08 Sharpe −0,92 (CAGR −67 %) vs rovné váhy −0,42, BTC 0,48; **horší než všech 500 náhodných vstupů** (medián −0,32). Selhal už ve vývoji a všech 24 variant. Nákup v discount zóně v kryptu chytá padající coiny; i stop na přesné úrovni dává CAGR −30 %. |
 
 Podrobně: [výzkum 1](docs/FINAL_REPORT.md) · [výzkum 2](docs/research2/REPORT.md) ·
-[výzkum 3](docs/research3/REPORT.md) · [výzkum 4](docs/research4/REPORT.md) · [výzkum 5](docs/research5/REPORT.md) · [výzkum 6](docs/research6/REPORT.md) · [výzkum 7](docs/research7/REPORT.md) · [výzkum 8](docs/research8/REPORT.md) · [výzkum 9](docs/research9/REPORT.md) · [výzkum 10](docs/research10/REPORT.md) · [výzkum 11](docs/research11/REPORT.md).
+[výzkum 3](docs/research3/REPORT.md) · [výzkum 4](docs/research4/REPORT.md) · [výzkum 5](docs/research5/REPORT.md) · [výzkum 6](docs/research6/REPORT.md) · [výzkum 7](docs/research7/REPORT.md) · [výzkum 8](docs/research8/REPORT.md) · [výzkum 9](docs/research9/REPORT.md) · [výzkum 10](docs/research10/REPORT.md) · [výzkum 11](docs/research11/REPORT.md) · [výzkum 13](docs/research13/REPORT.md).
 
 ## Co jsme se naučili
 
@@ -97,6 +98,9 @@ uv run python scripts/r10_crypto_dev.py binance_<datum>   # výzkum 10 C: krypto
 uv run python scripts/r10_crypto_final.py binance_<datum> freeze|run   # výzkum 10 C: jednorázový holdout
 uv run python scripts/r11_dev.py sharadar_<datum>         # výzkum 11: ML z fundamentů/insiderů/13F, vývoj 2010–2019
 uv run python scripts/r11_final.py sharadar_<datum> freeze|run   # výzkum 11: jednorázové finále 2020–2026
+uv run python scripts/r13_build_panel.py binance_<datum>  # výzkum 13: panel výzkumu 9 + high/low
+uv run python scripts/r13_dev.py binance_<datum>          # výzkum 13: 24 kandidátů Smart Zones na vývoji
+uv run python scripts/r13_final.py binance_<datum> freeze|run   # výzkum 13: jednorázový holdout
 ```
 
 ## Kdyby se projekt otevíral znovu

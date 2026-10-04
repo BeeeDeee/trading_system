@@ -1,6 +1,6 @@
 # Výzkum 13 – Smart Zones: nákup v discount zóně swingového rozpětí (pre-registrace)
 
-Verze 1.0 · 2026-10-03 · Stav: **pre-registrace, nic nespočteno**.
+Verze 1.0 · 2026-10-03 · Stav: **uzavřeno, zamítnuto** (`REPORT.md`).
 Navazuje na výzkum 9 (data Binance, univerzum, náklady) a na event-driven simulátor výzkumu 5.
 Změny po commitu = nový pokus v registru a řádek v §11.
 
@@ -140,3 +140,5 @@ dát stop příkaz); statistiky obchodů (počet, úspěšnost, průměrný čis
 | 2026-10-03 | Při z = 0,5 je cíl `PREM` (top − 0,5·R) totožný s `EQ`: 6 dvojic kandidátů je identických, různých konfigurací je 18. Mřížka a **N = 24 pro DSR zůstávají** (konzervativně). Shoda Sharpe ve vývoji → první kandidát v pořadí mřížky (`EQ`). | chyba návrhu mřížky, zjištěno před výpočtem |
 | 2026-10-03 | Simulátor výzkumu 5 rozšířen (§11.3): cenový stop a cíl pro každého kandidáta (`stop_px`, `target_px`, pořadí stop → cíl → signál → čas) a `reentry_same_open=False` (coin prodaný na openu se na stejném openu nekupuje, „bez otevřené pozice“ v §5). Výchozí chování beze změny, testy výzkumu 5 procházejí. B_RND otevírá méně pozic než strategie, protože jeho pozice nekončí cílem a déle drží sloty; to odpovídá §6 („stejné sloty“). | implementace |
 | 2026-10-04 | Vývoj spočten (`results/dev.json`, N = 24 zapsáno do registru před výpočtem): **P = `Z_k10_z50_EQ_touch`**, Sharpe 0,28 (CAGR −14,8 %, propad 91 %, náklady 15 % p. a., 501 obchodů, medián čistého výnosu −4,7 %). Všech 24 kandidátů má Sharpe pod B_EW (0,77) i B_BTC (1,06); P je pod 96 % náhodných běhů B_RND (medián 0,73, 95. percentil 1,18). Kontrola: ceny všech obchodů P sedí s openy panelu. Pravidla se nemění; holdout podle §8 se spustí jen jednorázovým skriptem `r13_final.py`. | výběr podle §7 |
+| 2026-10-04 | Metodika zamčena (`b035f81d…`), holdout otevřen jednou (commit `0a885a6`), bez pádu. Předtím smoke běh kopie skriptu na vývojových datech ve scratchpadu (bez trezoru a registru). | §11 |
+| 2026-10-04 | **0 ze 6 kritérií → zamítnuto.** P na holdoutu Sharpe −0,92 (CAGR −66,7 %) vs B_EW −0,42, B_BTC 0,48, B_RND p95 0,05; P pod všemi 500 náhodnými běhy. Forward test se nespouští. | `REPORT.md` |
