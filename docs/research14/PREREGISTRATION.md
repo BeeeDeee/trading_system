@@ -1,6 +1,6 @@
 # Výzkum 14 – Multi-timeframe pullback: vstup proti 1h pohybu ve směru týdenního a denního trendu (pre-registrace)
 
-Verze 1.0 · 2026-10-04 · Stav: **pre-registrováno, nic nespočteno**.
+Verze 1.0 · 2026-10-04 · Stav: **uzavřeno, zamítnuto** (`REPORT.md`).
 Navazuje na výzkumy 9 a 13 (krypto, období vývoj/holdout). Změny po commitu = nový pokus v registru a řádek v §12.
 
 ## 1. Otázka
@@ -132,3 +132,5 @@ roku 2018, výběr má survivorship bias, proto jen popisně) s pravidly P.
 | 2026-10-04 | Upřesnění implementace (nemění výběr): nový vstup na stejném aktivu až v hodině > e+H (signál v hodině výstupu se ignoruje); obchod otevřený na konci fáze se uzavře za close poslední hodiny fáze; denní výnos = součet hodinových. | implementace, před výpočtem |
 | 2026-10-04 | Smoke běh vývojového skriptu (kopie ve scratchpadu, dočasný registr, 5 náhodných běhů) vypsal výsledky vývoje před ostrým během. Ostrý běh je tentýž výpočet (16 kandidátů zapsáno do registru před výpočtem), pravidla se nezměnila. | transparentnost |
 | 2026-10-04 | Vývoj spočten (`results/dev.json`): **P = `MTF_L6_z15_H48_LONG`**, Sharpe 0.68 (CAGR 16.8 %, propad 23 %, 234 obchodů, průměr 0.58 %, 90% CI [-0.07; 1.20] %). B_RND medián 0.69, p95 1.22 – P nad jen 49 % náhodných běhů. B_NOHTF Sharpe -0.89, B_HTF 1.14, B_HOLD 0.89. Kladný Sharpe má 12 z 16 kandidátů, všechny varianty `LONG` > 0. Pravidla se nemění, holdout jen přes `r14_final.py`. | výběr podle §7 |
+| 2026-10-04 | Metodika zamčena (`4bf1c50a…`), holdout otevřen jednou (commit `d208d8d`), bez pádu. Předtím smoke běh kopie finálního skriptu na vývojových datech 2021 ve scratchpadu (bez trezoru a registru). | §11 |
+| 2026-10-04 | **2 ze 6 kritérií → zamítnuto.** P na holdoutu Sharpe 0,18 (CAGR +1,6 %), B_RND medián 0,13 / p95 0,59, B_HTF 0,74. Splněno jen 3 (nad B_NOHTF) a 6 (BTC i ETH > 0). Forward test se nespouští. | `REPORT.md` |
