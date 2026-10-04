@@ -1,0 +1,209 @@
+# Data catalog of the research lab.
+#
+# Agents read this file to know what exists. They never edit it: entries are added by the deterministic
+# ingest (`lab data ingest`) after validation, with the holdout boundary fixed at that moment.
+#
+# holdout_from: first day of the holdout (G4); dev ends the day before (PLAN §6.1, decision Q6).
+# forward_source: how G5 (paper) gets new data; null = no paper trading possible (decision Q3).
+# clock: when an observation becomes known (see market_relations `clocks`).
+
+version: 1
+datasets:
+  - id: sharadar_sep
+    asset_class: us_equity
+    instruments: "all US common stocks incl. delisted (permaticker); ~20k securities"
+    fields: [ret_co, ret_oc, close_u, dollar_volume, tradable, listed, delisting]
+    frequency: 1d
+    range: ["1998-01-02", "2026-09-25"]
+    clock: us_close
+    calendar: XNYS
+    source: "Sharadar SEP via Nasdaq Data Link, snapshot sharadar_2026-09-25 (subscription ended 2026-09-27)"
+    location: "strategy_backtester_2026_sep/data/{parquet,derived}/sharadar_2026-09-25"
+    quality: "audited: docs/audit/sharadar_2026-09-25.md, docs/DATA_FINDINGS.md"
+    holdout_from: "2021-01-01"
+    cost_model: us_equity_tiers
+    forward_source: null
+    known_biases:
+      - "Survivorship: none for prices, delisted securities included with a DELISTED row."
+      - "Terminal return of a delisting is a policy (acquisition = consideration, bankruptcy -100 %, performance -30 %, SPAC 0)."
+      - "Prices are unadjusted; use only total returns for P&L, unadjusted close only for filters."
+      - "Pre-2001-04 quotes in fractions: cost model applies x2.5 before decimalization."
+      - "Consumed: 2020-2026 used as holdout by research 1-7, 10-11; all history known to the LLM."
+
+  - id: sharadar_sfp
+    asset_class: us_etf
+    instruments: "US ETFs and funds (Sharadar SFP)"
+    fields: [ret_co, ret_oc, close_u, dollar_volume, tradable]
+    frequency: 1d
+    range: ["1998-01-02", "2026-09-25"]
+    clock: us_close
+    calendar: XNYS
+    source: "Sharadar SFP, snapshot sharadar_2026-09-25"
+    location: "strategy_backtester_2026_sep/data/derived/sharadar_2026-09-25/panel_etf"
+    quality: "audited: docs/research2/DATA_AUDIT.md"
+    holdout_from: "2021-01-01"
+    cost_model: us_etf
+    forward_source: null   # a free source (stockanalysis/Stooq, cross-checked) is planned via the Archivist
+    known_biases:
+      - "Many ETFs start after 2003-2007; pre-inception proxies are not provided."
+      - "Delisted/closed ETFs are present but sparse; check coverage per instrument."
+      - "Consumed: research 2, 3, 10 and market_relations used 2010-2026."
+
+  - id: sharadar_sf1
+    asset_class: us_equity
+    instruments: "fundamentals of US stocks (ARQ/ART dimensions, point-in-time by filing date column `date`)"
+    frequency: 1q
+    range: ["1998-01-02", "2026-09-24"]   # filings from 1990, prices only from 1998
+    clock: next_morning
+    source: "Sharadar SF1, snapshot sharadar_2026-09-25"
+    location: "strategy_backtester_2026_sep/data/parquet/sharadar_2026-09-25/fundamentals.parquet"
+    quality: "used in research 4 and 11"
+    holdout_from: "2021-01-01"
+    cost_model: null
+    forward_source: null   # SEC EDGAR XBRL is the planned free replacement
+    known_biases:
+      - "Point-in-time only via the filing date (`date`, Sharadar datekey); use ARQ/ART (as reported), never MRQ/MRT (restated)."
+      - "Some restatements may be backfilled into as-reported rows."
+
+  - id: sharadar_insiders
+    asset_class: alt
+    instruments: "Form 4 insider transactions"
+    frequency: event
+    range: ["2008-01-02", "2026-09-24"]   # by filing date `date`
+    clock: next_morning
+    source: "Sharadar SF2, snapshot sharadar_2026-09-25"
+    location: "strategy_backtester_2026_sep/data/parquet/sharadar_2026-09-25/insiders.parquet"
+    quality: "used in research 11"
+    holdout_from: "2021-01-01"
+    cost_model: null
+    forward_source: null   # SEC EDGAR Form 4 is free
+    known_biases:
+      - "Use the filing date (`date`), not `transactiondate` (filings lag up to 2 business days, older ones more)."
+
+  - id: sharadar_13f
+    asset_class: alt
+    instruments: "institutional holdings (13F)"
+    frequency: 1q
+    range: ["2013-06-30", "2026-06-30"]   # quarter-end report dates
+    clock: next_morning
+    source: "Sharadar SF3, snapshot sharadar_2026-09-25"
+    location: "strategy_backtester_2026_sep/data/parquet/sharadar_2026-09-25/holdings*.parquet"
+    quality: "used in research 11"
+    holdout_from: "2021-01-01"
+    cost_model: null
+    forward_source: null
+    known_biases:
+      - "Quarter-end holdings become public up to 45 days later; the loader must lag by the filing date."
+
+  - id: sharadar_sp500
+    asset_class: us_equity
+    instruments: "S&P 500 membership history"
+    frequency: event
+    range: ["1998-01-02", "2026-09-25"]
+    clock: us_close
+    source: "Sharadar SP500, snapshot sharadar_2026-09-25"
+    location: "strategy_backtester_2026_sep/data/derived/sharadar_2026-09-25/universe_sp500.parquet"
+    quality: "used in research 1 robustness"
+    holdout_from: "2021-01-01"
+    cost_model: null
+    forward_source: null
+    known_biases:
+      - "Index changes are announced days before the effective date; using the effective date is conservative."
+
+  - id: binance_spot_1d
+    asset_class: crypto_spot
+    instruments: "all Binance spot USDT pairs (stablecoins and wrapped assets excluded by loaders)"
+    fields: [ret_co, ret_oc, close, high, low, quote_volume]
+    frequency: 1d
+    range: ["2017-08-17", "2026-10-03"]
+    clock: crypto
+    calendar: "24/7 (UTC days)"
+    source: "data.binance.vision (free), snapshot binance_2026-10-03"
+    location: "strategy_backtester_2026_sep/data/raw/binance_2026-10-03/spot_1d"
+    quality: "research 9 audit; ms->us timestamp switch in 2025 handled by qlab.research8.data"
+    holdout_from: "2023-01-01"
+    cost_model: crypto_spot_tiers
+    forward_source: binance_public_api
+    known_biases:
+      - "Partial survivorship: delisted pairs exist in the archive only partly; a data gap > 7 days is treated as delisting at last close -2 %."
+      - "Single venue: Binance prices and volumes, wash volume in small caps."
+      - "Listing bias: Binance lists coins after they are already popular."
+      - "Consumed: research 8, 9, 10, 13 used 2022-2026."
+
+  - id: binance_perp_1d
+    asset_class: crypto_perp
+    instruments: "Binance USD-M perpetual futures, daily klines and mark price"
+    frequency: 1d
+    range: ["2020-01-01", "2026-10-03"]
+    clock: crypto
+    calendar: "24/7 (UTC days)"
+    source: "data.binance.vision (free), snapshot binance_2026-10-03"
+    location: "strategy_backtester_2026_sep/data/raw/binance_2026-10-03/{perp_1d,mark_1d}"
+    quality: "research 8 audit"
+    holdout_from: "2023-01-01"
+    cost_model: crypto_perp_tiers
+    forward_source: binance_public_api
+    known_biases:
+      - "Same survivorship and venue caveats as spot."
+
+  - id: binance_funding
+    asset_class: crypto_perp
+    instruments: "Binance USD-M funding rates (8h)"
+    frequency: event
+    range: ["2020-01-01", "2026-10-03"]
+    clock: crypto
+    source: "data.binance.vision (free), snapshot binance_2026-10-03"
+    location: "strategy_backtester_2026_sep/data/raw/binance_2026-10-03/funding"
+    quality: "research 8 audit; calc_time jitter rounded"
+    holdout_from: "2023-01-01"
+    cost_model: null
+    forward_source: binance_public_api
+    known_biases:
+      - "Regime change after mid-2024 (Ethena and basis trade crowding compressed funding)."
+
+  - id: fred_dtb3
+    asset_class: macro
+    instruments: "3-month T-bill secondary market rate"
+    frequency: 1d
+    range: ["1998-01-02", "2026-10-02"]
+    clock: next_morning
+    source: "FRED DTB3 (free)"
+    location: "strategy_backtester_2026_sep/data/raw/binance_2026-10-03/fred_DTB3.csv"
+    quality: "used as cash rate everywhere"
+    holdout_from: "2021-01-01"
+    cost_model: null
+    forward_source: fred_api
+    known_biases:
+      - "Published with a one-day lag; cash_returns() uses the last value strictly before the day."
+
+  - id: fred_macro
+    asset_class: macro
+    instruments: "30 FRED series: VIX, yields, curve, real yield, breakevens, credit spreads, oil, 15 FX rates"
+    frequency: 1d
+    range: ["1998-01-02", "2026-10-02"]   # most series start earlier; per-series start varies
+    clock: next_morning
+    source: "FRED (free), downloaded by market_relations"
+    location: "market_relations_2026_oct/data/raw/fred"
+    quality: "market_relations v1"
+    holdout_from: "2021-01-01"
+    cost_model: null
+    forward_source: fred_api
+    known_biases:
+      - "FX rates are noon New York fixings (clock fx_noon), stale for Asian currencies; mrel found spurious lead-lag from it."
+      - "Some series are revised; FRED serves the latest vintage (ALFRED has vintages) - use only unrevised market series."
+
+  - id: binance_spot_1h
+    asset_class: crypto_spot
+    instruments: "hourly klines of 105 liquid Binance spot pairs"
+    frequency: 1h
+    range: ["2017-08-17", "2026-10-03"]
+    clock: crypto
+    calendar: "24/7"
+    source: "data.binance.vision (free), downloaded by market_relations"
+    location: "market_relations_2026_oct/data/raw/binance_1h"
+    quality: "market_relations h1"
+    holdout_from: "2023-01-01"
+    cost_model: crypto_spot_tiers
+    forward_source: binance_public_api
+    known_biases:
+      - "Universe chosen by liquidity at download time (survivorship)."

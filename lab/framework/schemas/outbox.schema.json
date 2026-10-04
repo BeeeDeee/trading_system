@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lab/outbox.schema.json",
+  "title": "Agent outbox: everything an agent run wants to tell the blackboard",
+  "description": "Written by `lab` in staged mode inside the run's workspace. The sender role is NOT in the file: the framework takes it from agent_invocations.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["invocation_id", "messages"],
+  "properties": {
+    "invocation_id": {"type": "string"},
+    "messages": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "to", "payload"],
+        "properties": {
+          "type": {"type": "string"},
+          "to": {"type": "string"},
+          "hypothesis_id": {"type": ["string", "null"], "pattern": "^H-[0-9]{4}$"},
+          "payload": {"type": "object"}
+        }
+      }
+    }
+  }
+}

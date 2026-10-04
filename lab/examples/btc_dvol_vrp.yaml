@@ -1,0 +1,31 @@
+# Hand-written example card used by the walking-skeleton demo (entered as `human`).
+title: BTC exposure scaled by the implied-minus-realized volatility spread (DVOL)
+family: crypto-volatility-risk-premium
+asset_classes: [crypto_spot]
+universe: {kind: instruments, instruments: [BTCUSDT]}
+mechanism:
+  why: >-
+    Option buyers pay a premium for crash protection, so implied volatility usually exceeds realized
+    volatility. When the spread is unusually wide, fear is priced above what is realized and forward
+    spot returns have been higher; when implied is below realized, risk is underpriced.
+  counterparty: Hedgers and leveraged longs buying puts on Deribit, who accept a negative expected return for insurance.
+  why_not_arbitraged: Selling volatility needs margin and carries crash risk that most participants cannot hold through.
+signal:
+  description: >-
+    Daily after the 00:00 UTC close: spread = DVOL(BTC) - 30-day realized volatility of BTC. Weight in BTC =
+    1 if the spread z-score over the trailing lookback is above the entry threshold, 0.5 between 0 and the
+    threshold, 0 below 0.
+  params:
+    lookback: {value: 180, grid: [90, 120, 180, 270, 365]}
+    entry_z: {value: 1.0, grid: [0.5, 0.75, 1.0, 1.25, 1.5]}
+data_requirements:
+  - {dataset: deribit_dvol_1d, frequency: 1d, description: "Deribit DVOL index, BTC, daily close"}
+  - {dataset: binance_spot_1d, fields: [ret_co, ret_oc], frequency: 1d}
+holding_period: {typical_days: 20, rebalance: daily}
+market_exposure: long_only
+references:
+  - {cite: "Bollerslev, Tauchen, Zhou (2009) Expected stock returns and variance risk premia", year: 2009}
+falsification_criteria:
+  - Net Sharpe on dev does not beat BTC buy and hold by 0.10.
+  - The effect lives in a single parameter combination (fails the G2 neighborhood test).
+  - More than 60 % of the active P&L comes from one third of the dev period.

@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lab/messages.schema.json",
+  "title": "Payloads of typed blackboard messages (schema_version 1)",
+  "$defs": {
+    "NEW_HYPOTHESIS": {
+      "type": "object", "additionalProperties": false, "required": ["card"],
+      "properties": {
+        "card": {"type": "object"},
+        "card_file": {"type": "string", "description": "workspace-relative; replaced by `card` when the outbox is applied"},
+        "note": {"type": "string"}
+      }
+    },
+    "REVISION": {
+      "type": "object", "additionalProperties": false, "required": ["card", "reason"],
+      "properties": {"card": {"type": "object"}, "card_file": {"type": "string"}, "reason": {"type": "string", "minLength": 5}}
+    },
+    "DATA_REQUEST": {
+      "type": "object", "additionalProperties": false, "required": ["dataset", "description"],
+      "properties": {
+        "dataset": {"type": "string"},
+        "description": {"type": "string"},
+        "frequency": {"type": "string"},
+        "period": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "DATA_READY": {
+      "type": "object", "additionalProperties": false, "required": ["dataset", "catalog_entry", "source_file"],
+      "properties": {
+        "dataset": {"type": "string"},
+        "catalog_entry": {"type": "object"},
+        "source_file": {"type": "string", "description": "workspace-relative fetcher script, copied to lab/data/sources/"}
+      }
+    },
+    "IMPL_DONE": {
+      "type": "object", "additionalProperties": false, "required": ["files", "summary"],
+      "properties": {
+        "files": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^strategy/[A-Za-z0-9_./-]+$"}},
+        "summary": {"type": "string"},
+        "tests_passed": {"type": "boolean"}
+      }
+    },
+    "GATE_RESULT": {
+      "type": "object", "additionalProperties": false, "required": ["gate", "passed", "metrics"],
+      "properties": {
+        "gate": {"enum": ["G0", "G1", "G2", "G3", "G4", "G5"]},
+        "passed": {"type": "boolean"},
+        "reason_code": {"type": ["string", "null"]},
+        "metrics": {"type": "object"},
+        "run_id": {"type": "integer"}
+      }
+    },
+    "OBJECTION": {
+      "type": "object", "additionalProperties": false, "required": ["return_to", "items"],
+      "properties": {
+        "return_to": {"enum": ["builder", "scout"]},
+        "items": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["check", "finding", "evidence"],
+            "properties": {"check": {"type": "string"}, "finding": {"type": "string"}, "evidence": {"type": "string"}}
+          }
+        }
+      }
+    },
+    "VERDICT": {
+      "type": "object", "required": ["decision", "reason"],
+      "properties": {
+        "decision": {"enum": ["no_objection", "reject", "infeasible", "park", "reopen", "admit", "retire", "rejected", "parked"]},
+        "reason": {"type": "string", "minLength": 5},
+        "reason_code": {"type": "string"},
+        "checklist": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object", "additionalProperties": false, "required": ["status", "evidence"],
+            "properties": {"status": {"enum": ["ok", "concern"]}, "evidence": {"type": "string", "minLength": 10}}
+          }
+        }
+      }
+    },
+    "QUESTION": {
+      "type": "object", "additionalProperties": false, "required": ["question"],
+      "properties": {"question": {"type": "string", "minLength": 5}, "context": {"type": "string"}, "in_reply_to": {"type": "integer"}}
+    },
+    "ALERT": {
+      "type": "object", "additionalProperties": false, "required": ["severity", "text"],
+      "properties": {"severity": {"enum": ["info", "warning", "critical"]}, "text": {"type": "string"}, "metrics": {"type": "object"}}
+    }
+  }
+}

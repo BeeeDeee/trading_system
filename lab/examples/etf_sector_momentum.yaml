@@ -1,0 +1,27 @@
+# Example card used by the walking-skeleton demo (sent by the stub Scout). The demo kills it at G2.
+title: Sector ETF momentum, 12-1 months, top 3 of 11 SPDR sectors
+family: sector-momentum
+asset_classes: [us_etf]
+universe: {kind: instruments, instruments: [XLB, XLC, XLE, XLF, XLI, XLK, XLP, XLRE, XLU, XLV, XLY]}
+mechanism:
+  why: >-
+    Industry momentum (Moskowitz and Grinblatt 1999): investors under-react to slowly diffusing
+    industry news, so sectors that outperformed over the past year keep outperforming for months.
+  counterparty: Investors who rebalance back to fixed sector weights and value-tilted funds selling winners.
+  why_not_arbitraged: Momentum crashes after market rebounds make it hard to hold with leverage.
+signal:
+  description: >-
+    Monthly, after the close of the first trading day: rank the 11 sector ETFs by total return from t-252 to
+    t-21 days and hold the top N with equal weights.
+  params:
+    lookback_days: {value: 252, grid: [126, 189, 252, 315]}
+    top_n: {value: 3, grid: [2, 3, 4]}
+data_requirements:
+  - {dataset: sharadar_sfp, fields: [ret_co, ret_oc], frequency: 1d, period: ["1999-01-04", "2020-12-31"]}
+holding_period: {typical_days: 30, rebalance: monthly}
+market_exposure: long_only
+references:
+  - {cite: "Moskowitz, Grinblatt (1999) Do industries explain momentum?", year: 1999}
+falsification_criteria:
+  - Net Sharpe on dev below SPY + 0.10.
+  - Neighbor lookbacks (189, 315) do not beat SPY.

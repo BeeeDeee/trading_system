@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lab/hypothesis.schema.json",
+  "title": "Hypothesis card (content)",
+  "description": "What an author submits. id, version, status and history are assigned by the framework. A card in IDEA may be incomplete; SPECIFIED additionally requires every field in `x-specified-required` to be non-empty.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "family", "mechanism"],
+  "x-specified-required": ["title", "family", "asset_classes", "universe", "mechanism", "signal",
+                           "data_requirements", "holding_period", "market_exposure", "falsification_criteria"],
+  "properties": {
+    "title": {"type": "string", "minLength": 5, "maxLength": 200},
+    "author_agent": {"type": "string"},
+    "family": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,60}$"},
+    "asset_classes": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"enum": ["us_equity", "us_etf", "crypto_spot", "crypto_perp", "fx", "macro", "sentiment", "alt"]}
+    },
+    "universe": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {"enum": ["liq_n", "sp500", "instruments", "crypto_top_n", "catalog_all"]},
+        "n": {"type": "integer", "minimum": 1},
+        "instruments": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "mechanism": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["why"],
+      "properties": {
+        "why": {"type": "string", "minLength": 20},
+        "counterparty": {"type": "string", "minLength": 10},
+        "why_not_arbitraged": {"type": "string", "minLength": 10}
+      }
+    },
+    "signal": {
+      "type": "object",
+      "required": ["description", "params"],
+      "properties": {
+        "description": {"type": "string", "minLength": 20},
+        "params": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["value", "grid"],
+            "properties": {
+              "value": {"type": ["number", "string", "boolean"]},
+              "grid": {"type": "array", "minItems": 1}
+            }
+          }
+        },
+        "selection_procedure": {"type": "string"}
+      }
+    },
+    "data_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dataset", "frequency"],
+        "properties": {
+          "dataset": {"type": "string"},
+          "fields": {"type": "array", "items": {"type": "string"}},
+          "frequency": {"enum": ["1m", "5m", "1h", "1d", "1w", "1mo", "1q", "event"]},
+          "period": {"type": "array", "items": {"type": "string", "format": "date"}, "minItems": 2, "maxItems": 2},
+          "description": {"type": "string"}
+        }
+      }
+    },
+    "holding_period": {
+      "type": "object",
+      "required": ["typical_days", "rebalance"],
+      "properties": {
+        "typical_days": {"type": "number", "exclusiveMinimum": 0},
+        "rebalance": {"enum": ["hourly", "daily", "weekly", "monthly", "quarterly", "event"]}
+      }
+    },
+    "market_exposure": {"enum": ["long_only", "long_short", "market_neutral"]},
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["cite"],
+        "properties": {"cite": {"type": "string"}, "year": {"type": "integer"}, "url": {"type": "string"}}
+      }
+    },
+    "falsification_criteria": {"type": "array", "items": {"type": "string", "minLength": 10}},
+    "notes": {"type": "string"}
+  }
+}

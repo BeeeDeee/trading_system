@@ -1,0 +1,93 @@
+# Gate thresholds of the research lab (PLAN.md §8). Read by the deterministic gate runner only.
+# Agents cannot edit this file. Every gate result stores the sha256 of this file, so a change of any
+# threshold is visible in the history. Changes go through docs/research-lab/DECISIONS.md first.
+
+version: 1
+
+annualization: {us_equity: 252, us_etf: 252, crypto_spot: 365, crypto_perp: 365, default: 252}
+
+# The benchmark is chosen by the framework from asset_classes + market_exposure, never by the agent.
+benchmarks:
+  long_only:
+    us_equity: SPY_TR
+    us_etf: SIXTY_FORTY            # 60/40 SPY/IEF, monthly rebalance
+    crypto_spot: BTC_HOLD          # second benchmark: EW top-20
+    crypto_perp: BTC_HOLD
+    cross_asset: SIXTY_FORTY_BTC5  # 57/38/5 SPY/IEF/BTC
+  long_short: TBILL
+  market_neutral: TBILL
+  min_sharpe_vs_tbill: 0.5         # extra bar when the benchmark is cash
+
+G0:   # integrity, precondition of IMPLEMENTED; a failure is not a trial
+  leakage_cut_days: 12             # qlab.validation.leakage truncation + perturbation
+  determinism_runs: 2
+  max_gross: 1.0                   # decision Q8: shorts allowed, no leverage
+  forbid_date_literals: true
+  forbid_instrument_literals: true # beyond the card's declared universe
+  max_runtime_min: 20
+  max_rss_mb: 1500
+
+G1:   # basic, dev period, full universe, primary configuration only
+  min_sharpe_excess: 0.10          # Sharpe_net >= Sharpe_benchmark + 0.10
+  active_return_ci_level: 0.90     # one-sided stationary bootstrap CI of the active return > 0
+  bootstrap_samples: 2000
+  bootstrap_mean_block_days: 20
+  min_position_entries: 100
+  min_decision_dates: 36           # with non-zero turnover
+  min_mean_exposure: 0.20
+  max_drawdown_vs_benchmark: 1.5
+
+G2:   # robustness
+  params:
+    neighbor_steps: 1              # one grid step each way, all combinations of up to 3 params
+    max_combined_params: 3
+    min_share_beating_benchmark: 0.75
+    min_median_sharpe_ratio: 0.70  # median neighbor Sharpe / primary Sharpe
+  subperiods:
+    n_blocks: 3
+    min_positive_blocks: 2
+    max_block_share_of_active_pnl: 0.60
+  alt_universe:
+    min_sharpe_ratio: 0.50         # alt-universe Sharpe / main Sharpe, and >= benchmark
+  costs:
+    stress_multiplier: 2.0         # must still beat the benchmark Sharpe
+    report_multiplier: 3.0
+  random_entry:
+    runs: 200
+    min_percentile: 0.95
+  publication_decay:
+    min_post_pre_ratio: 0.50       # post-publication / pre-publication active Sharpe, if a reference year is in dev
+
+G3:   # multiple testing
+  literature_prior_trials: 20      # added to N when the card has references (lesson of research 1)
+  min_trials: 10
+  min_dsr: 0.95
+  max_pbo: 0.30
+  pbo_blocks: 16
+
+skeptic:
+  max_objection_rounds: 2          # the third objection rejects
+  checklist: [look_ahead, leakage, survivorship, costs_capacity, data_snooping, mechanism, hindsight, regime]
+
+G4:   # holdout, one attempt per hypothesis
+  min_sharpe_vs_benchmark: 0.0     # Sharpe_net >= Sharpe_benchmark
+  min_sharpe_vs_dev: 0.50
+  cost_stress_min_active_return: 0.0
+  max_drawdown_vs_dev: 1.5
+  family_max_attempts: 3
+  active_return_ci_levels: [0.80, 0.90, 0.93]   # tightens with the family's holdout attempts
+
+G5:   # paper, forward data only
+  min_months: {default: 6, crypto_spot: 4, crypto_perp: 4}
+  min_position_entries: 30
+  min_daily_correlation_vs_replay: 0.90
+  max_cumulative_gap: {floor: 0.02, te_multiplier: 2.0}
+  max_cost_ratio: 1.5
+  min_sharpe_percentile_vs_backtest: 0.05
+
+sentinel:
+  max_paper_strategies: 5
+  max_instrument_weight: 0.25
+  max_gross: 1.0
+  kill_drawdown_vs_backtest: 1.5
+  kill_tracking_fail_days: 20
