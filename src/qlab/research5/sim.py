@@ -8,7 +8,8 @@ first day = 1):
 - entry_delay 1: bought at the open of t+1; 2: open of t+2; 0: at the close of t (MOC upper bound),
 - after each close, every position counts one more day held; the exit signal, the time stop and
   the optional stop are checked on that close and executed at the next open where the security is
-  tradable,
+  tradable; optional per-candidate price levels (`stop_px`, `target_px`, compared with the close)
+  are checked first, in the order stop -> target,
 - a delisting row pays the terminal value into cash at that open without costs,
 - positions still open on the last day are marked at the close (reason "end").
 """
@@ -21,7 +22,7 @@ import polars as pl
 
 from qlab.data.panel import Panel
 
-REASONS = ("exit_signal", "time_stop", "stop", "delisted", "end")
+REASONS = ("exit_signal", "time_stop", "stop", "target", "delisted", "end")
 
 
 @dataclass(frozen=True)
@@ -33,6 +34,7 @@ class SimSpec:
     adv_cap: float = 0.01     # max position value as a fraction of ADV20 at the signal day
     vol_target: float | None = None
     vol_window: int = 63
+    reentry_same_open: bool = True   # False: an asset sold at an open is not bought back at that open
 
 
 @dataclass(frozen=True)
@@ -44,6 +46,8 @@ class Candidates:
     hold: np.ndarray | None = None   # per-candidate max hold (random benchmark)
     stop: np.ndarray | None = None   # per-candidate stop distance as a fraction (ATR variant)
     max_entries: np.ndarray | None = None  # (T,) cap of new entries per decision day
+    stop_px: np.ndarray | None = None    # per-candidate stop: exit when the close is below this price
+    target_px: np.ndarray | None = None  # per-candidate target: exit when the close is at or above it
 
     def bounds(self, n_days: int) -> np.ndarray:
         return np.searchsorted(self.t, np.arange(n_days + 1))
@@ -63,12 +67,14 @@ class SimOutput:
 
 class _Pos:
     __slots__ = ("value", "entry_value", "entry_cost", "entry_day", "signal_day", "held",
-                 "max_hold", "stop", "score", "adv")
+                 "max_hold", "stop", "score", "adv", "stop_px", "target_px")
 
-    def __init__(self, value, cost, entry_day, signal_day, max_hold, stop, score, adv):
+    def __init__(self, value, cost, entry_day, signal_day, max_hold, stop, score, adv,
+                 stop_px=None, target_px=None):
         self.value, self.entry_value, self.entry_cost = value, value, cost
         self.entry_day, self.signal_day, self.held = entry_day, signal_day, 0
         self.max_hold, self.stop, self.score, self.adv = max_hold, stop, score, adv
+        self.stop_px, self.target_px = stop_px, target_px
 
 
 CostFn = Callable[[int, int], float]
@@ -92,6 +98,7 @@ def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, 
     pos: dict[int, _Pos] = {}
     pending_exit: dict[int, str] = {}
     pending_buy: dict[int, int] = {}   # execution day -> decision day
+    sold_today: set[int] = set()
     cash = 1.0
     nav = np.empty(n)
     exposure = np.empty(n)
@@ -124,7 +131,7 @@ def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, 
             if free <= 0 or done >= cap:
                 break
             a = int(cands.a[k])
-            if a in pos or not tradable[a]:
+            if a in pos or not tradable[a] or (not spec.reentry_same_open and a in sold_today):
                 continue
             adv = float(adv20[sig, a])
             v = min(size, spec.adv_cap * adv / spec.capital) if np.isfinite(adv) else size
@@ -137,7 +144,9 @@ def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, 
             turnover[t - start] += v / nav_now
             hold = spec.max_hold if cands.hold is None else int(cands.hold[k])
             stop = None if cands.stop is None else float(cands.stop[k])
-            pos[a] = _Pos(v, v * rate, t, sig, hold, stop, float(cands.score[k]), adv)
+            stop_px = None if cands.stop_px is None else float(cands.stop_px[k])
+            target_px = None if cands.target_px is None else float(cands.target_px[k])
+            pos[a] = _Pos(v, v * rate, t, sig, hold, stop, float(cands.score[k]), adv, stop_px, target_px)
             free, done = free - 1, done + 1
 
     for t in range(start, end):
@@ -156,6 +165,7 @@ def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, 
             cash += p.value
             close_trade(a, p, t, "delisted", 0.0)
 
+        sold_today.clear()
         if pending_exit:
             nav_open = cash + sum(p.value for p in pos.values())
             tradable = panel.tradable[t]
@@ -167,6 +177,7 @@ def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, 
                 costs[i] += c / nav_open
                 turnover[i] += p.value / nav_open
                 close_trade(a, p, t, reason, c)
+                sold_today.add(a)
 
         if t in pending_buy:
             buy(t, pending_buy.pop(t), fill_at_close=False)
@@ -178,10 +189,15 @@ def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, 
             p.held += 1
 
         ex = None if exit_signal is None else exit_signal[t]
+        close_t = panel.close_u[t]
         for a, p in pos.items():
             if a in pending_exit:
                 continue
-            if ex is not None and ex[a] > 0:
+            if p.stop_px is not None and close_t[a] < p.stop_px:
+                pending_exit[a] = "stop"
+            elif p.target_px is not None and close_t[a] >= p.target_px:
+                pending_exit[a] = "target"
+            elif ex is not None and ex[a] > 0:
                 pending_exit[a] = "exit_signal"
             elif p.held >= p.max_hold:
                 pending_exit[a] = "time_stop"

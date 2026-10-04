@@ -135,3 +135,7 @@ dát stop příkaz); statistiky obchodů (počet, úspěšnost, průměrný čis
 | Datum | Rozhodnutí | Důvod |
 |---|---|---|
 | 2026-10-03 | Pre-registrace v1.0 | – |
+| 2026-10-03 | Panel `panel_r13` postaven (`DATA_AUDIT.md`): všechny matice bitově shodné s `panel_r9`, close z raw svíček shodný. Jediná nekonzistentní svíčka (high < max(open, close)) je `AUDUSDT` 2020-11-13. Nic se neopravuje. | audit (§3) |
+| 2026-10-03 | Filtr výzkumu 9 propustil dva fiat páry: `AUDUSDT` (australský dolar) a `BKRWUSDT` (stablecoin vázaný na KRW). Podle §3 se fiat vyřazuje, takže se vyřadí před seřazením univerza. V top 20 nebyly nikdy, `AUDUSDT` byl 26 dní v top 40 (2022-10 → 2023-01, jen robustnost). Výzkum 9 se zpětně nemění. | dodržení §3, zjištěno před výpočtem |
+| 2026-10-03 | Při z = 0,5 je cíl `PREM` (top − 0,5·R) totožný s `EQ`: 6 dvojic kandidátů je identických, různých konfigurací je 18. Mřížka a **N = 24 pro DSR zůstávají** (konzervativně). Shoda Sharpe ve vývoji → první kandidát v pořadí mřížky (`EQ`). | chyba návrhu mřížky, zjištěno před výpočtem |
+| 2026-10-03 | Simulátor výzkumu 5 rozšířen (§11.3): cenový stop a cíl pro každého kandidáta (`stop_px`, `target_px`, pořadí stop → cíl → signál → čas) a `reentry_same_open=False` (coin prodaný na openu se na stejném openu nekupuje, „bez otevřené pozice“ v §5). Výchozí chování beze změny, testy výzkumu 5 procházejí. B_RND otevírá méně pozic než strategie, protože jeho pozice nekončí cílem a déle drží sloty; to odpovídá §6 („stejné sloty“). | implementace |
