@@ -9,7 +9,8 @@ first day = 1):
 - after each close, every position counts one more day held; the exit signal, the time stop and
   the optional stop are checked on that close and executed at the next open where the security is
   tradable; optional per-candidate price levels (`stop_px`, `target_px`, compared with the close)
-  are checked first, in the order stop -> target,
+  are checked first, in the order stop -> target (`stop_px_fill_at_level`: the stop fills at its
+  price on that close, an upper bound for a resting stop order),
 - a delisting row pays the terminal value into cash at that open without costs,
 - positions still open on the last day are marked at the close (reason "end").
 """
@@ -35,6 +36,7 @@ class SimSpec:
     vol_target: float | None = None
     vol_window: int = 63
     reentry_same_open: bool = True   # False: an asset sold at an open is not bought back at that open
+    stop_px_fill_at_level: bool = False  # upper bound: a stop_px exit fills at the stop price on that close
 
 
 @dataclass(frozen=True)
@@ -190,11 +192,15 @@ def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, 
 
         ex = None if exit_signal is None else exit_signal[t]
         close_t = panel.close_u[t]
+        stopped_at_level = []
         for a, p in pos.items():
             if a in pending_exit:
                 continue
             if p.stop_px is not None and close_t[a] < p.stop_px:
-                pending_exit[a] = "stop"
+                if spec.stop_px_fill_at_level:
+                    stopped_at_level.append(a)
+                else:
+                    pending_exit[a] = "stop"
             elif p.target_px is not None and close_t[a] >= p.target_px:
                 pending_exit[a] = "target"
             elif ex is not None and ex[a] > 0:
@@ -203,6 +209,17 @@ def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, 
                 pending_exit[a] = "time_stop"
             elif p.stop is not None and p.value / p.entry_value < 1.0 - p.stop:
                 pending_exit[a] = "stop"
+
+        if stopped_at_level:
+            nav_close = cash + sum(p.value for p in pos.values())
+            for a in stopped_at_level:
+                p = pos.pop(a)
+                p.value *= p.stop_px / close_t[a]
+                c = p.value * exit_cost(t, a)
+                cash += p.value - c
+                costs[i] += c / nav_close
+                turnover[i] += p.value / nav_close
+                close_trade(a, p, t, "stop", c)
 
         if allow_entry is None or allow_entry[t]:
             if spec.entry_delay == 0:

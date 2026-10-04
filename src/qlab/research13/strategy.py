@@ -11,8 +11,9 @@ from dataclasses import asdict, dataclass
 import numpy as np
 
 from qlab.data.panel import Panel
+from qlab.engine.vector import Decisions
 from qlab.research5.sim import Candidates, SimOutput, SimSpec, simulate
-from qlab.research9.strategy import UNIVERSE_N, universe
+from qlab.research9.strategy import UNIVERSE_N, sundays, universe
 from qlab.research13.zones import ranges
 
 MAX_POSITIONS = 5
@@ -112,12 +113,21 @@ def candidates(depth: np.ndarray, bot: np.ndarray, top: np.ndarray, qv30: np.nda
     return Candidates(t, a, depth[t, a], stop_px=b * (1 - STOP_BUFFER), target_px=target)
 
 
-def spec(entry_delay: int = 1) -> SimSpec:
-    return SimSpec(MAX_POSITIONS, MAX_HOLD, entry_delay=entry_delay, reentry_same_open=False)
+def spec(entry_delay: int = 1, stop_at_level: bool = False) -> SimSpec:
+    return SimSpec(MAX_POSITIONS, MAX_HOLD, entry_delay=entry_delay, reentry_same_open=False,
+                   stop_px_fill_at_level=stop_at_level)
+
+
+def ew_decisions(p: Panel, in_univ: np.ndarray, first: int) -> Decisions:
+    """B_EW: equal weights of the universe mask, decided after the Sunday close, filled Monday open."""
+    days = [t for t in sundays(p) if first <= t < len(p.dates) - 1]
+    w = in_univ[days].astype(float)
+    w /= np.maximum(w.sum(axis=1, keepdims=True), 1)
+    return Decisions(np.array(days, dtype=int), w)
 
 
 def run(p: Panel, extra: dict, cfg: Config, rate: np.ndarray, start: int, end: int,
-        in_univ: np.ndarray, entry_delay: int = 1) -> SimOutput:
+        in_univ: np.ndarray, entry_delay: int = 1, stop_at_level: bool = False) -> SimOutput:
     """Simulate days [start, end) from an empty book. `rate`: per-side cost matrix of research 9,
     `in_univ`: universe_mask for cfg.universe_n."""
     qv = extra["qv"]
@@ -125,7 +135,7 @@ def run(p: Panel, extra: dict, cfg: Config, rate: np.ndarray, start: int, end: i
     cands = candidates(depth, bot, top, mean_qv30(qv), cfg, start, end - 1)
     no_adv = np.full(p.shape, np.nan)
     fee = lambda t, a: float(rate[t, a])  # noqa: E731
-    return simulate(p, cands, spec(entry_delay), no_adv, start, end, fee, fee)
+    return simulate(p, cands, spec(entry_delay, stop_at_level), no_adv, start, end, fee, fee)
 
 
 def random_benchmark(p: Panel, in_univ: np.ndarray, out: SimOutput, rate: np.ndarray, start: int,

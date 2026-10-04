@@ -65,13 +65,13 @@ def test_grid_24_unique():
 BASE = [110] * 50 + [115, 120, 115, 110, 105, 100, 103, 106, 107, 104]
 
 
-def _trade(tail: list[float]) -> tuple:
+def _trade(tail: list[float], **kw) -> tuple:
     close = col(*BASE, *tail)
     p, extra = make_panel(close)
     rate = np.full(p.shape, 0.001)
     cfg = S.Config(2, 0.25, "EQ", "touch", pivot_src="close")
     univ = S.universe_mask(p, extra["qv"], cfg.universe_n)
-    return S.run(p, extra, cfg, rate, 50, len(close), univ), close
+    return S.run(p, extra, cfg, rate, 50, len(close), univ, **kw), close
 
 
 def test_hand_trade_target():
@@ -88,6 +88,21 @@ def test_hand_trade_stop():
     tr = out.trades.row(0, named=True)
     assert (tr["entry_day"], tr["exit_day"], tr["reason"]) == (60, 61, "stop")   # close 98 < 100 * 0.99
     assert tr["gross_ret"] == pytest.approx(98 / 104 - 1)
+
+
+def test_stop_fill_at_level_upper_bound():
+    out, _ = _trade([98, 98, 98], stop_at_level=True)
+    tr = out.trades.row(0, named=True)
+    assert (tr["exit_day"], tr["reason"]) == (60, "stop")                      # sold on the close of day 60
+    assert tr["gross_ret"] == pytest.approx(99 / 104 - 1)                      # at the stop price 100 * 0.99
+    assert out.n_positions[60 - 50] == 0
+
+
+def test_ew_decisions_follow_the_mask():
+    p, extra = make_panel(np.full((80, 4), 100.0), np.array([4e9, 3e9, 2e9, 1e9]))
+    univ = S.universe_mask(p, extra["qv"], 2, exclude=[0])
+    d = S.ew_decisions(p, univ, 0)
+    assert (d.weights[d.days >= 59] == [0, 0.5, 0.5, 0]).all()
 
 
 def test_no_rebuy_at_the_exit_open():
