@@ -120,6 +120,12 @@ CREATE TABLE IF NOT EXISTS agent_invocations (
     output_json TEXT                  -- the outbox as applied (or as rejected)
 );
 
+CREATE TABLE IF NOT EXISTS lessons (    -- accepted LESSON messages (refused ones are not here)
+    message_id INTEGER PRIMARY KEY,
+    hypothesis_id TEXT NOT NULL,
+    ts TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS budget (
     day TEXT NOT NULL,
     agent TEXT NOT NULL,
@@ -148,7 +154,7 @@ CREATE TABLE IF NOT EXISTS counters (
 );
 """
 
-APPEND_ONLY = ("transitions", "gate_results", "trials", "canary_runs")
+APPEND_ONLY = ("transitions", "gate_results", "trials", "canary_runs", "lessons")
 
 _TRIGGERS = "".join(f"""
 CREATE TRIGGER IF NOT EXISTS {t}_no_update BEFORE UPDATE ON {t}

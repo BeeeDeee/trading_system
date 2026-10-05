@@ -94,6 +94,7 @@ MESSAGE_RULES: dict[str, dict] = {
     "VERDICT":        {"from": {"skeptic", "archivist", "chair", "sentinel", "system"},
                        "to": {"system", "librarian", "chair", HUMAN}},
     "QUESTION":       {"from": set(LLM_AGENTS) | {"system", HUMAN}, "to": set(LLM_AGENTS) | {HUMAN}},
+    "LESSON":         {"from": {"librarian"}, "to": {"system"}},
     "ALERT":          {"from": {"sentinel", "steward", "system", "gatekeeper"},
                        "to": {HUMAN, "chair", "librarian"}},
 }

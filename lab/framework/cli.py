@@ -267,6 +267,8 @@ def _default_task(lab: Lab, agent: str, hid: str | None) -> str:
         return "review"
     if agent == "archivist":
         return "data requests"
+    if agent == "librarian":
+        return "lessons"
     return "answer" if hid else "propose"
 
 

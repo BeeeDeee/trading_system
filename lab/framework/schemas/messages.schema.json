@@ -4,87 +4,346 @@
   "title": "Payloads of typed blackboard messages (schema_version 1)",
   "$defs": {
     "NEW_HYPOTHESIS": {
-      "type": "object", "additionalProperties": false, "required": ["card"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "card"
+      ],
       "properties": {
-        "card": {"type": "object"},
-        "card_file": {"type": "string", "description": "workspace-relative; replaced by `card` when the outbox is applied"},
-        "note": {"type": "string"}
+        "card": {
+          "type": "object"
+        },
+        "card_file": {
+          "type": "string",
+          "description": "workspace-relative; replaced by `card` when the outbox is applied"
+        },
+        "note": {
+          "type": "string"
+        }
       }
     },
     "REVISION": {
-      "type": "object", "additionalProperties": false, "required": ["card", "reason"],
-      "properties": {"card": {"type": "object"}, "card_file": {"type": "string"}, "reason": {"type": "string", "minLength": 5}}
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "card",
+        "reason"
+      ],
+      "properties": {
+        "card": {
+          "type": "object"
+        },
+        "card_file": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 5
+        }
+      }
     },
     "DATA_REQUEST": {
-      "type": "object", "additionalProperties": false, "required": ["dataset", "description"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dataset",
+        "description"
+      ],
       "properties": {
-        "dataset": {"type": "string"},
-        "description": {"type": "string"},
-        "frequency": {"type": "string"},
-        "period": {"type": "array", "items": {"type": "string"}}
+        "dataset": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "frequency": {
+          "type": "string"
+        },
+        "period": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "DATA_READY": {
-      "type": "object", "additionalProperties": false, "required": ["dataset", "catalog_entry", "source_file"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dataset",
+        "catalog_entry",
+        "source_file"
+      ],
       "properties": {
-        "dataset": {"type": "string"},
-        "catalog_entry": {"type": "object"},
-        "source_file": {"type": "string", "description": "workspace-relative fetcher script, copied to lab/data/sources/"}
+        "dataset": {
+          "type": "string"
+        },
+        "catalog_entry": {
+          "type": "object"
+        },
+        "source_file": {
+          "type": "string",
+          "description": "workspace-relative fetcher script, copied to lab/data/sources/"
+        }
       }
     },
     "IMPL_DONE": {
-      "type": "object", "additionalProperties": false, "required": ["files", "summary"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "files",
+        "summary"
+      ],
       "properties": {
-        "files": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^strategy/[A-Za-z0-9_./-]+$"}},
-        "summary": {"type": "string"},
-        "tests_passed": {"type": "boolean"}
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^strategy/[A-Za-z0-9_./-]+$"
+          }
+        },
+        "summary": {
+          "type": "string"
+        },
+        "tests_passed": {
+          "type": "boolean"
+        }
       }
     },
     "GATE_RESULT": {
-      "type": "object", "additionalProperties": false, "required": ["gate", "passed", "metrics"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gate",
+        "passed",
+        "metrics"
+      ],
       "properties": {
-        "gate": {"enum": ["G0", "G1", "G2", "G3", "G4", "G5"]},
-        "passed": {"type": "boolean"},
-        "reason_code": {"type": ["string", "null"]},
-        "metrics": {"type": "object"},
-        "run_id": {"type": "integer"}
+        "gate": {
+          "enum": [
+            "G0",
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5"
+          ]
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "reason_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "metrics": {
+          "type": "object"
+        },
+        "run_id": {
+          "type": "integer"
+        }
       }
     },
     "OBJECTION": {
-      "type": "object", "additionalProperties": false, "required": ["return_to", "items"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "return_to",
+        "items"
+      ],
       "properties": {
-        "return_to": {"enum": ["builder", "scout"]},
+        "return_to": {
+          "enum": [
+            "builder",
+            "scout"
+          ]
+        },
         "items": {
-          "type": "array", "minItems": 1,
+          "type": "array",
+          "minItems": 1,
           "items": {
-            "type": "object", "additionalProperties": false, "required": ["check", "finding", "evidence"],
-            "properties": {"check": {"type": "string"}, "finding": {"type": "string"}, "evidence": {"type": "string"}}
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "check",
+              "finding",
+              "evidence"
+            ],
+            "properties": {
+              "check": {
+                "type": "string"
+              },
+              "finding": {
+                "type": "string"
+              },
+              "evidence": {
+                "type": "string"
+              }
+            }
           }
         }
       }
     },
     "VERDICT": {
-      "type": "object", "required": ["decision", "reason"],
+      "type": "object",
+      "required": [
+        "decision",
+        "reason"
+      ],
       "properties": {
-        "decision": {"enum": ["no_objection", "reject", "infeasible", "park", "reopen", "admit", "retire", "rejected", "parked"]},
-        "reason": {"type": "string", "minLength": 5},
-        "reason_code": {"type": "string"},
+        "decision": {
+          "enum": [
+            "no_objection",
+            "reject",
+            "infeasible",
+            "park",
+            "reopen",
+            "admit",
+            "retire",
+            "rejected",
+            "parked"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 5
+        },
+        "reason_code": {
+          "type": "string"
+        },
         "checklist": {
           "type": "object",
           "additionalProperties": {
-            "type": "object", "additionalProperties": false, "required": ["status", "evidence"],
-            "properties": {"status": {"enum": ["ok", "concern"]}, "evidence": {"type": "string", "minLength": 10}}
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "evidence"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "ok",
+                  "concern"
+                ]
+              },
+              "evidence": {
+                "type": "string",
+                "minLength": 10
+              }
+            }
           }
         }
       }
     },
     "QUESTION": {
-      "type": "object", "additionalProperties": false, "required": ["question"],
-      "properties": {"question": {"type": "string", "minLength": 5}, "context": {"type": "string"}, "in_reply_to": {"type": "integer"}}
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "question"
+      ],
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 5
+        },
+        "context": {
+          "type": "string"
+        },
+        "in_reply_to": {
+          "type": "integer"
+        }
+      }
     },
     "ALERT": {
-      "type": "object", "additionalProperties": false, "required": ["severity", "text"],
-      "properties": {"severity": {"enum": ["info", "warning", "critical"]}, "text": {"type": "string"}, "metrics": {"type": "object"}}
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "severity",
+        "text"
+      ],
+      "properties": {
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "critical"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "metrics": {
+          "type": "object"
+        }
+      }
+    },
+    "LESSON": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "family",
+        "mechanism_class",
+        "outcome",
+        "lesson"
+      ],
+      "description": "A qualitative lesson from one hypothesis (Librarian). No numbers from gate results: the Scout reads lessons, and metric feedback would be untracked adaptive search on dev data.",
+      "properties": {
+        "family": {
+          "type": "string"
+        },
+        "mechanism_class": {
+          "enum": [
+            "risk_premium",
+            "behavioral",
+            "flow_structural",
+            "calendar",
+            "cross_asset_information",
+            "volatility",
+            "carry",
+            "liquidity_provision",
+            "other"
+          ]
+        },
+        "instruments": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "outcome": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "stage and check that decided, in words, e.g. 'rejected at G1: Sharpe difference vs BTC not reliably positive'"
+        },
+        "lesson": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 700
+        },
+        "avoid": {
+          "type": "string",
+          "maxLength": 400
+        },
+        "open_questions": {
+          "type": "string",
+          "maxLength": 400
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^H-\\d{4}$"
+          }
+        },
+        "family_merge": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "optional: this family looks like the same mechanism as another family (for the Chair)"
+        }
+      }
     }
   }
 }

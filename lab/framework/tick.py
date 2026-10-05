@@ -200,7 +200,17 @@ def _verdict(lab, m, payload, evaluator):
     return None
 
 
-REACTIONS = {"NEW_HYPOTHESIS": _new_hypothesis, "REVISION": _revision, "DATA_READY": _data_ready,
+def _lesson(lab, m, payload, evaluator):
+    from lab.framework import lessons
+    lessons.check(lab, m["hypothesis_id"], payload)
+    with Tx(lab.con):
+        lab.con.execute("INSERT OR IGNORE INTO lessons (message_id, hypothesis_id, ts) VALUES (?, ?, ?)",
+                        (m["id"], m["hypothesis_id"], now()))
+    lessons.render(lab)
+    return f"lesson on {m['hypothesis_id']} recorded"
+
+
+REACTIONS = {"LESSON": _lesson, "NEW_HYPOTHESIS": _new_hypothesis, "REVISION": _revision, "DATA_READY": _data_ready,
              "IMPL_DONE": _impl_done, "OBJECTION": _objection, "VERDICT": _verdict}
 
 

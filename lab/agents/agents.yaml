@@ -19,7 +19,7 @@ agents:
     model: claude-opus-5-5
     prompt: scout.md
     tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch]   # literature search; no WebFetch (data-blind)
-    context: [factsheets, prior_studies, card_schema, card_example, gates]
+    context: [factsheets, prior_studies, lessons, card_schema, card_example, gates]
 
   builder:
     model: claude-opus-5-5
@@ -44,3 +44,11 @@ agents:
     lab_verbs: [send, fetch, inbox, context]
     timeout_s: 1500
     context: [blocked]
+
+  librarian:
+    model: claude-sonnet-5-5
+    prompt: librarian.md
+    tools: [Read, Write, Edit, Glob, Grep, Bash]
+    lab_verbs: [send, inbox, context]
+    timeout_s: 1200
+    context: [cases, lessons, prior_studies]

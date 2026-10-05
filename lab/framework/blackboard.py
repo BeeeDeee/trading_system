@@ -176,7 +176,7 @@ class Lab:
             if gaps:
                 raise LabError("no_objection needs every checklist item with status ok and evidence; "
                                f"missing or concern: {', '.join(gaps)} (send an OBJECTION instead)")
-        if msg_type in ("OBJECTION", "VERDICT", "IMPL_DONE", "REVISION") and hid is None:
+        if msg_type in ("OBJECTION", "VERDICT", "IMPL_DONE", "REVISION", "LESSON") and hid is None:
             raise LabError(f"{msg_type} must name a hypothesis")
         if hid is not None:
             self.hypothesis(hid)

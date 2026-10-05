@@ -70,6 +70,12 @@ def render_context(lab, ws: Path, items: tuple[str, ...], hid: str | None = None
             case "history":
                 if hid:
                     (ws / "history.json").write_text(json.dumps(history(lab, hid), indent=2, ensure_ascii=False))
+            case "lessons":
+                from lab.framework import lessons
+                f = lessons.path(lab)
+                (ws / "lessons.md").write_text(f.read_text() if f.exists() else "# Lessons\n\nNone yet.\n")
+            case "cases":
+                (ws / "cases.json").write_text(json.dumps(cases(lab), indent=2, ensure_ascii=False, default=str))
             case "blocked":
                 (ws / "blocked.json").write_text(json.dumps(blocked(lab), indent=2, ensure_ascii=False))
             case "family":
@@ -110,4 +116,29 @@ def blocked(lab) -> list[dict]:
         out.append({"id": h["id"], "title": card["title"], "asset_classes": card.get("asset_classes"),
                     "signal": card.get("signal", {}).get("description"),
                     "data_requirements": card.get("data_requirements")})
+    return out
+
+
+def cases(lab) -> list[dict]:
+    """The Librarian's brief: every hypothesis that is decided (or past G3) and has no accepted lesson for its
+    current version yet, with card, gate metrics, the Builder's summary and the transitions."""
+    from lab.framework import lessons
+    done = {(r["hypothesis_id"]) for r in lab.con.execute(
+        "SELECT l.hypothesis_id FROM lessons l JOIN messages m ON m.id = l.message_id "
+        "JOIN hypotheses h ON h.id = l.hypothesis_id WHERE l.ts >= h.updated_at")}
+    out = []
+    for h in lab.hypotheses():
+        if h["id"] in done or h["status"] not in {str(s) for s in lessons.LESSON_STATES}:
+            continue
+        hist = history(lab, h["id"])
+        gates = [{"gate": r["gate"], "version": r["version"], "passed": bool(r["passed"]),
+                  "reason_code": r["reason_code"], "metrics": json.loads(r["metrics_json"])}
+                 for r in lab.con.execute("SELECT * FROM gate_results WHERE hypothesis_id = ? ORDER BY id",
+                                          (h["id"],))]
+        out.append({"id": h["id"], "status": h["status"], "reject_stage": h["reject_stage"],
+                    "reject_code": h["reject_code"], "card": lab.card(h["id"]), "gate_results": gates,
+                    "builder_summaries": [m["payload"].get("summary") for m in hist["messages"]
+                                          if m["type"] == "IMPL_DONE"],
+                    "skeptic": [m["payload"] for m in hist["messages"] if m["from"] == "skeptic"],
+                    "transitions": hist["transitions"]})
     return out
