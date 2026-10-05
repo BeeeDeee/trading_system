@@ -20,7 +20,7 @@ import yaml
 
 from lab.framework import catalog, data, strategy
 from lab.framework.data import DataView
-from lab.framework.evaluator import QlabEvaluator, integrity, strategy_instruments
+from lab.framework.evaluator import TRADABLE, QlabEvaluator, integrity, strategy_instruments
 
 DAILY_VOL = {"us_etf": 0.012, "us_equity": 0.02, "crypto_spot": 0.04, "crypto_perp": 0.04}
 SYNTHETIC_PAIRS = 40
@@ -84,10 +84,18 @@ def synthetic_view(card: dict, cat: dict, seed: int) -> DataView:
     dv = np.where(listed, rng.lognormal(17, 1, (T, N)), np.nan)
     view = DataView(days, tuple(names), tuple(classes), ret_co, ret_oc, tradable, listed, delisting, close, dv,
                     cash_ret=np.zeros(T))
+    from dataclasses import replace
     if top_n:
-        from dataclasses import replace
         view = replace(view, universe=data.crypto_top_n(view, top_n))
-    return view
+    series = {}
+    for r in reqs:                                                 # signal-only datasets (Archivist ingest)
+        if r["dataset"] in TRADABLE:
+            continue
+        for f in cat[r["dataset"]].get("fields") or r.get("fields") or []:   # what the gate runner will attach
+            x = 20 + np.cumsum(rng.normal(0, 1, T))
+            x[: T // 10] = np.nan                                 # starts later than the prices
+            series[f"{r['dataset']}.{f}"] = x
+    return replace(view, series=series) if series else view
 
 
 def stats(w: np.ndarray, view: DataView) -> dict:

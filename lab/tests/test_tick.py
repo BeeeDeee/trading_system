@@ -50,6 +50,8 @@ def test_missing_data_blocks_and_ingest_unblocks(lab, blocked_card):
     stubs.archivist(lab, inv)
     invocations.finish(lab, inv.id)
     tick(lab, None)
+    assert lab.hypothesis(hid)["status"] == S.BLOCKED_DATA      # ingest is the judge's work
+    tick(lab, Evaluator())
     assert lab.hypothesis(hid)["status"] == S.DATA_READY
     assert (lab.paths.lab / "data" / "sources" / "deribit_dvol_1d.py").exists()
     assert "deribit_dvol_1d" in lab.paths.catalog.read_text()

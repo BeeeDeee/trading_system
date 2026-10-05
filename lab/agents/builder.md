@@ -57,7 +57,14 @@ def target_weights(data, params):
 - `tradable[t]` an order can fill at the open of row t (known after the close of t-1; whether tomorrow is tradable is not known, the engine simply does not fill an order on a non-tradable open), `listed` the instrument exists on that row, `delisting` the
   position is paid out at this open. `close` (unadjusted, for filters only) and `dollar_volume`, NaN without a price.
 - `universe` (T, N) bool membership or None; with a universe you may only hold members.
-- `extras`, `series` named extra data, `cash_ret` the cash return.
+- `extras`, `series` named extra data, `cash_ret` the cash return. Datasets ingested by the Archivist (catalog
+  `loader: generic`) arrive as `data.series["<dataset>.<key>"]` (keys = the requirement's `fields`, else the
+  catalog's `fields`), already aligned by their clock: row t holds the last value known after the close of t,
+  NaN before the first. Do not lag them again unless the card says so; handle the leading NaNs. The key
+  names are the catalog's `fields` of that dataset (the card's `fields` may be a guess from before the ingest).
+- **Fail loudly on missing inputs**: index `data.series[...]` and `data.col(...)` directly so a missing series
+  or instrument raises. Never fall back to "no position" when an input is missing: a strategy that silently
+  holds nothing passes G0 and dies at G1 for the wrong reason.
 - A mixed calendar (ETF + crypto) has weekend rows where ETFs are not listed (zero returns, not tradable).
 
 Semantics the gate runner relies on:

@@ -292,6 +292,35 @@ def synthetic(seed: int = 7, edge: float = 0.004, n_assets: int = 30) -> DataVie
                     np.full((T, N + 1), 5e7), series={"signal": signal})
 
 
+# ---------------------------------------------------------------------------- generic (Archivist ingest)
+
+CLOCK_LAG_DAYS = {"us_close": 0, "crypto": 0, "next_morning": 1}
+
+
+def generic_series(home: Path, dataset: str) -> dict[str, tuple[np.ndarray, np.ndarray]]:
+    """key -> (observation dates, values) of an ingested dataset (dev and holdout files)."""
+    import polars as pl
+    d = home / "data" / dataset
+    df = pl.concat([pl.read_parquet(d / f) for f in ("dev.parquet", "holdout.parquet") if (d / f).exists()])
+    out = {}
+    for (key,), g in df.sort("date").group_by("key", maintain_order=True):
+        out[key] = (g["date"].to_numpy().astype("datetime64[D]"), g["value"].to_numpy().astype(float))
+    return out
+
+
+def attach_generic(view: DataView, home: Path, dataset: str, entry: dict) -> DataView:
+    """Add `series["<dataset>.<key>"]` for every key of the dataset (the catalog's `fields`; a card's
+    `fields` are the Scout's guess from before the ingest and are not used to filter): on row t the last observation known after the close of day t.
+    An observation of day d is known at the close of d (clock us_close, crypto) or of d+1 (next_morning,
+    published the next morning). Before the first known observation: NaN."""
+    lag = np.timedelta64(CLOCK_LAG_DAYS[entry["clock"]], "D")
+    series = dict(view.series)
+    for key, (d, v) in generic_series(home, dataset).items():
+        idx = np.searchsorted(d + lag, view.dates, side="right") - 1
+        series[f"{dataset}.{key}"] = np.where(idx >= 0, v[np.maximum(idx, 0)], np.nan)
+    return replace(view, series=series)
+
+
 def load(dataset: str, instruments: list[str] | None) -> DataView:
     match dataset:
         case "sharadar_sfp":

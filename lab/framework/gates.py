@@ -57,6 +57,12 @@ class StubEvaluator:
             raise LabError("the stub evaluator only runs in tests and the demo (allow=True)")
         self.script = script or {}
 
+    def ingest(self, lab, payload: dict) -> dict:
+        """Stub ingest: the Archivist's entry goes into the catalog as is (no fetch)."""
+        from lab.framework import catalog
+        catalog.add(lab.paths.catalog, payload["catalog_entry"])
+        return payload["catalog_entry"]
+
     def evaluate(self, lab, hid, card, gate, thresholds):
         version = lab.hypothesis(hid)["version"]
         passed, code = self.script.get((hid, gate), (True, None))

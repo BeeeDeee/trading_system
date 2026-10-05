@@ -62,7 +62,7 @@ def _react_all(lab: Lab, evaluator, log) -> bool:
 
 
 def _needs_evaluator(m, payload) -> bool:
-    return m["type"] == "IMPL_DONE" or (m["type"] == "VERDICT" and m["from_agent"] == "skeptic"
+    return m["type"] in ("IMPL_DONE", "DATA_READY") or (m["type"] == "VERDICT" and m["from_agent"] == "skeptic"
                                          and payload["decision"] == "no_objection")
 
 
@@ -134,16 +134,18 @@ def _check_data(lab: Lab, hid: str) -> str:
 
 
 def _data_ready(lab, m, payload, evaluator):
-    """Stub ingest (step 1): validate the entry and add it to the catalog. The real ingest runs the
-    Archivist's fetcher in a sandbox and splits dev/holdout before the entry is written (step 3)."""
-    catalog.add(lab.paths.catalog, payload["catalog_entry"])
+    """Ingest (by the evaluator: fetch, validate, dev/holdout split, catalog entry), then unblock."""
+    try:
+        entry = evaluator.ingest(lab, payload)
+    except ValueError as e:
+        raise LabError(f"ingest of {payload['dataset']} failed: {e}") from None
     unblocked = []
     for h in lab.hypotheses(S.BLOCKED_DATA):
         if catalog.resolve(lab.paths.catalog, lab.card(h["id"])["data_requirements"]).ok:
             lab.transition(h["id"], S.DATA_READY, "system", f"dataset {payload['dataset']} ingested",
                            message_id=m["id"])
             unblocked.append(h["id"])
-    return f"ingested {payload['dataset']}; unblocked {unblocked or 'none'}"
+    return f"ingested {payload['dataset']} (holdout from {entry['holdout_from']}); unblocked {unblocked or 'none'}"
 
 
 def _impl_done(lab, m, payload, evaluator):

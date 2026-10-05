@@ -36,3 +36,11 @@ agents:
     lab_verbs: [send, try, inbox, context]
     timeout_s: 1500
     context: [gates, history, family, prior_studies]
+
+  archivist:
+    model: claude-sonnet-5-5
+    prompt: archivist.md
+    tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch]   # WebFetch for API docs (data-blind by rule)
+    lab_verbs: [send, fetch, inbox, context]
+    timeout_s: 1500
+    context: [blocked]

@@ -68,6 +68,7 @@ _ROWS: list[tuple[S | None, S, set[str]]] = [
     (S.PAPER, S.RETIRED, {"sentinel", HUMAN}),
     (S.LIVE_CANDIDATE, S.RETIRED, {"sentinel", HUMAN}),
     (S.PARKED, S.IDEA, {"chair", HUMAN}),               # reopen as a new version (Q7)
+    (S.REJECTED, S.DATA_READY, {HUMAN}),                # void a gate rejection caused by a framework bug
     (S.SKEPTIC_REVIEW, S.REJECTED, {"skeptic"}),        # the Skeptic can only kill what it reviews
     *((s, S.REJECTED, {"gatekeeper", "system", HUMAN}) for s in _NON_TERMINAL),
     *((s, S.PARKED, {"chair", HUMAN}) for s in _NON_TERMINAL),

@@ -55,8 +55,12 @@ discarded.
 2. **Testable now.** The gate runner can load only datasets with `loader: true` in the catalog:
    `sharadar_sfp` (US ETFs, by explicit ticker list, universe kind `instruments`) and `binance_spot_1d`
    (Binance spot pairs, by explicit list or universe kind `crypto_top_n` with `n`). Pick instruments that exist
-   in the dev period (see `factsheets.md` for first price dates). A card that needs another dataset goes to
-   BLOCKED_DATA and waits for the owner; only do that on purpose, and say why in `notes`.
+   in the dev period (see `factsheets.md` for first price dates). Datasets with `loader: generic` are signal
+   series (not tradable) that a strategy can read next to the tradable data. A card may also ask for a **new
+   daily, free, public dataset** under a new id (e.g. `cboe_vix_1d`, with a clear `description` of the series):
+   it goes to BLOCKED_DATA, the Archivist tries to ingest it, and the hypothesis continues if that works. Do
+   that only when the data is essential to the mechanism, and say why in `notes`. Datasets in the catalog
+   with `loader: false` are blocked until the owner adds a loader.
 3. **Realistic after costs.** Costs are charged per trade (ETF and crypto tiers by liquidity) and must survive
    ×2. Daily turnover in anything but the most liquid instruments rarely survives. Prefer weekly or monthly
    rebalancing unless the mechanism is inherently short-horizon.

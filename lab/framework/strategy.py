@@ -33,8 +33,10 @@ FORBIDDEN_ATTRS = {"datetime64", "today", "now", "load", "save", "fromfile", "to
 DATE_RE = re.compile(r"(19|20)\d\d-[01]\d(-[0-3]\d)?")
 
 
-def scan(source: str, instruments_allowed: set[str], instruments_all: set[str]) -> list[str]:
-    """Static problems of a strategy file (empty = clean)."""
+def scan(source: str, instruments_allowed: set[str], instruments_all: set[str],
+         imports: set[str] = ALLOWED_IMPORTS, check_dates: bool = True) -> list[str]:
+    """Static problems of a strategy file (empty = clean). Ingest fetchers use their own import list and may
+    contain dates (API start dates); strategies may not."""
     try:
         tree = ast.parse(source)
     except SyntaxError as e:
@@ -43,10 +45,10 @@ def scan(source: str, instruments_allowed: set[str], instruments_all: set[str]) 
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for a in node.names:
-                if a.name not in ALLOWED_IMPORTS and a.name.split(".")[0] not in {"numpy"}:
+                if a.name not in imports and a.name.split(".")[0] not in {"numpy"}:
                     problems.append(f"line {node.lineno}: import {a.name} not allowed")
         elif isinstance(node, ast.ImportFrom):
-            if (node.module or "") not in ALLOWED_IMPORTS and (node.module or "").split(".")[0] != "numpy":
+            if (node.module or "") not in imports and (node.module or "").split(".")[0] != "numpy":
                 problems.append(f"line {node.lineno}: from {node.module} import not allowed")
         elif isinstance(node, ast.Name) and node.id in FORBIDDEN_NAMES:
             problems.append(f"line {node.lineno}: {node.id} not allowed")
@@ -60,21 +62,21 @@ def scan(source: str, instruments_allowed: set[str], instruments_all: set[str]) 
             if node.attr.startswith("__") and node.attr != "__init__":
                 problems.append(f"line {node.lineno}: dunder attribute {node.attr} not allowed")
         elif isinstance(node, ast.Constant) and isinstance(node.value, str):
-            if DATE_RE.search(node.value):
+            if check_dates and DATE_RE.search(node.value):
                 problems.append(f"line {node.lineno}: date literal {node.value!r} (hard-coded history)")
             if node.value in instruments_all - instruments_allowed:
                 problems.append(f"line {node.lineno}: instrument {node.value!r} is not in the card's universe")
     return problems
 
 
-def load(path: Path) -> ModuleType:
+def load(path: Path, entry: str = "target_weights") -> ModuleType:
     name = f"lab_strategy_{abs(hash(str(path)))}"
     spec = importlib.util.spec_from_file_location(name, path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     sys.modules.pop(name, None)
-    if not callable(getattr(module, "target_weights", None)):
-        raise TypeError("strategy.py must define target_weights(data, params)")
+    if not callable(getattr(module, entry, None)):
+        raise TypeError(f"{path.name} must define {entry}(...)")
     return module
 
 

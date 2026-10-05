@@ -72,6 +72,13 @@ class QlabEvaluator:
         self.load = view_loader or data.load
         self._ctx: dict[tuple, Context] = {}
 
+    def ingest(self, lab: Lab, payload: dict) -> dict:
+        """Real ingest of an Archivist dataset (lab.framework.ingest); raises IngestError (a ValueError)."""
+        from lab.framework import ingest
+        ds = payload["dataset"]
+        src = lab.paths.lab / "data" / "sources" / f"{ds}.py"
+        return ingest.ingest(lab.paths.home, lab.paths.catalog, ds, payload["catalog_entry"], src)
+
     def paper_ready(self, lab: Lab, hid: str) -> bool:
         return False  # the paper runner arrives in step 4
 
@@ -105,9 +112,11 @@ class QlabEvaluator:
         cat = catalog.load(lab.paths.catalog)
         reqs = card["data_requirements"]
         universe = card["universe"]
-        unknown = [r["dataset"] for r in reqs if r["dataset"] not in TRADABLE]
+        unknown = [r["dataset"] for r in reqs if r["dataset"] not in TRADABLE
+                   and cat.get(r["dataset"], {}).get("loader") != "generic"]
         if unknown:
             raise NotImplementedError(f"no data adapter yet for {unknown}")
+        signal_ds = [r["dataset"] for r in reqs if r["dataset"] not in TRADABLE]
         per_ds = strategy_instruments(card)
         strat_ds = list(per_ds)
 
@@ -133,14 +142,17 @@ class QlabEvaluator:
                 strat_set |= set(v.instruments if per_ds[ds] is None else per_ds[ds])
             views.append(v)
         view = data.merge(views)
+        for ds in dict.fromkeys(signal_ds):
+            view = data.attach_generic(view, lab.paths.home, ds, cat[ds])
+        all_ds = strat_ds + signal_ds
         start = max(data.as_date(cat[d]["range"][0]) for d in strat_ds)
         if any(r.get("period") for r in reqs):
             start = max([start] + [data.as_date(r["period"][0]) for r in reqs if r.get("period")])
-        end = min(data.as_date(cat[d]["range"][1]) for d in strat_ds)
+        end = min(data.as_date(cat[d]["range"][1]) for d in all_ds)
         view = view.between(start, end)
         synthetic_only = set(load_ds) == {"synthetic_market"}
         view = data.with_cash(view, None if synthetic_only else data.tbill_rates())
-        holdout = min(data.as_date(cat[d]["holdout_from"]) for d in strat_ds)
+        holdout = min(data.as_date(cat[d]["holdout_from"]) for d in all_ds)
         strat_cols = [c for c in view.instruments if c in strat_set]
         limit = _merge(gates_cfg["G0"], self.overrides.get("G0", {}))["max_runtime_min"] * 60.0
         ctx = Context(hid, card, view, strat_cols, bench, bweights, limit,
@@ -496,13 +508,16 @@ def _merge(a: dict, b: dict) -> dict:
 def strategy_instruments(card: dict) -> dict[str, list[str] | None]:
     """dataset -> the strategy's instruments from it (None = every instrument, for crypto_top_n).
 
-    A requirement's own `instruments`, else the universe's instruments for the first requirement. Several
+    Only tradable datasets give instruments. A requirement's own `instruments`, else the universe's
+    instruments for the first tradable requirement. Several
     requirements on the same dataset add up (a card may list SPY and IEF as two requirements with
     different periods); a later requirement without instruments adds nothing."""
     universe, per_ds = card["universe"], {}
-    for k, r in enumerate(card["data_requirements"]):
+    for r in card["data_requirements"]:
         ds = r["dataset"]
-        inst = r.get("instruments") or (universe.get("instruments") if k == 0 else None)
+        if ds not in TRADABLE:
+            continue   # signal-only dataset (Archivist ingest): series, not instruments
+        inst = r.get("instruments") or (universe.get("instruments") if not per_ds else None)
         if universe["kind"] == "crypto_top_n" and ds == "binance_spot_1d":
             inst = None
         if ds not in per_ds:

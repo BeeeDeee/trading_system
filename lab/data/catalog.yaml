@@ -221,3 +221,45 @@ datasets:
     forward_source: binance_public_api
     known_biases:
       - "Universe chosen by liquidity at download time (survivorship)."
+
+  - id: stablecoin_supply_1d
+    loader: generic
+    asset_class: crypto_spot
+    instruments: total circulating supply in USD of all USD-pegged stablecoins (USDT,
+      USDC, BUSD, DAI, TUSD, ... all chains summed); one series, key 'total' (field
+      total_circulating_usd); signal only, not tradable
+    frequency: 1d
+    range:
+    - '2017-11-29'
+    - '2026-10-05'
+    clock: crypto
+    source: DefiLlama stablecoins API, https://stablecoins.llama.fi/stablecoincharts/all,
+      field totalCirculatingUSD.peggedUSD (free, public, no key)
+    quality: 'lab ingest 2026-10-05: 3233 rows, 1 series, see LAB_HOME/data/stablecoin_supply_1d/report.json'
+    holdout_from: '2023-01-01'
+    known_biases:
+    - 'Revised/backfilled: DefiLlama recomputes the whole history on every call; newly
+      listed stablecoins and chains are added retroactively, so a value as served today
+      is not what was visible on that day (look-ahead in level and in growth rates,
+      especially 2018-2020 when coverage was thinner).'
+    - Daily timestamps are 00:00 UTC snapshots; the value stamped day d is likely the
+      supply at the start of d (end of d-1). Treating it as the value of day d with
+      clock crypto is conservative (about one day late), not look-ahead.
+    - Only USD-pegged assets (peggedUSD); EUR and other pegs are excluded. Includes
+      algorithmic/crypto-backed coins (DAI, UST until its 2022 collapse), so supply
+      drops in 2022 mix redemptions and collapse.
+    - 'Single aggregator: depends on DefiLlama''s chain coverage and methodology; Tether/Circle
+      supply is issuer-reported.'
+    - The earliest history is sparse in coverage (starts around 2017-2018); any gaps
+      are reported as published, not filled.
+    - The framework flagged 60 big day-to-day jumps (likely early thin history and coin/chain
+      additions); they are kept as published. The newest row (fetch day) may be a provisional
+      intraday snapshot.
+    forward_source: same DefiLlama endpoint (https://stablecoins.llama.fi/stablecoincharts/all),
+      refreshed daily; cross-check with Coin Metrics community API SplyCur of usdt and
+      usdc
+    calendar: 24/7
+    fields:
+    - total
+    location: LAB_HOME/data/stablecoin_supply_1d
+    cost_model: null

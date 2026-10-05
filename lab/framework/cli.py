@@ -22,7 +22,7 @@ from lab.framework.blackboard import Lab, LabError
 from lab.framework.paths import default_paths
 from lab.framework.states import ACTORS, FUNNEL, HUMAN, S
 
-STAGED_COMMANDS = {"send", "inbox", "context", "check", "try"}
+STAGED_COMMANDS = {"send", "inbox", "context", "check", "try", "fetch"}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -73,6 +73,9 @@ def _parser() -> argparse.ArgumentParser:
     sub.add_parser("context", help="the current agent run (staged mode)")
     s = sub.add_parser("check", help="what the framework will say about a card (staged mode)")
     s.add_argument("card", type=Path)
+    s = sub.add_parser("fetch", help="run a fetcher with network and validate (staged mode, Archivist); no values shown")
+    s.add_argument("source", type=Path)
+    s.add_argument("--entry", type=Path, required=True, help="draft catalog entry (YAML)")
     sub.add_parser("try", help="G0 + grid neighbors + own tests on a synthetic market (staged mode, Builder)")
     s = sub.add_parser("agent", help="run one headless agent now (claude -p), apply its outbox, tick")
     s.add_argument("agent")
@@ -80,6 +83,9 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--task", help="task text for the agent (default: propose / answer)")
     s.add_argument("--dry-run", action="store_true", help="render the workspace, print the command, run nothing")
     s = sub.add_parser("rerun-g0", help="re-run G0 on the current code (owner, after a framework fix; not a trial)")
+    s.add_argument("hid")
+    s.add_argument("--reason", required=True)
+    s = sub.add_parser("void", help="owner: undo a gate rejection caused by a framework bug (-> DATA_READY)")
     s.add_argument("hid")
     s.add_argument("--reason", required=True)
     s = sub.add_parser("factsheets", help="build the descriptive dataset fact sheets for the Scout")
@@ -121,6 +127,22 @@ def _staged(args, ws: Path) -> int:
         for w in warnings:
             print(f"warning: {w}")
         print("ok" if not errors else f"{len(errors)} error(s): fix them before sending")
+        return 1 if errors else 0
+    elif args.cmd == "fetch":
+        from lab.framework import ingest
+        src = invocations._inside(ws, str(args.source))
+        draft = yaml.safe_load(invocations._inside(ws, str(args.entry)).read_text())
+        errors = ingest.draft_errors(draft, draft.get("id", "")) if isinstance(draft, dict) else ["entry is not a mapping"]
+        try:
+            rows, http = ingest.fetch(src)
+            _, report, _ = ingest.plan(rows, draft if isinstance(draft, dict) else {})
+            print(f"fetched {len(rows)} rows with {len(http.urls)} requests, {http.bytes // 1024} kB")
+            print("\n".join(ingest.report_text(report)))
+        except Exception as e:  # noqa: BLE001 - agent code; the message goes back to the agent
+            errors.append(f"{type(e).__name__}: {e}")
+        for e in errors:
+            print(f"error: {e}")
+        print("ok: ready for DATA_READY" if not errors else "NOT ready")
         return 1 if errors else 0
     elif args.cmd == "try":
         from lab.framework import dryrun
@@ -203,7 +225,7 @@ def _direct(args) -> int:
             for d in catalog.load(lab.paths.catalog).values():
                 print(f"{d['id']:<22} {d['asset_class']:<12} {d['frequency']:<6} {d['range'][0]}..{d['range'][1]}"
                       f"  holdout {d['holdout_from']}  forward: {d['forward_source'] or '-'}")
-        case "context" | "check" | "try":
+        case "context" | "check" | "try" | "fetch":
             raise LabError(f"`lab {args.cmd}` only exists inside an agent run")
         case "agent":
             return _run_agent(lab, args)
@@ -223,6 +245,15 @@ def _direct(args) -> int:
             print(f"G0 {'passed' if out.passed else 'failed: ' + str(out.reason_code)}")
             for line in tick.tick(lab, QlabEvaluator()):
                 print(line)
+        case "void":
+            h = lab.hypothesis(args.hid)
+            if h["status"] != S.REJECTED or h["reject_stage"] not in ("G0", "G1", "G2", "G3", "IMPLEMENTED", "GATE_1",
+                                                                      "GATE_2", "GATE_3"):
+                raise LabError(f"{args.hid} was not rejected by a gate (status {h['status']}, "
+                               f"stage {h['reject_stage']})")
+            lab.transition(args.hid, S.DATA_READY, HUMAN, f"void ({h['reject_stage']}: {h['reject_code']}): "
+                           f"{args.reason}. Earlier trials stay counted in the family.")
+            print(f"{args.hid} -> DATA_READY; run `lab rerun-g0 {args.hid}` or let the Builder fix it")
         case "factsheets":
             from lab.framework import factsheets
             print(factsheets.get(lab.paths.home, lab.paths.catalog, rebuild=args.rebuild))
@@ -234,6 +265,8 @@ def _default_task(lab: Lab, agent: str, hid: str | None) -> str:
         return "fix" if hid and lab.inbox("builder", hid) else "implement"
     if agent == "skeptic":
         return "review"
+    if agent == "archivist":
+        return "data requests"
     return "answer" if hid else "propose"
 
 

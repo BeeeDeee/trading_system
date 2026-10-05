@@ -19,8 +19,9 @@ def test_no_llm_agent_can_move_a_hypothesis_into_a_judged_state():
 
 def test_no_llm_agent_can_pass_or_skip_the_data_check():
     for (frm, to), actors in states.TRANSITIONS.items():
-        if to == S.DATA_READY and frm != S.SKEPTIC_REVIEW:
+        if to == S.DATA_READY and frm not in (S.SKEPTIC_REVIEW, S.REJECTED):
             assert actors == {"system"}
+    assert states.TRANSITIONS[(S.REJECTED, S.DATA_READY)] == {"human"}   # owner voids a framework-bug rejection
 
 
 def test_skeptic_can_only_block_what_it_reviews():
@@ -33,10 +34,10 @@ def test_librarian_and_steward_never_change_states():
         assert "librarian" not in actors and "steward" not in actors
 
 
-def test_terminal_states_only_reopen_from_parked():
+def test_terminal_states_only_reopen_from_parked_or_by_the_owners_void():
     for frm, to in states.TRANSITIONS:
         if frm in states.TERMINAL:
-            assert (frm, to) == (S.PARKED, S.IDEA)
+            assert (frm, to) in {(S.PARKED, S.IDEA), (S.REJECTED, S.DATA_READY)}
 
 
 def test_every_gate_target_has_a_gate_and_a_source_state():

@@ -70,6 +70,8 @@ def render_context(lab, ws: Path, items: tuple[str, ...], hid: str | None = None
             case "history":
                 if hid:
                     (ws / "history.json").write_text(json.dumps(history(lab, hid), indent=2, ensure_ascii=False))
+            case "blocked":
+                (ws / "blocked.json").write_text(json.dumps(blocked(lab), indent=2, ensure_ascii=False))
             case "family":
                 if hid:
                     (ws / "family.json").write_text(json.dumps(family(lab, hid), indent=2, ensure_ascii=False))
@@ -98,3 +100,14 @@ def family(lab, hid: str) -> dict:
              "reject_code": r["reject_code"]} for r in lab.hypotheses() if r["family"] == fam]
     n = lab.con.execute("SELECT COUNT(*) FROM trials WHERE family = ?", (fam,)).fetchone()[0]
     return {"family": fam, "trials_recorded": n, "hypotheses": hyps}
+
+
+def blocked(lab) -> list[dict]:
+    """Hypotheses waiting for data, with what they need (the Archivist's brief)."""
+    out = []
+    for h in lab.hypotheses("BLOCKED_DATA"):
+        card = lab.card(h["id"])
+        out.append({"id": h["id"], "title": card["title"], "asset_classes": card.get("asset_classes"),
+                    "signal": card.get("signal", {}).get("description"),
+                    "data_requirements": card.get("data_requirements")})
+    return out
