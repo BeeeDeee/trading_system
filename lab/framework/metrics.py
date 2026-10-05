@@ -46,8 +46,9 @@ def bootstrap_mean_lower(x: np.ndarray, level: float, n_boot: int, mean_block: f
 
 
 def bootstrap_sharpe_diff_lower(r: np.ndarray, b: np.ndarray, level: float, n_boot: int, mean_block: float,
-                                seed: int = 0) -> float:
-    """One-sided lower bound of Sharpe(r) - Sharpe(b) (per period, paired rows resampled together)."""
+                                seed: int = 0, ppy: float = 1.0) -> float:
+    """One-sided lower bound of Sharpe(r) - Sharpe(b), paired rows resampled together, annualized with
+    `ppy` periods per year (1 = per period). Only the sign is a gate; the unit matters for reading it."""
     x = np.column_stack([r, b]).astype(float)
     n = len(x)
     rng = np.random.default_rng(seed)
@@ -63,7 +64,7 @@ def bootstrap_sharpe_diff_lower(r: np.ndarray, b: np.ndarray, level: float, n_bo
         sd = s.std(axis=0, ddof=1)
         sr = np.where(sd > 0, s.mean(axis=0) / np.where(sd > 0, sd, 1), 0.0)
         diffs[k] = sr[0] - sr[1]
-    return float(np.quantile(diffs, 1.0 - level))
+    return float(np.quantile(diffs, 1.0 - level) * np.sqrt(ppy))
 
 
 def block_log_return_share(r: np.ndarray, n_blocks: int) -> tuple[np.ndarray, float]:

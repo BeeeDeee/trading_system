@@ -154,15 +154,35 @@ def _cache_dir() -> Path:
     return default_paths().home / "cache"
 
 
+SFP_LOADER_VERSION = 2      # 2: one-day closeadj spikes dropped (decision log 2026-10-05)
+SPIKE_LOG = 0.4             # |log move| of the spike day
+SPIKE_REVERT = 0.1          # |log move of the spike day + log move of the next day|
+
+
+def drop_spikes(prices, key: str = "permaticker"):
+    """Drop vendor errors: a day whose adjusted close moves by more than SPIKE_LOG (log) and returns within
+    SPIKE_REVERT the next day (e.g. SSO 2014-06-24 x3.95, a split adjustment applied to one day only).
+    The dropped day becomes a day without a bar (not tradable, zero return), and the next day's return runs
+    from the last good close. The flag of day t uses the price of t+1: this repairs the data the strategy
+    sees, it is not a signal, and no strategy can trade the spike that never happened in the market."""
+    import polars as pl
+    lr = (pl.col("closeadj") / pl.col("closeadj").shift(1).over(key)).log()
+    return (prices.sort(key, "date").with_columns(_lr=lr)
+            .with_columns(_spike=(pl.col("_lr").abs() > SPIKE_LOG)
+                          & ((pl.col("_lr") + pl.col("_lr").shift(-1).over(key)).abs() < SPIKE_REVERT))
+            .filter(~pl.col("_spike").fill_null(False)).drop("_lr", "_spike"))
+
+
 def sharadar_sfp(tickers: list[str]) -> DataView:
-    """US ETFs from Sharadar SFP (total return from closeadj), built on demand and cached per ticker set."""
+    """US ETFs from Sharadar SFP (total return from closeadj, one-day spikes dropped), built on demand and
+    cached per ticker set and loader version."""
     import polars as pl
 
     from qlab.data.normalize import normalize_prices
     from qlab.data.panel import load_panel, panel_from_bars, save_panel
     from qlab.data.schema import DELISTINGS_SCHEMA, PRICES_SCHEMA
 
-    key = hashlib.sha256(",".join(sorted(tickers)).encode()).hexdigest()[:12]
+    key = hashlib.sha256((",".join(sorted(tickers)) + f"|v{SFP_LOADER_VERSION}").encode()).hexdigest()[:12]
     out = _cache_dir() / f"sfp_{key}"
     if not (out / "tickers.json").exists():
         src = DATA_ROOT / "parquet" / SHARADAR
@@ -174,9 +194,9 @@ def sharadar_sfp(tickers: list[str]) -> DataView:
         missing = sorted(set(tickers) - set(perm["ticker"].to_list()))
         if missing:
             raise KeyError(f"not in Sharadar SFP: {missing}")
-        prices = (pl.scan_parquet(src / "funds.parquet").filter(pl.col("ticker").is_in(tickers)).collect()
-                  .join(perm, on="ticker").select([pl.col(c).cast(t) for c, t in PRICES_SCHEMA.items()])
-                  .sort("permaticker", "date"))
+        prices = drop_spikes(pl.scan_parquet(src / "funds.parquet").filter(pl.col("ticker").is_in(tickers))
+                             .collect().join(perm, on="ticker")
+                             .select([pl.col(c).cast(t) for c, t in PRICES_SCHEMA.items()]))
         panel = panel_from_bars(normalize_prices(prices, pl.DataFrame(schema=DELISTINGS_SCHEMA), calendar),
                                 calendar)
         save_panel(panel, out)

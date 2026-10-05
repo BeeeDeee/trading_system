@@ -114,7 +114,10 @@ notes: 'Gap named in prior_studies: calendar and flow effects were never tested 
   different instruments). Most likely death: the window premium has decayed since the effect became widely known
   and IEF-outside-window does not compensate, so the Sharpe excess over 60/40 is below +0.10, or it hinges on one
   sub-period.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_sharpe_excess
 history:
 - ts: '2026-10-05T05:49:37.712974+00:00'
   version: 1
@@ -137,3 +140,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-05T07:34:26.330546+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 1, qlab-v1)
+- ts: '2026-10-05T07:34:28.493633+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 2, qlab-v1)

@@ -16,9 +16,8 @@ import numpy as np
 
 from lab.framework import catalog, data
 
-VERSION = 1
+VERSION = 2
 ETF_TOP = 60
-SPIKE = 0.4
 DAY = np.timedelta64(1, "D")
 CRYPTO_TOP = 30
 # Reference set for the cross-class correlation table (weekly returns, Friday to Friday).
@@ -92,24 +91,19 @@ def _etf_sheet(entry: dict) -> tuple[str, dict]:
     top = liq["ticker"].to_list()
     hist = (px.filter(pl.col("ticker").is_in(top + [t for t in REFERENCE if not t.endswith("USDT")]))
             .sort("ticker", "date").collect())
-    lr = (pl.col("closeadj") / pl.col("closeadj").shift(1).over("ticker")).log()
-    hist = hist.with_columns(lr.alias("lr")).with_columns(   # one-day price spikes that reverse next day
-        ((pl.col("lr").abs() > SPIKE) & ((pl.col("lr") + pl.col("lr").shift(-1).over("ticker")).abs() < 0.1))
-        .alias("spike"))
-    hist = hist.with_columns((pl.col("spike") | pl.col("spike").shift(1).over("ticker")).fill_null(False))
-    stats = (hist.group_by("ticker").agg(
-        pl.col("date").min().alias("first"),
-        (pl.col("lr").filter(~pl.col("spike")).std() * np.sqrt(252)).alias("vol"),
-        pl.col("spike").sum().alias("spikes")))
+    hist = data.drop_spikes(hist, "ticker").with_columns(
+        (pl.col("closeadj") / pl.col("closeadj").shift(1).over("ticker")).log().alias("lr"))
+    stats = (hist.group_by("ticker").agg(pl.col("date").min().alias("first"),
+                                          (pl.col("lr").std() * np.sqrt(252)).alias("vol")))
     t = liq.join(stats, on="ticker").join(names, on="ticker", how="left").sort("dv", descending=True)
 
     lines = [f"## sharadar_sfp (US ETFs and funds), dev {entry['range'][0]} .. {holdout - DAY}", "",
              "Funds with a price in the year: " + ", ".join(f"{r['y']}: {r['n']}" for r in counts.iter_rows(named=True)),
              "(includes ETNs, closed-end funds and leveraged products; many ETFs start only after 2003-2007).",
-             f"Data quality: some funds have one-day price spikes in the adjusted close (a move > {SPIKE:.0%} in log",
-             "terms that reverses the next day, e.g. SSO on 2014-06-24). The gate runner does not clean them.", "",
+             "Data quality: one-day spikes in the adjusted close that reverse the next day (vendor errors, e.g. SSO",
+             "on 2014-06-24) are dropped by the loader; that day counts as a day without a bar.", "",
              f"Top {ETF_TOP} by median daily dollar volume in {last_year} (vol = annualized volatility of daily",
-             "log total returns over the dev period from the first price, without one-day spikes):", "",
+             "log total returns over the dev period from the first price):", "",
              "| ticker | name | category | first price | vol | median $vol " + str(last_year) + " |",
              "|---|---|---|---|---|---|"]
     for r in t.iter_rows(named=True):

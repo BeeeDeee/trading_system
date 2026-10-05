@@ -60,3 +60,15 @@ def test_synthetic_edge_is_where_it_was_planted():
     sig = v.series["signal"][:-1]
     corr = [np.corrcoef(sig, v.ret_oc[1:, v.col(a)])[0, 1] for a in ("S00", "S10")]
     assert corr[0] > 0.15 and abs(corr[1]) < 0.05
+
+
+def test_one_day_spikes_are_dropped_and_real_moves_kept():
+    import polars as pl
+    from datetime import date, timedelta
+    days = [date(2020, 1, 1) + timedelta(d) for d in range(6)]
+    px = pl.DataFrame({"permaticker": [1] * 6 + [2] * 6, "date": days * 2,
+                       "closeadj": [10.0, 10, 40, 10.2, 10, 10,      # spike on day 2 (vendor error)
+                                    10.0, 10, 4, 4.1, 4, 4]})       # a real crash that stays
+    out = data.drop_spikes(px)
+    assert out.filter(pl.col("permaticker") == 1)["closeadj"].to_list() == [10, 10, 10.2, 10, 10]
+    assert out.filter(pl.col("permaticker") == 2).height == 6

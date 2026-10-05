@@ -37,8 +37,9 @@ def pending_tasks(lab: Lab) -> list[Task]:
     if lab.inbox("archivist"):
         tasks.append(Task("archivist", None, "DATA_REQUEST in inbox"))
     tasks += [Task("skeptic", hid, "review before the holdout") for hid in free(S.SKEPTIC_REVIEW)]
-    tasks += [Task("builder", hid, "implement") for hid in free(S.DATA_READY)]
-    tasks += [Task("scout", hid, "answer objection/question") for hid in free(S.IDEA) if lab.inbox("scout", hid)]
+    tasks += [Task("builder", hid, "fix" if lab.inbox("builder", hid) else "implement")
+              for hid in free(S.DATA_READY)]
+    tasks += [Task("scout", hid, "answer") for hid in free(S.IDEA) if lab.inbox("scout", hid)]
     if lab.inbox("librarian"):
         tasks.append(Task("librarian", None, "record results and lessons"))
     return tasks

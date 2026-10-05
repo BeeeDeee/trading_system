@@ -22,7 +22,7 @@ from lab.framework.blackboard import Lab, LabError
 from lab.framework.paths import default_paths
 from lab.framework.states import ACTORS, FUNNEL, HUMAN, S
 
-STAGED_COMMANDS = {"send", "inbox", "context", "check"}
+STAGED_COMMANDS = {"send", "inbox", "context", "check", "try"}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -73,6 +73,7 @@ def _parser() -> argparse.ArgumentParser:
     sub.add_parser("context", help="the current agent run (staged mode)")
     s = sub.add_parser("check", help="what the framework will say about a card (staged mode)")
     s.add_argument("card", type=Path)
+    sub.add_parser("try", help="G0 + grid neighbors + own tests on a synthetic market (staged mode, Builder)")
     s = sub.add_parser("agent", help="run one headless agent now (claude -p), apply its outbox, tick")
     s.add_argument("agent")
     s.add_argument("--hyp", help="hypothesis to work on (leased for the run)")
@@ -118,6 +119,12 @@ def _staged(args, ws: Path) -> int:
             print(f"warning: {w}")
         print("ok" if not errors else f"{len(errors)} error(s): fix them before sending")
         return 1 if errors else 0
+    elif args.cmd == "try":
+        from lab.framework import dryrun
+        ok, lines = dryrun.run(ws)
+        print("\n".join(lines))
+        print("ok: ready for IMPL_DONE" if ok else "NOT ready: fix the failures above")
+        return 0 if ok else 1
     elif args.cmd == "inbox":
         print((ws / "inbox.json").read_text())
     else:
@@ -193,7 +200,7 @@ def _direct(args) -> int:
             for d in catalog.load(lab.paths.catalog).values():
                 print(f"{d['id']:<22} {d['asset_class']:<12} {d['frequency']:<6} {d['range'][0]}..{d['range'][1]}"
                       f"  holdout {d['holdout_from']}  forward: {d['forward_source'] or '-'}")
-        case "context" | "check":
+        case "context" | "check" | "try":
             raise LabError(f"`lab {args.cmd}` only exists inside an agent run")
         case "agent":
             return _run_agent(lab, args)
@@ -203,12 +210,18 @@ def _direct(args) -> int:
     return 0
 
 
+def _default_task(lab: Lab, agent: str, hid: str | None) -> str:
+    if agent == "builder":
+        return "fix" if hid and lab.inbox("builder", hid) else "implement"
+    return "answer" if hid else "propose"
+
+
 def _run_agent(lab: Lab, args) -> int:
     """One agent run by hand (step 3: every agent's first runs are supervised by the owner)."""
     from lab.framework import headless
     runner = headless.ClaudeRunner(args.agent)
     tick.tick(lab, None)
-    task = args.task or ("answer" if args.hyp else "propose")
+    task = args.task or _default_task(lab, args.agent, args.hyp)
     inv = invocations.start(lab, args.agent, args.hyp, model=runner.model, task=task)
     print(f"invocation {inv.id}\nworkspace  {inv.workspace}")
     if args.dry_run:

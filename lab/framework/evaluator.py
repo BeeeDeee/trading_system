@@ -220,61 +220,8 @@ class QlabEvaluator:
     # ------------------------------------------------------------------ G0 integrity
 
     def _g0(self, lab, ctx: Context, th) -> Outcome:
-        source = ctx.path.read_text() if ctx.path.exists() else ""
-        universe = set(ctx.card["universe"].get("instruments") or ctx.strat_cols)
-        problems = strategy.scan(source, universe, set(ctx.view.instruments))
-        m = {"problems": problems}
-        if not source:
-            return Outcome(False, m | {"problems": ["strategy.py missing"]}, "g0_missing")
-        if problems:
-            return Outcome(False, m, "g0_static")
-        params, end = self.primary(ctx.card), ctx.dev_end
-        t0 = time.monotonic()
-        try:
-            w = self._targets(ctx, params, end)
-        except strategy.StrategyTimeout as e:
-            return Outcome(False, m | {"error": str(e)}, "g0_timeout")
-        except Exception as e:  # noqa: BLE001 - any crash of agent code is a G0 failure
-            return Outcome(False, m | {"error": f"{type(e).__name__}: {e}"}, "g0_crash")
-        m["runtime_s"] = round(time.monotonic() - t0, 3)
-        errors = engine.validate_targets(w, w.shape)
-        decided = ~np.isnan(w).all(axis=1)
-        if errors:
-            return Outcome(False, m | {"error": "; ".join(errors)}, "g0_weights")
-        if not decided.any():
-            return Outcome(False, m | {"error": "no decision row"}, "g0_no_decisions")
-        u = ctx.view.slice(end).columns(ctx.strat_cols).universe
-        if u is not None:
-            outside = decided[:, None] & ~u & (np.abs(np.nan_to_num(w)) > 1e-12)
-            if outside.any():
-                t, j = np.argwhere(outside)[0]
-                return Outcome(False, m | {"error": f"weight on {ctx.strat_cols[j]} outside the universe on "
-                                                     f"{ctx.view.dates[t]}"}, "g0_outside_universe")
-        if not np.array_equal(w, self._targets(ctx, params, end), equal_nan=True):
-            return Outcome(False, m, "g0_nondeterministic")
-        bad = self._lookahead(ctx, params, end, w, th.get("leakage_cut_days", 12))
-        m["lookahead_failures"] = bad
-        if bad["truncation"] or bad["perturbation"]:
-            return Outcome(False, m, "g0_lookahead")
-        return Outcome(True, m)
-
-    def _lookahead(self, ctx: Context, params: dict, end: int, full: np.ndarray, n_cuts: int) -> dict:
-        """Truncation + perturbation test of qlab.validation.leakage, on the DataView."""
-        view = ctx.view.slice(end).columns(ctx.strat_cols)
-        module = strategy.load(ctx.path)
-        rng = np.random.default_rng(0)
-        decided = np.flatnonzero(~np.isnan(full).all(axis=1))
-        lo = int(decided[0]) if len(decided) else 1
-        cuts = sorted(set(rng.integers(lo, end - 1, n_cuts).tolist()) | {end - 2})
-        same = lambda a, b: np.allclose(a, b, rtol=1e-12, atol=1e-12, equal_nan=True)  # noqa: E731
-        trunc, pert = [], []
-        for t in cuts:
-            if not same(np.asarray(module.target_weights(view.slice(t + 1), dict(params)))[t], full[t]):
-                trunc.append(str(view.dates[t]))
-            if not same(np.asarray(module.target_weights(data.perturb_after(view, t, rng), dict(params)))[: t + 1],
-                        full[: t + 1]):
-                pert.append(str(view.dates[t]))
-        return {"cuts": len(cuts), "truncation": trunc, "perturbation": pert}
+        return integrity(ctx.card, ctx.path, ctx.view, ctx.strat_cols, self.primary(ctx.card), ctx.dev_end, th,
+                         ctx.runtime_limit_s)
 
     # ------------------------------------------------------------------ scoring
     # Sharpe ratios are of returns in excess of cash, so a cash benchmark has Sharpe 0 and a strategy that is
@@ -304,7 +251,7 @@ class QlabEvaluator:
         s = self._scores(ctx, run, bench, win)
         lower = metrics.bootstrap_sharpe_diff_lower(self.excess(ctx, run.returns, win), self.excess(ctx, bench, win),
                                                     th["sharpe_diff_ci_level"], th["bootstrap_samples"],
-                                                    th["bootstrap_mean_block_days"])
+                                                    th["bootstrap_mean_block_days"], ppy=s["ppy"])
         decisions = int((run.sim.turnover[win] > 1e-9).sum())
         checks = {
             "sharpe_excess": _check(s["sharpe"] - s["bench_sharpe"], ">=", th["min_sharpe_excess"]),
@@ -495,7 +442,7 @@ class QlabEvaluator:
         levels = th["sharpe_diff_ci_levels"]
         level = levels[min(attempts, len(levels) - 1)]
         lower = metrics.bootstrap_sharpe_diff_lower(self.excess(ctx, full.returns, win), self.excess(ctx, bench, win),
-                                                    level, 2000, 20)
+                                                    level, 2000, 20, ppy=s["ppy"])
         stressed = self.run(ctx, params, ctx.data_end, cost_mult=2.0)
         checks = {
             "sharpe_vs_benchmark": _check(s["sharpe"] - s["bench_sharpe"], ">=", th["min_sharpe_vs_benchmark"]),
@@ -547,3 +494,74 @@ def _merge(a: dict, b: dict) -> dict:
         out[k] = _merge(out.get(k, {}), v) if isinstance(v, dict) else v
     return out
 
+
+
+# ---------------------------------------------------------------------------- G0 on any view
+
+def integrity(card: dict, path, view: DataView, strat_cols: list[str], params: dict, end: int, th: dict,
+              runtime_limit_s: float) -> Outcome:
+    """G0: static scan, crash/timeout, weight schema, universe, determinism, look-ahead (truncation +
+    perturbation of qlab.validation.leakage). The gate runner calls it on the real dev rows; `lab try` calls it
+    on a synthetic market inside the Builder's workspace, so the Builder never needs real data to pass G0."""
+    source = path.read_text() if path.exists() else ""
+    universe = set(card["universe"].get("instruments") or strat_cols)
+    problems = strategy.scan(source, universe, set(view.instruments))
+    m = {"problems": problems}
+    if not source:
+        return Outcome(False, m | {"problems": ["strategy.py missing"]}, "g0_missing")
+    if problems:
+        return Outcome(False, m, "g0_static")
+    sv = view.slice(end).columns(strat_cols)
+
+    def targets(v: DataView) -> np.ndarray:
+        module = strategy.load(path)
+        with strategy.time_limit(runtime_limit_s):
+            w = np.asarray(module.target_weights(v, dict(params)), dtype=float)
+        if w.shape != v.shape:
+            raise ValueError(f"target_weights returned shape {w.shape}, expected {v.shape}")
+        return w
+
+    t0 = time.monotonic()
+    try:
+        w = targets(sv)
+    except strategy.StrategyTimeout as e:
+        return Outcome(False, m | {"error": str(e)}, "g0_timeout")
+    except Exception as e:  # noqa: BLE001 - any crash of agent code is a G0 failure
+        return Outcome(False, m | {"error": f"{type(e).__name__}: {e}"}, "g0_crash")
+    m["runtime_s"] = round(time.monotonic() - t0, 3)
+    errors = engine.validate_targets(w, w.shape)
+    decided = ~np.isnan(w).all(axis=1)
+    if errors:
+        return Outcome(False, m | {"error": "; ".join(errors)}, "g0_weights")
+    if not decided.any():
+        return Outcome(False, m | {"error": "no decision row"}, "g0_no_decisions")
+    if sv.universe is not None:
+        outside = decided[:, None] & ~sv.universe & (np.abs(np.nan_to_num(w)) > 1e-12)
+        if outside.any():
+            t, j = np.argwhere(outside)[0]
+            return Outcome(False, m | {"error": f"weight on {strat_cols[j]} outside the universe on "
+                                                 f"{sv.dates[t]}"}, "g0_outside_universe")
+    if not np.array_equal(w, targets(sv), equal_nan=True):
+        return Outcome(False, m, "g0_nondeterministic")
+    bad = _lookahead(targets, sv, w, th.get("leakage_cut_days", 12))
+    m["lookahead_failures"] = bad
+    if bad["truncation"] or bad["perturbation"]:
+        return Outcome(False, m, "g0_lookahead")
+    return Outcome(True, m)
+
+
+def _lookahead(targets, view: DataView, full: np.ndarray, n_cuts: int) -> dict:
+    """Truncation + perturbation test of qlab.validation.leakage, on the DataView."""
+    rng = np.random.default_rng(0)
+    end = len(view.dates)
+    decided = np.flatnonzero(~np.isnan(full).all(axis=1))
+    lo = int(decided[0]) if len(decided) else 1
+    cuts = sorted(set(rng.integers(lo, end - 1, n_cuts).tolist()) | {end - 2})
+    same = lambda a, b: np.allclose(a, b, rtol=1e-12, atol=1e-12, equal_nan=True)  # noqa: E731
+    trunc, pert = [], []
+    for t in cuts:
+        if not same(targets(view.slice(t + 1))[t], full[t]):
+            trunc.append(str(view.dates[t]))
+        if not same(targets(data.perturb_after(view, t, rng))[: t + 1], full[: t + 1]):
+            pert.append(str(view.dates[t]))
+    return {"cuts": len(cuts), "truncation": trunc, "perturbation": pert}

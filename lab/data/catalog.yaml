@@ -50,7 +50,7 @@ datasets:
     known_biases:
       - "Many ETFs start after 2003-2007; pre-inception proxies are not provided."
       - "Delisted/closed ETFs are present but sparse; check coverage per instrument."
-      - "One-day spikes in closeadj that reverse the next day (191 cases in 67 funds over 1998-2026, e.g. SSO 2014-06-24 x3.95); not cleaned by the loader."
+      - "One-day spikes in closeadj that reverse the next day (191 cases in 67 funds over 1998-2026, e.g. SSO 2014-06-24 x3.95) are vendor errors; the loader drops those days (no bar, not tradable). A genuine >49 % one-day move that fully reverses the next day would be dropped too."
       - "Consumed: research 2, 3, 10 and market_relations used 2010-2026."
 
   - id: sharadar_sf1
