@@ -180,3 +180,15 @@ def test_value_outside_its_grid_stays_in_idea(lab, card):
     assert lab.hypothesis(hid)["status"] == "IDEA"
     (q,) = lab.inbox("human", hid)
     assert "not in its grid" in q["payload_json"]
+
+
+def test_skeptic_workspace_has_history_and_family(lab, card):
+    hid = submit(lab, card)
+    inv = invocations.start(lab, "skeptic", hid, task="review")
+    hist = json.loads((inv.workspace / "history.json").read_text())
+    assert hist["hypothesis_id"] == hid and [t["to"] for t in hist["transitions"]][-1] == "DATA_READY"
+    fam = json.loads((inv.workspace / "family.json").read_text())
+    assert fam["family"] == card["family"] and [h["id"] for h in fam["hypotheses"]] == [hid]
+    assert (inv.workspace / "strategy").is_dir() and (inv.workspace / "prior_studies.md").exists()
+    s = agents.spec("skeptic")
+    assert "try" in s.lab_verbs and "WebFetch" not in s.tools

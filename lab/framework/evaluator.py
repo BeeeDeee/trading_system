@@ -108,12 +108,7 @@ class QlabEvaluator:
         unknown = [r["dataset"] for r in reqs if r["dataset"] not in TRADABLE]
         if unknown:
             raise NotImplementedError(f"no data adapter yet for {unknown}")
-        per_ds: dict[str, list[str] | None] = {}
-        for k, r in enumerate(reqs):
-            inst = r.get("instruments") or (universe.get("instruments") if k == 0 else None)
-            if universe["kind"] == "crypto_top_n" and r["dataset"] == "binance_spot_1d":
-                inst = None
-            per_ds[r["dataset"]] = inst
+        per_ds = strategy_instruments(card)
         strat_ds = list(per_ds)
 
         exposure = card["market_exposure"]
@@ -494,6 +489,27 @@ def _merge(a: dict, b: dict) -> dict:
         out[k] = _merge(out.get(k, {}), v) if isinstance(v, dict) else v
     return out
 
+
+
+# ---------------------------------------------------------------------------- instruments of a card
+
+def strategy_instruments(card: dict) -> dict[str, list[str] | None]:
+    """dataset -> the strategy's instruments from it (None = every instrument, for crypto_top_n).
+
+    A requirement's own `instruments`, else the universe's instruments for the first requirement. Several
+    requirements on the same dataset add up (a card may list SPY and IEF as two requirements with
+    different periods); a later requirement without instruments adds nothing."""
+    universe, per_ds = card["universe"], {}
+    for k, r in enumerate(card["data_requirements"]):
+        ds = r["dataset"]
+        inst = r.get("instruments") or (universe.get("instruments") if k == 0 else None)
+        if universe["kind"] == "crypto_top_n" and ds == "binance_spot_1d":
+            inst = None
+        if ds not in per_ds:
+            per_ds[ds] = list(inst) if inst else None
+        elif inst and per_ds[ds] is not None:
+            per_ds[ds] += [i for i in inst if i not in per_ds[ds]]
+    return per_ds
 
 
 # ---------------------------------------------------------------------------- G0 on any view

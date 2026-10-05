@@ -79,6 +79,9 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--hyp", help="hypothesis to work on (leased for the run)")
     s.add_argument("--task", help="task text for the agent (default: propose / answer)")
     s.add_argument("--dry-run", action="store_true", help="render the workspace, print the command, run nothing")
+    s = sub.add_parser("rerun-g0", help="re-run G0 on the current code (owner, after a framework fix; not a trial)")
+    s.add_argument("hid")
+    s.add_argument("--reason", required=True)
     s = sub.add_parser("factsheets", help="build the descriptive dataset fact sheets for the Scout")
     s.add_argument("--rebuild", action="store_true")
     s = sub.add_parser("tick", help="deterministic phase: react to messages, run due gates")
@@ -204,6 +207,22 @@ def _direct(args) -> int:
             raise LabError(f"`lab {args.cmd}` only exists inside an agent run")
         case "agent":
             return _run_agent(lab, args)
+        case "rerun-g0":
+            from lab.framework import canaries
+            from lab.framework.evaluator import QlabEvaluator
+            from lab.framework.gates import run_gate
+            if lab.hypothesis(args.hid)["status"] != S.DATA_READY:
+                raise LabError(f"{args.hid} is not in DATA_READY")
+            if not (lab.paths.strategies / args.hid / "strategy.py").exists():
+                raise LabError(f"{args.hid} has no strategy yet")
+            if not canaries.passed_for_current(lab):
+                raise LabError("canaries have not passed for the current framework; run `lab canaries`")
+            lab.send("ALERT", "system", "human", args.hid, {"severity": "info",
+                     "text": f"G0 re-run by the owner: {args.reason}"})
+            out = run_gate(lab, args.hid, "G0", QlabEvaluator())
+            print(f"G0 {'passed' if out.passed else 'failed: ' + str(out.reason_code)}")
+            for line in tick.tick(lab, QlabEvaluator()):
+                print(line)
         case "factsheets":
             from lab.framework import factsheets
             print(factsheets.get(lab.paths.home, lab.paths.catalog, rebuild=args.rebuild))
@@ -213,6 +232,8 @@ def _direct(args) -> int:
 def _default_task(lab: Lab, agent: str, hid: str | None) -> str:
     if agent == "builder":
         return "fix" if hid and lab.inbox("builder", hid) else "implement"
+    if agent == "skeptic":
+        return "review"
     return "answer" if hid else "propose"
 
 

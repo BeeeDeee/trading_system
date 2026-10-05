@@ -104,7 +104,7 @@ def _render(lab: Lab, ws: Path, inv_id: str, agent: str, hid: str | None, inbox:
         if existing.exists():
             shutil.copytree(existing, ws / "strategy", ignore=shutil.ignore_patterns("__pycache__"))
     (ws / "strategy").mkdir(exist_ok=True)
-    agents.render_context(lab.paths, ws, agents.context_items(agent))
+    agents.render_context(lab, ws, agents.context_items(agent), hid)
 
 
 # ---------------------------------------------------------------------------- staged mode (agent side)

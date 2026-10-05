@@ -20,7 +20,7 @@ import yaml
 
 from lab.framework import catalog, data, strategy
 from lab.framework.data import DataView
-from lab.framework.evaluator import QlabEvaluator, integrity
+from lab.framework.evaluator import QlabEvaluator, integrity, strategy_instruments
 
 DAILY_VOL = {"us_etf": 0.012, "us_equity": 0.02, "crypto_spot": 0.04, "crypto_perp": 0.04}
 SYNTHETIC_PAIRS = 40
@@ -29,26 +29,27 @@ TEST_EXTRA_IMPORTS = ("pytest", "strategy")
 
 
 def instruments(card: dict, cat: dict) -> tuple[list[str], list[str], int | None]:
-    """(names, asset classes, top-n) of the strategy's instruments, resolved like the gate runner does."""
-    uni, names, classes = card["universe"], [], []
+    """(names, asset classes, top-n) of the strategy's instruments, resolved exactly as the gate runner does."""
+    uni = card["universe"]
     if uni["kind"] not in ("instruments", "crypto_top_n"):
         raise ValueError(f"universe kind {uni['kind']!r} has no loader yet")
-    for k, req in enumerate(card["data_requirements"]):
-        ds = cat[req["dataset"]]
-        if uni["kind"] == "crypto_top_n" and req["dataset"] == "binance_spot_1d":
-            inst = [f"SYN{i:02d}USDT" for i in range(SYNTHETIC_PAIRS)]
-        else:
-            inst = req.get("instruments") or (uni.get("instruments") if k == 0 else None) or []
+    names, classes = [], []
+    for ds, inst in strategy_instruments(card).items():
+        inst = [f"SYN{i:02d}USDT" for i in range(SYNTHETIC_PAIRS)] if inst is None else inst
         for i in inst:
             if i not in names:
                 names.append(i)
-                classes.append(ds["asset_class"])
+                classes.append(cat[ds]["asset_class"])
     return names, classes, uni.get("n") if uni["kind"] == "crypto_top_n" else None
 
 
 def synthetic_view(card: dict, cat: dict, seed: int) -> DataView:
-    names, classes, top_n = instruments(card, cat)
     reqs = card["data_requirements"]
+    if {r["dataset"] for r in reqs} == {"synthetic_market"}:   # canaries: the generator itself (with its series)
+        names = instruments(card, cat)[0]
+        end = data.as_date(cat["synthetic_market"]["holdout_from"]) - np.timedelta64(1, "D")
+        return data.with_cash(data.synthetic().between(None, end).columns(names), None)
+    names, classes, top_n = instruments(card, cat)
     start = max([data.as_date(cat[r["dataset"]]["range"][0]) for r in reqs]
                 + [data.as_date(r["period"][0]) for r in reqs if r.get("period")])
     end = min(data.as_date(cat[r["dataset"]]["holdout_from"]) for r in reqs) - np.timedelta64(1, "D")

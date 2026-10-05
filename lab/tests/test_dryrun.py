@@ -95,3 +95,12 @@ def test_crypto_top_n_view_has_a_universe(card):
 def test_builder_definition():
     s = agents.spec("builder")
     assert "try" in s.lab_verbs and "check" not in s.lab_verbs and "WebSearch" not in s.tools
+
+
+def test_synthetic_market_cards_get_the_generator_with_its_series():
+    import yaml
+    from lab.framework.data import SYNTHETIC_DATASET
+    from lab.framework.paths import LAB_DIR
+    card = yaml.safe_load((LAB_DIR / "canaries" / "positive" / "card.yaml").read_text())
+    v = dryrun.synthetic_view(card, {"synthetic_market": SYNTHETIC_DATASET}, seed=0)
+    assert "signal" in v.series and str(v.dates[-1]) < SYNTHETIC_DATASET["holdout_from"]

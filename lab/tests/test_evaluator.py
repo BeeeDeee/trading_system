@@ -84,3 +84,15 @@ def test_gates_refuse_to_run_without_passing_canaries(slab):
     C.record(slab, [C.Result("fake", True, "recorded for the test")])
     tick(slab, ev)
     assert slab.hypothesis(hid)["status"] == S.SKEPTIC_REVIEW
+
+
+def test_two_requirements_on_one_dataset_add_up(card):
+    from lab.framework.evaluator import strategy_instruments
+    card = dict(card, universe={"kind": "instruments", "instruments": ["SPY", "IEF"]}, data_requirements=[
+        {"dataset": "sharadar_sfp", "frequency": "1d", "instruments": ["SPY"]},
+        {"dataset": "sharadar_sfp", "frequency": "1d", "instruments": ["IEF"]},
+        {"dataset": "sharadar_sfp", "frequency": "1d"}])
+    assert strategy_instruments(card) == {"sharadar_sfp": ["SPY", "IEF"]}
+    crypto = dict(card, universe={"kind": "crypto_top_n", "n": 20},
+                  data_requirements=[{"dataset": "binance_spot_1d", "frequency": "1d"}])
+    assert strategy_instruments(crypto) == {"binance_spot_1d": None}

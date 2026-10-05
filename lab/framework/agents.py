@@ -4,6 +4,7 @@ The definition is framework data: model, prompt file, tools, allowed `lab` verbs
 items an agent gets. Context items are produced here, never by an agent.
 """
 
+import json
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
@@ -49,7 +50,8 @@ def context_items(agent: str) -> tuple[str, ...]:
         return ()   # agents without a headless definition yet (stubs) get no extra context
 
 
-def render_context(paths: LabPaths, ws: Path, items: tuple[str, ...]) -> None:
+def render_context(lab, ws: Path, items: tuple[str, ...], hid: str | None = None) -> None:
+    paths: LabPaths = lab.paths
     for item in items:
         match item:
             case "factsheets":
@@ -65,5 +67,34 @@ def render_context(paths: LabPaths, ws: Path, items: tuple[str, ...]) -> None:
                 shutil.copy(EXAMPLE_CARD, ws / "card_example.yaml")
             case "gates":
                 shutil.copy(paths.gates, ws / "gates.yaml")
+            case "history":
+                if hid:
+                    (ws / "history.json").write_text(json.dumps(history(lab, hid), indent=2, ensure_ascii=False))
+            case "family":
+                if hid:
+                    (ws / "family.json").write_text(json.dumps(family(lab, hid), indent=2, ensure_ascii=False))
             case _:
                 raise ValueError(f"unknown context item {item!r}")
+
+
+def history(lab, hid: str) -> dict:
+    """Everything said and done about one hypothesis, with full payloads (IMPL_DONE summaries, earlier
+    objections and verdicts, gate results) and the transitions, in time order."""
+    msgs = [{"id": r["id"], "ts": r["created_at"], "type": r["type"], "from": r["from_agent"], "to": r["to_agent"],
+             "payload": json.loads(r["payload_json"])}
+            for r in lab.con.execute("SELECT * FROM messages WHERE hypothesis_id = ? ORDER BY id", (hid,))]
+    trans = [{"ts": r["ts"], "version": r["version"], "from": r["from_status"], "to": r["to_status"],
+              "actor": r["actor"], "reason": r["reason"]}
+             for r in lab.con.execute("SELECT * FROM transitions WHERE hypothesis_id = ? ORDER BY id", (hid,))]
+    h = lab.hypothesis(hid)
+    return {"hypothesis_id": hid, "version": h["version"], "status": h["status"],
+            "objection_rounds": h["objection_rounds"], "messages": msgs, "transitions": trans}
+
+
+def family(lab, hid: str) -> dict:
+    """The multiple-testing context: every hypothesis and every recorded trial of the same family."""
+    fam = lab.hypothesis(hid)["family"]
+    hyps = [{"id": r["id"], "title": r["title"], "status": r["status"], "reject_stage": r["reject_stage"],
+             "reject_code": r["reject_code"]} for r in lab.hypotheses() if r["family"] == fam]
+    n = lab.con.execute("SELECT COUNT(*) FROM trials WHERE family = ?", (fam,)).fetchone()[0]
+    return {"family": fam, "trials_recorded": n, "hypotheses": hyps}

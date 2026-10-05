@@ -28,3 +28,11 @@ agents:
     lab_verbs: [send, try, inbox, context]
     timeout_s: 1500
     context: [gates]
+
+  skeptic:
+    model: claude-opus-5-5
+    prompt: skeptic.md
+    tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch]   # WebSearch: references, publication dates
+    lab_verbs: [send, try, inbox, context]
+    timeout_s: 1500
+    context: [gates, history, family, prior_studies]
