@@ -57,7 +57,12 @@ def target_weights(data, params):
 - `tradable[t]` an order can fill at the open of row t (known after the close of t-1; whether tomorrow is tradable is not known, the engine simply does not fill an order on a non-tradable open), `listed` the instrument exists on that row, `delisting` the
   position is paid out at this open. `close` (unadjusted, for filters only) and `dollar_volume`, NaN without a price.
 - `universe` (T, N) bool membership or None; with a universe you may only hold members.
-- `extras`, `series` named extra data, `cash_ret` the cash return. Datasets ingested by the Archivist (catalog
+- `extras`, `series` named extra data, `cash_ret` the cash return. Single stocks (`sharadar_sep`):
+  instruments are opaque ids `E<number>`, the card's universe is `data.universe` (point-in-time membership;
+  hold only members), `extras["liq_rank"]` is the PIT liquidity rank (1 = most liquid); never read
+  `extras["alt_universe"]` (it is the gate's alternative universe for G2). Perpetuals (`binance_perp_1d`,
+  ids `BTCUSDT.P`): `extras["funding"]` the day's funding sum known after the close, `extras["basis"]`
+  perp/spot - 1; the engine charges `funding_paid` itself, do not subtract funding in the strategy. Datasets ingested by the Archivist (catalog
   `loader: generic`) arrive as `data.series["<dataset>.<key>"]` (keys = the requirement's `fields`, else the
   catalog's `fields`), already aligned by their clock: row t holds the last value known after the close of t,
   NaN before the first. Do not lag them again unless the card says so; handle the leading NaNs. The key

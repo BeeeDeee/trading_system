@@ -36,3 +36,9 @@ def test_clean_strategy_passes():
 def test_forbidden_constructs(snippet, match):
     problems = scan(CLEAN + "\n" + snippet + "\n", {"SPY"}, {"SPY", "IEF"})
     assert any(match in p for p in problems), problems
+
+
+def test_reserved_extras_are_refused():
+    from lab.framework import strategy
+    src = 'def target_weights(data, params):\n    return data.extras["alt_universe"]\n'
+    assert any("reserved" in p for p in strategy.scan(src, set(), set()))

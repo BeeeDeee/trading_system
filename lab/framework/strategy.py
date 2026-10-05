@@ -30,6 +30,7 @@ FORBIDDEN_NAMES = {"open", "eval", "exec", "compile", "__import__", "globals", "
                    "setattr", "delattr", "input", "breakpoint", "memoryview"}
 FORBIDDEN_ATTRS = {"datetime64", "today", "now", "load", "save", "fromfile", "tofile", "memmap", "loadtxt",
                    "genfromtxt"}
+RESERVED_KEYS = {"alt_universe", "funding_paid"}   # G2's alternative universe; the engine's funding charge
 DATE_RE = re.compile(r"(19|20)\d\d-[01]\d(-[0-3]\d)?")
 
 
@@ -64,6 +65,8 @@ def scan(source: str, instruments_allowed: set[str], instruments_all: set[str],
         elif isinstance(node, ast.Constant) and isinstance(node.value, str):
             if check_dates and DATE_RE.search(node.value):
                 problems.append(f"line {node.lineno}: date literal {node.value!r} (hard-coded history)")
+            if node.value in RESERVED_KEYS:
+                problems.append(f"line {node.lineno}: {node.value!r} is reserved for the gate runner")
             if node.value in instruments_all - instruments_allowed:
                 problems.append(f"line {node.lineno}: instrument {node.value!r} is not in the card's universe")
     return problems

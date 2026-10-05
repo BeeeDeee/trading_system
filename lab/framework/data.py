@@ -102,6 +102,8 @@ def merge(views: list[DataView]) -> DataView:
         return views[0]
     dates = np.unique(np.concatenate([v.dates for v in views]))
     T = len(dates)
+    # a float32 view (single stocks, RAM) keeps the merged floats in float32; otherwise float64
+    ftype = np.float32 if any(v.ret_co.dtype == np.float32 for v in views) else np.float64
     out = {m: [] for m in MATRICES}
     universe, extras, series, cash = [], {}, {}, None
     for v in views:
@@ -110,14 +112,14 @@ def merge(views: list[DataView]) -> DataView:
         for m in MATRICES:
             a = getattr(v, m)
             fill = False if a.dtype == bool else (np.nan if m in ("close", "dollar_volume") else 0.0)
-            full = np.full((T, N), fill, dtype=a.dtype)
+            full = np.full((T, N), fill, dtype=bool if a.dtype == bool else ftype)
             full[rows] = a
             out[m].append(full)
         u = np.zeros((T, N), dtype=bool)
         u[rows] = v.listed if v.universe is None else v.universe
         universe.append(u)
         for k, a in v.extras.items():
-            full = np.full((T, N), np.nan)
+            full = np.full((T, N), np.nan, dtype=ftype)
             full[rows] = a
             extras.setdefault(k, []).append((len(out["ret_co"]) - 1, full))
         for k, s in v.series.items():
@@ -129,7 +131,7 @@ def merge(views: list[DataView]) -> DataView:
     widths = [v.shape[1] for v in views]
     ext = {}
     for k, parts in extras.items():
-        mats = [np.full((T, w), np.nan) for w in widths]
+        mats = [np.full((T, w), np.nan, dtype=ftype) for w in widths]
         for i, full in parts:
             mats[i] = full
         ext[k] = np.hstack(mats)
@@ -321,8 +323,97 @@ def attach_generic(view: DataView, home: Path, dataset: str, entry: dict) -> Dat
     return replace(view, series=series)
 
 
+# ---------------------------------------------------------------------------- US single stocks (Sharadar SEP)
+
+SEP_PANEL = "panel_liq1000"
+MAX_LIQ_N = 500          # RAM: the union of LIQ-500 and S&P 500 members since 1998 is ~2 600 columns
+
+
+def sharadar_sep(universe: dict) -> DataView:
+    """US common stocks from the qlab LIQ1000 panel (delistings with terminal returns, PIT universes).
+
+    Ticker-blind: instruments are opaque ids `E<permaticker>`, so a strategy cannot pick a stock it remembers.
+    Columns are every stock that was ever in LIQ-n or the S&P 500 (the G2 alternative universe), the
+    `universe` mask is the card's point-in-time membership: kind `liq_n` (n <= 500: liquidity rank <= n among
+    the LIQ1000 stocks, price and listing filters of qlab) or `sp500`. extras: `liq_rank` (PIT liquidity rank,
+    1 = most liquid; the cost tiers use it), `alt_universe` (1.0 where the other universe has the stock)."""
+    from qlab.data.panel import load_panel
+
+    kind, n = universe["kind"], int(universe.get("n") or 0)
+    if kind == "liq_n" and not 1 <= n <= MAX_LIQ_N:
+        raise NotImplementedError(f"liq_n with n={n}: the loader supports 1..{MAX_LIQ_N} (RAM of this machine)")
+    if kind not in ("liq_n", "sp500"):
+        raise NotImplementedError(f"universe kind {kind!r} is not available for sharadar_sep")
+    n = n or MAX_LIQ_N
+    d = DATA_ROOT / "derived" / SHARADAR / SEP_PANEL
+    p, ex = load_panel(d, mmap=True)
+    special = set(json.loads((d / "special_assets.json").read_text()).values())
+    T, N = len(p.dates), len(p.assets)
+
+    def mask(j0, j1):
+        rank = np.asarray(ex["liq_rank"][:, j0:j1])
+        liq = np.asarray(ex["in_liq1000"][:, j0:j1]).astype(bool) & (rank <= n)
+        return liq, np.asarray(ex["in_sp500"][:, j0:j1]).astype(bool)
+
+    keep = np.zeros(N, dtype=bool)
+    for j0 in range(0, N, 500):                     # column chunks keep the peak small
+        liq, sp = mask(j0, j0 + 500)
+        keep[j0:j0 + 500] = (liq | sp).any(axis=0)
+    keep &= ~np.isin(np.asarray(p.assets), list(special))
+    cols = np.flatnonzero(keep)
+    liq, sp = mask(0, N)
+    liq, sp = liq[:, cols], sp[:, cols]
+    main, alt = (liq, sp) if kind == "liq_n" else (sp, liq)
+    sel = lambda a: np.asarray(a[:, cols])  # noqa: E731
+    f32 = lambda a: np.asarray(a[:, cols], dtype=np.float32)  # noqa: E731  (RAM: half of float64)
+    return DataView(np.asarray(p.dates), tuple(f"E{int(a)}" for a in np.asarray(p.assets)[cols]),
+                    ("us_equity",) * len(cols), f32(p.ret_co), f32(p.ret_oc), sel(p.tradable), sel(p.listed),
+                    sel(p.delisting), f32(p.close_u), f32(p.dollar_volume), universe=main,
+                    extras={"liq_rank": f32(ex["liq_rank"]), "alt_universe": alt.astype(np.float32)})
+
+
+# ---------------------------------------------------------------------------- Binance USD-M perpetuals
+
+PERP_PANEL = "r8_panel.npz"
+PERP_SUFFIX = ".P"
+PERP_DELIST_RETURN = -0.02     # same policy as spot: a contract that stops trading is closed at last close -2 %
+
+
+def binance_perp(symbols: list[str] | None = None) -> DataView:
+    """Binance USD-M perpetuals (research 8 panel: perps with a spot pair, 2019-12 .. 2026-09).
+
+    Instruments are `<SYMBOL>.P` (e.g. `BTCUSDT.P`), so they never collide with spot pairs. extras:
+    `funding` = sum of the funding rates of day t (events in [t 00:00, t+1 00:00), known after the close of
+    t: usable as a signal), `funding_paid` = funding charged to a position held over day t (events in
+    (t 00:00, t+1 00:00]); the engine charges it to longs and pays it to shorts. `basis` = perp close / spot
+    close - 1 (spot in perp units)."""
+    z = np.load(DATA_ROOT / "derived" / BINANCE / PERP_PANEL, allow_pickle=False)
+    names = [f"{s}{PERP_SUFFIX}" for s in z["symbols"]]
+    idx = list(range(len(names))) if symbols is None else [names.index(s) for s in symbols]
+    po, pc = z["po"][:, idx], z["pc"][:, idx]
+    T, N = pc.shape
+    listed = np.isfinite(pc)
+    prev = np.vstack([np.full((1, N), np.nan), pc[:-1]])
+    with np.errstate(invalid="ignore", divide="ignore"):
+        ret_co = np.where(listed & np.isfinite(prev) & np.isfinite(po), po / prev - 1.0, 0.0)
+        ret_oc = np.where(listed & np.isfinite(po), pc / po - 1.0, 0.0)
+        basis = z["pc"][:, idx] / z["sc"][:, idx] - 1.0
+    tradable = listed & np.isfinite(po)
+    delisting = np.zeros((T, N), dtype=bool)
+    last = np.where(listed.any(axis=0), T - 1 - np.argmax(listed[::-1], axis=0), -1)
+    for j in np.flatnonzero((last >= 0) & (last < T - 8)):    # stopped trading more than a week before the end
+        delisting[last[j] + 1, j], ret_co[last[j] + 1, j] = True, PERP_DELIST_RETURN
+    return DataView(np.asarray(z["dates"]), tuple(names[i] for i in idx), ("crypto_perp",) * N, ret_co, ret_oc,
+                    tradable, listed, delisting, pc, z["qv"][:, idx],
+                    extras={"funding": np.where(listed, np.nan_to_num(z["fund_sig"][:, idx]), np.nan),
+                            "funding_paid": np.where(listed, np.nan_to_num(z["fund_hold"][:, idx]), 0.0),
+                            "basis": np.where(listed, basis, np.nan)})
+
+
 def load(dataset: str, instruments: list[str] | None) -> DataView:
     match dataset:
+        case "binance_perp_1d":
+            return binance_perp(instruments)
         case "sharadar_sfp":
             return sharadar_sfp(instruments)
         case "binance_spot_1d":

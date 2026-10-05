@@ -85,6 +85,8 @@ def _parser() -> argparse.ArgumentParser:
     s = sub.add_parser("rerun-g0", help="re-run G0 on the current code (owner, after a framework fix; not a trial)")
     s.add_argument("hid")
     s.add_argument("--reason", required=True)
+    s = sub.add_parser("import-local", help="owner: make fred_macro / fred_dtb3 (on disk) loadable as signal series")
+    s.add_argument("dataset", choices=["fred_macro", "fred_dtb3"])
     s = sub.add_parser("void", help="owner: undo a gate rejection caused by a framework bug (-> DATA_READY)")
     s.add_argument("hid")
     s.add_argument("--reason", required=True)
@@ -245,6 +247,10 @@ def _direct(args) -> int:
             print(f"G0 {'passed' if out.passed else 'failed: ' + str(out.reason_code)}")
             for line in tick.tick(lab, QlabEvaluator()):
                 print(line)
+        case "import-local":
+            from lab.framework import ingest
+            rep = ingest.import_local(lab.paths.home, lab.paths.catalog, args.dataset)
+            print(f"{args.dataset}: {len(rep['keys'])} series, {rep['n_rows']} rows, holdout from {rep['holdout_from']}")
         case "void":
             h = lab.hypothesis(args.hid)
             if h["status"] != S.REJECTED or h["reject_stage"] not in ("G0", "G1", "G2", "G3", "IMPLEMENTED", "GATE_1",

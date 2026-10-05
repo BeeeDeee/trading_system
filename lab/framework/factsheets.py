@@ -16,7 +16,7 @@ import numpy as np
 
 from lab.framework import catalog, data
 
-VERSION = 2
+VERSION = 3
 ETF_TOP = 60
 DAY = np.timedelta64(1, "D")
 CRYPTO_TOP = 30
@@ -63,6 +63,11 @@ def build(catalog_path: Path) -> str:
         text, w = _crypto_sheet(cat["binance_spot_1d"])
         parts.append(text)
         weekly |= w
+    if cat.get("sharadar_sep", {}).get("loader"):
+        parts.append(_stock_sheet(cat["sharadar_sep"]))
+    if cat.get("binance_perp_1d", {}).get("loader"):
+        parts.append(_perp_sheet(cat["binance_perp_1d"]))
+    parts.append(_generic_sheet(cat))
     parts.append(_correlations(weekly, min(data.as_date(cat[d]["holdout_from"]) for d in
                                            ("sharadar_sfp", "binance_spot_1d") if d in cat)))
     parts.append(_no_loader(cat))
@@ -174,6 +179,55 @@ def _correlations(weekly: dict, until: np.datetime64) -> str:
             row.append(f"{np.corrcoef(ra[ia], rb[ib])[0, 1]:.2f}" if len(common) >= 52 else "")
         lines.append(f"| **{a}** | " + " | ".join(row) + " |")
     lines += ["", "Reference set: " + "; ".join(f"{t} = {d}" for t, d in REFERENCE.items() if t in weekly) + "."]
+    return "\n".join(lines) + "\n"
+
+
+def _stock_sheet(entry: dict) -> str:
+    hold = data.as_date(entry["holdout_from"])
+    v = data.sharadar_sep({"kind": "liq_n", "n": data.MAX_LIQ_N}).between(None, hold - DAY)
+    lines = [f"## sharadar_sep (US single stocks), dev {v.dates[0]} .. {v.dates[-1]}", "",
+             "Universe kinds: `liq_n` (n <= 500, point-in-time liquidity rank among the LIQ1000 stocks: price,",
+             "listing and liquidity filters of qlab) and `sp500` (point-in-time S&P 500 membership). Instruments",
+             "are opaque ids (E<number>): strategies are ticker-blind and work on cross-sections, not on names.",
+             "Delisted stocks are included with their terminal return (acquisition price, bankruptcy -100 %).",
+             "Costs: half-spread tiers by liquidity rank (3/6/12 bps up to rank 200/500/1000, 5 bps floor),",
+             "x2.5 before decimalization (2001-04).", "",
+             "| year | stocks ever in LIQ-500 that year | in the S&P 500 (alt universe) | median annualized vol of LIQ-500 members |",
+             "|---|---|---|---|"]
+    lr = np.log(np.maximum((1 + v.ret_co.astype(float)) * (1 + v.ret_oc.astype(float)), 1e-3))  # -100 % delistings
+    alt = np.nan_to_num(v.extras["alt_universe"]) > 0.5
+    last = int(str(v.dates[-1])[:4])
+    for y in sorted(set(range(int(str(v.dates[0])[:4]) + 1, last + 1, 4)) | {last}):
+        rows = (v.dates >= np.datetime64(f"{y}-01-01")) & (v.dates <= np.datetime64(f"{y}-12-31"))
+        mem = v.universe[rows].any(axis=0)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)       # members with a single row
+            vol = np.nanstd(np.where(v.universe[rows], lr[rows], np.nan), axis=0)[mem] * np.sqrt(252)
+        lines.append(f"| {y} | {int(mem.sum())} | {int(alt[rows].any(axis=0).sum())} | {np.nanmedian(vol):.0%} |")
+    return "\n".join(lines) + "\n"
+
+
+def _perp_sheet(entry: dict) -> str:
+    hold = data.as_date(entry["holdout_from"])
+    v = data.binance_perp(None).between(None, hold - DAY)
+    lines = [f"## binance_perp_1d (Binance USD-M perpetuals), dev {v.dates[0]} .. {v.dates[-1]}", "",
+             "Ids `<SYMBOL>.P` (e.g. BTCUSDT.P). Only perps that also have a Binance spot pair. Shorts are",
+             "implementable here (unlike spot). Funding is charged by the engine to every position held over a",
+             "day (longs pay a positive rate, shorts receive it); `extras['funding']` is the day's funding known",
+             "after the close, `extras['basis']` perp/spot - 1. Costs: crypto tiers (10 bps fee + slippage by volume).", "",
+             "Perps listed at some point in the year: " + ", ".join(
+                 f"{y}: {int(v.listed[(v.dates >= np.datetime64(f'{y}-01-01')) & (v.dates <= np.datetime64(f'{y}-12-31'))].any(axis=0).sum())}"
+                 for y in range(int(str(v.dates[0])[:4]), int(str(v.dates[-1])[:4]) + 1)) + "."]
+    return "\n".join(lines) + "\n"
+
+
+def _generic_sheet(cat: dict) -> str:
+    gen = [d for d in cat.values() if d.get("loader") == "generic"]
+    lines = ["## Signal datasets (`loader: generic`)", "",
+             "Not tradable. A strategy reads them as `data.series['<dataset>.<key>']`, aligned by the dataset's",
+             "clock (next_morning = usable from the day after the observation).", ""]
+    lines += [f"- {d['id']} ({d['asset_class']}, clock {d['clock']}, {d['range'][0]} .. {d['range'][1]}): "
+              f"{d['instruments']}; keys: {', '.join(map(str, d.get('fields', [])))}" for d in gen]
     return "\n".join(lines) + "\n"
 
 

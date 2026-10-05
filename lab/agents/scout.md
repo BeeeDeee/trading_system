@@ -54,8 +54,12 @@ discarded.
    Why is it not arbitraged away (limits to arbitrage, capacity, risk, mandate constraints, slow information)?
    "The indicator works" is not a mechanism.
 2. **Testable now.** The gate runner can load only datasets with `loader: true` in the catalog:
-   `sharadar_sfp` (US ETFs, by explicit ticker list, universe kind `instruments`) and `binance_spot_1d`
-   (Binance spot pairs, by explicit list or universe kind `crypto_top_n` with `n`). Pick instruments that exist
+   `sharadar_sfp` (US ETFs, by explicit ticker list, universe kind `instruments`), `sharadar_sep` (US single
+   stocks, universe kind `liq_n` with n <= 500 or `sp500`, point-in-time and ticker-blind: cross-sectional
+   ideas only, no named stocks; no forward data, so a stock idea can pass at most G4), `binance_spot_1d`
+   (Binance spot pairs, by explicit list or universe kind `crypto_top_n` with `n`; shorts on spot carry no
+   borrow cost in the engine, so use perps for short legs) and `binance_perp_1d` (perpetuals `BTCUSDT.P`
+   etc., funding charged to positions, funding and basis available as signals). Pick instruments that exist
    in the dev period (see `factsheets.md` for first price dates). Datasets with `loader: generic` are signal
    series (not tradable) that a strategy can read next to the tradable data. A card may also ask for a **new
    daily, free, public dataset** under a new id (e.g. `cboe_vix_1d`, with a clear `description` of the series):

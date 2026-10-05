@@ -11,10 +11,10 @@
 version: 1
 datasets:
   - id: sharadar_sep
-    loader: false
+    loader: true
     asset_class: us_equity
-    instruments: "all US common stocks incl. delisted (permaticker); ~20k securities"
-    fields: [ret_co, ret_oc, close_u, dollar_volume, tradable, listed, delisting]
+    instruments: "US common stocks incl. delisted; loadable as universe kind liq_n (n <= 500, PIT liquidity rank among the LIQ1000 stocks) or sp500 (PIT membership). Ticker-blind: ids E<permaticker>."
+    fields: [ret_co, ret_oc, close_u, dollar_volume, tradable, listed, delisting, "extras: liq_rank, alt_universe"]
     frequency: 1d
     range: ["1998-01-02", "2026-09-25"]
     clock: us_close
@@ -140,11 +140,11 @@ datasets:
       - "Consumed: research 8, 9, 10, 13 used 2022-2026."
 
   - id: binance_perp_1d
-    loader: false
+    loader: true
     asset_class: crypto_perp
-    instruments: "Binance USD-M perpetual futures, daily klines and mark price"
+    instruments: "389 Binance USD-M perpetuals that have a spot pair (research 8 panel, 2019-12 .. 2026-09); ids <SYMBOL>.P, e.g. BTCUSDT.P. extras: funding (daily sum of funding rates, a signal), funding_paid (charged by the engine: longs pay, shorts receive), basis (perp/spot - 1)"
     frequency: 1d
-    range: ["2020-01-01", "2026-10-03"]
+    range: ["2019-12-01", "2026-09-30"]
     clock: crypto
     calendar: "24/7 (UTC days)"
     source: "data.binance.vision (free), snapshot binance_2026-10-03"
@@ -154,7 +154,9 @@ datasets:
     cost_model: crypto_perp_tiers
     forward_source: binance_public_api
     known_biases:
-      - "Same survivorship and venue caveats as spot."
+      - "Same survivorship and venue caveats as spot; only perps with a spot pair are in the panel."
+      - "Funding regime change after mid-2024 (Ethena, basis trade crowding); research 8 used this data 2020-2026."
+      - "No liquidation model: with gross <= 1 a perp position is fully collateralized, so liquidation does not occur."
 
   - id: binance_funding
     loader: false
@@ -171,16 +173,18 @@ datasets:
     forward_source: binance_public_api
     known_biases:
       - "Regime change after mid-2024 (Ethena and basis trade crowding compressed funding)."
+      - "Not loaded on its own: the funding of every loadable perp is in binance_perp_1d (extras funding / funding_paid)."
 
   - id: fred_dtb3
-    loader: false
+    loader: generic
+    fields: [DTB3]
+    location: "LAB_HOME/data/fred_dtb3"
     asset_class: macro
     instruments: "3-month T-bill secondary market rate"
     frequency: 1d
     range: ["1998-01-02", "2026-10-02"]
     clock: next_morning
     source: "FRED DTB3 (free)"
-    location: "strategy_backtester_2026_sep/data/raw/binance_2026-10-03/fred_DTB3.csv"
     quality: "used as cash rate everywhere"
     holdout_from: "2021-01-01"
     cost_model: null
@@ -189,14 +193,15 @@ datasets:
       - "Published with a one-day lag; cash_returns() uses the last value strictly before the day."
 
   - id: fred_macro
-    loader: false
+    loader: generic
+    fields: [BAMLC0A0CM, BAMLH0A0HYM2, DCOILWTICO, DEXBZUS, DEXCAUS, DEXCHUS, DEXINUS, DEXJPUS, DEXKOUS, DEXMXUS, DEXNOUS, DEXSDUS, DEXSIUS, DEXSZUS, DEXUSAL, DEXUSEU, DEXUSNZ, DEXUSUK, DFII10, DGS10, DGS2, DTWEXBGS, GVZCLS, OVXCLS, T10Y2Y, T10Y3M, T5YIE, VIXCLS, VXNCLS]
+    location: "LAB_HOME/data/fred_macro"
     asset_class: macro
     instruments: "30 FRED series: VIX, yields, curve, real yield, breakevens, credit spreads, oil, 15 FX rates"
     frequency: 1d
     range: ["1998-01-02", "2026-10-02"]   # most series start earlier; per-series start varies
     clock: next_morning
     source: "FRED (free), downloaded by market_relations"
-    location: "market_relations_2026_oct/data/raw/fred"
     quality: "market_relations v1"
     holdout_from: "2021-01-01"
     cost_model: null

@@ -24,23 +24,29 @@ from lab.framework.evaluator import TRADABLE, QlabEvaluator, integrity, strategy
 
 DAILY_VOL = {"us_etf": 0.012, "us_equity": 0.02, "crypto_spot": 0.04, "crypto_perp": 0.04}
 SYNTHETIC_PAIRS = 40
+SYNTHETIC_STOCKS = 80
 TEST_TIMEOUT_S = 300
 TEST_EXTRA_IMPORTS = ("pytest", "strategy")
 
 
 def instruments(card: dict, cat: dict) -> tuple[list[str], list[str], int | None]:
-    """(names, asset classes, top-n) of the strategy's instruments, resolved exactly as the gate runner does."""
+    """(names, asset classes, top-n) of the strategy's instruments, resolved exactly as the gate runner does.
+    Universe-based datasets get synthetic names in the same format (SYNxxUSDT pairs, E<number> stocks)."""
     uni = card["universe"]
-    if uni["kind"] not in ("instruments", "crypto_top_n"):
+    if uni["kind"] not in ("instruments", "crypto_top_n", "liq_n", "sp500"):
         raise ValueError(f"universe kind {uni['kind']!r} has no loader yet")
     names, classes = [], []
     for ds, inst in strategy_instruments(card).items():
-        inst = [f"SYN{i:02d}USDT" for i in range(SYNTHETIC_PAIRS)] if inst is None else inst
+        if inst is None:
+            inst = ([f"E{100000 + i}" for i in range(SYNTHETIC_STOCKS)] if ds == "sharadar_sep"
+                    else [f"SYN{i:02d}USDT" for i in range(SYNTHETIC_PAIRS)])
         for i in inst:
             if i not in names:
                 names.append(i)
                 classes.append(cat[ds]["asset_class"])
-    return names, classes, uni.get("n") if uni["kind"] == "crypto_top_n" else None
+    n = {"crypto_top_n": uni.get("n"), "liq_n": min(int(uni.get("n") or 0), SYNTHETIC_STOCKS // 2),
+         "sp500": SYNTHETIC_STOCKS // 2}.get(uni["kind"])
+    return names, classes, n
 
 
 def synthetic_view(card: dict, cat: dict, seed: int) -> DataView:
@@ -71,11 +77,13 @@ def synthetic_view(card: dict, cat: dict, seed: int) -> DataView:
         late = int(rng.integers(0, N))
         listed[: T // 5, late] = False                             # one instrument lists late
     delisting = np.zeros((T, N), dtype=bool)
-    if crypto.sum() > 2:
-        j = int(np.flatnonzero(crypto)[-1])
-        last = int(T * 0.7)
-        delisting[last + 1, j], ret_co[last + 1, j] = True, -0.02
-        listed[last + 2:, j] = False
+    stocks = np.array([c == "us_equity" for c in classes])
+    for group, frac, terminal in ((crypto, 0.7, -0.02), (stocks, 0.5, -0.30), (stocks, 0.8, 0.10)):
+        if group.sum() > 2:                                        # delistings (stocks: a bankruptcy-like and
+            j = int(np.flatnonzero(group)[-1 if frac != 0.8 else -2])   # an acquisition-like terminal return)
+            last = int(T * frac)
+            delisting[last + 1, j], ret_co[last + 1, j] = True, terminal
+            listed[last + 2:, j] = False
     tradable = listed & ~delisting
     tradable &= rng.random((T, N)) > 0.002                         # rare missing opens
     ret_co, ret_oc = np.where(listed | delisting, ret_co, 0.0), np.where(tradable, ret_oc, 0.0)
@@ -85,8 +93,20 @@ def synthetic_view(card: dict, cat: dict, seed: int) -> DataView:
     view = DataView(days, tuple(names), tuple(classes), ret_co, ret_oc, tradable, listed, delisting, close, dv,
                     cash_ret=np.zeros(T))
     from dataclasses import replace
-    if top_n:
+    kind = card["universe"]["kind"]
+    if top_n and kind == "crypto_top_n":
         view = replace(view, universe=data.crypto_top_n(view, top_n))
+    elif top_n and kind in ("liq_n", "sp500"):                    # PIT membership by trailing liquidity
+        member = data.crypto_top_n(view, top_n, window=63) & stocks[None, :]
+        rank = np.where(stocks[None, :] & listed, np.argsort(np.argsort(-np.nan_to_num(dv), axis=1), axis=1) + 1.0,
+                        np.nan)
+        alt = data.crypto_top_n(view, min(N, int(top_n * 1.25)), window=63) & stocks[None, :]
+        view = replace(view, universe=member, extras={"liq_rank": rank, "alt_universe": alt.astype(float)})
+    if crypto.any() and any(c == "crypto_perp" for c in classes):
+        perp = np.array([c == "crypto_perp" for c in classes])
+        f = np.where(perp[None, :] & listed, rng.normal(3e-4, 4e-4, (T, N)), np.nan)
+        view = replace(view, extras={**view.extras, "funding": f, "funding_paid": np.nan_to_num(f),
+                                     "basis": np.where(perp[None, :] & listed, rng.normal(0, 2e-3, (T, N)), np.nan)})
     series = {}
     for r in reqs:                                                 # signal-only datasets (Archivist ingest)
         if r["dataset"] in TRADABLE:

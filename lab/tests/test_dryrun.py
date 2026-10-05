@@ -104,3 +104,18 @@ def test_synthetic_market_cards_get_the_generator_with_its_series():
     card = yaml.safe_load((LAB_DIR / "canaries" / "positive" / "card.yaml").read_text())
     v = dryrun.synthetic_view(card, {"synthetic_market": SYNTHETIC_DATASET}, seed=0)
     assert "signal" in v.series and str(v.dates[-1]) < SYNTHETIC_DATASET["holdout_from"]
+
+
+def test_synthetic_views_for_stocks_and_perps(card):
+    from lab.framework import catalog
+    from lab.framework.paths import LAB_DIR
+    cat = catalog.load(LAB_DIR / "data" / "catalog.yaml")
+    stocks = dict(card, asset_classes=["us_equity"], universe={"kind": "liq_n", "n": 200},
+                  data_requirements=[{"dataset": "sharadar_sep", "frequency": "1d"}])
+    v = dryrun.synthetic_view(stocks, cat, seed=2)
+    assert all(i.startswith("E") for i in v.instruments) and v.universe.sum(axis=1).max() == 40
+    assert {"liq_rank", "alt_universe"} <= set(v.extras) and v.delisting.sum() == 2
+    perps = dict(card, asset_classes=["crypto_perp"], universe={"kind": "instruments", "instruments": ["BTCUSDT.P", "ETHUSDT.P", "SOLUSDT.P"]},
+                 data_requirements=[{"dataset": "binance_perp_1d", "frequency": "1d"}])
+    v = dryrun.synthetic_view(perps, cat, seed=2)
+    assert {"funding", "funding_paid", "basis"} <= set(v.extras)

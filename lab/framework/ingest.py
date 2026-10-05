@@ -185,14 +185,8 @@ def ingest(home: Path, catalog_path: Path, dataset: str, draft: dict, source_pat
     t0 = time.monotonic()
     rows, http = fetch(source_path)
     data, report, framework = plan(rows, draft)
-    import polars as pl
+    _store(home, dataset, data, framework["holdout_from"])
     out = home / "data" / dataset
-    out.mkdir(parents=True, exist_ok=True)
-    hold = np.datetime64(framework["holdout_from"])
-    frames = [pl.DataFrame({"date": ds, "key": [k] * len(ds), "value": vs}) for k, (ds, vs) in data.items()]
-    df = pl.concat(frames).sort("key", "date")
-    df.filter(pl.col("date") < hold).write_parquet(out / "dev.parquet")
-    df.filter(pl.col("date") >= hold).write_parquet(out / "holdout.parquet")
     report |= {"urls": http.urls[:50], "n_requests": len(http.urls), "bytes": http.bytes,
                "seconds": round(time.monotonic() - t0, 1), "ingested": str(date.today())}
     (out / "report.json").write_text(json.dumps(report, indent=2))
@@ -203,6 +197,50 @@ def ingest(home: Path, catalog_path: Path, dataset: str, draft: dict, source_pat
     entry = {k: entry[k] for k in catalog.ENTRY_REQUIRED + tuple(k for k in entry if k not in catalog.ENTRY_REQUIRED)}
     catalog.add(catalog_path, entry)
     return entry
+
+
+def _store(home: Path, dataset: str, data: dict, holdout_from: str) -> None:
+    import polars as pl
+    out = home / "data" / dataset
+    out.mkdir(parents=True, exist_ok=True)
+    hold = np.datetime64(holdout_from)
+    frames = [pl.DataFrame({"date": ds, "key": [k] * len(ds), "value": vs}) for k, (ds, vs) in data.items()]
+    df = pl.concat(frames).sort("key", "date")
+    df.filter(pl.col("date") < hold).write_parquet(out / "dev.parquet")
+    df.filter(pl.col("date") >= hold).write_parquet(out / "holdout.parquet")
+
+
+# ---------------------------------------------------------------------------- data already on disk
+
+FRED_DIRS = {"fred_macro": Path("/home/kapo/ccode/market_relations_2026_oct/data/raw/fred"),
+             "fred_dtb3": Path("/home/kapo/ccode/strategy_backtester_2026_sep/data/raw/binance_2026-10-03")}
+
+
+def local_rows(dataset: str) -> list:
+    """FRED CSVs downloaded by the sibling projects (observation_date,<SERIES>; '.' or empty = missing)."""
+    import csv
+    files = sorted(FRED_DIRS[dataset].glob("fred_DTB3.csv" if dataset == "fred_dtb3" else "*.csv"))
+    rows = []
+    for f in files:
+        with f.open() as fh:
+            r = csv.reader(fh)
+            header = next(r)
+            for line in r:
+                if len(line) == 2 and line[1] not in ("", "."):
+                    rows.append((line[0], header[1], float(line[1])))
+    return rows
+
+
+def import_local(home: Path, catalog_path: Path, dataset: str) -> dict:
+    """Make an existing catalog entry loadable as a generic signal dataset. The entry's holdout boundary is
+    kept (it was fixed when the entry was written); only `loader`, `fields` and `location` change."""
+    entry = catalog.load(catalog_path)[dataset]
+    data, report = validate(local_rows(dataset))
+    _store(home, dataset, data, entry["holdout_from"])
+    report |= {"holdout_from": entry["holdout_from"], "imported": str(date.today()), "source": str(FRED_DIRS[dataset])}
+    (home / "data" / dataset / "report.json").write_text(json.dumps(report, indent=2))
+    catalog.enable_generic(catalog_path, dataset, sorted(data), f"LAB_HOME/data/{dataset}")
+    return report
 
 
 def report_text(report: dict) -> list[str]:

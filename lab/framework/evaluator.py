@@ -32,7 +32,7 @@ BENCHMARKS = {"SPY_TR": {"SPY": 1.0}, "SIXTY_FORTY": {"SPY": 0.6, "IEF": 0.4}, "
               "SIXTY_FORTY_BTC5": {"SPY": 0.57, "IEF": 0.38, "BTCUSDT": 0.05}, "TBILL": {},
               "SYN_MKT": {"MKT": 1.0}}
 SOURCE = {"SPY": "sharadar_sfp", "IEF": "sharadar_sfp", "BTCUSDT": "binance_spot_1d", "MKT": "synthetic_market"}
-TRADABLE = {"sharadar_sfp", "binance_spot_1d", "synthetic_market"}
+TRADABLE = {"sharadar_sfp", "sharadar_sep", "binance_spot_1d", "binance_perp_1d", "synthetic_market"}
 
 
 @dataclass
@@ -135,7 +135,7 @@ class QlabEvaluator:
                 load_ds[ds] = [inst]
         views, strat_set = [], set()
         for ds, inst in load_ds.items():
-            v = self.load(ds, inst)
+            v = data.sharadar_sep(universe) if ds == "sharadar_sep" and inst is None else self.load(ds, inst)
             if universe["kind"] == "crypto_top_n" and ds == "binance_spot_1d":
                 v = replace(v, universe=data.crypto_top_n(v, universe["n"]))
             if ds in per_ds:
@@ -183,13 +183,17 @@ class QlabEvaluator:
     def _simulate(self, ctx: Context, full_targets: np.ndarray, end: int, cost_mult: float = 1.0):
         v = ctx.view.slice(end)
         return engine.simulate(v.ret_co, v.ret_oc, full_targets, costs.cost_rates(v, cost_mult), v.tradable,
-                               v.delisting, v.cash_ret)
+                               v.delisting, v.cash_ret, funding=v.extras.get("funding_paid"))
 
     def run(self, ctx: Context, params: dict, end: int, cost_mult: float = 1.0, universe=None) -> Run:
         key = (json.dumps(params, sort_keys=True), end, cost_mult, None if universe is None else id(universe))
         if key not in ctx.runs:
             w = self._targets(ctx, params, end, universe)
             sim = self._simulate(ctx, self._full_width(ctx, w), end, cost_mult)
+            if params != self.primary(ctx.card) or cost_mult != 1.0 or universe is not None:
+                # variants (neighbors, cost stress, alt universe) are only scored on returns: keep them light,
+                # a (T, N) targets + holdings pair is ~0.3 GB for single stocks
+                w, sim = None, replace(sim, held=None)
             ctx.runs[key] = Run(w, sim.returns, sim)
         return ctx.runs[key]
 
@@ -348,6 +352,15 @@ class QlabEvaluator:
             alt = self.run(ctx, params, end, universe=mask[:, [v.instruments.index(c) for c in ctx.strat_cols]])
             alt_sharpe = self.sr(ctx, alt.returns, win, ppy)
             m["alt_universe"] = {"kind": "crypto_top_n", "n": n_alt, "sharpe": alt_sharpe}
+            checks["alt_universe_vs_benchmark"] = _check(alt_sharpe, ">=", sb)
+            checks["alt_universe_ratio"] = _check(alt_sharpe / base["sharpe"] if base["sharpe"] > 0 else 0.0, ">=",
+                                                  th["alt_universe"]["min_sharpe_ratio"])
+        elif uni["kind"] in ("liq_n", "sp500") and "alt_universe" in ctx.view.extras:
+            v = ctx.view
+            mask = np.nan_to_num(v.extras["alt_universe"]) > 0.5
+            alt = self.run(ctx, params, end, universe=mask[:, [v.instruments.index(c) for c in ctx.strat_cols]])
+            alt_sharpe = self.sr(ctx, alt.returns, win, ppy)
+            m["alt_universe"] = {"kind": "sp500" if uni["kind"] == "liq_n" else "liq_n", "sharpe": alt_sharpe}
             checks["alt_universe_vs_benchmark"] = _check(alt_sharpe, ">=", sb)
             checks["alt_universe_ratio"] = _check(alt_sharpe / base["sharpe"] if base["sharpe"] > 0 else 0.0, ">=",
                                                   th["alt_universe"]["min_sharpe_ratio"])
@@ -519,6 +532,8 @@ def strategy_instruments(card: dict) -> dict[str, list[str] | None]:
             continue   # signal-only dataset (Archivist ingest): series, not instruments
         inst = r.get("instruments") or (universe.get("instruments") if not per_ds else None)
         if universe["kind"] == "crypto_top_n" and ds == "binance_spot_1d":
+            inst = None
+        if universe["kind"] in ("liq_n", "sp500") and ds == "sharadar_sep":
             inst = None
         if ds not in per_ds:
             per_ds[ds] = list(inst) if inst else None

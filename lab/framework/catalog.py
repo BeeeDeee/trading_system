@@ -73,3 +73,25 @@ def missing_forward_source(path: Path, dataset_ids: list[str]) -> list[str]:
     """Datasets among `dataset_ids` without a forward source (they block paper trading, decision Q3)."""
     datasets = load(path)
     return [d for d in dataset_ids if not datasets.get(d, {}).get("forward_source")]
+
+
+def enable_generic(path: Path, dataset: str, fields: list[str], location: str) -> None:
+    """Switch an existing entry to the generic loader (framework import of data already on disk). A text
+    edit inside that entry only, so comments and every other field (the holdout boundary above all) stay."""
+    lines = path.read_text().splitlines(keepends=True)
+    start = next(i for i, ln in enumerate(lines) if ln.strip() == f"- id: {dataset}")
+    end = next((i for i in range(start + 1, len(lines)) if lines[i].lstrip().startswith("- id: ")), len(lines))
+    out, done = lines[:start + 1], False
+    for ln in lines[start + 1:end]:
+        key = ln.strip().split(":", 1)[0]
+        if key == "loader":
+            ln, done = ln.split("loader:")[0] + "loader: generic\n", True
+        elif key in ("fields", "location"):
+            continue
+        out.append(ln)
+    if not done:
+        raise ValueError(f"{dataset}: no loader field")
+    indent = " " * (len(lines[start]) - len(lines[start].lstrip()) + 2)
+    out.insert(start + 2, f"{indent}fields: [{', '.join(fields)}]\n{indent}location: \"{location}\"\n")
+    path.write_text("".join(out + lines[end:]))
+    load(path)

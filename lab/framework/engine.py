@@ -44,7 +44,9 @@ def validate_targets(targets: np.ndarray, shape: tuple[int, int]) -> list[str]:
 
 def simulate(ret_co: np.ndarray, ret_oc: np.ndarray, targets: np.ndarray, cost_rate: np.ndarray | float,
              tradable: np.ndarray, delisting: np.ndarray, cash_ret: np.ndarray | None = None,
-             short_carry: np.ndarray | None = None) -> SimResult:
+             short_carry: np.ndarray | None = None, funding: np.ndarray | None = None) -> SimResult:
+    """`funding` (T, N): rate charged on the value of a position held over day t (perpetual funding):
+    a long pays it, a short receives it (negative rates the other way round)."""
     T, N = ret_co.shape
     errors = validate_targets(targets, (T, N))
     if errors:
@@ -55,6 +57,9 @@ def simulate(ret_co: np.ndarray, ret_oc: np.ndarray, targets: np.ndarray, cost_r
     decided = ~np.isnan(targets).all(axis=1)
     shorts = bool((np.nan_to_num(targets) < -WEIGHT_TOL).any())     # long-only books skip the short bookkeeping
     carry = shorts and bool(short_carry.any())
+    funding = None if funding is None else np.nan_to_num(np.asarray(funding, dtype=float))
+    if funding is not None and not funding.any():
+        funding = None
     paid_rows = delisting.any(axis=1)
 
     v, cash = np.zeros(N), 1.0
@@ -88,6 +93,8 @@ def simulate(ret_co: np.ndarray, ret_oc: np.ndarray, targets: np.ndarray, cost_r
             pending = None
         if carry:
             cash -= (short_carry[t] * np.minimum(v, 0.0)).sum()
+        if funding is not None:
+            cash -= (funding[t] * v).sum()
         v *= 1.0 + ret_oc[t]
         values[t] = v
         nav[t] = cash + v.sum()
