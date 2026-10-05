@@ -135,7 +135,10 @@ notes: 'Fit to the brief: holding 5 trading days, US single stocks, cross-sectio
   2001-04) hit the first sub-period. Most likely death: G1/G2 cost stress (premium in large caps smaller than costs
   x2) or G1 Sharpe below 0.5 because the idiosyncratic jump risk of a 10-40 name announcer basket swamps a small
   premium. Either way the predictor check and the timing placebo make the death informative.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_sharpe_excess
 history:
 - ts: '2026-10-05T19:06:46.017277+00:00'
   version: 1
@@ -158,3 +161,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-05T19:43:38.916987+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 16, qlab-v1)
+- ts: '2026-10-05T19:44:32.154902+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 19, qlab-v1)

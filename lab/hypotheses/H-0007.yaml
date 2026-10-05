@@ -125,7 +125,10 @@ notes: 'Brief fit: short holding (5 trading days), US single stocks, cross-secti
   x2.5 hits the 1998-2001 part, so the strategy cannot live off that era; (c) short legs of high-intraday-return
   losers are crash-prone in sharp junk rallies. No hindsight: no dates or names are used, the universe is the PIT
   LIQ-500, parameters are round conventional values. No new data needed.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G2
+  reason_code: g2_median_neighbor_sharpe_ratio
 history:
 - ts: '2026-10-05T19:02:10.676917+00:00'
   version: 1
@@ -148,3 +151,24 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-05T19:38:55.778410+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 15, qlab-v1)
+- ts: '2026-10-05T19:44:07.453640+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: GATE_1
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 passed (run 18, qlab-v1)
+- ts: '2026-10-05T19:53:08.334726+00:00'
+  version: 1
+  from: GATE_1
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G2 failed (run 20, qlab-v1)

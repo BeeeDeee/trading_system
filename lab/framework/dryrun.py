@@ -152,7 +152,8 @@ def run(ws: Path) -> tuple[bool, list[str]]:
     cat = catalog.load(ws / "catalog.yaml")
     th = yaml.safe_load((ws / "gates.yaml").read_text())["G0"]
     path = ws / "strategy" / "strategy.py"
-    seed = int(hashlib.sha256(json.dumps(card, sort_keys=True, default=str).encode()).hexdigest()[:8], 16)
+    content = {k: v for k, v in card.items() if k not in ("id", "version", "status", "history", "terminal")}
+    seed = int(hashlib.sha256(json.dumps(content, sort_keys=True, default=str).encode()).hexdigest()[:8], 16)
     view = synthetic_view(card, cat, seed)
     cols = list(view.instruments)
     params = QlabEvaluator.primary(card)

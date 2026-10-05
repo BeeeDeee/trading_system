@@ -149,7 +149,10 @@ notes: 'Brief: crypto, 1-5 day holding, combined timeframes. The weekly BTC regi
   the strategy is in cash whenever the regime is OFF and no pair has triggered; few pairs exist in 2017-2018, so
   early dev contributes few trades. Perpetuals were considered and rejected for the long leg: in uptrend regimes
   funding paid by longs is high and would be a direct cost of exactly these trades; spot carries no funding.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_sharpe_diff_ci_lower
 history:
 - ts: '2026-10-05T18:58:21.421081+00:00'
   version: 1
@@ -172,3 +175,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-05T19:36:07.013361+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 14, qlab-v1)
+- ts: '2026-10-05T19:43:47.077996+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 17, qlab-v1)

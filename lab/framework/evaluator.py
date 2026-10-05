@@ -32,6 +32,7 @@ BENCHMARKS = {"SPY_TR": {"SPY": 1.0}, "SIXTY_FORTY": {"SPY": 0.6, "IEF": 0.4}, "
               "SIXTY_FORTY_BTC5": {"SPY": 0.57, "IEF": 0.38, "BTCUSDT": 0.05}, "TBILL": {},
               "SYN_MKT": {"MKT": 1.0}}
 SOURCE = {"SPY": "sharadar_sfp", "IEF": "sharadar_sfp", "BTCUSDT": "binance_spot_1d", "MKT": "synthetic_market"}
+BENCH_GROUP = {"crypto_perp": "crypto_spot"}
 TRADABLE = {"sharadar_sfp", "sharadar_sep", "binance_spot_1d", "binance_perp_1d", "synthetic_market"}
 
 
@@ -121,7 +122,10 @@ class QlabEvaluator:
         strat_ds = list(per_ds)
 
         exposure = card["market_exposure"]
-        classes = sorted({cat[d]["asset_class"] for d in strat_ds})
+        # one benchmark per market: spot and perps are both crypto (BTC), stocks with ETFs are US (60/40)
+        classes = sorted({BENCH_GROUP.get(cat[d]["asset_class"], cat[d]["asset_class"]) for d in strat_ds})
+        if classes == ["us_equity", "us_etf"]:
+            classes = ["us_etf"]
         bcfg = gates_cfg["benchmarks"]
         bench = bcfg[exposure] if exposure != "long_only" else bcfg["long_only"][
             classes[0] if len(classes) == 1 else "cross_asset"]
@@ -401,8 +405,11 @@ class QlabEvaluator:
         w = run.targets
         active_cols = np.flatnonzero(np.nan_to_num(np.abs(w)).sum(axis=0) > 0)
         rng = np.random.default_rng(12345)
-        listed = ctx.view.slice(end).columns(ctx.strat_cols).listed[win]
-        eligible = np.union1d(np.flatnonzero(listed.mean(axis=0) > 0.5), active_cols)
+        sv = ctx.view.slice(end).columns(ctx.strat_cols)
+        # random assets come from the same pool the strategy chooses from: the card's universe when there is
+        # one (otherwise a LIQ-500 book is compared with random illiquid stocks that cost several times more)
+        pool = (sv.listed if sv.universe is None else sv.universe)[win]
+        eligible = np.union1d(np.flatnonzero(pool.mean(axis=0) > 0.5), active_cols)
         null = []
         for _ in range(n_runs):
             if len(active_cols) >= 5 and len(eligible) > len(active_cols):
@@ -601,7 +608,15 @@ def _lookahead(targets, view: DataView, full: np.ndarray, n_cuts: int) -> dict:
     end = len(view.dates)
     decided = np.flatnonzero(~np.isnan(full).all(axis=1))
     lo = int(decided[0]) if len(decided) else 1
-    cuts = sorted(set(rng.integers(lo, end - 1, n_cuts).tolist()) | {end - 2})
+    cuts = set(rng.integers(lo, end - 1, n_cuts).tolist()) | {end - 2}
+    # sparse strategies (weekly/monthly decisions) only reveal a peek on the rows where they decide:
+    # add as many cuts on rows where the weights change
+    held = np.where(np.isnan(full), 0.0, full)
+    changes = np.flatnonzero(np.abs(np.diff(held, axis=0)).sum(axis=1) > 1e-12) + 1
+    changes = changes[(changes >= lo) & (changes < end - 1)]
+    if len(changes):
+        cuts |= set(rng.choice(changes, min(n_cuts, len(changes)), replace=False).tolist())
+    cuts = sorted(cuts)
     same = lambda a, b: np.allclose(a, b, rtol=1e-12, atol=1e-12, equal_nan=True)  # noqa: E731
     trunc, pert = [], []
     for t in cuts:
