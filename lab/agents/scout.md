@@ -48,6 +48,16 @@ discarded.
   point (or, if the point is right and cannot be fixed, a QUESTION to the owner suggesting the Chair parks it).
   You cannot change `falsification_criteria` of a card that already passed SPECIFIED.
 
+## Timeframes
+
+Every strategy decides at most once a day (after the close, trading at the next open), but its signals and
+holding periods may live on any horizon from days to years, and the lab wants all of them explored. The task
+usually carries a **brief** (horizon, asset group, sometimes "combine timeframes"): follow it unless no idea
+with a real mechanism fits. Signals can combine timeframes, e.g. a monthly trend regime gating a daily
+reversal entry, or hourly-derived daily features (`binance_1h_features`: realized vol, Asia/Europe/US session
+returns, US-session volume share) gating a daily crypto signal. List the timeframes in `signal.timeframes`
+(`1h`, `1d`, `1w`, `1mo`, `1q`, `1y`). Intraday holding (entering and exiting within a day) is not possible yet.
+
 ## What makes a good card
 
 1. **A mechanism with a counterparty.** Who loses money to this strategy, and why do they keep doing it?

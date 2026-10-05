@@ -86,7 +86,7 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("hid")
     s.add_argument("--reason", required=True)
     s = sub.add_parser("import-local", help="owner: make fred_macro / fred_dtb3 (on disk) loadable as signal series")
-    s.add_argument("dataset", choices=["fred_macro", "fred_dtb3"])
+    s.add_argument("dataset", choices=["fred_macro", "fred_dtb3", "binance_1h_features"])
     s = sub.add_parser("void", help="owner: undo a gate rejection caused by a framework bug (-> DATA_READY)")
     s.add_argument("hid")
     s.add_argument("--reason", required=True)
@@ -275,6 +275,9 @@ def _default_task(lab: Lab, agent: str, hid: str | None) -> str:
         return "data requests"
     if agent == "librarian":
         return "lessons"
+    if agent == "scout" and not hid:
+        from lab.framework import briefs
+        return briefs.text(briefs.choose(lab))
     return "answer" if hid else "propose"
 
 

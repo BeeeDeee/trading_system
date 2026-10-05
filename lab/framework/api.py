@@ -40,3 +40,65 @@ def only_on(days: np.ndarray, weights: np.ndarray) -> np.ndarray:
     out = np.asarray(weights, dtype=float).copy()
     out[~np.asarray(days, dtype=bool)] = np.nan
     return out
+
+
+# ---------------------------------------------------------------------------- multiple timeframes
+# A strategy decides once a day, but its signals may live on any horizon: weekly or monthly bars built
+# from the daily rows, slow filters confirming fast signals. These helpers build higher-timeframe bars
+# point-in-time: a week or month counts only once it is complete, i.e. from the first row of the next one.
+
+def _period_key(dates, unit: str) -> np.ndarray:
+    d = np.asarray(dates, dtype="datetime64[D]")
+    if unit == "W":
+        return (d.astype(np.int64) + 3) // 7          # Monday-based weeks (1970-01-01 was a Thursday)
+    if unit == "M":
+        return d.astype("datetime64[M]").astype(np.int64)
+    if unit == "Q":
+        return d.astype("datetime64[M]").astype(np.int64) // 3
+    raise ValueError(f"unknown unit {unit!r} (W, M, Q)")
+
+
+def last_completed_row(dates, unit: str) -> np.ndarray:
+    """(T,) index of the last row of the most recent *completed* period before row t's period; -1 if none.
+    Row t's own period is still open, so its last row is not known yet."""
+    key = _period_key(dates, unit)
+    start = np.r_[True, key[1:] != key[:-1]]
+    idx = np.arange(len(key))
+    cur_start = np.maximum.accumulate(np.where(start, idx, 0))
+    return cur_start - 1
+
+
+def completed_period_value(x: np.ndarray, dates, unit: str) -> np.ndarray:
+    """x (T,) or (T, N) as of the close of the last completed week/month/quarter; NaN before the first."""
+    x = np.asarray(x, dtype=float)
+    rows = last_completed_row(dates, unit)
+    out = x[np.maximum(rows, 0)].copy()
+    out[rows < 0] = np.nan
+    return out
+
+
+def period_return(index: np.ndarray, dates, unit: str, periods: int) -> np.ndarray:
+    """Return over the last `periods` completed weeks/months/quarters, from a (T, N) total-return index."""
+    key = _period_key(dates, unit)
+    ends = np.flatnonzero(np.r_[key[1:] != key[:-1], False])     # last row of every completed period
+    rows = last_completed_row(dates, unit)
+    pos = np.searchsorted(ends, rows)                               # position of that row among the period ends
+    back = pos - periods
+    ok = (rows >= 0) & (back >= 0)
+    index = np.asarray(index, dtype=float)
+    out = np.full(index.shape, np.nan)
+    out[ok] = index[rows[ok]] / index[ends[back[ok]]] - 1.0
+    return out
+
+
+def ema(x: np.ndarray, span: float) -> np.ndarray:
+    """Exponential moving average along rows (alpha = 2 / (span + 1)); NaNs carry the previous value."""
+    x = np.asarray(x, dtype=float)
+    a = 2.0 / (span + 1.0)
+    out = np.full(x.shape, np.nan)
+    prev = np.full(x.shape[1:], np.nan)
+    for t in range(len(x)):
+        cur = np.where(np.isnan(prev), x[t], a * x[t] + (1 - a) * prev)
+        prev = np.where(np.isnan(x[t]), prev, cur)
+        out[t] = prev
+    return out

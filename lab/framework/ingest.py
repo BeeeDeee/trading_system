@@ -21,6 +21,7 @@ dataset's clock (see `data.attach_generic`).
 """
 
 import json
+import math
 import time
 import urllib.parse
 import urllib.request
@@ -212,12 +213,69 @@ def _store(home: Path, dataset: str, data: dict, holdout_from: str) -> None:
 
 # ---------------------------------------------------------------------------- data already on disk
 
+HOURLY_DIR = Path("/home/kapo/ccode/market_relations_2026_oct/data/raw/binance_1h/spot_1h")
+SESSIONS = {"asia": (0, 8), "europe": (8, 16), "us": (16, 24)}     # UTC hours [start, end)
+LOCAL_ENTRIES = {
+    "binance_1h_features": {
+        "id": "binance_1h_features", "asset_class": "crypto_spot",
+        "instruments": "daily features from hourly Binance spot klines of 105 liquid pairs: <PAIR>.rv (realized "
+                       "volatility of the day from hourly log returns), <PAIR>.ret_asia / .ret_europe / .ret_us "
+                       "(log return of the UTC sessions 00-08, 08-16, 16-24), <PAIR>.vshare_us (share of the "
+                       "day's quote volume traded 16-24 UTC)",
+        "frequency": "1d", "clock": "crypto", "calendar": "24/7 (UTC days)",
+        "source": "data.binance.vision hourly klines downloaded by market_relations (free)",
+        "known_biases": ["Universe of 105 pairs chosen by liquidity at download time (survivorship).",
+                         "A day with missing hours is computed from the hours present; days with < 20 hours are dropped.",
+                         "Session returns are parts of the same daily return the price data has: not independent."],
+        "forward_source": "binance_public_api", "per_instrument": True},
+}
 FRED_DIRS = {"fred_macro": Path("/home/kapo/ccode/market_relations_2026_oct/data/raw/fred"),
              "fred_dtb3": Path("/home/kapo/ccode/strategy_backtester_2026_sep/data/raw/binance_2026-10-03")}
 
 
+def hourly_feature_rows() -> list:
+    """Daily features from hourly klines (UTC days): realized vol, session returns, US-session volume share."""
+    import io
+    import zipfile
+
+    import polars as pl
+    rows = []
+    for d in sorted(p for p in HOURLY_DIR.iterdir() if p.is_dir()):
+        frames = []
+        for f in sorted(d.glob("*.zip")):
+            with zipfile.ZipFile(f) as z:
+                raw = z.read(z.namelist()[0])
+            if raw.strip():
+                frames.append(pl.read_csv(io.BytesIO(raw), has_header=not raw[:1].isdigit(), new_columns=[
+                    "t", "o", "h", "l", "c", "v", "ct", "qv", "n", "tb", "tq", "x"], infer_schema_length=0)
+                    .select(pl.col("t").cast(pl.Float64), pl.col("o").cast(pl.Float64), pl.col("c").cast(pl.Float64),
+                            pl.col("qv").cast(pl.Float64)))
+        if not frames:
+            continue
+        ms = pl.when(pl.col("t") > 1e14).then(pl.col("t") / 1000).otherwise(pl.col("t")).cast(pl.Int64)
+        k = (pl.concat(frames).with_columns(pl.from_epoch(ms, time_unit="ms").alias("ts"))
+             .unique("ts", keep="first").sort("ts")
+             .with_columns(pl.col("ts").dt.date().alias("date"), pl.col("ts").dt.hour().alias("hour"),
+                           (pl.col("c") / pl.col("o")).log().alias("lr")))
+        sess = [pl.col("lr").filter(pl.col("hour").is_between(a, b - 1)).sum().alias(f"ret_{name}")
+                for name, (a, b) in SESSIONS.items()]
+        day = (k.group_by("date").agg(pl.len().alias("n"), (pl.col("lr") ** 2).sum().sqrt().alias("rv"), *sess,
+                                      (pl.col("qv").filter(pl.col("hour") >= 16).sum() / pl.col("qv").sum())
+                                      .alias("vshare_us"))
+               .filter(pl.col("n") >= 20).sort("date"))
+        for r in day.iter_rows(named=True):
+            for key in ("rv", "ret_asia", "ret_europe", "ret_us", "vshare_us"):
+                v = r[key]
+                if v is not None and math.isfinite(v):
+                    rows.append((str(r["date"]), f"{d.name}.{key}", float(v)))
+    return rows
+
+
 def local_rows(dataset: str) -> list:
-    """FRED CSVs downloaded by the sibling projects (observation_date,<SERIES>; '.' or empty = missing)."""
+    """Data already on disk. FRED CSVs from the sibling projects (observation_date,<SERIES>; '.' = missing),
+    or daily features of the hourly Binance klines."""
+    if dataset == "binance_1h_features":
+        return hourly_feature_rows()
     import csv
     files = sorted(FRED_DIRS[dataset].glob("fred_DTB3.csv" if dataset == "fred_dtb3" else "*.csv"))
     rows = []
@@ -234,12 +292,24 @@ def local_rows(dataset: str) -> list:
 def import_local(home: Path, catalog_path: Path, dataset: str) -> dict:
     """Make an existing catalog entry loadable as a generic signal dataset. The entry's holdout boundary is
     kept (it was fixed when the entry was written); only `loader`, `fields` and `location` change."""
-    entry = catalog.load(catalog_path)[dataset]
-    data, report = validate(local_rows(dataset))
-    _store(home, dataset, data, entry["holdout_from"])
-    report |= {"holdout_from": entry["holdout_from"], "imported": str(date.today()), "source": str(FRED_DIRS[dataset])}
+    existing = catalog.load(catalog_path).get(dataset)
+    if existing is None and dataset in LOCAL_ENTRIES:      # a new derived dataset: boundary by the usual rule
+        draft = LOCAL_ENTRIES[dataset]
+        data, report, framework = plan(local_rows(dataset), draft)
+        holdout = framework["holdout_from"]
+    else:
+        data, report = validate(local_rows(dataset))
+        holdout = existing["holdout_from"]
+    _store(home, dataset, data, holdout)
+    report |= {"holdout_from": holdout, "imported": str(date.today()),
+               "source": str(HOURLY_DIR if dataset in LOCAL_ENTRIES else FRED_DIRS[dataset])}
     (home / "data" / dataset / "report.json").write_text(json.dumps(report, indent=2))
-    catalog.enable_generic(catalog_path, dataset, sorted(data), f"LAB_HOME/data/{dataset}")
+    if existing is None:
+        fields = sorted({k.split(".", 1)[1] for k in data}) if dataset == "binance_1h_features" else sorted(data)
+        catalog.add(catalog_path, {**draft, **framework, "fields": fields, "location": f"LAB_HOME/data/{dataset}",
+                                   "cost_model": None, "quality": f"lab import {report['imported']}: {report['n_rows']} rows"})
+    else:
+        catalog.enable_generic(catalog_path, dataset, sorted(data), f"LAB_HOME/data/{dataset}")
     return report
 
 

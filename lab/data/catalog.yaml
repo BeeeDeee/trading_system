@@ -268,3 +268,35 @@ datasets:
     - total
     location: LAB_HOME/data/stablecoin_supply_1d
     cost_model: null
+
+  - id: binance_1h_features
+    asset_class: crypto_spot
+    instruments: 'daily features from hourly Binance spot klines of 105 liquid pairs:
+      <PAIR>.rv (realized volatility of the day from hourly log returns), <PAIR>.ret_asia
+      / .ret_europe / .ret_us (log return of the UTC sessions 00-08, 08-16, 16-24),
+      <PAIR>.vshare_us (share of the day''s quote volume traded 16-24 UTC)'
+    frequency: 1d
+    clock: crypto
+    calendar: 24/7 (UTC days)
+    source: data.binance.vision hourly klines downloaded by market_relations (free)
+    known_biases:
+    - Universe of 105 pairs chosen by liquidity at download time (survivorship).
+    - A day with missing hours is computed from the hours present; days with < 20 hours
+      are dropped.
+    - 'Session returns are parts of the same daily return the price data has: not independent.'
+    forward_source: binance_public_api
+    range:
+    - '2017-08-17'
+    - '2026-08-31'
+    holdout_from: '2023-01-01'
+    fields:
+    - ret_asia
+    - ret_europe
+    - ret_us
+    - rv
+    - vshare_us
+    per_instrument: true
+    loader: generic
+    location: LAB_HOME/data/binance_1h_features
+    cost_model: null
+    quality: 'lab import 2026-10-05: 900865 rows'

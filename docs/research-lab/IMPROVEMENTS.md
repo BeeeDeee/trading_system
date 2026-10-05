@@ -60,7 +60,10 @@ have nothing to combine.
 4. **Warm-up per dataset:** allow indicator history before the trading start (the view starts at the earliest
    period, trading is masked until the latest).
 5. **Combination cards** as in §3, when there is something to combine.
-6. **Faster funnel:** run G1 for several hypotheses in one tick, cache panels across hypotheses.
+6. **Intraday engine** (hourly decisions and fills) for crypto: the hourly data is on disk, but an hourly
+   panel for 100+ pairs over 9 years needs ~1 GB per float matrix and a cost model for hourly taker fills;
+   realistic only with more RAM (see §5). Until then the hourly timeframe enters as daily features.
+7. **Faster funnel:** run G1 for several hypotheses in one tick, cache panels across hypotheses.
 
 ## 5. Improvements that cost money (owner decisions)
 

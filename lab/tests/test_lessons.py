@@ -73,3 +73,13 @@ def test_librarian_definition_and_workspace(lab, card):
     inv = invocations.start(lab, "librarian", None, task="lessons")
     cases = json.loads((inv.workspace / "cases.json").read_text())
     assert cases and "gate_results" in cases[0] and (inv.workspace / "lessons.md").exists()
+
+
+def test_scout_brief_targets_the_least_explored_cell(lab, card):
+    from lab.framework import briefs
+    first = briefs.choose(lab)
+    assert first == {"horizon": "short", "group": "crypto", "multi_timeframe": False}
+    submit(lab, dict(card, asset_classes=["crypto_spot"], holding_period={"typical_days": 2, "rebalance": "daily"}))
+    b = briefs.choose(lab)
+    assert (b["horizon"], b["group"]) != ("short", "crypto") and b["multi_timeframe"]
+    assert "Combine timeframes" in briefs.text(b)

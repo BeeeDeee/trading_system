@@ -111,7 +111,11 @@ def synthetic_view(card: dict, cat: dict, seed: int) -> DataView:
     for r in reqs:                                                 # signal-only datasets (Archivist ingest)
         if r["dataset"] in TRADABLE:
             continue
-        for f in cat[r["dataset"]].get("fields") or r.get("fields") or []:   # what the gate runner will attach
+        fields = cat[r["dataset"]].get("fields") or r.get("fields") or []   # what the gate runner will attach
+        if cat[r["dataset"]].get("per_instrument"):        # keys "<PAIR>.<field>" for the card's pairs
+            pairs = [n.removesuffix(".P") for n, c in zip(names, classes) if c.startswith("crypto")]
+            fields = [f"{p}.{f}" for p in pairs for f in fields]
+        for f in fields:
             x = 20 + np.cumsum(rng.normal(0, 1, T))
             x[: T // 10] = np.nan                                 # starts later than the prices
             series[f"{r['dataset']}.{f}"] = x

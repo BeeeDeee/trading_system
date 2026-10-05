@@ -41,6 +41,7 @@ command, or reading/writing outside the workspace, discards the whole run.
 ```python
 import numpy as np
 from lab.framework.api import only_on, period_starts, total_return_index, trailing_return, rolling_mean, rolling_std
+from lab.framework.api import completed_period_value, period_return, last_completed_row, ema   # higher timeframes
 
 PARAMS = {...}            # the card's primary values, same names as card.signal.params
 
@@ -97,6 +98,12 @@ Semantics the gate runner relies on:
    universe (`data.col("SPY")`), never by position.
 6. **Fast**: vectorized numpy; G0 and G2 call your function dozens of times on 20+ years of daily rows.
    Pure-Python loops over rows are fine only if they are simple (≈ 10⁴ rows).
+
+**Higher timeframes** (weekly, monthly, quarterly bars) must be built point-in-time: a week or month counts
+only once it is complete. Use `completed_period_value(x, data.dates, "W"|"M"|"Q")` (value at the close of the
+last completed period) and `period_return(index, data.dates, unit, k)` (return over the last k completed
+periods); never take "the last row of the current week", which needs tomorrow's date. Hourly-derived inputs
+come as daily series from `binance_1h_features` (`data.series["binance_1h_features.<PAIR>.rv"]` etc.).
 
 The framework does execution, costs, cash, benchmarks and all statistics. Do not compute P&L, Sharpe or
 anything about performance, and do not add filters, stops, volatility scaling or parameters that are not in
