@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "deny": [
+      "WebFetch",
+      "Read(//home/kapo/ccode/strategy_backtester_2026_sep/data/**)",
+      "Read(//home/kapo/ccode/market_relations_2026_oct/data/**)",
+      "Read(//srv/**)",
+      "Read(~/.claude/**)",
+      "Read(~/.config/**)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(uv:*)"
+    ]
+  }
+}

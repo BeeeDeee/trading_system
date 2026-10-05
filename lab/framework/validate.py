@@ -32,6 +32,27 @@ def specified_missing(card: dict) -> list[str]:
     return [f for f in required if not card.get(f)]
 
 
+def grid_problems(card: dict, both_sides: bool = False) -> list[str]:
+    """G2 tests one grid step each way around the primary value, so the grid must allow that: the value is
+    in the grid, a numeric grid is strictly increasing, and there is at least one neighbor. `both_sides`
+    also asks for a neighbor on each side of a numeric value (advice: a value at the edge of its grid, such as
+    a weight of 1.0 under gross <= 1, is tested on one side only)."""
+    out = []
+    for name, p in (card.get("signal", {}).get("params") or {}).items():
+        grid, value = p.get("grid", []), p.get("value")
+        if value not in grid:
+            out.append(f"param {name}: value {value!r} is not in its grid {grid}")
+            continue
+        numeric = all(isinstance(g, (int, float)) and not isinstance(g, bool) for g in grid)
+        if numeric and any(b <= a for a, b in zip(grid, grid[1:])):
+            out.append(f"param {name}: numeric grid must be strictly increasing, got {grid}")
+        elif both_sides and numeric and grid.index(value) in (0, len(grid) - 1):
+            out.append(f"param {name}: value {value} needs a grid neighbor on each side, got {grid}")
+        elif len(grid) < 2:
+            out.append(f"param {name}: grid needs at least one alternative to {value!r}")
+    return out
+
+
 def payload_errors(msg_type: str, payload: dict) -> list[str]:
     defs = _schema("messages")["$defs"]
     if msg_type not in defs:

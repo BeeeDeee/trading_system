@@ -20,7 +20,7 @@ from pathlib import Path
 
 import yaml
 
-from lab.framework import states, validate
+from lab.framework import agents, catalog, states, validate
 from lab.framework.blackboard import Lab, LabError, sha256
 from lab.framework.db import Tx, dumps, now
 
@@ -36,7 +36,7 @@ class Invocation:
     workspace: Path
 
 
-def start(lab: Lab, agent: str, hid: str | None = None, model: str = "stub") -> Invocation:
+def start(lab: Lab, agent: str, hid: str | None = None, model: str = "stub", task: str | None = None) -> Invocation:
     if agent not in states.LLM_AGENTS:
         raise LabError(f"{agent} is not an agent")
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
@@ -47,7 +47,7 @@ def start(lab: Lab, agent: str, hid: str | None = None, model: str = "stub") -> 
     ws = lab.paths.workspaces / inv_id
     try:
         inbox = [_message_dict(m) for m in lab.inbox(agent, hid)]
-        _render(lab, ws, inv_id, agent, hid, inbox)
+        _render(lab, ws, inv_id, agent, hid, inbox, task)
         with Tx(lab.con):
             lab.con.execute(
                 "INSERT INTO agent_invocations (id, agent, model, hypothesis_id, workspace, input_message_ids,"
@@ -83,10 +83,11 @@ def _message_dict(m) -> dict:
             "created_at": m["created_at"]}
 
 
-def _render(lab: Lab, ws: Path, inv_id: str, agent: str, hid: str | None, inbox: list[dict]) -> None:
+def _render(lab: Lab, ws: Path, inv_id: str, agent: str, hid: str | None, inbox: list[dict],
+            task: str | None) -> None:
     ws.mkdir(parents=True)
     write = lambda name, obj: (ws / name).write_text(json.dumps(obj, indent=2, ensure_ascii=False))  # noqa: E731
-    write("context.json", {"invocation_id": inv_id, "agent": agent, "hypothesis_id": hid})
+    write("context.json", {"invocation_id": inv_id, "agent": agent, "hypothesis_id": hid, "task": task})
     write("inbox.json", inbox)
     write(OUTBOX, {"invocation_id": inv_id, "messages": []})
     write("registry.json", [
@@ -103,6 +104,7 @@ def _render(lab: Lab, ws: Path, inv_id: str, agent: str, hid: str | None, inbox:
         if existing.exists():
             shutil.copytree(existing, ws / "strategy", ignore=shutil.ignore_patterns("__pycache__"))
     (ws / "strategy").mkdir(exist_ok=True)
+    agents.render_context(lab.paths, ws, agents.context_items(agent))
 
 
 # ---------------------------------------------------------------------------- staged mode (agent side)
@@ -111,6 +113,8 @@ def stage(ws: Path, msg_type: str, to: str, hid: str | None, payload: dict) -> i
     """Append one message to the workspace outbox after a local check (the real check is in finish())."""
     ctx = json.loads((ws / "context.json").read_text())
     errors = validate.payload_errors(msg_type, payload)
+    if msg_type in ("NEW_HYPOTHESIS", "REVISION") and isinstance(payload.get("card"), dict):
+        errors += [f"card: {e}" for e in validate.card_errors(payload["card"])]
     rule = states.MESSAGE_RULES.get(msg_type, {})
     if ctx["agent"] not in rule.get("from", ()):
         errors.append(f"{ctx['agent']} cannot send {msg_type}")
@@ -122,6 +126,38 @@ def stage(ws: Path, msg_type: str, to: str, hid: str | None, payload: dict) -> i
     box["messages"].append({"type": msg_type, "to": to, "hypothesis_id": hid, "payload": payload})
     (ws / OUTBOX).write_text(json.dumps(box, indent=2, ensure_ascii=False))
     return len(box["messages"])
+
+
+def check_card(ws: Path, rel: str) -> tuple[list[str], list[str]]:
+    """What the framework will say about a card, before it is sent: (errors, warnings). Errors keep the card
+    in IDEA or refuse it; warnings are advice. Uses only workspace files (catalog, registry)."""
+    card = read_card(ws, rel)
+    if not isinstance(card, dict):
+        return [f"{rel} is not a YAML mapping"], []
+    card = {k: v for k, v in card.items() if k not in CARD_DROP}
+    errors = validate.card_errors(card)
+    if errors:
+        return errors, []
+    errors += [f"missing or empty for SPECIFIED: {f}" for f in validate.specified_missing(card)]
+    errors += validate.grid_problems(card)
+    warnings = [w for w in validate.grid_problems(card, both_sides=True) if w not in errors]
+    if card.get("data_requirements"):
+        res = catalog.resolve(ws / "catalog.yaml", card["data_requirements"])
+        errors += [f"dataset {r['dataset']} is not in the catalog (the card would go to BLOCKED_DATA)"
+                   for r in res.missing]
+        errors += res.problems
+    registry = json.loads((ws / "registry.json").read_text())
+    title = card["title"].strip().lower()
+    warnings += [f"same title as {h['id']} ({h['status']})" for h in registry
+                 if h["title"].strip().lower() == title]
+    same_family = [h["id"] for h in registry if h["family"] == card["family"]]
+    if same_family:
+        warnings.append(f"family {card['family']!r} already has {len(same_family)} hypotheses ({', '.join(same_family)}); "
+                        "the duplicate check compares signal descriptions within the family")
+    return errors, warnings
+
+
+CARD_DROP = {"id", "version", "status", "history", "terminal", "author_agent"}
 
 
 def read_card(ws: Path, rel: str) -> dict:
@@ -139,7 +175,10 @@ def _inside(ws: Path, rel: str) -> Path:
 # ---------------------------------------------------------------------------- finish (framework side)
 
 def finish(lab: Lab, inv_id: str, exit_code: int = 0, *, transcript_path: str | None = None,
-           usage: dict | None = None) -> str:
+           usage: dict | None = None, violations: list[str] | None = None, timed_out: bool = False,
+           note: str | None = None) -> str:
+    """Apply the outbox, or nothing. `violations` (from the transcript audit) discard the whole run and raise
+    an ALERT to the owner: an agent that tried to step outside its workspace does not get its messages in."""
     row = lab.con.execute("SELECT * FROM agent_invocations WHERE id = ?", (inv_id,)).fetchone()
     if row is None:
         raise LabError(f"unknown invocation {inv_id}")
@@ -147,8 +186,12 @@ def finish(lab: Lab, inv_id: str, exit_code: int = 0, *, transcript_path: str | 
         return row["outcome"]  # idempotent
     agent, hid, ws = row["agent"], row["hypothesis_id"], Path(row["workspace"])
     usage, box, plan = usage or {}, None, None
-    if exit_code != 0:
-        outcome, error = "failed", f"exit code {exit_code}"   # a crashed run's partial outbox is not applied
+    if violations:
+        outcome, error = "policy_violation", "; ".join(violations)
+    elif timed_out:
+        outcome, error = "timeout", note or "wall-clock limit"
+    elif exit_code != 0:
+        outcome, error = "failed", note or f"exit code {exit_code}"   # a crashed run's outbox is not applied
     else:
         try:
             box = json.loads((ws / OUTBOX).read_text())
@@ -169,6 +212,9 @@ def finish(lab: Lab, inv_id: str, exit_code: int = 0, *, transcript_path: str | 
     else:
         with Tx(lab.con):
             _finish_row(lab, inv_id, exit_code, outcome, error, box, transcript_path, usage)
+        if outcome == "policy_violation":
+            lab.send("ALERT", "system", "human", hid, {"severity": "critical", "text":
+                     f"{agent} run {inv_id} discarded, policy violation: {error}"[:2000]})
     _release(lab, inv_id)
     return outcome
 

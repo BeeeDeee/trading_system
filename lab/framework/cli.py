@@ -10,6 +10,7 @@ Two modes:
 import argparse
 import json
 import os
+import shlex
 import sys
 import tempfile
 from pathlib import Path
@@ -21,7 +22,7 @@ from lab.framework.blackboard import Lab, LabError
 from lab.framework.paths import default_paths
 from lab.framework.states import ACTORS, FUNNEL, HUMAN, S
 
-STAGED_COMMANDS = {"send", "inbox", "context"}
+STAGED_COMMANDS = {"send", "inbox", "context", "check"}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -70,6 +71,15 @@ def _parser() -> argparse.ArgumentParser:
     s = sub.add_parser("inbox", help="unread messages")
     s.add_argument("agent", nargs="?")
     sub.add_parser("context", help="the current agent run (staged mode)")
+    s = sub.add_parser("check", help="what the framework will say about a card (staged mode)")
+    s.add_argument("card", type=Path)
+    s = sub.add_parser("agent", help="run one headless agent now (claude -p), apply its outbox, tick")
+    s.add_argument("agent")
+    s.add_argument("--hyp", help="hypothesis to work on (leased for the run)")
+    s.add_argument("--task", help="task text for the agent (default: propose / answer)")
+    s.add_argument("--dry-run", action="store_true", help="render the workspace, print the command, run nothing")
+    s = sub.add_parser("factsheets", help="build the descriptive dataset fact sheets for the Scout")
+    s.add_argument("--rebuild", action="store_true")
     s = sub.add_parser("tick", help="deterministic phase: react to messages, run due gates")
     g = s.add_mutually_exclusive_group()
     g.add_argument("--no-gates", action="store_true", help="react to messages only")
@@ -100,6 +110,14 @@ def _payload(args, base: Path) -> dict:
 def _staged(args, ws: Path) -> int:
     if args.cmd == "context":
         print((ws / "context.json").read_text())
+    elif args.cmd == "check":
+        errors, warnings = invocations.check_card(ws, str(args.card))
+        for e in errors:
+            print(f"error: {e}")
+        for w in warnings:
+            print(f"warning: {w}")
+        print("ok" if not errors else f"{len(errors)} error(s): fix them before sending")
+        return 1 if errors else 0
     elif args.cmd == "inbox":
         print((ws / "inbox.json").read_text())
     else:
@@ -175,9 +193,46 @@ def _direct(args) -> int:
             for d in catalog.load(lab.paths.catalog).values():
                 print(f"{d['id']:<22} {d['asset_class']:<12} {d['frequency']:<6} {d['range'][0]}..{d['range'][1]}"
                       f"  holdout {d['holdout_from']}  forward: {d['forward_source'] or '-'}")
-        case "context":
-            raise LabError("`lab context` only exists inside an agent run")
+        case "context" | "check":
+            raise LabError(f"`lab {args.cmd}` only exists inside an agent run")
+        case "agent":
+            return _run_agent(lab, args)
+        case "factsheets":
+            from lab.framework import factsheets
+            print(factsheets.get(lab.paths.home, lab.paths.catalog, rebuild=args.rebuild))
     return 0
+
+
+def _run_agent(lab: Lab, args) -> int:
+    """One agent run by hand (step 3: every agent's first runs are supervised by the owner)."""
+    from lab.framework import headless
+    runner = headless.ClaudeRunner(args.agent)
+    tick.tick(lab, None)
+    task = args.task or ("answer" if args.hyp else "propose")
+    inv = invocations.start(lab, args.agent, args.hyp, model=runner.model, task=task)
+    print(f"invocation {inv.id}\nworkspace  {inv.workspace}")
+    if args.dry_run:
+        cmd = headless.command(runner.spec, headless.task_prompt(inv))
+        print(" ".join(shlex.quote(c) if i != cmd.index("--system-prompt") + 1 else "<prompt>"
+                       for i, c in enumerate(cmd)))
+        print(invocations.finish(lab, inv.id, 130, note="dry run"))
+        return 0
+    res = runner(lab, inv)
+    outcome = invocations.finish(lab, inv.id, res.exit_code, transcript_path=res.transcript_path, usage=res.usage,
+                                 violations=res.violations, timed_out=res.timed_out, note=res.note)
+    u = res.usage
+    print(f"outcome    {outcome}  (exit {res.exit_code}, {u.get('wall_s')} s, {u.get('n_turns')} turns, "
+          f"tokens in/out {u.get('tokens_in')}/{u.get('tokens_out')}, model {u.get('model')})")
+    for v in res.violations:
+        print(f"VIOLATION  {v}")
+    if res.note:
+        print(f"note       {res.note}")
+    print(f"transcript {res.transcript_path}")
+    for line in tick.tick(lab, None):
+        print(line)
+    if u.get("result_text"):
+        print("\n" + u["result_text"])
+    return 0 if outcome == "applied" else 1
 
 
 if __name__ == "__main__":

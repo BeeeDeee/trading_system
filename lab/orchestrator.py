@@ -1,8 +1,8 @@
 """Orchestrator: picks pending work, runs one agent at a time, applies the result. Deterministic.
 
 One cycle = tick (deterministic work) -> pick the next agent task -> start invocation -> run the agent
--> finish (apply outbox) -> tick. Who runs the agent is pluggable: stub functions in step 1, headless
-`claude -p --agent <name>` from step 3/4 on. Budget, timeouts and the systemd timer come in step 4.
+-> finish (apply outbox) -> tick. Who runs the agent is pluggable: stub functions (tests, demo) or
+`headless.ClaudeRunner` (`claude -p` per lab/agents/agents.yaml). Budget and the systemd timer come in step 4.
 """
 
 from collections.abc import Callable
@@ -12,11 +12,13 @@ from lab.framework import invocations, tick
 from lab.framework.blackboard import Lab
 from lab.framework.db import now
 from lab.framework.gates import Evaluator
+from lab.framework.headless import RunResult
 from lab.framework.invocations import Invocation
 from lab.framework.states import S
 
-# runner(lab, invocation) -> exit code; the agent's effects are only the files in its workspace
-Runner = Callable[[Lab, Invocation], int]
+# runner(lab, invocation) -> exit code (stubs) or RunResult (headless claude); the agent's effects are only
+# the files in its workspace and, for headless runs, a transcript that finish() audits
+Runner = Callable[[Lab, Invocation], "int | RunResult"]
 
 
 @dataclass(frozen=True)
@@ -49,12 +51,15 @@ def run_cycle(lab: Lab, evaluator: Evaluator | None, runners: dict[str, Runner])
         if task.agent not in runners:
             continue
         inv = invocations.start(lab, task.agent, task.hypothesis_id, model=getattr(
-            runners[task.agent], "model", "stub"))
+            runners[task.agent], "model", "stub"), task=task.why)
         try:
-            code = runners[task.agent](lab, inv)
-        except Exception:
-            code = 1
-        invocations.finish(lab, inv.id, code)
+            res = runners[task.agent](lab, inv)
+        except Exception as e:
+            res = RunResult(1, note=f"runner crashed: {type(e).__name__}: {e}")
+        if isinstance(res, int):   # stub agents return an exit code
+            res = RunResult(res)
+        invocations.finish(lab, inv.id, res.exit_code, transcript_path=res.transcript_path, usage=res.usage,
+                           violations=res.violations, timed_out=res.timed_out, note=res.note)
         tick.tick(lab, evaluator)
         return task
     return None

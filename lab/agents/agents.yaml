@@ -1,0 +1,22 @@
+# Headless agent definitions (framework-owned; agents never edit this file).
+#
+# The orchestrator runs `claude -p` with the agent's prompt as the whole system prompt, the workspace as cwd,
+# only the tools listed here, and `--permission-mode dontAsk` (anything not allowed is denied). After the run the
+# transcript is audited: a tool call outside the workspace or a Bash command other than `lab <allowed verb>`
+# rejects the whole outbox (PLAN §5, soft layer; the OS users of step 4 are the hard layer).
+#
+# context: framework files copied into the workspace before the run (see lab/framework/agents.py).
+# Models and budget: decision Q4 (Opus for Scout, Builder, Skeptic; Sonnet for the rest).
+
+defaults:
+  timeout_s: 900
+  effort: high
+  tools: [Read, Write, Edit, Glob, Grep, Bash]
+  lab_verbs: [send, check, inbox, context]
+
+agents:
+  scout:
+    model: claude-opus-5-5
+    prompt: scout.md
+    tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch]   # literature search; no WebFetch (data-blind)
+    context: [factsheets, prior_studies, card_schema, card_example, gates]
