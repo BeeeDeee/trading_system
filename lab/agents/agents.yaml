@@ -52,3 +52,11 @@ agents:
     lab_verbs: [send, inbox, context]
     timeout_s: 1200
     context: [cases, lessons, prior_studies]
+
+  chair:
+    model: claude-sonnet-5-5
+    prompt: chair.md
+    tools: [Read, Write, Edit, Glob, Grep, Bash]
+    lab_verbs: [send, inbox, context]
+    timeout_s: 900
+    context: [families, lessons, prior_studies]

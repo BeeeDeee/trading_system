@@ -126,6 +126,15 @@ CREATE TABLE IF NOT EXISTS lessons (    -- accepted LESSON messages (refused one
     ts TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS family_merges (   -- families consolidated by the Chair or the owner; never split
+    from_family TEXT PRIMARY KEY,
+    into_family TEXT NOT NULL,
+    actor TEXT NOT NULL,
+    reason TEXT NOT NULL,
+    message_id INTEGER,
+    ts TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS budget (
     day TEXT NOT NULL,
     agent TEXT NOT NULL,
@@ -154,7 +163,7 @@ CREATE TABLE IF NOT EXISTS counters (
 );
 """
 
-APPEND_ONLY = ("transitions", "gate_results", "trials", "canary_runs", "lessons")
+APPEND_ONLY = ("transitions", "gate_results", "trials", "canary_runs", "lessons", "family_merges")
 
 _TRIGGERS = "".join(f"""
 CREATE TRIGGER IF NOT EXISTS {t}_no_update BEFORE UPDATE ON {t}

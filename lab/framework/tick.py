@@ -108,7 +108,7 @@ def _spec_and_data(lab: Lab, hid: str, m) -> str:
 def _duplicate_of(lab: Lab, hid: str, card: dict) -> str | None:
     text = card["signal"]["description"].lower()
     for other in lab.hypotheses():
-        if other["id"] == hid or other["family"] != card["family"]:
+        if other["id"] == hid or lab.canonical_family(other["family"]) != lab.canonical_family(card["family"]):
             continue
         o = json.loads(other["card_json"])
         if o["title"].strip().lower() == card["title"].strip().lower() or SequenceMatcher(
@@ -210,7 +210,13 @@ def _lesson(lab, m, payload, evaluator):
     return f"lesson on {m['hypothesis_id']} recorded"
 
 
-REACTIONS = {"LESSON": _lesson, "NEW_HYPOTHESIS": _new_hypothesis, "REVISION": _revision, "DATA_READY": _data_ready,
+def _family_merge(lab, m, payload, evaluator):
+    lab.merge_family(payload["from_family"], payload["into_family"], m["from_agent"], payload["reason"],
+                     message_id=m["id"])
+    return f"family {payload['from_family']} merged into {lab.canonical_family(payload['into_family'])}"
+
+
+REACTIONS = {"FAMILY_MERGE": _family_merge, "LESSON": _lesson, "NEW_HYPOTHESIS": _new_hypothesis, "REVISION": _revision, "DATA_READY": _data_ready,
              "IMPL_DONE": _impl_done, "OBJECTION": _objection, "VERDICT": _verdict}
 
 

@@ -275,6 +275,8 @@ def _default_task(lab: Lab, agent: str, hid: str | None) -> str:
         return "data requests"
     if agent == "librarian":
         return "lessons"
+    if agent == "chair":
+        return "backlog"
     if agent == "scout" and not hid:
         from lab.framework import briefs
         return briefs.text(briefs.choose(lab))

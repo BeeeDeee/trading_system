@@ -201,10 +201,57 @@ class Lab:
                                " ORDER BY id DESC LIMIT 1", (hid, version, gate)).fetchone()
         return bool(row and row["passed"])
 
+    # ---------------------------------------------------------------- families (multiple-testing groups)
+
+    def canonical_family(self, family: str) -> str:
+        seen = set()
+        while family not in seen:
+            seen.add(family)
+            row = self.con.execute("SELECT into_family FROM family_merges WHERE from_family = ?", (family,)).fetchone()
+            if row is None:
+                return family
+            family = row[0]
+        return family
+
+    def family_members(self, family: str) -> list[str]:
+        """Every family name merged into the same canonical family (trials are counted over all of them)."""
+        root = self.canonical_family(family)
+        names = {r[0] for r in self.con.execute("SELECT family FROM hypotheses")} | {
+            r[0] for r in self.con.execute("SELECT from_family FROM family_merges")} | {root}
+        return sorted(f for f in names if self.canonical_family(f) == root)
+
+    def merge_family(self, from_family: str, into_family: str, actor: str, reason: str,
+                     message_id: int | None = None) -> None:
+        if actor not in ("chair", "human"):
+            raise LabError(f"{actor} cannot merge families")
+        known = {r[0] for r in self.con.execute("SELECT family FROM hypotheses")}
+        for f in (from_family, into_family):
+            if f not in known:
+                raise LabError(f"unknown family {f!r}")
+        if self.canonical_family(from_family) != from_family:
+            raise LabError(f"{from_family!r} is already merged into {self.canonical_family(from_family)!r}")
+        into = self.canonical_family(into_family)
+        if into == from_family:
+            raise LabError("a family cannot be merged into itself")
+        with Tx(self.con):
+            self.con.execute("INSERT INTO family_merges (from_family, into_family, actor, reason, message_id, ts) "
+                             "VALUES (?, ?, ?, ?, ?, ?)", (from_family, into, actor, reason, message_id, now()))
+
+    def _in_family(self, family: str) -> tuple[str, list[str]]:
+        members = self.family_members(family)
+        return ",".join("?" * len(members)), members
+
     def family_trials(self, family: str) -> int:
-        return int(self.con.execute("SELECT COUNT(*) FROM trials WHERE family = ?", (family,)).fetchone()[0])
+        q, members = self._in_family(family)
+        return int(self.con.execute(f"SELECT COUNT(*) FROM trials WHERE family IN ({q})", members).fetchone()[0])
+
+    def family_trial_sharpes(self, family: str) -> list[float]:
+        q, members = self._in_family(family)
+        return [r[0] for r in self.con.execute(
+            f"SELECT sharpe FROM trials WHERE family IN ({q}) AND sharpe IS NOT NULL", members)]
 
     def family_holdout_attempts(self, family: str) -> int:
+        q, members = self._in_family(family)
         return int(self.con.execute(
             "SELECT COUNT(*) FROM gate_results g JOIN hypotheses h ON h.id = g.hypothesis_id "
-            "WHERE g.gate = 'G4' AND h.family = ?", (family,)).fetchone()[0])
+            f"WHERE g.gate = 'G4' AND h.family IN ({q})", members).fetchone()[0])

@@ -426,8 +426,7 @@ class QlabEvaluator:
         ex = self.excess(ctx, run.returns, win)
         sb = _per_period(self.excess(ctx, bench, win))
         family = ctx.card["family"]
-        rows = lab.con.execute("SELECT sharpe FROM trials WHERE family = ? AND sharpe IS NOT NULL", (family,))
-        family_sharpes = np.array([r[0] for r in rows], dtype=float)
+        family_sharpes = np.array(lab.family_trial_sharpes(family), dtype=float)   # merged families included
         n_family = lab.family_trials(family)
         prior = th["literature_prior_trials"] if ctx.card.get("references") else 0
         n = max(n_family + prior, th["min_trials"])

@@ -76,6 +76,8 @@ def render_context(lab, ws: Path, items: tuple[str, ...], hid: str | None = None
                 (ws / "lessons.md").write_text(f.read_text() if f.exists() else "# Lessons\n\nNone yet.\n")
             case "cases":
                 (ws / "cases.json").write_text(json.dumps(cases(lab), indent=2, ensure_ascii=False, default=str))
+            case "families":
+                (ws / "families.json").write_text(json.dumps(families(lab), indent=2, ensure_ascii=False))
             case "blocked":
                 (ws / "blocked.json").write_text(json.dumps(blocked(lab), indent=2, ensure_ascii=False))
             case "family":
@@ -102,10 +104,26 @@ def history(lab, hid: str) -> dict:
 def family(lab, hid: str) -> dict:
     """The multiple-testing context: every hypothesis and every recorded trial of the same family."""
     fam = lab.hypothesis(hid)["family"]
-    hyps = [{"id": r["id"], "title": r["title"], "status": r["status"], "reject_stage": r["reject_stage"],
-             "reject_code": r["reject_code"]} for r in lab.hypotheses() if r["family"] == fam]
-    n = lab.con.execute("SELECT COUNT(*) FROM trials WHERE family = ?", (fam,)).fetchone()[0]
-    return {"family": fam, "trials_recorded": n, "hypotheses": hyps}
+    members = lab.family_members(fam)
+    hyps = [{"id": r["id"], "title": r["title"], "family": r["family"], "status": r["status"],
+             "reject_stage": r["reject_stage"], "reject_code": r["reject_code"]}
+            for r in lab.hypotheses() if r["family"] in members]
+    return {"family": fam, "canonical": lab.canonical_family(fam), "merged_names": members,
+            "trials_recorded": lab.family_trials(fam), "hypotheses": hyps}
+
+
+def families(lab) -> list[dict]:
+    """The Chair's view: every canonical family with its names, hypotheses, trials and holdout attempts."""
+    out = {}
+    for h in lab.hypotheses():
+        root = lab.canonical_family(h["family"])
+        f = out.setdefault(root, {"family": root, "merged_names": lab.family_members(root),
+                                  "trials": lab.family_trials(root),
+                                  "holdout_attempts": lab.family_holdout_attempts(root), "hypotheses": []})
+        f["hypotheses"].append({"id": h["id"], "title": h["title"], "family": h["family"], "status": h["status"],
+                                "reject_stage": h["reject_stage"], "reject_code": h["reject_code"],
+                                "updated_at": h["updated_at"]})
+    return list(out.values())
 
 
 def blocked(lab) -> list[dict]:

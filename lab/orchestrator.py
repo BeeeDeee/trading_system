@@ -40,6 +40,8 @@ def pending_tasks(lab: Lab) -> list[Task]:
     tasks += [Task("builder", hid, "fix" if lab.inbox("builder", hid) else "implement")
               for hid in free(S.DATA_READY)]
     tasks += [Task("scout", hid, "answer") for hid in free(S.IDEA) if lab.inbox("scout", hid)]
+    if lab.inbox("chair"):
+        tasks.append(Task("chair", None, "backlog"))
     if lab.inbox("librarian"):
         tasks.append(Task("librarian", None, "record results and lessons"))
     return tasks

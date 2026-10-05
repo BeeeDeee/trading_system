@@ -344,6 +344,28 @@
           "description": "optional: this family looks like the same mechanism as another family (for the Chair)"
         }
       }
+    },
+    "FAMILY_MERGE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from_family",
+        "into_family",
+        "reason"
+      ],
+      "description": "Consolidate two families that test the same mechanism (never split). Trials of both count together from now on.",
+      "properties": {
+        "from_family": {
+          "type": "string"
+        },
+        "into_family": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 20
+        }
+      }
     }
   }
 }
