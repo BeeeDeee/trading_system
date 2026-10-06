@@ -1,0 +1,50 @@
+title: 'Calibration: delta-neutral funding carry on BTC and ETH (long spot, short perp)'
+family: calibration-carry
+asset_classes:
+- crypto_spot
+- crypto_perp
+universe:
+  kind: instruments
+  instruments:
+  - BTCUSDT
+  - ETHUSDT
+  - BTCUSDT.P
+  - ETHUSDT.P
+mechanism:
+  why: 'Calibration card: research 8, long spot and short the perpetual so that the position earns the funding paid
+    by leveraged longs.'
+  counterparty: calibration, not a real hypothesis
+  why_not_arbitraged: calibration, not a real hypothesis
+signal:
+  description: 'Weekly, after the close of the first trading day: hold BTC and ETH spot long and the same notional
+    short in the BTC and ETH perpetuals, each leg gross/4.'
+  params:
+    gross:
+      value: 0.9
+      grid:
+      - 0.8
+      - 0.9
+      - 1.0
+data_requirements:
+- dataset: binance_spot_1d
+  frequency: 1d
+  instruments:
+  - BTCUSDT
+  - ETHUSDT
+  period:
+  - '2019-12-01'
+  - '2022-12-31'
+- dataset: binance_perp_1d
+  frequency: 1d
+  instruments:
+  - BTCUSDT.P
+  - ETHUSDT.P
+  period:
+  - '2019-12-01'
+  - '2022-12-31'
+holding_period:
+  typical_days: 60
+  rebalance: weekly
+market_exposure: market_neutral
+falsification_criteria:
+- 'Calibration run: compared with expected.yaml.'

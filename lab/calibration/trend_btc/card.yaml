@@ -1,0 +1,36 @@
+title: 'Calibration: BTC above its 100-day average (spot), cash otherwise'
+family: calibration-trend
+asset_classes:
+- crypto_spot
+universe:
+  kind: instruments
+  instruments:
+  - BTCUSDT
+mechanism:
+  why: 'Calibration card: the trend filter that research 9 found indistinguishable from buy and hold on BTC.'
+  counterparty: calibration, not a real hypothesis
+  why_not_arbitraged: calibration, not a real hypothesis
+signal:
+  description: 'Daily after the close: hold BTC fully if the total-return index is above its simple moving average
+    of sma_days days, otherwise hold cash.'
+  params:
+    sma_days:
+      value: 100
+      grid:
+      - 50
+      - 100
+      - 200
+data_requirements:
+- dataset: binance_spot_1d
+  frequency: 1d
+  instruments:
+  - BTCUSDT
+  period:
+  - '2018-01-01'
+  - '2022-12-31'
+holding_period:
+  typical_days: 30
+  rebalance: daily
+market_exposure: long_only
+falsification_criteria:
+- 'Calibration run: compared with expected.yaml.'

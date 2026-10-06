@@ -1,0 +1,43 @@
+title: 'Calibration: 5-day reversal stocks (bottom decile, daily)'
+family: calibration-reversal
+asset_classes:
+- us_equity
+universe:
+  kind: liq_n
+  n: 500
+mechanism:
+  why: 'Calibration card: a known strategy from the literature or from the owner''s earlier studies, run through
+    the judge to check that its verdict agrees with what is already known about it.'
+  counterparty: calibration, not a real hypothesis
+  why_not_arbitraged: calibration, not a real hypothesis
+signal:
+  description: 'Daily, after the close: among the universe members, rank by the total return of the last lookback_days
+    days and hold the lowest pct share with equal weights.'
+  params:
+    lookback_days:
+      value: 5
+      grid:
+      - 3
+      - 5
+      - 10
+    pct:
+      value: 0.1
+      grid:
+      - 0.05
+      - 0.1
+      - 0.2
+data_requirements:
+- dataset: sharadar_sep
+  frequency: 1d
+  period:
+  - '1999-01-04'
+  - '2020-12-31'
+holding_period:
+  typical_days: 3
+  rebalance: daily
+market_exposure: long_only
+falsification_criteria:
+- 'Calibration run: the verdict is compared with the expected outcome in expected.yaml.'
+references:
+- cite: Jegadeesh (1990) Evidence of predictable behavior of security returns, Journal of Finance
+  year: 1990

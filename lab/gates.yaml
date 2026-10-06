@@ -34,6 +34,7 @@ G1:   # basic, dev period, full universe, primary configuration only
   bootstrap_samples: 2000
   bootstrap_mean_block_days: 20
   min_position_entries: 100
+  continuous_min_exposure: 0.5     # at or above this mean exposure rebalancing dates count as bets too (carry)
   min_decision_dates: 36           # with non-zero turnover
   min_mean_exposure: 0.20
   max_drawdown_vs_benchmark: 1.5

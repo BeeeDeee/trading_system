@@ -124,7 +124,7 @@ datasets:
     instruments: "all Binance spot USDT pairs (stablecoins and wrapped assets excluded by loaders)"
     fields: [ret_co, ret_oc, close, high, low, quote_volume]
     frequency: 1d
-    range: ["2017-08-17", "2026-10-03"]
+    range: ["2017-08-17", "2026-08-31"]   # the loadable research 9 panel ends 2026-08-31 (raw files go to 2026-10-03)
     clock: crypto
     calendar: "24/7 (UTC days)"
     source: "data.binance.vision (free), snapshot binance_2026-10-03"

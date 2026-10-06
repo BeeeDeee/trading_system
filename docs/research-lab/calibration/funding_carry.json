@@ -1,0 +1,67 @@
+{
+ "name": "funding_carry",
+ "status": "REJECTED",
+ "died_at": "G2",
+ "reason": "g2_max_subperiod_share",
+ "gates": [
+  {
+   "gate": "G0",
+   "passed": true,
+   "reason": null,
+   "failed_checks": [],
+   "checks": {},
+   "headline": {}
+  },
+  {
+   "gate": "G1",
+   "passed": true,
+   "reason": null,
+   "failed_checks": [],
+   "checks": {
+    "decision_dates": 156.0,
+    "mean_exposure": 0.878214,
+    "position_entries": 156.0,
+    "sharpe_diff_ci_lower": 6.684801,
+    "sharpe_excess": 8.443794,
+    "sharpe_vs_tbill": 8.443794
+   },
+   "headline": {
+    "sharpe": 8.443793521260222,
+    "bench_sharpe": 0.0,
+    "benchmark": "TBILL",
+    "cagr": 0.09031488684982647,
+    "bench_cagr": 0.008389228828068918,
+    "max_dd": 0.00477602165517399,
+    "mean_exposure": 0.8782138558952899
+   }
+  },
+  {
+   "gate": "G2",
+   "passed": false,
+   "reason": "g2_max_subperiod_share",
+   "failed_checks": [
+    "max_subperiod_share"
+   ],
+   "checks": {
+    "alt_universe": null,
+    "max_subperiod_share": 0.604492,
+    "median_neighbor_sharpe_ratio": 1.0,
+    "neighbors_beating_benchmark": 1.0,
+    "random_entry_percentile": 1.0,
+    "sharpe_costs_x2_vs_benchmark": 6.892087,
+    "subperiods_beating_benchmark": 2.0
+   },
+   "headline": {
+    "sharpe": 8.443793521260222,
+    "bench_sharpe": 0.0,
+    "benchmark": "TBILL"
+   }
+  }
+ ],
+ "expected": {
+  "source": "research 8 (dev 2020-2022 +12 % over T-bill, Sharpe 8; holdout 2023-2026 +0.7 %, CI contains 0)",
+  "dev": "should pass G1 and probably most of G2/G3",
+  "holdout": "must fail G4 (carry vanished after 2023)"
+ },
+ "seconds": 9
+}

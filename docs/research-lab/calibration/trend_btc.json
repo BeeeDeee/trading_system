@@ -1,0 +1,48 @@
+{
+ "name": "trend_btc",
+ "status": "REJECTED",
+ "died_at": "G1",
+ "reason": "g1_sharpe_diff_ci_lower",
+ "gates": [
+  {
+   "gate": "G0",
+   "passed": true,
+   "reason": null,
+   "failed_checks": [],
+   "checks": {},
+   "headline": {}
+  },
+  {
+   "gate": "G1",
+   "passed": false,
+   "reason": "g1_sharpe_diff_ci_lower",
+   "failed_checks": [
+    "position_entries",
+    "sharpe_diff_ci_lower"
+   ],
+   "checks": {
+    "decision_dates": 56.0,
+    "max_dd_vs_benchmark": 0.379705,
+    "mean_exposure": 0.468134,
+    "position_entries": 28.0,
+    "sharpe_diff_ci_lower": -0.050379,
+    "sharpe_excess": 0.422944
+   },
+   "headline": {
+    "sharpe": 1.0317276175627434,
+    "bench_sharpe": 0.6087833453656241,
+    "benchmark": "BTC_HOLD",
+    "cagr": 0.47973497568577605,
+    "bench_cagr": 0.20534535830125766,
+    "max_dd": 0.3797045287413301,
+    "mean_exposure": 0.4681344148319815
+   }
+  }
+ ],
+ "expected": {
+  "source": "research 9 (SMA20 filter Sharpe 0.36 vs 0.34, CI contains 0; drawdowns lower)",
+  "dev": "must fail G1 (no reliable Sharpe improvement over BTC hold)",
+  "holdout": "not reached"
+ },
+ "seconds": 1
+}

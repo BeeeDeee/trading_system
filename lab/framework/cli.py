@@ -87,6 +87,13 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--reason", required=True)
     s = sub.add_parser("import-local", help="owner: make fred_macro / fred_dtb3 (on disk) loadable as signal series")
     s.add_argument("dataset", choices=["fred_macro", "fred_dtb3", "binance_1h_features"])
+    s = sub.add_parser("pause", help="owner: stop agent runs (creates LAB_HOME/PAUSE); gates and ingest continue")
+    s.add_argument("--reason", required=True)
+    sub.add_parser("resume", help="owner: remove the PAUSE file")
+    s = sub.add_parser("calibrate", help="run known strategies through the real gates in a throwaway lab")
+    s.add_argument("name", nargs="?", help="fixture name (default: list)")
+    s.add_argument("--no-holdout", action="store_true")
+    s.add_argument("--root", type=Path, help="scratch directory (default: LAB_HOME/calibration)")
     s = sub.add_parser("ack", help="owner: mark messages in the owner's inbox handled (optionally with a reply)")
     s.add_argument("ids", type=int, nargs="+")
     s.add_argument("--reply", help="answer, sent as a QUESTION back to the sender (agents) or logged (system)")
@@ -270,6 +277,24 @@ def _direct(args) -> int:
             from lab.framework import ingest
             rep = ingest.import_local(lab.paths.home, lab.paths.catalog, args.dataset)
             print(f"{args.dataset}: {len(rep['keys'])} series, {rep['n_rows']} rows, holdout from {rep['holdout_from']}")
+        case "pause":
+            lab.paths.home.mkdir(parents=True, exist_ok=True)
+            (lab.paths.home / "PAUSE").write_text(args.reason + "\n")
+            print("paused: agent runs stop; `lab resume` to continue")
+        case "resume":
+            (lab.paths.home / "PAUSE").unlink(missing_ok=True)
+            print("resumed")
+        case "calibrate":
+            from lab.framework import calibration
+            if not args.name:
+                print("\n".join(calibration.names()))
+            else:
+                res = calibration.run(args.name, args.root or lab.paths.home / "calibration" / args.name,
+                                      through_holdout=not args.no_holdout)
+                print(calibration.save(res))
+                print(f"{res['name']}: {res['status']} {res['died_at'] or ''} {res['reason'] or ''} ({res['seconds']} s)")
+                for g in res["gates"]:
+                    print(f"  {g['gate']} {'pass' if g['passed'] else 'FAIL'} {g['reason'] or ''} {g['failed_checks']}")
         case "ack":
             rows = [lab.con.execute("SELECT * FROM messages WHERE id = ?", (i,)).fetchone() for i in args.ids]
             bad = [i for i, r in zip(args.ids, rows) if r is None or r["to_agent"] != HUMAN]

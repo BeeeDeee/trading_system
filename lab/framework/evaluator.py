@@ -285,7 +285,8 @@ class QlabEvaluator:
         checks = {
             "sharpe_excess": _check(s["sharpe"] - s["bench_sharpe"], ">=", th["min_sharpe_excess"]),
             "sharpe_diff_ci_lower": _check(lower, ">", 0.0),
-            "position_entries": _check(metrics.position_entries(run.sim.held[win]), ">=", th["min_position_entries"]),
+            "position_entries": _check(_bets(metrics.position_entries(run.sim.held[win]), decisions,
+                                             s["mean_exposure"], th), ">=", th["min_position_entries"]),
             "decision_dates": _check(decisions, ">=", th["min_decision_dates"]),
             "mean_exposure": _check(s["mean_exposure"], ">=", th["min_mean_exposure"]),
         }
@@ -537,6 +538,15 @@ def _merge(a: dict, b: dict) -> dict:
         out[k] = _merge(out.get(k, {}), v) if isinstance(v, dict) else v
     return out
 
+
+
+def _bets(entries: int, decisions: int, mean_exposure: float, th: dict) -> int:
+    """Independent bets of a strategy: position entries, but for a book that is invested most of the time
+    (carry, allocation) the rebalancing dates count too: it does not enter and leave, it stays and rebalances
+    (calibration 2026-10-06: delta-neutral funding carry has 4 entries and 156 weekly rebalances)."""
+    if mean_exposure >= th.get("continuous_min_exposure", 2.0):
+        return max(entries, decisions)
+    return entries
 
 
 # ---------------------------------------------------------------------------- G5 (paper)
