@@ -12,7 +12,7 @@ from lab.orchestrator import Policy, gate, production_cycle
 
 from .conftest import Evaluator, submit
 
-NOON = datetime(2026, 10, 6, 12, 0, tzinfo=timezone.utc)
+NOON = datetime.now(timezone.utc).replace(hour=12, minute=0, second=0, microsecond=0)   # budget days are real dates
 
 
 def policy(tmp_path, **over):
@@ -64,3 +64,15 @@ def test_one_cycle_at_a_time(lab, tmp_path):
         fcntl.flock(f, fcntl.LOCK_EX)
         rec = production_cycle(lab, policy(tmp_path), at=NOON, evaluator=Evaluator())
     assert rec["skipped"] == "another cycle is running"
+
+
+def test_infrastructure_failures_pause_and_cost_no_budget(lab, card, tmp_path):
+    from lab.orchestrator import used_today
+    submit(lab, card)
+    broken = lambda lab, inv: RunResult(1, note="sudo: no new privileges flag is set")  # noqa: E731
+    for _ in range(3):
+        production_cycle(lab, policy(tmp_path, daily={"builder": 5, "scout": 0}, total_daily=8), at=NOON,
+                         evaluator=Evaluator(), runners={"builder": broken})
+    assert (lab.paths.home / "PAUSE").exists()
+    assert any("paused" in m["payload_json"] for m in lab.inbox("human"))
+    assert used_today(lab, NOON.date().isoformat()) == {}

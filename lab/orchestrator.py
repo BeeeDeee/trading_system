@@ -128,8 +128,10 @@ class Policy:
 
 
 def used_today(lab: Lab, day: str) -> dict[str, int]:
+    # runs that failed before the model answered (no turns: sudo, binary, network) used no quota
     rows = lab.con.execute("SELECT agent, COUNT(*) FROM agent_invocations WHERE substr(started_at, 1, 10) = ? "
-                           "AND COALESCE(error, '') != 'dry run' GROUP BY agent", (day,))
+                           "AND COALESCE(error, '') != 'dry run' AND NOT (outcome = 'failed' AND n_turns IS NULL) "
+                           "GROUP BY agent", (day,))
     return {a: n for a, n in rows}
 
 
@@ -156,6 +158,13 @@ def propose_brief(lab: Lab, policy: Policy) -> str | None:
     if len(lab.hypotheses(S.DATA_READY)) + len(lab.hypotheses(S.IDEA)) >= policy.propose_when_waiting_below:
         return None
     return briefs.text(briefs.choose(lab))
+
+
+def infrastructure_broken(lab: Lab, n: int = 3) -> bool:
+    """The last n runs all failed before the model answered (sudo, binary, auth): stop, do not retry forever."""
+    rows = lab.con.execute("SELECT outcome, n_turns FROM agent_invocations WHERE COALESCE(error, '') != 'dry run' "
+                           "ORDER BY started_at DESC LIMIT ?", (n,)).fetchall()
+    return len(rows) == n and all(r["outcome"] == "failed" and r["n_turns"] is None for r in rows)
 
 
 RATE_LIMIT_WORDS = ("rate limit", "rate_limit", "usage limit", "429", "overloaded", "quota")
@@ -221,6 +230,12 @@ def production_cycle(lab: Lab, policy_path: Path, *, agents: bool = True, dry_ru
                                       "LIMIT 1").fetchone()
                 ran.append({"agent": task.agent, "hypothesis": task.hypothesis_id, "invocation": row["id"],
                             "outcome": row["outcome"], "error": row["error"]})
+                if infrastructure_broken(lab):
+                    reason = ("the last 3 agent runs failed before the model answered: " + (row["error"] or "")[:300])
+                    (home / "PAUSE").write_text(reason)
+                    lab.send("ALERT", "system", "human", None, {"severity": "critical", "text":
+                             f"agent runs paused (PAUSE file): {reason}. Fix it, then delete the PAUSE file."})
+                    break
                 if row["outcome"] == "failed" and any(w in (row["error"] or "").lower() for w in RATE_LIMIT_WORDS):
                     until = at + timedelta(hours=policy.rate_limit_pause_hours)
                     (home / "RATE_LIMITED_UNTIL").write_text(until.isoformat(timespec="seconds"))

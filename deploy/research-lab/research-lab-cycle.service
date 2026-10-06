@@ -22,11 +22,10 @@ Nice=10
 # 3.9 GB machine shared with the cpb bots: the whole cycle (gates included) stays below this
 MemoryMax=2800M
 CPUQuota=200%
-# sudo -u labagent needs privileges, so no NoNewPrivileges; the rest of the hardening applies
+# sudo -u labagent needs privileges. NoNewPrivileges is off, and so must be every option that implies it
+# (ProtectKernelTunables/Modules/Logs, LockPersonality, RestrictSUIDSGID, SystemCallFilter, PrivateDevices, ...):
+# with them sudo refuses to run ("no new privileges flag is set"). The sandbox for strategy code is bwrap.
 PrivateTmp=true
 ProtectSystem=full
-ProtectKernelTunables=true
-ProtectKernelModules=true
 ProtectControlGroups=true
-LockPersonality=true
 UMask=0007
