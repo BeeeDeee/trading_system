@@ -1,0 +1,109 @@
+{
+ "label": "2026-10-05T16",
+ "locked_at": "2026-10-05T16:02:03.683Z",
+ "locked_ms": 1791216123683,
+ "portfolios": {
+  "funding_kontra": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "QNT",
+     "SUI",
+     "SOL",
+     "BTC",
+     "ETH"
+    ]
+   },
+   "keep": [],
+   "targets": {
+    "BTC": 0.2,
+    "ETH": 0.2,
+    "QNT": 0.2,
+    "SOL": 0.2,
+    "SUI": 0.2
+   }
+  },
+  "h_breakout": {
+   "exits": {},
+   "info": {
+    "signals": []
+   },
+   "keep": [
+    "BNB",
+    "BTC",
+    "ETH"
+   ],
+   "targets": {}
+  },
+  "h_kniha": {
+   "exits": {
+    "ETH": "signal"
+   },
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "h_momentum": {
+   "exits": {},
+   "info": {
+    "candidates": [
+     "QNT",
+     "NEAR",
+     "BNB"
+    ]
+   },
+   "keep": [
+    "QNT"
+   ],
+   "targets": {
+    "BNB": 0.3333333333,
+    "NEAR": 0.3333333333
+   }
+  },
+  "h_reverze": {
+   "exits": {},
+   "info": {
+    "signals": []
+   },
+   "keep": [
+    "BTC",
+    "SUI"
+   ],
+   "targets": {}
+  },
+  "llm_nacasovani": {
+   "exits": {},
+   "info": {
+    "waiting": []
+   },
+   "keep": [],
+   "targets": {
+    "AVAX": 0.2105263158,
+    "BNB": 0.1052631579,
+    "ETH": 0.1052631579,
+    "LTC": 0.0526315789,
+    "NEAR": 0.1052631579,
+    "PUMP": 0.1052631579,
+    "SOL": 0.1052631579,
+    "SUI": 0.1052631579,
+    "UNI": 0.1052631579
+   }
+  },
+  "seance_usa": {
+   "exits": {},
+   "info": {
+    "in_session": true
+   },
+   "keep": [],
+   "targets": {
+    "BNB": 0.2,
+    "BTC": 0.2,
+    "ETH": 0.2,
+    "SOL": 0.2,
+    "XRP": 0.2
+   }
+  }
+ }
+}
