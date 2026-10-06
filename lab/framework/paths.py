@@ -28,7 +28,10 @@ class LabPaths:
 
     @property
     def workspaces(self) -> Path:
-        return self.home / "workspaces"
+        """Agent workspaces. In production outside LAB_HOME (`LAB_WORKSPACES`), because the agent user may
+        write there but must not even list LAB_HOME (lab.db, data, transcripts)."""
+        env = os.environ.get("LAB_WORKSPACES")
+        return Path(env) if env and self.home == default_paths().home else self.home / "workspaces"
 
     @property
     def kill_switch(self) -> Path:

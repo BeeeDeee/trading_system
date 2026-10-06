@@ -1,0 +1,10 @@
+[Unit]
+Description=Research lab cycle every 30 minutes
+
+[Timer]
+OnCalendar=*-*-* *:05,35:00
+Persistent=false
+RandomizedDelaySec=60
+
+[Install]
+WantedBy=timers.target

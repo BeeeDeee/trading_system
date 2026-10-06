@@ -21,12 +21,21 @@ AUTO_GATES = {S.IMPLEMENTED: "G1", S.GATE_1: "G2", S.GATE_2: "G3"}
 DUPLICATE_SIMILARITY = 0.90
 
 
-def tick(lab: Lab, evaluator: Evaluator | None, max_rounds: int = 50) -> list[str]:
-    """Run the deterministic phase. Without an evaluator, gates are not run (messages still are)."""
+PHASES = ("all", "ingest", "judge")
+
+
+def tick(lab: Lab, evaluator: Evaluator | None, max_rounds: int = 50, phase: str = "all") -> list[str]:
+    """Run the deterministic phase. Without an evaluator, gates are not run (messages still are).
+
+    Production splits it in two: `ingest` (DATA_READY only: runs Archivist fetchers, needs the network) and
+    `judge` (everything else: runs strategy code, so it runs inside the bwrap sandbox without network)."""
+    if phase not in PHASES:
+        raise ValueError(f"phase must be one of {PHASES}")
     log: list[str] = []
     for _ in range(max_rounds):
-        moved = _react_all(lab, evaluator, log)
-        moved |= _drive_states(lab, evaluator, log)
+        moved = _react_all(lab, evaluator, log, phase)
+        if phase != "ingest":
+            moved |= _drive_states(lab, evaluator, log)
         if not moved:
             break
     return log
@@ -34,10 +43,12 @@ def tick(lab: Lab, evaluator: Evaluator | None, max_rounds: int = 50) -> list[st
 
 # ---------------------------------------------------------------------------- reactions to messages
 
-def _react_all(lab: Lab, evaluator, log) -> bool:
+def _react_all(lab: Lab, evaluator, log, phase: str = "all") -> bool:
     rows = lab.con.execute("SELECT * FROM messages WHERE reacted_at IS NULL ORDER BY id").fetchall()
     reacted = 0
     for m in rows:
+        if (phase == "ingest") != (m["type"] == "DATA_READY") and phase != "all":
+            continue
         payload = json.loads(m["payload_json"])
         if evaluator is None and _needs_evaluator(m, payload):
             continue  # leave it for a tick that can run gates

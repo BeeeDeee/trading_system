@@ -73,3 +73,23 @@ def invocations(lab: Lab, limit: int = 50) -> list[dict]:
     rows = lab.con.execute("SELECT id, agent, model, hypothesis_id, started_at, ended_at, outcome, error "
                            "FROM agent_invocations ORDER BY started_at DESC LIMIT ?", (limit,))
     return [dict(r) for r in rows]
+
+
+EXPORT_TABLES = {"hypotheses": "id", "transitions": "id", "messages": "id", "gate_results": "id", "trials": "id",
+                 "agent_invocations": "started_at", "lessons": "message_id", "knowledge": "id",
+                 "family_merges": "ts", "canary_runs": "id"}
+DROP_COLUMNS = {"agent_invocations": {"workspace", "transcript_path", "output_json"}}
+
+
+def export(lab: Lab, out_dir) -> str:
+    """One JSON file per table (sorted, stable), so the nightly commit diff shows what changed."""
+    from pathlib import Path
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    counts = {}
+    for table, order in EXPORT_TABLES.items():
+        rows = [{k: v for k, v in dict(r).items() if k not in DROP_COLUMNS.get(table, set())}
+                for r in lab.con.execute(f"SELECT * FROM {table} ORDER BY {order}")]
+        (out / f"{table}.json").write_text(json.dumps(rows, indent=1, ensure_ascii=False, default=str) + "\n")
+        counts[table] = len(rows)
+    return " ".join(f"{t}={n}" for t, n in counts.items())

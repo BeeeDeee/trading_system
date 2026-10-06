@@ -1,0 +1,31 @@
+[Unit]
+Description=Research lab cycle: ingest, sandboxed gates, one agent run within the budget
+Wants=network-online.target
+After=network-online.target time-sync.target
+
+[Service]
+Type=oneshot
+User=labcore
+Group=labcore
+WorkingDirectory=/srv/research-lab/app
+EnvironmentFile=/etc/research-lab/env
+Environment=LAB_HOME=/srv/research-lab/home
+Environment=LAB_WORKSPACES=/srv/research-lab/workspaces
+Environment=LAB_AGENT_USER=labagent
+Environment=LAB_CLAUDE_BIN=/home/labagent/.local/bin/claude
+Environment=LAB_SANDBOX=1
+Environment=PATH=/srv/research-lab/app/.venv/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/srv/research-lab/app/.venv/bin/lab cycle
+TimeoutStartSec=4h
+Nice=10
+# 3.9 GB machine shared with the cpb bots: the whole cycle (gates included) stays below this
+MemoryMax=2800M
+CPUQuota=200%
+# sudo -u labagent needs privileges, so no NoNewPrivileges; the rest of the hardening applies
+PrivateTmp=true
+ProtectSystem=full
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+LockPersonality=true
+UMask=0007

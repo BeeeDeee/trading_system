@@ -192,3 +192,14 @@ def test_skeptic_workspace_has_history_and_family(lab, card):
     assert (inv.workspace / "strategy").is_dir() and (inv.workspace / "prior_studies.md").exists()
     s = agents.spec("skeptic")
     assert "try" in s.lab_verbs and "WebFetch" not in s.tools
+
+
+def test_agent_user_wrapper(tmp_path, monkeypatch):
+    ws = tmp_path / "ws"
+    (ws / "strategy").mkdir(parents=True)
+    (ws / "outbox.json").write_text("{}")
+    assert headless.as_agent_user(["claude", "-p"], ws) == ["claude", "-p"]
+    monkeypatch.setenv("LAB_AGENT_USER", "labagent")
+    cmd = headless.as_agent_user(["claude", "-p"], ws)
+    assert cmd[:5] == ["sudo", "-n", "-u", "labagent", "--preserve-env=LAB_WORKSPACE,PATH,CLAUDE_CODE_OAUTH_TOKEN,LANG"]
+    assert (ws / "outbox.json").stat().st_mode & 0o777 == 0o660 and (ws / "strategy").stat().st_mode & 0o2000

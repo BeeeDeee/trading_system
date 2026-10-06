@@ -87,6 +87,11 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--reason", required=True)
     s = sub.add_parser("import-local", help="owner: make fred_macro / fred_dtb3 (on disk) loadable as signal series")
     s.add_argument("dataset", choices=["fred_macro", "fred_dtb3", "binance_1h_features"])
+    s = sub.add_parser("export", help="JSON export of lab.db (nightly, committed: decision Q2)")
+    s.add_argument("out", type=Path)
+    s = sub.add_parser("cycle", help="one orchestrator cycle (systemd timer): tick, then agents within the budget")
+    s.add_argument("--no-agents", action="store_true", help="deterministic phase only")
+    s.add_argument("--dry-run", action="store_true", help="show what would run, change nothing")
     s = sub.add_parser("knowledge", help="the knowledge base: list, or add an entry as the owner")
     s.add_argument("action", choices=["list", "add"])
     s.add_argument("--kind", choices=["market", "data", "method", "framework", "process"])
@@ -101,6 +106,7 @@ def _parser() -> argparse.ArgumentParser:
     s = sub.add_parser("factsheets", help="build the descriptive dataset fact sheets for the Scout")
     s.add_argument("--rebuild", action="store_true")
     s = sub.add_parser("tick", help="deterministic phase: react to messages, run due gates")
+    s.add_argument("--phase", choices=["all", "ingest", "judge"], default="all")
     g = s.add_mutually_exclusive_group()
     g.add_argument("--no-gates", action="store_true", help="react to messages only")
     g.add_argument("--stub-gates", action="store_true", help="tests/demo only, needs LAB_ALLOW_STUB=1")
@@ -217,7 +223,7 @@ def _direct(args) -> int:
                 if not canaries.passed_for_current(lab):
                     raise LabError("canaries have not passed for the current framework; run `lab canaries`")
                 evaluator = QlabEvaluator()
-            for line in tick.tick(lab, evaluator):
+            for line in tick.tick(lab, evaluator, phase=args.phase):
                 print(line)
         case "canaries":
             from lab.framework import canaries
@@ -259,6 +265,14 @@ def _direct(args) -> int:
             from lab.framework import ingest
             rep = ingest.import_local(lab.paths.home, lab.paths.catalog, args.dataset)
             print(f"{args.dataset}: {len(rep['keys'])} series, {rep['n_rows']} rows, holdout from {rep['holdout_from']}")
+        case "export":
+            from lab.framework import report
+            print(report.export(lab, args.out))
+        case "cycle":
+            from lab.orchestrator import production_cycle
+            rec = production_cycle(lab, lab.paths.lab / "budget.yaml", agents=not args.no_agents,
+                                   dry_run=args.dry_run)
+            print(json.dumps(rec, indent=2, default=str))
         case "knowledge":
             from lab.framework import knowledge
             if args.action == "list":

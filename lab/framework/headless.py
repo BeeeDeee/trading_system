@@ -73,6 +73,20 @@ def environment(ws: Path) -> dict:
     return env
 
 
+# Production: the agent runs as its own OS user (`LAB_AGENT_USER`, e.g. labagent) through a narrow sudoers rule.
+# That user can write its workspace and read the app code, nothing else of the lab (no lab.db, no data).
+AGENT_ENV = ("LAB_WORKSPACE", "PATH", "CLAUDE_CODE_OAUTH_TOKEN", "LANG")
+
+
+def as_agent_user(cmd: list[str], ws: Path) -> list[str]:
+    user = os.environ.get("LAB_AGENT_USER")
+    if not user:
+        return cmd
+    for p in [ws, *ws.rglob("*")]:            # the agent user writes through the shared group
+        os.chmod(p, 0o2770 if p.is_dir() else 0o660)
+    return ["sudo", "-n", "-u", user, f"--preserve-env={','.join(AGENT_ENV)}", "--", *cmd]
+
+
 # ---------------------------------------------------------------------------- transcript
 
 def events(path: Path) -> list[dict]:
@@ -155,10 +169,10 @@ def _bash_problem(cmd: str, verbs: tuple[str, ...]) -> str | None:
 class ClaudeRunner:
     """Orchestrator runner for one agent: `runner(lab, invocation) -> RunResult`."""
 
-    def __init__(self, agent: str, claude_bin: str = "claude", spec: agents.AgentSpec | None = None):
+    def __init__(self, agent: str, claude_bin: str | None = None, spec: agents.AgentSpec | None = None):
         self.spec = spec or agents.spec(agent)
         self.model = self.spec.model
-        self.claude_bin = claude_bin
+        self.claude_bin = claude_bin or os.environ.get("LAB_CLAUDE_BIN", "claude")
 
     def __call__(self, lab: Lab, inv: Invocation) -> RunResult:
         if inv.agent != self.spec.name:
@@ -166,7 +180,7 @@ class ClaudeRunner:
         tdir = lab.paths.home / "transcripts"
         tdir.mkdir(parents=True, exist_ok=True)
         transcript, stderr = tdir / f"{inv.id}.jsonl", tdir / f"{inv.id}.stderr"
-        cmd = command(self.spec, task_prompt(inv), self.claude_bin)
+        cmd = as_agent_user(command(self.spec, task_prompt(inv), self.claude_bin), inv.workspace)
         t0, timed_out = time.monotonic(), False
         with transcript.open("w") as out, stderr.open("w") as err:
             p = subprocess.Popen(cmd, cwd=inv.workspace, stdout=out, stderr=err, stdin=subprocess.DEVNULL,

@@ -1,0 +1,6 @@
+# /etc/sudoers.d/research-lab (installed by install.sh after `visudo -cf`).
+# labcore (the framework) may run Claude Code as labagent (the agents), nothing else. SETENV lets it pass the
+# workspace and the token; the PATH for agents is fixed here (the app's venv for `lab`, Claude Code).
+Defaults:labcore !requiretty
+Defaults>labagent secure_path="/srv/research-lab/app/.venv/bin:/home/labagent/.local/bin:/usr/bin:/bin"
+labcore ALL=(labagent) NOPASSWD:SETENV: /home/labagent/.local/bin/claude

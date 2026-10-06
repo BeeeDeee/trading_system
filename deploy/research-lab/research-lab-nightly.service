@@ -1,0 +1,15 @@
+[Unit]
+Description=Research lab nightly: export lab.db to JSON, commit cards/strategies/knowledge, push
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=labcore
+Group=labcore
+WorkingDirectory=/srv/research-lab/app
+Environment=LAB_HOME=/srv/research-lab/home
+Environment=PATH=/srv/research-lab/app/.venv/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/srv/research-lab/app/deploy/research-lab/nightly.sh
+TimeoutStartSec=30min
+Nice=10

@@ -1,0 +1,9 @@
+[Unit]
+Description=Research lab nightly export and push
+
+[Timer]
+OnCalendar=*-*-* 03:30:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target
