@@ -286,7 +286,6 @@ def _direct(args) -> int:
             from lab.framework import dashboard
             print(dashboard.publish(lab, args.web))
         case "export":
-            from lab.framework import report
             print(report.export(lab, args.out))
         case "cycle":
             from lab.orchestrator import production_cycle

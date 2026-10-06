@@ -116,3 +116,12 @@ def test_staged_cli_only_offers_send_inbox_context(lab, card, monkeypatch, capsy
     assert invocations.finish(lab, inv.id) == "applied"
     assert lab.inbox("human", hid)[0]["type"] == "QUESTION"
     assert "LAB_WORKSPACE" not in os.environ
+
+
+@pytest.mark.parametrize("argv", [["status"], ["list"], ["inbox"], ["invocations"], ["catalog"], ["knowledge", "list"]])
+def test_direct_commands_run(lab, card, monkeypatch, argv, capsys):
+    """Every read-only direct command works on a populated lab (a local import once shadowed `report`)."""
+    from lab.framework import paths
+    submit(lab, card)
+    monkeypatch.setattr(cli, "default_paths", lambda: lab.paths)
+    assert cli.main(argv) == 0
