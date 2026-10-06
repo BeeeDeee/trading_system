@@ -18,7 +18,7 @@ def test_workspace_contains_what_the_agent_needs_and_nothing_else(lab, card):
     inv = invocations.start(lab, "builder", hid)
     names = {p.name for p in inv.workspace.iterdir()}
     assert names == {"context.json", "inbox.json", "outbox.json", "registry.json", "catalog.yaml", "card.yaml",
-                     "gate_results.json", "strategy", "gates.yaml"}
+                     "gate_results.json", "strategy", "gates.yaml", "knowledge.md"}
     assert not any(p.suffix == ".db" for p in inv.workspace.rglob("*"))
 
 
