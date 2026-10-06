@@ -299,6 +299,8 @@ def publish(lab: Lab, web: Path) -> Path:
     """Write a new release and switch `current` to it atomically; keep the last few releases."""
     rel = web / "releases" / datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
     rel.mkdir(parents=True, exist_ok=True)
+    for d in (web, web / "releases"):     # the web server reads them; the cycle service runs with umask 0007
+        os.chmod(d, 0o755)
     (rel / "index.html").write_text(build(lab))
     os.chmod(rel, 0o755)
     os.chmod(rel / "index.html", 0o644)

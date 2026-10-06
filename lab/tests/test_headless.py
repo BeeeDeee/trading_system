@@ -203,3 +203,14 @@ def test_agent_user_wrapper(tmp_path, monkeypatch):
     cmd = headless.as_agent_user(["claude", "-p"], ws)
     assert cmd[:5] == ["sudo", "-n", "-u", "labagent", "--preserve-env=LAB_WORKSPACE,PATH,CLAUDE_CODE_OAUTH_TOKEN,LANG"]
     assert (ws / "outbox.json").stat().st_mode & 0o777 == 0o660 and (ws / "strategy").stat().st_mode & 0o2000
+
+
+def test_deny_rules_never_cover_the_workspaces():
+    """A deny rule on /srv/** once blocked every file tool in the production workspaces."""
+    from fnmatch import fnmatch
+    deny = json.loads((agents.AGENTS_DIR / "settings.json").read_text())["permissions"]["deny"]
+    for ws in ("/srv/research-lab/workspaces/scout-1/card.yaml", "/home/kapo/ccode/research_lab/var/lab/workspaces/x/a"):
+        for rule in deny:
+            if rule.startswith(("Read(", "Edit(", "Write(")):
+                pattern = rule[rule.index("(") + 1:-1].removeprefix("/")
+                assert not fnmatch(ws, pattern.replace("**", "*")), (rule, ws)

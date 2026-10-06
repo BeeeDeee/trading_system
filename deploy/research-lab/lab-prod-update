@@ -1,0 +1,3 @@
+#!/bin/sh
+# /usr/local/bin/lab-prod-update: deploy the pushed research-lab branch to production (code + canaries).
+exec sudo -n -u labcore /usr/local/sbin/research-lab-update

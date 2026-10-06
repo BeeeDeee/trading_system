@@ -2,9 +2,12 @@
   "permissions": {
     "deny": [
       "WebFetch",
+      "Read(//srv/research-lab/home/**)",
+      "Read(//srv/research-lab/web/**)",
+      "Read(//srv/cpb/**)",
+      "Read(//etc/research-lab/**)",
       "Read(//home/kapo/ccode/strategy_backtester_2026_sep/data/**)",
       "Read(//home/kapo/ccode/market_relations_2026_oct/data/**)",
-      "Read(//srv/**)",
       "Read(~/.claude/**)",
       "Read(~/.config/**)",
       "Bash(curl:*)",

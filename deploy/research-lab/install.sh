@@ -154,6 +154,9 @@ so 'lab-prod status', 'lab-prod inbox', 'lab-prod ack 12 --reply ...' work for k
 already in the sudoers file: kapo may run only that wrapper, as $CORE)." || return 0
   sudo install -m 755 -o root -g root "$HERE/research-lab-cli" /usr/local/sbin/research-lab-cli
   sudo install -m 755 -o root -g root "$HERE/lab-prod" /usr/local/bin/lab-prod
+  sudo install -m 755 -o root -g root "$HERE/research-lab-update" /usr/local/sbin/research-lab-update
+  sudo install -m 755 -o root -g root "$HERE/lab-prod-update" /usr/local/bin/lab-prod-update
+  sudo visudo -cf "$HERE/sudoers" && sudo install -m 440 -o root -g root "$HERE/sudoers" /etc/sudoers.d/research-lab
   lab-prod status | head -5
 }
 

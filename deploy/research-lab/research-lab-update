@@ -1,0 +1,11 @@
+#!/bin/sh
+# /usr/local/sbin/research-lab-update (root-owned), run as labcore through the owner's sudo rule (lab-prod-update):
+# pull the branch into the production app, sync the environment, re-run the canaries. Code only: systemd units
+# and sudoers still need `install.sh update` (root).
+set -eu
+cd /srv/research-lab/app
+git pull --no-rebase -q
+UV_PYTHON_INSTALL_DIR=/srv/research-lab/app/.python /usr/local/bin/uv sync -q
+chmod -R a+rX /srv/research-lab/app
+LAB_HOME=/srv/research-lab/home .venv/bin/lab canaries | tail -1
+git log --oneline -1
