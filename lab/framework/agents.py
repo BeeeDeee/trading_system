@@ -74,6 +74,10 @@ def render_context(lab, ws: Path, items: tuple[str, ...], hid: str | None = None
                 from lab.framework import lessons
                 f = lessons.path(lab)
                 (ws / "lessons.md").write_text(f.read_text() if f.exists() else "# Lessons\n\nNone yet.\n")
+            case "knowledge":
+                from lab.framework import knowledge
+                f = knowledge.path(lab)
+                (ws / "knowledge.md").write_text(f.read_text() if f.exists() else "# Lab knowledge base\n\nEmpty.\n")
             case "cases":
                 (ws / "cases.json").write_text(json.dumps(cases(lab), indent=2, ensure_ascii=False, default=str))
             case "families":

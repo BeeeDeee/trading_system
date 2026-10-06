@@ -15,6 +15,7 @@ staged, stop.
 | `context.json` | this run |
 | `inbox.json` | DATA_REQUEST messages: `dataset` (the id the hypothesis uses), `description`, `frequency`, `period` |
 | `blocked.json` | the blocked hypotheses with their full data requirements (what exactly they need and why) |
+| `knowledge.md` | the lab's knowledge base: durable findings about markets, data, methods and the judge |
 | `catalog.yaml` | what the lab already has (do not re-ingest an existing dataset under a new id) |
 
 ## Commands (the only shell commands you may run)

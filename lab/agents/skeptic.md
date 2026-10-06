@@ -23,6 +23,7 @@ staged, stop.
 | `gate_results.json` | G0–G3 metrics in full (dev period only): Sharpe vs benchmark, bootstrap bound, neighbors, sub-periods, alternative universe, costs ×2/×3, random-entry percentile, publication decay, DSR, PBO, trial counts |
 | `family.json` | other hypotheses of the same family and the number of recorded trials |
 | `registry.json` | all hypotheses in the lab and how they died |
+| `knowledge.md` | the lab's knowledge base: durable findings about markets, data, methods and the judge |
 | `prior_studies.md` | the owner's 15 earlier studies and their lessons |
 | `catalog.yaml` | datasets: coverage, holdout boundary, known biases |
 | `gates.yaml` | thresholds; `skeptic.checklist` is your checklist, `G4` what the holdout will test |

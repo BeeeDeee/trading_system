@@ -87,6 +87,14 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--reason", required=True)
     s = sub.add_parser("import-local", help="owner: make fred_macro / fred_dtb3 (on disk) loadable as signal series")
     s.add_argument("dataset", choices=["fred_macro", "fred_dtb3", "binance_1h_features"])
+    s = sub.add_parser("knowledge", help="the knowledge base: list, or add an entry as the owner")
+    s.add_argument("action", choices=["list", "add"])
+    s.add_argument("--kind", choices=["market", "data", "method", "framework", "process"])
+    s.add_argument("--title")
+    s.add_argument("--statement")
+    s.add_argument("--evidence", action="append", help="reference (repeatable)")
+    s.add_argument("--confidence", choices=["low", "medium", "high"], default="medium")
+    s.add_argument("--supersedes")
     s = sub.add_parser("void", help="owner: undo a gate rejection caused by a framework bug (-> DATA_READY)")
     s.add_argument("hid")
     s.add_argument("--reason", required=True)
@@ -251,6 +259,18 @@ def _direct(args) -> int:
             from lab.framework import ingest
             rep = ingest.import_local(lab.paths.home, lab.paths.catalog, args.dataset)
             print(f"{args.dataset}: {len(rep['keys'])} series, {rep['n_rows']} rows, holdout from {rep['holdout_from']}")
+        case "knowledge":
+            from lab.framework import knowledge
+            if args.action == "list":
+                for r in knowledge.entries(lab):
+                    print(f"{r['id']} {'   ' if r['current'] else 'old'} {r['kind']:<9} {r['confidence']:<6} {r['title']}")
+            else:
+                payload = {k: v for k, v in {"kind": args.kind, "title": args.title, "statement": args.statement,
+                           "evidence": args.evidence, "confidence": args.confidence,
+                           "supersedes": args.supersedes}.items() if v}
+                mid = lab.send("KNOWLEDGE", HUMAN, "system", None, payload)
+                tick.tick(lab, None)
+                print(f"message {mid}: " + (knowledge.entries(lab)[-1]["id"] if knowledge.entries(lab) else "refused"))
         case "void":
             h = lab.hypothesis(args.hid)
             if h["status"] != S.REJECTED or h["reject_stage"] not in ("G0", "G1", "G2", "G3", "IMPLEMENTED", "GATE_1",

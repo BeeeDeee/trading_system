@@ -126,6 +126,19 @@ CREATE TABLE IF NOT EXISTS lessons (    -- accepted LESSON messages (refused one
     ts TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS knowledge (   -- the lab's knowledge base; corrections supersede, nothing is edited
+    id TEXT PRIMARY KEY,                 -- K-0001
+    kind TEXT NOT NULL,                  -- market | data | method | framework | process
+    title TEXT NOT NULL,
+    statement TEXT NOT NULL,
+    evidence TEXT NOT NULL,              -- JSON list of references (hypotheses, decision log, files)
+    confidence TEXT NOT NULL,            -- low | medium | high
+    supersedes TEXT,
+    actor TEXT NOT NULL,
+    message_id INTEGER,
+    ts TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS family_merges (   -- families consolidated by the Chair or the owner; never split
     from_family TEXT PRIMARY KEY,
     into_family TEXT NOT NULL,
@@ -163,7 +176,7 @@ CREATE TABLE IF NOT EXISTS counters (
 );
 """
 
-APPEND_ONLY = ("transitions", "gate_results", "trials", "canary_runs", "lessons", "family_merges")
+APPEND_ONLY = ("transitions", "gate_results", "trials", "canary_runs", "lessons", "family_merges", "knowledge")
 
 _TRIGGERS = "".join(f"""
 CREATE TRIGGER IF NOT EXISTS {t}_no_update BEFORE UPDATE ON {t}

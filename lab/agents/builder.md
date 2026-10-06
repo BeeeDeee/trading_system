@@ -16,6 +16,7 @@ message is staged, stop.
 | `inbox.json` | messages: a G0 failure from the gatekeeper, a Skeptic objection, questions |
 | `gate_results.json` | earlier gate results of this hypothesis (G0 problems are listed in full) |
 | `strategy/` | your files; already contains the previous implementation if there is one |
+| `knowledge.md` | the lab's knowledge base: durable findings about markets, data, methods and the judge |
 | `gates.yaml` | thresholds; `G0` is what your code must pass |
 | `catalog.yaml` | datasets (asset class, calendar, clock, biases) |
 

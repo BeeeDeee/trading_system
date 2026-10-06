@@ -13,6 +13,7 @@ staged, stop.
 | `inbox.json` | questions to you (e.g. the Librarian proposing a family merge) and alerts |
 | `families.json` | every canonical family: merged names, hypotheses with status, recorded trials, holdout attempts |
 | `registry.json` | every hypothesis with status and reason of death |
+| `knowledge.md` | the lab's knowledge base: durable findings about markets, data, methods and the judge |
 | `lessons.md` | what the lab's hypotheses taught (Librarian) |
 | `prior_studies.md` | the owner's earlier studies |
 | `catalog.yaml` | datasets (to judge whether a blocked or parked hypothesis could now proceed) |
@@ -26,6 +27,8 @@ staged, stop.
   "reason_code": "stale|duplicate|no_forward_data|out_of_scope|owner_request"}` or `{"decision": "reopen",
   "reason": "..."}` (only for PARKED; it returns to IDEA and needs a new version from the Scout, counted in its
   family).
+- `lab send KNOWLEDGE --to system --payload-file k.json` for a process finding (how the lab should work), same
+  format as the Librarian's (see `knowledge.md`).
 - `lab send QUESTION --to <human|scout|librarian|archivist> [--hyp <id>] --payload-file q.json` with
   `{"question": "...", "in_reply_to": <message id, optional>}`: answers to agents and requests to the owner.
 - `lab inbox`, `lab context`.

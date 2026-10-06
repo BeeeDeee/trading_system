@@ -216,7 +216,13 @@ def _family_merge(lab, m, payload, evaluator):
     return f"family {payload['from_family']} merged into {lab.canonical_family(payload['into_family'])}"
 
 
-REACTIONS = {"FAMILY_MERGE": _family_merge, "LESSON": _lesson, "NEW_HYPOTHESIS": _new_hypothesis, "REVISION": _revision, "DATA_READY": _data_ready,
+def _knowledge(lab, m, payload, evaluator):
+    from lab.framework import knowledge
+    kid = knowledge.add(lab, payload, m["from_agent"], message_id=m["id"])
+    return f"knowledge {kid} recorded"
+
+
+REACTIONS = {"KNOWLEDGE": _knowledge, "FAMILY_MERGE": _family_merge, "LESSON": _lesson, "NEW_HYPOTHESIS": _new_hypothesis, "REVISION": _revision, "DATA_READY": _data_ready,
              "IMPL_DONE": _impl_done, "OBJECTION": _objection, "VERDICT": _verdict}
 
 

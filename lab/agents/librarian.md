@@ -11,6 +11,7 @@ staged, stop.
 | File | What it is |
 |---|---|
 | `cases.json` | the hypotheses that need a lesson: card, all gate results with full metrics, the Builder's implementation summary, the Skeptic's messages, transitions |
+| `knowledge.md` | the lab's knowledge base: durable findings about markets, data, methods and the judge |
 | `lessons.md` | the lessons so far (what the Scout reads) |
 | `registry.json` | every hypothesis: id, title, family, status, reason of death |
 | `prior_studies.md` | the owner's 15 earlier studies and their lessons |
@@ -33,6 +34,12 @@ staged, stop.
  "family_merge": "optional: 'same mechanism as family X because ...' (for the Chair)"}
 ```
 
+- `lab send KNOWLEDGE --to system --payload-file k.json` for a finding that holds **across** hypotheses
+  (a market regularity seen twice, a data problem, a methodological pitfall, a judge behaviour):
+  `{"kind": "market|data|method|framework|process", "title": "...", "statement": "...", "evidence":
+  ["H-0003", "H-0007", "decision log 2026-10-05"], "confidence": "low|medium|high", "supersedes": "K-0004"}`.
+  Read `knowledge.md` first: add only what is new, and supersede an entry that new evidence corrects.
+  `market` entries follow the no-numbers rule of lessons; the other kinds may contain counts and dates.
 - `lab send QUESTION --to chair --payload-file q.json` only for a family that should be merged with another
   (the Chair decides), or `--to human` for something the owner must know (e.g. a framework result that looks
   wrong).

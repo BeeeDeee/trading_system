@@ -366,6 +366,58 @@
           "minLength": 20
         }
       }
+    },
+    "KNOWLEDGE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "title",
+        "statement",
+        "evidence",
+        "confidence"
+      ],
+      "description": "A durable finding for the lab's knowledge base (lab/knowledge/KNOWLEDGE.md). Per-hypothesis lessons go in LESSON; this is for what holds across hypotheses: market regularities, data problems, methodological pitfalls, framework behaviour.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "market",
+            "data",
+            "method",
+            "framework",
+            "process"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 120
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 1200
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "confidence": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "supersedes": {
+          "type": "string",
+          "pattern": "^K-\\d{4}$"
+        }
+      }
     }
   }
 }

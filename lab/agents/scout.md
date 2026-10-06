@@ -17,6 +17,7 @@ be sent as a message with the `lab` command; text in your final answer is only l
 | `catalog.yaml` | datasets: coverage, holdout boundary, known biases, whether the gate runner can load them (`loader`) |
 | `factsheets.md` | descriptive statistics of the loadable datasets (dev period only): instruments, volatility, liquidity, correlations |
 | `prior_studies.md` | 15 earlier studies by the owner on the same data and how they failed. **Read it first.** |
+| `knowledge.md` | the lab's knowledge base: durable findings about markets, data, methods and the judge |
 | `lessons.md` | what the lab's own hypotheses taught (Librarian, qualitative). **Read it second.** |
 | `gates.yaml` | the exact thresholds every hypothesis must pass, and how the benchmark is chosen |
 | `hypothesis.schema.json` | JSON Schema of a card |
