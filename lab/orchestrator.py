@@ -230,4 +230,10 @@ def production_cycle(lab: Lab, policy_path: Path, *, agents: bool = True, dry_ru
         rec["agents"] = ran
     with open(home / "cycles.jsonl", "a") as f:
         f.write(json.dumps(rec, default=str) + "\n")
+    if os.environ.get("LAB_WEB"):                  # production: the dashboard after every cycle
+        try:
+            from lab.framework import dashboard
+            dashboard.publish(lab, Path(os.environ["LAB_WEB"]))
+        except Exception as e:  # noqa: BLE001 - a broken page must not break the lab
+            lab.send("ALERT", "system", "human", None, {"severity": "warning", "text": f"dashboard failed: {e}"})
     return rec

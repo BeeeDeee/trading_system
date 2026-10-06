@@ -66,6 +66,12 @@ def _summary(msg_type: str, p: dict) -> str:
             return p["question"]
         case "ALERT":
             return f"[{p['severity']}] {p['text']}"
+        case "LESSON":
+            return f"{p['outcome']}: {p['lesson']}"
+        case "KNOWLEDGE":
+            return f"[{p['kind']}] {p['title']}: {p['statement']}"
+        case "FAMILY_MERGE":
+            return f"{p['from_family']} -> {p['into_family']}: {p['reason']}"
     return json.dumps(p)[:120]
 
 

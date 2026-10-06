@@ -14,6 +14,7 @@ Environment=LAB_WORKSPACES=/srv/research-lab/workspaces
 Environment=LAB_AGENT_USER=labagent
 Environment=LAB_CLAUDE_BIN=/home/labagent/.local/bin/claude
 Environment=LAB_SANDBOX=1
+Environment=LAB_WEB=/srv/research-lab/web
 Environment=PATH=/srv/research-lab/app/.venv/bin:/usr/local/bin:/usr/bin:/bin
 ExecStart=/srv/research-lab/app/.venv/bin/lab cycle
 TimeoutStartSec=4h

@@ -87,6 +87,11 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--reason", required=True)
     s = sub.add_parser("import-local", help="owner: make fred_macro / fred_dtb3 (on disk) loadable as signal series")
     s.add_argument("dataset", choices=["fred_macro", "fred_dtb3", "binance_1h_features"])
+    s = sub.add_parser("ack", help="owner: mark messages in the owner's inbox handled (optionally with a reply)")
+    s.add_argument("ids", type=int, nargs="+")
+    s.add_argument("--reply", help="answer, sent as a QUESTION back to the sender (agents) or logged (system)")
+    s = sub.add_parser("dashboard", help="build the static dashboard (a release + atomic `current` switch)")
+    s.add_argument("web", type=Path)
     s = sub.add_parser("export", help="JSON export of lab.db (nightly, committed: decision Q2)")
     s.add_argument("out", type=Path)
     s = sub.add_parser("cycle", help="one orchestrator cycle (systemd timer): tick, then agents within the budget")
@@ -265,6 +270,21 @@ def _direct(args) -> int:
             from lab.framework import ingest
             rep = ingest.import_local(lab.paths.home, lab.paths.catalog, args.dataset)
             print(f"{args.dataset}: {len(rep['keys'])} series, {rep['n_rows']} rows, holdout from {rep['holdout_from']}")
+        case "ack":
+            rows = [lab.con.execute("SELECT * FROM messages WHERE id = ?", (i,)).fetchone() for i in args.ids]
+            bad = [i for i, r in zip(args.ids, rows) if r is None or r["to_agent"] != HUMAN]
+            if bad:
+                raise LabError(f"not messages to the owner: {bad}")
+            for r in rows:
+                if args.reply and r["from_agent"] in ACTORS and r["from_agent"] not in ("system", "gatekeeper",
+                                                                                          "sentinel", HUMAN):
+                    lab.send("QUESTION", HUMAN, r["from_agent"], r["hypothesis_id"],
+                             {"question": f"Owner's answer: {args.reply}", "in_reply_to": r["id"]})
+            lab.mark_handled(args.ids, "human" + (f": {args.reply[:200]}" if args.reply else ""))
+            print(f"handled {args.ids}")
+        case "dashboard":
+            from lab.framework import dashboard
+            print(dashboard.publish(lab, args.web))
         case "export":
             from lab.framework import report
             print(report.export(lab, args.out))

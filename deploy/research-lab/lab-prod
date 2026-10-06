@@ -1,0 +1,3 @@
+#!/bin/sh
+# /usr/local/bin/lab-prod: the owner's `lab` on the production lab (as labcore), e.g. `lab-prod status`.
+exec sudo -n -u labcore /usr/local/sbin/research-lab-cli "$@"

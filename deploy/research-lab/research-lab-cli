@@ -1,0 +1,8 @@
+#!/bin/sh
+# /usr/local/sbin/research-lab-cli (root-owned): the `lab` CLI with the production environment, run as labcore.
+# The owner (kapo) calls it through /usr/local/bin/lab-prod (sudo rule in /etc/sudoers.d/research-lab).
+set -a; . /etc/research-lab/env; set +a
+export LAB_HOME=/srv/research-lab/home LAB_WORKSPACES=/srv/research-lab/workspaces LAB_WEB=/srv/research-lab/web \
+       LAB_AGENT_USER=labagent LAB_CLAUDE_BIN=/home/labagent/.local/bin/claude LAB_SANDBOX=1 \
+       PATH=/srv/research-lab/app/.venv/bin:/usr/local/bin:/usr/bin:/bin
+cd /srv/research-lab/app && exec /srv/research-lab/app/.venv/bin/lab "$@"

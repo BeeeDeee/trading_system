@@ -4,3 +4,5 @@
 Defaults:labcore !requiretty
 Defaults>labagent secure_path="/srv/research-lab/app/.venv/bin:/home/labagent/.local/bin:/usr/bin:/bin"
 labcore ALL=(labagent) NOPASSWD:SETENV: /home/labagent/.local/bin/claude
+# The owner runs the lab CLI on the production state as labcore (lab-prod -> research-lab-cli, root-owned).
+kapo ALL=(labcore) NOPASSWD: /usr/local/sbin/research-lab-cli
