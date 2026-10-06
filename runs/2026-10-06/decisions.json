@@ -1,0 +1,457 @@
+{
+ "date": "2026-10-06",
+ "llm_ok": true,
+ "locked_at": "2026-10-06T04:02:32.330Z",
+ "locked_ms": 1791259352330,
+ "portfolios": {
+  "b_btc": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_btc_eth": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_cash": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_ew20": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_mcap10": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "bez_brany": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "AVAX",
+     "SOL",
+     "NEAR",
+     "SUI",
+     "UNI",
+     "PUMP",
+     "ENA",
+     "BNB",
+     "ADA",
+     "LTC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1086956522,
+    "AVAX": 0.1739130435,
+    "BNB": 0.0434782609,
+    "ENA": 0.0869565217,
+    "LTC": 0.0869565217,
+    "NEAR": 0.1086956522,
+    "PUMP": 0.1086956522,
+    "SOL": 0.0869565217,
+    "SUI": 0.1086956522,
+    "UNI": 0.0869565217
+   }
+  },
+  "btc_filtr": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "AVAX",
+     "SOL",
+     "NEAR",
+     "SUI",
+     "UNI",
+     "PUMP",
+     "ENA",
+     "ADA",
+     "LTC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1153846154,
+    "AVAX": 0.2307692308,
+    "ENA": 0.0769230769,
+    "LTC": 0.0769230769,
+    "NEAR": 0.1153846154,
+    "PUMP": 0.1153846154,
+    "SOL": 0.0769230769,
+    "SUI": 0.1153846154,
+    "UNI": 0.0769230769
+   }
+  },
+  "claude_volne": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "AVAX",
+     "BTC",
+     "NEAR",
+     "SOL",
+     "SUI"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "AVAX": 0.2,
+    "BTC": 0.2,
+    "NEAR": 0.12,
+    "SOL": 0.15,
+    "SUI": 0.08
+   }
+  },
+  "inv_vol": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "AVAX",
+     "SOL",
+     "NEAR",
+     "SUI",
+     "UNI",
+     "PUMP",
+     "ENA",
+     "ADA",
+     "LTC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1202404366,
+    "AVAX": 0.1194373745,
+    "ENA": 0.0792886415,
+    "LTC": 0.1525658521,
+    "NEAR": 0.0791757761,
+    "PUMP": 0.0729806731,
+    "SOL": 0.1835571939,
+    "SUI": 0.0995398069,
+    "UNI": 0.0932142452
+   }
+  },
+  "jen_mr": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ZEC": 0.25
+   }
+  },
+  "jen_trend": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "PUMP",
+     "ADA",
+     "SUI",
+     "NEAR",
+     "AVAX",
+     "QNT",
+     "BTC",
+     "UNI",
+     "SOL",
+     "ENA"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1,
+    "AVAX": 0.1,
+    "BTC": 0.1,
+    "ENA": 0.1,
+    "NEAR": 0.1,
+    "PUMP": 0.1,
+    "QNT": 0.1,
+    "SOL": 0.1,
+    "SUI": 0.1,
+    "UNI": 0.1
+   }
+  },
+  "jen_zpravy": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "kontrarian": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ZEC",
+     "ETH",
+     "DOGE",
+     "QNT",
+     "BNB",
+     "XRP",
+     "BTC",
+     "UNI",
+     "SOL",
+     "ENA"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.1,
+    "BTC": 0.1,
+    "DOGE": 0.1,
+    "ENA": 0.1,
+    "ETH": 0.1,
+    "QNT": 0.1,
+    "SOL": 0.1,
+    "UNI": 0.1,
+    "XRP": 0.1,
+    "ZEC": 0.1
+   }
+  },
+  "mech_momentum": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "QNT",
+     "NEAR",
+     "PUMP",
+     "SUI",
+     "AVAX",
+     "ENA",
+     "UNI",
+     "LTC",
+     "ADA",
+     "SOL"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.0327125174,
+    "AVAX": 0.0779099812,
+    "ENA": 0.0749539023,
+    "LTC": 0.0412944507,
+    "NEAR": 0.25,
+    "PUMP": 0.1212547885,
+    "QNT": 0.25,
+    "SUI": 0.0900357185,
+    "UNI": 0.0426809394
+   }
+  },
+  "nahodny": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ADA",
+     "BNB",
+     "BTC",
+     "DOGE",
+     "ENA",
+     "LTC",
+     "PUMP",
+     "QNT",
+     "XRP",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1,
+    "BNB": 0.1,
+    "BTC": 0.1,
+    "DOGE": 0.1,
+    "ENA": 0.1,
+    "LTC": 0.1,
+    "PUMP": 0.1,
+    "QNT": 0.1,
+    "XRP": 0.1,
+    "ZEC": 0.1
+   }
+  },
+  "pravdepodobnost": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "rovne": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "AVAX",
+     "SOL",
+     "NEAR",
+     "SUI",
+     "UNI",
+     "PUMP",
+     "ENA",
+     "ADA",
+     "LTC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1111111111,
+    "AVAX": 0.1111111111,
+    "ENA": 0.1111111111,
+    "LTC": 0.1111111111,
+    "NEAR": 0.1111111111,
+    "PUMP": 0.1111111111,
+    "SOL": 0.1111111111,
+    "SUI": 0.1111111111,
+    "UNI": 0.1111111111
+   }
+  },
+  "skore_vol": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "AVAX",
+     "SOL",
+     "NEAR",
+     "SUI",
+     "UNI",
+     "PUMP",
+     "ENA",
+     "ADA",
+     "LTC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1268322203,
+    "AVAX": 0.25,
+    "ENA": 0.0557569191,
+    "LTC": 0.1072865131,
+    "NEAR": 0.0835163258,
+    "PUMP": 0.0769815968,
+    "SOL": 0.1290800727,
+    "SUI": 0.1049967472,
+    "UNI": 0.065549605
+   }
+  },
+  "stop": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "AVAX",
+     "SOL",
+     "NEAR",
+     "SUI",
+     "UNI",
+     "PUMP",
+     "ENA",
+     "ADA",
+     "LTC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1153846154,
+    "AVAX": 0.2307692308,
+    "ENA": 0.0769230769,
+    "LTC": 0.0769230769,
+    "NEAR": 0.1153846154,
+    "PUMP": 0.1153846154,
+    "SOL": 0.0769230769,
+    "SUI": 0.1153846154,
+    "UNI": 0.0769230769
+   }
+  },
+  "top3": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "AVAX",
+     "SOL",
+     "NEAR"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "AVAX": 0.4,
+    "NEAR": 0.36,
+    "SOL": 0.24
+   }
+  },
+  "tydenni": {
+   "exits": {},
+   "info": {
+    "hold": "rebalanc jen v pondělí"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "vol_target": {
+   "exits": {},
+   "info": {
+    "overlay": "vol portfolia 77 % → expozice ×0.65",
+    "selected": [
+     "AVAX",
+     "SOL",
+     "NEAR",
+     "SUI",
+     "UNI",
+     "PUMP",
+     "ENA",
+     "ADA",
+     "LTC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.0749680278,
+    "AVAX": 0.1499360555,
+    "ENA": 0.0499786852,
+    "LTC": 0.0499786852,
+    "NEAR": 0.0749680278,
+    "PUMP": 0.0749680278,
+    "SOL": 0.0499786852,
+    "SUI": 0.0749680278,
+    "UNI": 0.0499786852
+   }
+  },
+  "zaklad": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "AVAX",
+     "SOL",
+     "NEAR",
+     "SUI",
+     "UNI",
+     "PUMP",
+     "ENA",
+     "ADA",
+     "LTC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1153846154,
+    "AVAX": 0.2307692308,
+    "ENA": 0.0769230769,
+    "LTC": 0.0769230769,
+    "NEAR": 0.1153846154,
+    "PUMP": 0.1153846154,
+    "SOL": 0.0769230769,
+    "SUI": 0.1153846154,
+    "UNI": 0.0769230769
+   }
+  }
+ },
+ "scores_sha256": "92d7629ff927232473d20bcd10e4e07705f046515ac8c18daf0e16e96c1b0068"
+}
