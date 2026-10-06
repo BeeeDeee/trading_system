@@ -132,8 +132,13 @@ def gate_summary(lab: Lab, hid: str) -> list[dict]:
                              "WHERE hypothesis_id = ? ORDER BY id", (hid,)):
         m = json.loads(r["metrics_json"])
         failed = [k for k, c in (m.get("checks") or {}).items() if isinstance(c, dict) and c.get("pass") is False]
+        metrics = {k: m[k] for k in keys if k in m}
+        if m.get("mechanism"):
+            mech = m["mechanism"]
+            metrics |= {"mechanism_events": mech.get("n_events"), "mechanism_abnormal": mech.get("mean_abnormal"),
+                        "mechanism_placebo_pct": mech.get("placebo_percentile"), "mechanism_cost_ratio": mech.get("cost_ratio")}
         out.append({"gate": r["gate"], "v": r["version"], "passed": bool(r["passed"]), "code": r["reason_code"],
-                    "ts": r["ts"][:16], "metrics": {k: m[k] for k in keys if k in m}, "failed": failed,
+                    "ts": r["ts"][:16], "metrics": metrics, "failed": failed,
                     "error": m.get("error"), "problems": m.get("problems")})
     return out
 

@@ -10,6 +10,9 @@ evaluator) in a throwaway lab on the synthetic market. Expectations:
                 without the 2000 trials recorded
     positive    passes G0-G3, then G4 after a clean Skeptic review (a judge that rejects everything is broken too)
     replica_*   the benchmark itself on real data (60/40, BTC) fails G1
+    mechanism_positive   planted effect with a mechanism test: passes it and every gate
+    mechanism_absent     a working strategy with an absent claimed mechanism: dies at G1 on a mechanism check
+    mechanism noise      20 random event sets: at most 3 pass the placebo test
 """
 
 import copy
@@ -35,7 +38,7 @@ from lab.framework.states import S
 from lab.framework.tick import tick
 
 CANARIES = Path(__file__).resolve().parents[1] / "canaries"
-QUICK = {"G1": {"bootstrap_samples": 300}, "G2": {"random_entry": {"runs": 40}}}
+QUICK = {"G1": {"bootstrap_samples": 300, "mechanism": {"placebo_runs": 60}}, "G2": {"random_entry": {"runs": 40}}}
 
 
 @dataclass
@@ -51,14 +54,19 @@ def _lab(root: Path) -> Lab:
     return lab
 
 
-def submit_and_build(lab: Lab, card: dict, source: Path, evaluator, params: dict | None = None) -> str:
+def submit_and_build(lab: Lab, card: dict, source: Path, evaluator, params: dict | None = None,
+                     extra: dict[str, Path] | None = None) -> str:
     """Card in as human, strategy in through a Builder invocation, then the deterministic phase."""
     lab.send("NEW_HYPOTHESIS", "human", "system", None, {"card": card})
     tick(lab, evaluator)
     hid = lab.hypotheses()[-1]["id"]
     inv = invocations.start(lab, "builder", hid)
     shutil.copy(source, inv.workspace / "strategy" / "strategy.py")
-    stage(inv.workspace, "IMPL_DONE", "gatekeeper", hid, {"files": ["strategy/strategy.py"], "summary": "canary"})
+    files = ["strategy/strategy.py"]
+    for name, src in (extra or {}).items():
+        shutil.copy(src, inv.workspace / "strategy" / name)
+        files.append(f"strategy/{name}")
+    stage(inv.workspace, "IMPL_DONE", "gatekeeper", hid, {"files": files, "summary": "canary"})
     invocations.finish(lab, inv.id)
     tick(lab, evaluator)
     return hid
@@ -167,6 +175,39 @@ def run_positive(root: Path, overrides=QUICK) -> Result:
     return Result("positive", h["status"] == S.PAPER, f"-> {h['status']} {h['reject_code'] or ''}".strip())
 
 
+def run_mechanism(name: str, root: Path, expect_pass: bool, overrides=QUICK) -> Result:
+    """A card with mechanism_test through the real pipeline. `mechanism_positive` (planted effect) must pass the
+    mechanism test and then every gate; `mechanism_absent` (a strategy that works, with a claimed mechanism that
+    does not exist) must die at G1 on a mechanism check, before its strategy is simulated."""
+    lab = _lab(root)
+    ev = QlabEvaluator(overrides, require_canaries=False)
+    hid = submit_and_build(lab, _card(name), CANARIES / name / "strategy.py", ev,
+                           extra={"diagnostic.py": CANARIES / name / "diagnostic.py"})
+    if expect_pass and lab.hypothesis(hid)["status"] == S.SKEPTIC_REVIEW:
+        clean_review(lab, hid, ev)
+    h = lab.hypothesis(hid)
+    g1 = last_result(lab, hid, "G1")
+    mech = (json.loads(g1["metrics_json"]).get("mechanism") or {}) if g1 else {}
+    detail = f"-> {h['status']} {h['reject_stage'] or ''} {h['reject_code'] or ''} (placebo percentile {mech.get('placebo_percentile')})"
+    ok = h["status"] == S.PAPER if expect_pass else (
+        h["status"] == S.REJECTED and h["reject_stage"] == "G1" and str(h["reject_code"]).startswith("g1_mechanism"))
+    return Result(name, ok, detail.strip())
+
+
+def run_mechanism_noise(seeds: int = 20, max_pass: int = 3) -> Result:
+    """Random event sets on the synthetic market: the placebo test must pass about 5 % of them at most."""
+    from lab.framework import diagnostic
+    v = synthetic()
+    th = yaml.safe_load((Path(__file__).resolve().parents[1] / "gates.yaml").read_text())["G1"]["mechanism"]
+    survived = []
+    for seed in range(seeds):
+        mask = np.random.default_rng(1000 + seed).random(v.shape) < 0.02
+        st = diagnostic.event_study(v, mask, None, 1, placebo_runs=100, seed=seed)
+        if all(c["pass"] for c in diagnostic.evaluate(st, th).values()):
+            survived.append(seed)
+    return Result("mechanism noise", len(survived) <= max_pass, f"{seeds} random event sets, passed {survived} (max {max_pass})")
+
+
 def run_replica(name: str, root: Path, overrides=QUICK) -> Result:
     """The benchmark itself on real data must fail G1 (skipped when the data snapshot is not on this machine)."""
     from lab.framework.data import DATA_ROOT
@@ -214,5 +255,8 @@ def run_all(quick: bool = True) -> list[Result]:
                 run_overfit(root / "overfit1", True, overrides),
                 run_overfit(root / "overfit2", False, overrides),
                 run_positive(root / "positive", overrides),
+                run_mechanism("mechanism_positive", root / "mpos", True, overrides),
+                run_mechanism("mechanism_absent", root / "mabs", False, overrides),
+                run_mechanism_noise(),
                 run_replica("replica_6040", root / "r6040", overrides),
                 run_replica("replica_btc", root / "rbtc", overrides)]

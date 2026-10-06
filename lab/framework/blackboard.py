@@ -17,7 +17,7 @@ from lab.framework.paths import LabPaths
 from lab.framework.states import S
 
 CARD_ORDER = ("title", "author_agent", "family", "asset_classes", "universe", "mechanism", "signal",
-              "data_requirements", "holding_period", "market_exposure", "references", "falsification_criteria",
+              "mechanism_test", "data_requirements", "holding_period", "market_exposure", "references", "falsification_criteria",
               "notes")
 
 

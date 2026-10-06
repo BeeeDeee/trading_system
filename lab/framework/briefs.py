@@ -53,5 +53,6 @@ def text(brief: dict) -> str:
         out += (" Combine timeframes: a signal on one timeframe confirmed or filtered by another (e.g. a slow "
                 "weekly/monthly regime confirming a faster daily entry, or hourly-derived features gating a "
                 "daily signal); list them in signal.timeframes.")
+    out += " Declare a mechanism_test (event + primary horizon) so the judge tests the mechanism before the strategy."
     return out + (" The brief is a direction, not a waiver: if no idea with a real mechanism fits it, take the "
                   "closest fit and say why in notes.")

@@ -1,0 +1,48 @@
+{
+ "name": "reversal_stocks",
+ "status": "REJECTED",
+ "died_at": "G1",
+ "reason": "g1_sharpe_excess",
+ "gates": [
+  {
+   "gate": "G0",
+   "passed": true,
+   "reason": null,
+   "failed_checks": [],
+   "checks": {},
+   "headline": {}
+  },
+  {
+   "gate": "G1",
+   "passed": false,
+   "reason": "g1_sharpe_excess",
+   "failed_checks": [
+    "sharpe_diff_ci_lower",
+    "sharpe_excess"
+   ],
+   "checks": {
+    "decision_dates": 5529.0,
+    "max_dd_vs_benchmark": 0.728349,
+    "mean_exposure": 0.999876,
+    "position_entries": 105502.0,
+    "sharpe_diff_ci_lower": -0.192669,
+    "sharpe_excess": -0.013351
+   },
+   "headline": {
+    "sharpe": 0.34464833485670376,
+    "bench_sharpe": 0.35799942715030036,
+    "benchmark": "SPY_TR",
+    "cagr": 0.07972812804072715,
+    "bench_cagr": 0.07095982031741976,
+    "max_dd": 0.7283486154007253,
+    "mean_exposure": 0.9998760927566694
+   }
+  }
+ ],
+ "expected": {
+  "source": "research 5 / 6 (short-term reversal: dev Sharpe 1.02 but DSR 0.52, isolated peak, 53 % of profit in 1999-2002, costs)",
+  "dev": "must not pass G1-G3 as a whole; costs x2 and neighbors are the expected killers",
+  "holdout": "not reached"
+ },
+ "seconds": 134
+}

@@ -35,6 +35,14 @@ G1:   # basic, dev period, full universe, primary configuration only
   bootstrap_mean_block_days: 20
   min_position_entries: 100
   continuous_min_exposure: 0.5     # at or above this mean exposure rebalancing dates count as bets too (carry)
+  mechanism:                       # event study with placebo, run before the strategy when the card has mechanism_test
+    min_events: 200
+    min_event_dates: 30
+    placebo_runs: 200              # the whole event set shifted in time by a random number of rows
+    min_placebo_percentile: 0.95
+    n_blocks: 3
+    min_blocks_same_sign: 2
+    min_cost_ratio: 1.0            # gross abnormal return per event / round-trip cost of trading it
   min_decision_dates: 36           # with non-zero turnover
   min_mean_exposure: 0.20
   max_drawdown_vs_benchmark: 1.5

@@ -73,6 +73,11 @@ object only on what matters, all items in one message.
    check show decay? Is there a reason it should hold in the holdout years (see `G4` and the holdout start in
    the catalog), and what in the holdout period could break it?
 
+If the card has `mechanism_test`, `gate_results.json` G1 carries the event-study result (`mechanism`: events,
+mean abnormal return, placebo percentile, sub-period signs, cost ratio, other horizons). Use it under `mechanism`
+and `hindsight`: does the effect live in the horizon the strategy trades, in all sub-periods, and is `diagnostic.py`
+the same event as the strategy's entry rule?
+
 Also check that the code implements the card faithfully (every rule of `signal.description`, every parameter
 read from `params`, no extra filters), and that the Builder's stated approximations are harmless.
 

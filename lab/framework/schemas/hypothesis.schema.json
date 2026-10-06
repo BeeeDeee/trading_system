@@ -267,6 +267,36 @@
     },
     "notes": {
       "type": "string"
+    },
+    "mechanism_test": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "primary_horizon_days"
+      ],
+      "description": "The event the mechanism is about. The judge runs an event study with a placebo before any strategy: forward abnormal return after the event, side-adjusted, vs time-shifted placebos. Needs diagnostic.py: events(data, params) -> (mask, side).",
+      "properties": {
+        "event": {
+          "type": "string",
+          "minLength": 20
+        },
+        "primary_horizon_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60,
+          "description": "horizon of the gate; matches the holding period"
+        },
+        "horizons": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60
+          },
+          "description": "descriptive only"
+        }
+      }
     }
   }
 }

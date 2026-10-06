@@ -250,7 +250,7 @@ class QlabEvaluator:
 
     def _g0(self, lab, ctx: Context, th) -> Outcome:
         return integrity(ctx.card, ctx.path, ctx.view, ctx.strat_cols, self.primary(ctx.card), ctx.dev_end, th,
-                         ctx.runtime_limit_s)
+                         ctx.runtime_limit_s, events_path=ctx.path.parent / "diagnostic.py")
 
     # ------------------------------------------------------------------ scoring
     # Sharpe ratios are of returns in excess of cash, so a cash benchmark has Sharpe 0 and a strategy that is
@@ -273,8 +273,29 @@ class QlabEvaluator:
 
     # ------------------------------------------------------------------ G1 basic
 
+    def _mechanism(self, ctx: Context, th: dict) -> tuple[dict, dict]:
+        """The event study with placebo on dev rows (lab.framework.diagnostic) -> (stats, checks)."""
+        from lab.framework import diagnostic
+        mt = ctx.card["mechanism_test"]
+        mech = th["mechanism"]
+        view = ctx.view.slice(ctx.dev_end).columns(ctx.strat_cols)
+        mask, side = load_events(ctx.path.parent / "diagnostic.py", view, self.primary(ctx.card), ctx.runtime_limit_s)
+        horizon = int(mt["primary_horizon_days"])
+        if not 1 <= horizon <= diagnostic.MAX_HORIZON:
+            raise ValueError(f"primary_horizon_days must be 1..{diagnostic.MAX_HORIZON}")
+        stats = diagnostic.event_study(view, mask, side, horizon, horizons=tuple(mt.get("horizons") or ()),
+                                       placebo_runs=mech["placebo_runs"], n_blocks=mech["n_blocks"],
+                                       cost_rate=costs.cost_rates(view))
+        return stats, diagnostic.evaluate(stats, mech)
+
     def _g1(self, lab, ctx: Context, th) -> Outcome:
         params, end = self.primary(ctx.card), ctx.dev_end
+        mech_stats, mech_trial = None, []
+        if ctx.card.get("mechanism_test") and th.get("mechanism"):
+            mech_stats, mech_checks = self._mechanism(ctx, th)
+            mech_trial = [Trial(self.config_sha(ctx, params) + "|mechanism", None, mech_stats["n_events"])]
+            if not all(c["pass"] for c in mech_checks.values()):      # the mechanism is absent: no strategy run
+                return _outcome("g1", {"mechanism": mech_stats, "strategy_not_run": True}, mech_checks, mech_trial)
         run, bench = self.run(ctx, params, end), self.benchmark(ctx, end)
         win = self.window(ctx, run)
         s = self._scores(ctx, run, bench, win)
@@ -295,9 +316,10 @@ class QlabEvaluator:
                                                    th["max_drawdown_vs_benchmark"] * s["bench_max_dd"])
         else:
             checks["sharpe_vs_tbill"] = _check(s["sharpe"], ">=", 0.5)
-        return _outcome("g1", s | {"benchmark": ctx.bench_name}, checks,
-                        [Trial(self.config_sha(ctx, params), _per_period(self.excess(ctx, run.returns, win)),
-                               win.stop - win.start)])
+        return _outcome("g1", s | {"benchmark": ctx.bench_name} | ({"mechanism": mech_stats} if mech_stats else {}),
+                        checks, mech_trial + [Trial(self.config_sha(ctx, params),
+                                                    _per_period(self.excess(ctx, run.returns, win)),
+                                                    win.stop - win.start)])
 
     # ------------------------------------------------------------------ G2 robustness
 
@@ -416,22 +438,18 @@ class QlabEvaluator:
         return _outcome("g2", m, checks, trials)
 
     def _random_entry(self, ctx, run: Run, end, win, ppy, n_runs) -> tuple[float, list[float]]:
-        """Same exposure, turnover and holding periods, random assets (>= 5 active) or random timing."""
+        """Same exposure, turnover and holding periods with random names (>= 5 active names: lab.framework.nulls,
+        built date by date from the instruments eligible on that date) or random timing (few instruments)."""
+        from lab.framework import nulls
         w = run.targets
         active_cols = np.flatnonzero(np.nan_to_num(np.abs(w)).sum(axis=0) > 0)
         rng = np.random.default_rng(12345)
         sv = ctx.view.slice(end).columns(ctx.strat_cols)
-        # random assets come from the same pool the strategy chooses from: the card's universe when there is
-        # one (otherwise a LIQ-500 book is compared with random illiquid stocks that cost several times more)
-        pool = (sv.listed if sv.universe is None else sv.universe)[win]
-        eligible = np.union1d(np.flatnonzero(pool.mean(axis=0) > 0.5), active_cols)
+        eligible = (sv.listed if sv.universe is None else sv.universe) & sv.tradable
         null = []
         for _ in range(n_runs):
-            if len(active_cols) >= 5 and len(eligible) > len(active_cols):
-                perm = np.arange(w.shape[1])
-                perm[eligible] = rng.permutation(eligible)
-                fake = np.full_like(w, np.nan)
-                fake[:, perm] = w
+            if len(active_cols) >= 5:
+                fake = nulls.random_book(w, eligible, rng)
             else:
                 fake = np.roll(w, int(rng.integers(63, max(64, len(w) - 63))), axis=0)
             null.append(self.sr(ctx, self._simulate(ctx, self._full_width(ctx, fake), end).returns, win, ppy))
@@ -605,7 +623,7 @@ def strategy_instruments(card: dict) -> dict[str, list[str] | None]:
 # ---------------------------------------------------------------------------- G0 on any view
 
 def integrity(card: dict, path, view: DataView, strat_cols: list[str], params: dict, end: int, th: dict,
-              runtime_limit_s: float) -> Outcome:
+              runtime_limit_s: float, events_path=None) -> Outcome:
     """G0: static scan, crash/timeout, weight schema, universe, determinism, look-ahead (truncation +
     perturbation of qlab.validation.leakage). The gate runner calls it on the real dev rows; `lab try` calls it
     on a synthetic market inside the Builder's workspace, so the Builder never needs real data to pass G0."""
@@ -615,6 +633,13 @@ def integrity(card: dict, path, view: DataView, strat_cols: list[str], params: d
     m = {"problems": problems}
     if not source:
         return Outcome(False, m | {"problems": ["strategy.py missing"]}, "g0_missing")
+    wants_events = bool(card.get("mechanism_test")) and events_path is not None
+    if wants_events:
+        if not events_path.exists():
+            return Outcome(False, m | {"problems": ["the card declares mechanism_test: diagnostic.py is missing"]},
+                           "g0_missing_diagnostic")
+        problems += [f"diagnostic.py {p}" for p in strategy.scan(events_path.read_text(), universe, set(view.instruments))]
+        m["problems"] = problems
     if problems:
         return Outcome(False, m, "g0_static")
     sv = view.slice(end).columns(strat_cols)
@@ -651,6 +676,45 @@ def integrity(card: dict, path, view: DataView, strat_cols: list[str], params: d
         return Outcome(False, m, "g0_nondeterministic")
     bad = _lookahead(targets, sv, w, th.get("leakage_cut_days", 12))
     m["lookahead_failures"] = bad
+    if bad["truncation"] or bad["perturbation"]:
+        return Outcome(False, m, "g0_lookahead")
+    if wants_events:
+        return _integrity_events(events_path, sv, params, th, m, runtime_limit_s)
+    return Outcome(True, m)
+
+
+def load_events(path, view: DataView, params: dict, limit_s: float = 1200.0):
+    """Run diagnostic.py: -> (mask bool (T, N), side float (T, N) of +-1 or None)."""
+    module = strategy.load(path, entry="events")
+    with strategy.time_limit(limit_s):
+        out = module.events(view, dict(params))
+    mask, side = out if isinstance(out, tuple) else (out, None)
+    mask = np.asarray(mask, dtype=bool)
+    if mask.shape != view.shape:
+        raise ValueError(f"events returned a mask of shape {mask.shape}, expected {view.shape}")
+    if side is not None:
+        side = np.asarray(side, dtype=float)
+        if side.shape != view.shape or not np.isin(side[mask], (-1.0, 1.0)).all():
+            raise ValueError("side must have the shape of the mask and be +1 or -1 where the event happens")
+    return mask, side
+
+
+def _integrity_events(path, sv: DataView, params: dict, th: dict, m: dict, limit_s: float) -> Outcome:
+    """G0 for diagnostic.py: runs, right shape, deterministic, point-in-time (same truncation/perturbation test)."""
+    def flat(v: DataView) -> np.ndarray:
+        mask, side = load_events(path, v, params, limit_s)
+        return mask * (1.0 if side is None else np.where(mask, side, 1.0))
+    try:
+        full = flat(sv)
+    except strategy.StrategyTimeout as e:
+        return Outcome(False, m | {"error": f"diagnostic.py: {e}"}, "g0_timeout")
+    except Exception as e:  # noqa: BLE001
+        return Outcome(False, m | {"error": f"diagnostic.py {type(e).__name__}: {e}"}, "g0_crash")
+    m["events_in_dev"] = int(np.count_nonzero(full))
+    if not np.array_equal(full, flat(sv)):
+        return Outcome(False, m, "g0_nondeterministic")
+    bad = _lookahead(flat, sv, full, th.get("leakage_cut_days", 12))
+    m["events_lookahead_failures"] = bad
     if bad["truncation"] or bad["perturbation"]:
         return Outcome(False, m, "g0_lookahead")
     return Outcome(True, m)

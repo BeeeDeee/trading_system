@@ -110,6 +110,26 @@ The framework does execution, costs, cash, benchmarks and all statistics. Do not
 anything about performance, and do not add filters, stops, volatility scaling or parameters that are not in
 the card. Every parameter in the card's `signal.params` must be read from `params` (G2 varies them).
 
+## The diagnostic (only when the card has `mechanism_test`)
+
+Also write `strategy/diagnostic.py` and list it in IMPL_DONE `files`:
+
+```python
+import numpy as np
+
+def events(data, params):
+    mask = ...    # (T, N) bool: the event happens to instrument j after the close of day t (rows <= t only)
+    side = ...    # (T, N) float +1 / -1 (the direction the mechanism predicts), or None for all +1
+    return mask, side
+```
+
+Same rules as the strategy (point-in-time, deterministic, allowed imports, no date or instrument literals,
+parameters read from `params`). Implement exactly the event the card's `mechanism_test.event` describes and
+the same side logic as the strategy's positions (events on the long leg +1, on the short leg -1); do not tune
+the event to produce more or better events. Mark an event only where the instrument is in the universe
+(`data.universe`) and tradable. `lab try` runs it and shows the number of events (the gate needs at least 200 on
+30 dates in the dev period); it never shows returns.
+
 ## Tests
 
 `strategy/test_strategy.py` (pytest, run by `lab try`): test the *mechanics* on small hand-made inputs whose

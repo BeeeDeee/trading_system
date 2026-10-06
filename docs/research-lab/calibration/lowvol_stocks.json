@@ -1,0 +1,69 @@
+{
+ "name": "lowvol_stocks",
+ "status": "REJECTED",
+ "died_at": "G2",
+ "reason": "g2_post_publication_ratio",
+ "gates": [
+  {
+   "gate": "G0",
+   "passed": true,
+   "reason": null,
+   "failed_checks": [],
+   "checks": {},
+   "headline": {}
+  },
+  {
+   "gate": "G1",
+   "passed": true,
+   "reason": null,
+   "failed_checks": [],
+   "checks": {
+    "decision_dates": 252.0,
+    "max_dd_vs_benchmark": 0.41362,
+    "mean_exposure": 0.953279,
+    "position_entries": 2169.0,
+    "sharpe_diff_ci_lower": 0.04896,
+    "sharpe_excess": 0.180539
+   },
+   "headline": {
+    "sharpe": 0.5402051527165379,
+    "bench_sharpe": 0.35966580415260035,
+    "benchmark": "SPY_TR",
+    "cagr": 0.09045102716643783,
+    "bench_cagr": 0.07134892511257318,
+    "max_dd": 0.41362011927661213,
+    "mean_exposure": 0.9532787043200749
+   }
+  },
+  {
+   "gate": "G2",
+   "passed": false,
+   "reason": "g2_post_publication_ratio",
+   "failed_checks": [
+    "post_publication_ratio"
+   ],
+   "checks": {
+    "alt_universe_ratio": 1.128358,
+    "alt_universe_vs_benchmark": 0.609545,
+    "max_subperiod_share": 0.440253,
+    "median_neighbor_sharpe_ratio": 0.975127,
+    "neighbors_beating_benchmark": 1.0,
+    "post_publication_ratio": 0.178246,
+    "random_entry_percentile": 1.0,
+    "sharpe_costs_x2_vs_benchmark": 0.529108,
+    "subperiods_beating_benchmark": 2.0
+   },
+   "headline": {
+    "sharpe": 0.5402051527165379,
+    "bench_sharpe": 0.35966580415260035,
+    "benchmark": "SPY_TR"
+   }
+  }
+ ],
+ "expected": {
+  "source": "research 1 (low-vol ensemble: dev Sharpe 0.93 vs SPY 0.49, DSR 0.999; locked holdout Sharpe 0.01)",
+  "dev": "should reach at least G1; the literature prior (+20 trials) and the S&P 500 alternative universe may stop it at G2/G3",
+  "holdout": "must fail G4 if reached (it failed in research 1)"
+ },
+ "seconds": 718
+}

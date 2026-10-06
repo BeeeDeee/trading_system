@@ -1,0 +1,48 @@
+{
+ "name": "momentum_stocks",
+ "status": "REJECTED",
+ "died_at": "G1",
+ "reason": "g1_sharpe_excess",
+ "gates": [
+  {
+   "gate": "G0",
+   "passed": true,
+   "reason": null,
+   "failed_checks": [],
+   "checks": {},
+   "headline": {}
+  },
+  {
+   "gate": "G1",
+   "passed": false,
+   "reason": "g1_sharpe_excess",
+   "failed_checks": [
+    "sharpe_diff_ci_lower",
+    "sharpe_excess"
+   ],
+   "checks": {
+    "decision_dates": 252.0,
+    "max_dd_vs_benchmark": 0.679089,
+    "mean_exposure": 0.951207,
+    "position_entries": 6540.0,
+    "sharpe_diff_ci_lower": -0.225949,
+    "sharpe_excess": -0.048909
+   },
+   "headline": {
+    "sharpe": 0.3107569277994291,
+    "bench_sharpe": 0.35966580415260035,
+    "benchmark": "SPY_TR",
+    "cagr": 0.06692188082525896,
+    "bench_cagr": 0.07134892511257318,
+    "max_dd": 0.6790894930504084,
+    "mean_exposure": 0.9512070233762031
+   }
+  }
+ ],
+ "expected": {
+  "source": "literature; research 1 included momentum candidates without a standalone verdict",
+  "dev": "report only (no firm expectation)",
+  "holdout": "report only"
+ },
+ "seconds": 153
+}

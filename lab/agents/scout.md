@@ -106,6 +106,30 @@ returns, US-session volume share) gating a daily crypto signal. List the timefra
 Avoid what `prior_studies.md` already killed unless you have a mechanism-level reason why your variant is
 different, and write that reason in `notes`. Do not propose a near-copy of a hypothesis in `registry.json`.
 
+## The mechanism test (`mechanism_test`) - declare one whenever the mechanism implies an observable effect
+
+Most hypotheses died at G1 before anyone learned whether their mechanism exists. Declare in the card the
+**event** your mechanism is about and one **primary horizon** (days, 1-60, matching the holding period):
+
+```yaml
+mechanism_test:
+  event: "A stock's daily volume exceeds 3 times its 63-day average on a day when its return is in the top decile of the universe (a news day)."
+  primary_horizon_days: 5
+  horizons: [1, 5, 10, 21]      # descriptive only
+```
+
+The Builder implements `diagnostic.py: events(data, params) -> (mask, side)`: `mask[t, j]` is True when the event
+happens to instrument j after the close of day t, `side[t, j]` is +1 where the mechanism says j should outperform
+afterwards and -1 where it should underperform. Before simulating any strategy the judge measures, on dev rows,
+the side-adjusted return from the next open to the close of day t+h minus the mean of the other instruments on
+the same date, and compares it with 200 placebos (the whole event set shifted in time). The mechanism must beat
+the 95th percentile of the placebos, keep its sign in two of three sub-periods, have at least 200 events on 30
+dates, and earn more gross per event than the round trip costs. If it fails, the hypothesis dies there with a
+mechanism reason: that is cheap, and it tells the lab whether the idea was wrong or only its strategy. It counts
+as one trial of the family. For a ranking strategy (e.g. low volatility) the event is "the instrument enters the
+long (short) leg at a rebalance"; for a regime filter, "the filter switches on". If no event can be defined (a
+pure allocation rule with no conditional claim), leave `mechanism_test` out and say why in `notes`.
+
 ## Card details the checker enforces
 
 - `data_requirements[].period`: optional `[start, end]` inside the dataset range; use it to start after the

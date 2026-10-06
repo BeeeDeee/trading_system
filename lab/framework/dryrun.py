@@ -150,7 +150,10 @@ def run(ws: Path) -> tuple[bool, list[str]]:
     """Everything `lab try` checks. Returns (ok, report lines)."""
     card = yaml.safe_load((ws / "card.yaml").read_text())
     cat = catalog.load(ws / "catalog.yaml")
-    th = yaml.safe_load((ws / "gates.yaml").read_text())["G0"]
+    gates = yaml.safe_load((ws / "gates.yaml").read_text())
+    th = gates["G0"]
+    th_events = gates["G1"]["mechanism"]["min_events"]
+    th_dates = gates["G1"]["mechanism"]["min_event_dates"]
     path = ws / "strategy" / "strategy.py"
     content = {k: v for k, v in card.items() if k not in ("id", "version", "status", "history", "terminal")}
     seed = int(hashlib.sha256(json.dumps(content, sort_keys=True, default=str).encode()).hexdigest()[:8], 16)
@@ -160,7 +163,8 @@ def run(ws: Path) -> tuple[bool, list[str]]:
     lines, ok = [f"synthetic market: {len(cols)} instruments, {view.dates[0]} .. {view.dates[-1]} "
                  f"({len(view.dates)} rows; random returns, a late listing, missing opens)"], True
 
-    out = integrity(card, path, view, cols, params, len(view.dates), th, th["max_runtime_min"] * 60.0)
+    out = integrity(card, path, view, cols, params, len(view.dates), th, th["max_runtime_min"] * 60.0,
+                    events_path=path.parent / "diagnostic.py")
     if out.passed:
         lines.append(f"G0 integrity on synthetic data: passed ({out.metrics.get('runtime_s')} s, "
                      f"{out.metrics['lookahead_failures']['cuts']} look-ahead cuts)")
@@ -174,6 +178,15 @@ def run(ws: Path) -> tuple[bool, list[str]]:
         w = np.asarray(module.target_weights(sv, dict(params)), dtype=float)
         lines.append("trading statistics (primary config, synthetic data; check them against the card):")
         lines += [f"  {k}: {v}" for k, v in stats(w, sv).items()]
+        if card.get("mechanism_test"):
+            from lab.framework import diagnostic
+            from lab.framework.evaluator import load_events
+            mt = card["mechanism_test"]
+            mask, side = load_events(path.parent / "diagnostic.py", sv, params)
+            st = diagnostic.event_study(sv, mask, side, int(mt["primary_horizon_days"]), placebo_runs=5)
+            lines.append("mechanism test (events on the synthetic market; the judge's result on real data is not shown): "
+                         f"{st['n_events']} events on {st['n_event_dates']} dates ({st['events_per_year']} per year); "
+                         f"the gate needs >= {th_events} events on >= {th_dates} dates in the dev period")
         for cfg in QlabEvaluator().neighbors(card):
             full = params | cfg
             try:
