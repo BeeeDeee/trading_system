@@ -56,9 +56,22 @@ def pending_tasks(lab: Lab, propose: str | None = None) -> list[Task]:
         tasks.append(Task("chair", None, "backlog"))
     if lab.inbox("librarian"):
         tasks.append(Task("librarian", None, "record results and lessons"))
+    if steward_due(lab):
+        tasks.append(Task("steward", None, "weekly paper report"))
     if propose:
         tasks.append(Task("scout", None, propose))
     return tasks
+
+
+def steward_due(lab: Lab, days: int = 7) -> bool:
+    """A weekly Steward report while something is paper trading (or an ALERT about paper waits for it)."""
+    if not lab.hypotheses(S.PAPER):
+        return False
+    last = lab.con.execute("SELECT MAX(started_at) FROM agent_invocations WHERE agent = 'steward'").fetchone()[0]
+    if last is None:
+        return True
+    from datetime import datetime, timedelta, timezone
+    return datetime.fromisoformat(last) < datetime.now(timezone.utc) - timedelta(days=days)
 
 
 def run_cycle(lab: Lab, evaluator: Evaluator | None, runners: dict[str, Runner],

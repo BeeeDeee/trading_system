@@ -95,7 +95,7 @@ MESSAGE_RULES: dict[str, dict] = {
                        "to": {"system", "librarian", "chair", HUMAN}},
     "QUESTION":       {"from": set(LLM_AGENTS) | {"system", HUMAN}, "to": set(LLM_AGENTS) | {HUMAN}},
     "LESSON":         {"from": {"librarian"}, "to": {"system"}},
-    "KNOWLEDGE":      {"from": {"librarian", "chair", HUMAN}, "to": {"system"}},
+    "KNOWLEDGE":      {"from": {"librarian", "chair", "steward", HUMAN}, "to": {"system"}},
     "FAMILY_MERGE":   {"from": {"chair", HUMAN}, "to": {"system"}},
     "ALERT":          {"from": {"sentinel", "steward", "system", "gatekeeper"},
                        "to": {HUMAN, "chair", "librarian"}},

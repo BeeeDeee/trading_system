@@ -126,6 +126,19 @@ CREATE TABLE IF NOT EXISTS lessons (    -- accepted LESSON messages (refused one
     ts TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS paper_days (  -- forward (paper) results, one row per hypothesis and day, never rewritten
+    hypothesis_id TEXT NOT NULL,
+    date TEXT NOT NULL,
+    ret REAL NOT NULL,
+    bench_ret REAL NOT NULL,
+    cash_ret REAL NOT NULL,
+    gross REAL NOT NULL,
+    turnover REAL NOT NULL,
+    entries INTEGER NOT NULL,
+    ts TEXT NOT NULL,
+    PRIMARY KEY (hypothesis_id, date)
+);
+
 CREATE TABLE IF NOT EXISTS knowledge (   -- the lab's knowledge base; corrections supersede, nothing is edited
     id TEXT PRIMARY KEY,                 -- K-0001
     kind TEXT NOT NULL,                  -- market | data | method | framework | process
@@ -176,7 +189,7 @@ CREATE TABLE IF NOT EXISTS counters (
 );
 """
 
-APPEND_ONLY = ("transitions", "gate_results", "trials", "canary_runs", "lessons", "family_merges", "knowledge")
+APPEND_ONLY = ("transitions", "gate_results", "trials", "canary_runs", "lessons", "family_merges", "knowledge", "paper_days")
 
 _TRIGGERS = "".join(f"""
 CREATE TRIGGER IF NOT EXISTS {t}_no_update BEFORE UPDATE ON {t}

@@ -80,6 +80,8 @@ def render_context(lab, ws: Path, items: tuple[str, ...], hid: str | None = None
                 (ws / "knowledge.md").write_text(f.read_text() if f.exists() else "# Lab knowledge base\n\nEmpty.\n")
             case "cases":
                 (ws / "cases.json").write_text(json.dumps(cases(lab), indent=2, ensure_ascii=False, default=str))
+            case "paper":
+                (ws / "paper.json").write_text(json.dumps(paper_summary(lab), indent=2, ensure_ascii=False))
             case "families":
                 (ws / "families.json").write_text(json.dumps(families(lab), indent=2, ensure_ascii=False))
             case "blocked":
@@ -163,4 +165,26 @@ def cases(lab) -> list[dict]:
                                           if m["type"] == "IMPL_DONE"],
                     "skeptic": [m["payload"] for m in hist["messages"] if m["from"] == "skeptic"],
                     "transitions": hist["transitions"]})
+    return out
+
+
+def paper_summary(lab) -> list[dict]:
+    """The Steward's brief: every hypothesis that is or was paper trading, with its forward record."""
+    import numpy as np
+
+    from lab.framework import metrics, paper
+    out = []
+    for h in lab.hypotheses():
+        rec = paper.record(lab, h["id"])
+        if not rec["days"]:
+            continue
+        ex, bx = rec["ret"] - rec["cash"], rec["bench"] - rec["cash"]
+        last30 = slice(max(0, rec["days"] - 30), rec["days"])
+        out.append({"id": h["id"], "title": h["title"], "status": h["status"], "days": rec["days"],
+                    "first": rec["first"], "last": rec["last"], "entries": rec["entries"],
+                    "cum_return": float(np.prod(1 + rec["ret"]) - 1), "bench_cum_return": float(np.prod(1 + rec["bench"]) - 1),
+                    "sharpe": metrics.sharpe(ex, 365.0), "bench_sharpe": metrics.sharpe(bx, 365.0),
+                    "max_dd": rec["max_dd"], "dev_max_dd": paper.dev_max_dd(lab, h["id"]),
+                    "last_30_days_return": float(np.prod(1 + rec["ret"][last30]) - 1),
+                    "g5_ready": paper.ready(lab, h["id"]) if h["status"] == "PAPER" else None})
     return out

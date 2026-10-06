@@ -26,7 +26,7 @@ def policy(tmp_path, **over):
 def test_budget_quiet_window_and_pause(lab, tmp_path):
     pol = Policy.load(policy(tmp_path))
     allow, why = gate(lab, pol, NOON)
-    assert why is None and allow("scout") and not allow("steward")
+    assert why is None and allow("scout") and not allow("nobody")
     assert gate(lab, pol, NOON.replace(hour=1))[1].startswith("quiet window")
     (lab.paths.home / "PAUSE").write_text("owner")
     assert gate(lab, pol, NOON)[1] == "PAUSE file present"

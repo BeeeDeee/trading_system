@@ -38,6 +38,12 @@ Sharadar SF1 filing dates exist on disk but there is no loader, and announcement
 
 *confidence medium · 2026-10-06 · human · evidence: H-0008; catalog*
 
+### K-0014 Only crypto has forward data
+
+Forward daily bars come from the Binance public API (spot and USD-M perps with funding), reachable from this VPS. ETFs and US stocks have no free forward source yet (Sharadar not renewed), so hypotheses on them are parked after G4 until the Archivist validates a source.
+
+*confidence high · 2026-10-06 · human · evidence: lab/framework/forward.py; decision Q3*
+
 ## Methodology
 
 ### K-0005 Benchmark-relative binary switches start handicapped
@@ -85,3 +91,9 @@ A strategy that silently holds nothing when a series or instrument is missing pa
 Without steering, three of the first four cards used SPY/IEF and monthly switching. Rotating briefs (least-used horizon x asset group, multi-timeframe while under half of the cards combine timeframes) produced three different markets and horizons in the next three runs.
 
 *confidence medium · 2026-10-06 · human · evidence: H-0001..H-0004; H-0006..H-0008*
+
+### K-0013 Paper trading is model execution on forward data
+
+The lab places no orders. Paper = the strategy run by the lab engine on daily bars that did not exist when it was judged, appended once per day and never recomputed. It is clean out-of-sample evidence for the signal and the cost model's assumptions, not for real fills or slippage; G5 therefore cannot test tracking or realized costs.
+
+*confidence high · 2026-10-06 · human · evidence: PLAN decision log 2026-10-06 (step 4c); lab/framework/paper.py*

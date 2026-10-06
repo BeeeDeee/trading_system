@@ -81,7 +81,21 @@ class QlabEvaluator:
         return ingest.ingest(lab.paths.home, lab.paths.catalog, ds, payload["catalog_entry"], src)
 
     def paper_ready(self, lab: Lab, hid: str) -> bool:
-        return False  # the paper runner arrives in step 4
+        from lab.framework import paper
+        return paper.ready(lab, hid)
+
+    def paper_forward(self, lab: Lab) -> list[str]:
+        """Ingest phase (network): fetch forward days for every hypothesis in PAPER."""
+        from lab.framework import paper
+        return paper.update_forward(lab, self)
+
+    def paper_run(self, lab: Lab, hid: str) -> int:
+        """Judge phase (sandbox): append new forward days; the Sentinel's kill rule runs on the record."""
+        from lab.framework import paper
+        added = paper.run(lab, self, hid)
+        if added:
+            paper.sentinel_check(lab, hid)
+        return added
 
     # ------------------------------------------------------------------ entry point
 
@@ -96,7 +110,7 @@ class QlabEvaluator:
         except (NotImplementedError, KeyError) as e:   # catalog has it, no loader yet / unknown instrument
             lab.send("ALERT", "gatekeeper", "human", hid, {"severity": "warning", "text": f"{gate}: {e}"})
             return Outcome(False, {"error": str(e)}, f"{gate.lower()}_no_data_adapter")
-        out = {"G0": self._g0, "G1": self._g1, "G2": self._g2, "G3": self._g3, "G4": self._g4}[gate](lab, ctx, th)
+        out = {"G0": self._g0, "G1": self._g1, "G2": self._g2, "G3": self._g3, "G4": self._g4, "G5": self._g5}[gate](lab, ctx, th)
         if self.overrides.get(gate):
             out.metrics["test_overrides"] = self.overrides[gate]
         return out
@@ -455,6 +469,9 @@ class QlabEvaluator:
 
     # ------------------------------------------------------------------ G4 holdout
 
+    def _g5(self, lab, ctx: Context, th) -> Outcome:
+        return _g5_outcome(lab, ctx.hid, th)
+
     def _g4(self, lab, ctx: Context, th) -> Outcome:
         params = self.primary(ctx.card)
         dev_run, dev_bench = self.run(ctx, params, ctx.dev_end), self.benchmark(ctx, ctx.dev_end)
@@ -520,6 +537,33 @@ def _merge(a: dict, b: dict) -> dict:
         out[k] = _merge(out.get(k, {}), v) if isinstance(v, dict) else v
     return out
 
+
+
+# ---------------------------------------------------------------------------- G5 (paper)
+
+def _g5_outcome(lab, hid: str, th: dict) -> Outcome:
+    """Forward record vs what the dev period implied. Fill tracking and realized costs need real orders, which
+    the lab does not place: those checks are reported as not applicable."""
+    from lab.framework import paper
+    rec = paper.record(lab, hid)
+    row = lab.con.execute("SELECT metrics_json FROM gate_results WHERE hypothesis_id = ? AND gate = 'G1' AND passed = 1 "
+                          "ORDER BY id DESC LIMIT 1", (hid,)).fetchone()
+    dev = json.loads(row[0]) if row else {}
+    ppy = dev.get("ppy", 252.0)
+    years = rec["days"] / ppy
+    sr = metrics.sharpe(rec["ret"] - rec["cash"], ppy)
+    sr_b = metrics.sharpe(rec["bench"] - rec["cash"], ppy)
+    sr_dev = float(dev.get("sharpe", 0.0))
+    se = float(np.sqrt((1 + sr_dev ** 2 / 2) / max(years, 1e-9)))
+    from scipy.stats import norm
+    p5 = sr_dev + norm.ppf(th["min_sharpe_percentile_vs_backtest"]) * se
+    checks = {"sharpe_vs_backtest_p5": _check(sr, ">=", p5),
+              "position_entries": _check(rec["entries"], ">=", th["min_position_entries"]),
+              "tracking_vs_replay": _na("no real orders: paper is the model's own execution"),
+              "realized_costs": _na("no real orders: costs are the model's")}
+    m = {"days": rec["days"], "first": rec["first"], "last": rec["last"], "sharpe": sr, "bench_sharpe": sr_b,
+         "dev_sharpe": sr_dev, "backtest_p5": p5, "max_dd": rec["max_dd"], "years": years}
+    return _outcome("g5", m, checks, [])
 
 
 # ---------------------------------------------------------------------------- instruments of a card

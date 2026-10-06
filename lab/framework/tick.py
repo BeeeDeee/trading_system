@@ -32,6 +32,11 @@ def tick(lab: Lab, evaluator: Evaluator | None, max_rounds: int = 50, phase: str
     if phase not in PHASES:
         raise ValueError(f"phase must be one of {PHASES}")
     log: list[str] = []
+    if phase in ("all", "ingest") and evaluator is not None and getattr(evaluator, "paper_forward", None):
+        try:
+            log += evaluator.paper_forward(lab)
+        except OSError as e:          # network down: paper waits for the next cycle
+            log.append(f"forward data not updated: {e}")
     for _ in range(max_rounds):
         moved = _react_all(lab, evaluator, log, phase)
         if phase != "ingest":
@@ -263,10 +268,18 @@ def _drive_states(lab: Lab, evaluator, log) -> bool:
             if new != S.HOLDOUT:
                 log.append(f"{hid} sentinel -> {new}")
                 moved = True
-        elif status == S.PAPER and evaluator is not None and getattr(evaluator, "paper_ready", None) \
-                and evaluator.paper_ready(lab, hid):
-            out = run_gate(lab, hid, "G5", evaluator)
-            log.append(f"{hid} G5 {'passed' if out.passed else 'failed'}")
-            moved = True
+        elif status == S.PAPER and evaluator is not None:
+            if getattr(evaluator, "paper_run", None):
+                added = evaluator.paper_run(lab, hid)
+                if added:
+                    log.append(f"{hid} paper: {added} new forward days")
+                if lab.hypothesis(hid)["status"] != S.PAPER:
+                    log.append(f"{hid} -> {lab.hypothesis(hid)['status']} (sentinel)")
+                    moved = True
+                    continue
+            if getattr(evaluator, "paper_ready", None) and evaluator.paper_ready(lab, hid):
+                out = run_gate(lab, hid, "G5", evaluator)
+                log.append(f"{hid} G5 {'passed' if out.passed else 'failed'}")
+                moved = True
     return moved
 
