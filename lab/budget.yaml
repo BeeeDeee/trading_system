@@ -1,14 +1,14 @@
 # Agent budget of the research lab (decision Q4: Claude Pro, 8 runs/day). The owner edits this file.
 # Counted per UTC day from agent_invocations (every started run counts, failed ones too: they used the quota).
 daily:
-  scout: 2
-  builder: 2
+  scout: 4            # 2 more hypotheses per day (owner, 2026-10-07)
+  builder: 4          # each new hypothesis needs a Scout and a Builder run
   skeptic: 1
   archivist: 1
   librarian: 1
   chair: 1
   steward: 1          # runs only weekly and only while something is in PAPER
-total_daily: 8
+total_daily: 12
 quiet_utc: [0, 2]     # no agent runs 00:00-02:00 UTC (the cpb bots' daily run uses the same subscription)
 max_agent_runs_per_cycle: 1
 propose_when_waiting_below: 2   # Scout proposes only while fewer hypotheses than this wait for the Builder
