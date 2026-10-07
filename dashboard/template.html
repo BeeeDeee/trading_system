@@ -171,7 +171,7 @@ function header(){
 // ------------------------------------------------------------------ equity chart
 function equitySection(){
   var sec = el("section", null, [el("h2",{text:"Vývoj kapitálu"}),
-    el("p",{cls:"sub", text:"Hodnota portfolií k 00:00 UTC (hodinové varianty podle prvního hodinového běhu dne), logaritmická osa. Barevně až 3 zvýrazněná portfolia (klepnutím v legendě nebo v tabulce), BTC HOLD přerušovaně, ostatní šedě."})]);
+    el("p",{cls:"sub", text:"Hodnota portfolií k 00:00 UTC (hodinové varianty podle prvního hodinového běhu dne); poslední bod je aktuální hodnota stejná jako v tabulce. Logaritmická osa. Barevně až 3 zvýrazněná portfolia (klepnutím v legendě nebo v tabulce), BTC HOLD přerušovaně, ostatní šedě."})]);
   var ctr = el("div",{cls:"controls"});
   var seg = el("div",{cls:"seg", role:"group", "aria-label":"Scénář nákladů"});
   Object.keys(SCN).forEach(function(k){ seg.appendChild(el("button",{"aria-pressed": String(state.scn===k), text:SCN[k], onclick:function(){ state.scn=k; render(); }})); });
@@ -218,7 +218,7 @@ function drawEquity(wrap){
     s.appendChild(svg("line",{x1:m.l, x2:W-m.r, y1:yy, y2:yy, stroke:css("--grid"), "stroke-width":1}));
     var tx = svg("text",{x:m.l-6, y:yy+4, "text-anchor":"end", "font-size":11, fill:css("--muted")}); tx.textContent = pct(t / D.start_capital - 1, 0); s.appendChild(tx); });
   var step = Math.max(1, Math.ceil(n / (W < 600 ? 4 : 8)));
-  for (var i = 0; i < n; i += step){ var tx = svg("text",{x:x(i), y:H-8, "text-anchor":"middle", "font-size":11, fill:css("--muted")}); tx.textContent = dates[i].slice(5).split("-").reverse().join(". ") + "."; s.appendChild(tx); }
+  for (var i = 0; i < n; i += step){ var tx = svg("text",{x:x(i), y:H-8, "text-anchor":"middle", "font-size":11, fill:css("--muted")}); tx.textContent = dates[i].slice(5,10).split("-").reverse().join(". ") + "." + (i === n-1 && dates[i].length > 10 ? " (nyní)" : ""); s.appendChild(tx); }
   // segments (release/model change)
   (S.segments||[]).forEach(function(sg, k){ if (k > 0 && (sg.tag !== S.segments[k-1].tag || sg.model !== S.segments[k-1].model)){
     var xi = x(dates.indexOf(sg.date)); s.appendChild(svg("line",{x1:xi, x2:xi, y1:m.t, y2:H-m.b, stroke:css("--axis"), "stroke-dasharray":"4 3"}));

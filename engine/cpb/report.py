@@ -83,6 +83,7 @@ def collect(repo, cfg, null_paths=1000, full_replay=True, fast=False):
             if vid in hnull:
                 m["null"] = {k: hnull[vid][k] for k in ("p05", "p50", "p95", "percentile")}
             met[vid] = m
+    _append_live_point(data["series"], ledgers, hl[-1] if hl else None)
     data["hourly"] = {"runs_total": len(hruns), "runs_ok": len(hgood), "last": _hourly_last(hruns),
                       "today": [{"label": r["label"], "status": r["status"], "error": r.get("error"),
                                  "quarantine": sorted((r.get("checks") or {}).get("quarantine") or {})}
@@ -126,6 +127,21 @@ def collect(repo, cfg, null_paths=1000, full_replay=True, fast=False):
                                                      "snapshot_crosscheck", "catchup_days", "summary", "version", "llm_model_pinned",
                                                      "this_hash", "prev_hash", "universe_date", "delisted")}
     return data
+
+
+def _append_live_point(series, ledgers, hl_last):
+    """Chart's last point = the same latest (after-fill) mark the metrics table uses, so the chart and the table agree.
+    The daily close marks (00:00 UTC) stay as the earlier points; the live point is labelled "<date> aktuálně"."""
+    after = ledgers[-1].get("after")
+    if not after:
+        return
+    hafter = (hl_last or {}).get("after") or {}
+    for pid, scns in series["equity"].items():
+        src = hafter.get(pid) or after.get(pid)
+        for scn, vals in scns.items():
+            m = (src or {}).get(scn)
+            vals.append(round(m["equity"], 2) if m else None)
+    series["dates"].append(ledgers[-1]["date"] + " aktuálně")
 
 
 def _hourly_runs(repo):
