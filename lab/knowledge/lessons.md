@@ -73,3 +73,12 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not retune the volume threshold, the lags or the tolerance: a negative result over this many years has no peak to refine. Do not use a volume peak as a proxy for announcement dates again without validating it.
 - open questions: The missing input is real earnings dates (filing dates in sf1 lag the press release, so they would not do); an Archivist task. With dates, run an event study of returns on announcement days against size- and beta-matched controls before any strategy. Check first whether the volume rule hits announcement weeks at all.
 - related: H-0007, H-0001
+
+## H-0009 – Disposition-gated news drift - after a stock-specific volume shock, follow the move only when it has the same sign as holders' 12-month capital gain, LIQ-500 long/short, hold 5 days
+
+- family: `disposition-news-drift` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), daily long/short following volume-shock moves that agree with holders' capital gain or loss, short hold, 1998 to 2020
+- outcome: rejected at G1: lost money outright, far below T-bills, deep drawdown, bootstrap bound well below zero; ample coverage, so not a power problem; mechanism checks never ran
+- lesson: A clear negative on a long, dense sample: the book was mostly invested and traded constantly, yet lost steadily. Not separated: (1) wrong sign, since volume-driven moves in liquid stocks may partly reverse (K-0012, H-0007); (2) spread costs of a high-turnover taker book, plus short-side squeeze risk with no borrow cost modelled. Whether any drift exists before costs is unknown. No sign of a framework bug.
+- avoid: Do not retune the volume threshold, reference window or hold, or swap the overhang for another gate: a long dense negative has no peak to refine. No other daily US large-cap event-follow book at this turnover.
+- open questions: An event study first: forward returns after volume-shock days by news direction and overhang sign, against delayed-entry and misaligned placebos, gross of costs, by era and in large caps. Real announcement dates (K-0004) would isolate true news days.
+- related: H-0007, H-0008, H-0006

@@ -44,6 +44,12 @@ Forward daily bars come from the Binance public API (spot and USD-M perps with f
 
 *confidence high · 2026-10-06 · human · evidence: lab/framework/forward.py; decision Q3*
 
+### K-0020 Spot catalog range was longer than the loadable data
+
+The catalog said Binance spot daily data runs to 2026-10-03 but the research 9 panel the loader reads ends 2026-08-31; the gate runner takes the end of a card's data from the catalog range, so perp-plus-spot cards would have run on a month of missing spot rows. The range now says 2026-08-31.
+
+*confidence high · 2026-10-06 · human · evidence: lab/data/catalog.yaml*
+
 ## Methodology
 
 ### K-0005 Benchmark-relative binary switches start handicapped
@@ -64,6 +70,18 @@ Three cards died at G1 before their own mechanism checks could run. An event stu
 
 *confidence medium · 2026-10-06 · human · evidence: lessons H-0006..H-0008*
 
+### K-0019 The judge was calibrated against five known strategies
+
+Low-vol stocks, funding carry, 12-1 momentum, 5-day reversal and a BTC trend filter were run through the real gates in a throwaway lab (lab calibrate). Verdicts agree with the owner's earlier studies: nothing passes unexplained, low-vol reaches G2 and dies on publication decay, carry dies on sub-period concentration, the rest die at G1. This shows the judge is not lenient; it cannot show that it passes a genuinely good real strategy because none is known.
+
+*confidence medium · 2026-10-06 · human · evidence: PLAN decision log 2026-10-06; docs/research-lab/calibration*
+
+### K-0021 Mechanism tests before strategies
+
+Cards can declare an event and a horizon; the judge runs an event study against time-shifted placebos on dev rows before simulating the strategy. A strategy whose claimed mechanism is absent dies at G1 with a mechanism reason, which separates 'the idea is wrong' from 'this strategy was too weak'. It counts as one trial of the family. Placebo percentile is the gate, not a t-statistic.
+
+*confidence medium · 2026-10-06 · human · evidence: lab/framework/diagnostic.py; canaries mechanism_**
+
 ## The judge (framework behaviour)
 
 ### K-0008 Gate runner fixes found by real hypotheses
@@ -77,6 +95,18 @@ Real runs exposed judge bugs that the canaries did not: a per-period bootstrap b
 Truncation and perturbation at random rows rarely hit the decision rows of weekly or monthly strategies, and rank-based weights often do not change under perturbation. G0 now also cuts on rows where the weights change; the Skeptic must still read the code of sparse strategies.
 
 *confidence high · 2026-10-06 · human · evidence: PLAN decision log 2026-10-05; lab/tests/test_dryrun.py*
+
+### K-0017 The random-entry null was survivorship-biased
+
+G2's random-entry null drew random stocks from those listed in more than half of the dev window, a pool chosen with knowledge of who lasted. Its median Sharpe (0.62) beat both the market (0.36) and a real low-volatility book, so no long-only stock strategy could pass. Found by calibrating on real data. The null is now built date by date from the instruments eligible on that date, with the real book's retention so that turnover matches.
+
+*confidence high · 2026-10-06 · human · evidence: docs/research-lab/calibration/lowvol_stocks.json; lab/framework/nulls.py*
+
+### K-0018 Position-entry minimum rejected always-invested books
+
+min_position_entries counted only flat-to-position entries: a delta-neutral funding carry has 4 entries but 156 weekly rebalances and was rejected at G1 despite a Sharpe of 8.4. For books invested at least half the time the rebalancing dates now count as bets (gates.yaml continuous_min_exposure).
+
+*confidence high · 2026-10-06 · human · evidence: docs/research-lab/calibration/funding_carry.json*
 
 ## How the lab works
 
@@ -97,3 +127,15 @@ Without steering, three of the first four cards used SPY/IEF and monthly switchi
 The lab places no orders. Paper = the strategy run by the lab engine on daily bars that did not exist when it was judged, appended once per day and never recomputed. It is clean out-of-sample evidence for the signal and the cost model's assumptions, not for real fills or slippage; G5 therefore cannot test tracking or realized costs.
 
 *confidence high · 2026-10-06 · human · evidence: PLAN decision log 2026-10-06 (step 4c); lab/framework/paper.py*
+
+### K-0015 systemd hardening can silently break the agent user switch
+
+ProtectKernelTunables, ProtectKernelModules, LockPersonality (and other options) imply NoNewPrivileges, which makes sudo refuse to switch to labagent. The first production cycles failed this way; the unit now omits them, and three agent runs failing before any model turn pause the lab with a critical alert instead of retrying every 30 minutes.
+
+*confidence high · 2026-10-06 · human · evidence: PLAN decision log 2026-10-06 (first production cycles); deploy/research-lab/research-lab-cycle.service*
+
+### K-0016 A deny rule meant for the lab state blinded the agents
+
+The agents' settings denied Read(//srv/**) to protect the lab state; in production the workspaces live under /srv/research-lab/workspaces, so every file tool was denied and two Scout runs produced nothing. Deny rules must name the protected directories exactly; a test now checks that none covers a workspace. The Scouts reported the problem as owner questions instead of improvising, which is the intended behaviour.
+
+*confidence high · 2026-10-06 · human · evidence: PLAN decision log 2026-10-06; messages 70, 71*

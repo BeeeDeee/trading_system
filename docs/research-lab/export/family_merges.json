@@ -1,0 +1,10 @@
+[
+ {
+  "from_family": "rebalancing-flow-pressure",
+  "into_family": "turn-of-month-flows",
+  "actor": "chair",
+  "reason": "Same mechanism: predictable institutional month-end flows (pension/60-40 rebalancing) pressuring SPY vs IEF in the last days of the month, same instruments and dev period. Only the direction rule differs (always long equity in the window vs sign of month-to-date drift). Merging makes the multiple-testing penalty stricter, the safe direction.",
+  "message_id": 53,
+  "ts": "2026-10-05T20:00:36.260168+00:00"
+ }
+]
