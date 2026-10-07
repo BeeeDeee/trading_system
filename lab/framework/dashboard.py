@@ -17,7 +17,7 @@ from pathlib import Path
 
 import numpy as np
 
-from lab.framework import agents, briefs, knowledge, lessons, report
+from lab.framework import agents, briefs, knowledge, lessons, pipeline_view, report
 from lab.framework.blackboard import Lab
 from lab.framework.states import FUNNEL, TERMINAL
 
@@ -48,6 +48,48 @@ summary{cursor:pointer;font-weight:600}code,.mono{font-family:var(--mono);font-s
 .bar{height:8px;background:var(--accent);border-radius:4px;opacity:.75}
 .note{border-left:3px solid var(--warn);padding:4px 10px;margin:6px 0;background:var(--card)}
 .kb p{margin:4px 0 10px}svg{display:block;max-width:100%}a{color:var(--accent)}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin:22px 0 0;border-bottom:1px solid var(--line)}
+.tabs label{padding:8px 14px;cursor:pointer;border:1px solid transparent;border-bottom:0;border-radius:8px 8px 0 0;color:var(--muted);font-weight:600}
+input.tab{position:absolute;opacity:0;pointer-events:none}
+.panel{display:none}
+#t-overview:checked~.tabs label[for=t-overview],#t-pipeline:checked~.tabs label[for=t-pipeline],
+#t-hypotheses:checked~.tabs label[for=t-hypotheses],#t-paper:checked~.tabs label[for=t-paper],
+#t-ops:checked~.tabs label[for=t-ops],#t-knowledge:checked~.tabs label[for=t-knowledge]
+{color:var(--fg);background:var(--card);border-color:var(--line)}
+#t-overview:checked~.panels #p-overview,#t-pipeline:checked~.panels #p-pipeline,#t-hypotheses:checked~.panels #p-hypotheses,
+#t-paper:checked~.panels #p-paper,#t-ops:checked~.panels #p-ops,#t-knowledge:checked~.panels #p-knowledge{display:block}
+svg.flow{width:100%;min-width:760px;height:auto;margin:10px 0}.flowwrap{overflow-x:auto}svg.flow a{cursor:pointer}
+.picker{margin:8px 0}.picker select{font:inherit;padding:5px 8px;max-width:100%;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:6px}
+body.js section.hyp{display:none}body.js section.hyp.on{display:block}
+section.hyp{margin:10px 0;padding:6px 14px 10px;background:var(--card);border:1px solid var(--line);border-radius:10px}
+.note.warn{border-left-color:var(--warn)}.note.bad{border-left-color:var(--bad)}.note.good{border-left-color:var(--good)}
+details.stage{border-left:3px solid var(--line)}details.stage>summary{display:flex;align-items:center;gap:8px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--muted)}
+.dot.done{background:var(--good)}.dot.failed{background:var(--bad)}.dot.active{background:var(--warn)}.dot.parked{background:var(--muted)}
+.ev{border-top:1px solid var(--line);padding:8px 0}.ev:first-child{border-top:0}.evh{font-size:13px;margin-bottom:4px}
+details.run{margin:6px 0;padding:4px 10px;background:var(--bg)}details.run summary{font-weight:400;font-size:13px}
+.agentsays{border-left:3px solid var(--accent);padding-left:10px;margin:6px 0;max-height:420px;overflow:auto}
+.mech{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 10px;margin:6px 0;font-size:13px}
+table.checks{width:auto;min-width:380px}.pill.good{border-color:var(--good)}.pill.bad{border-color:var(--bad)}.pill.warn{border-color:var(--warn)}
+"""
+
+
+JS = """
+(function(){var b=document.body;b.classList.add('js');
+function tab(n){var r=document.getElementById('t-'+n);if(r)r.checked=true;}
+function show(id){var all=document.querySelectorAll('section.hyp'),f=null;
+ all.forEach(function(x){var on=x.getAttribute('data-id')===id;x.classList.toggle('on',on);if(on)f=x;});
+ var sel=document.getElementById('hsel');if(sel&&id)sel.value=id;return f;}
+function route(){var h=location.hash.replace('#','');
+ if(h.indexOf('h-')===0){tab('pipeline');show(h.slice(2));}
+ else if(h.indexOf('tab-')===0){tab(h.slice(4));}}
+var sel=document.getElementById('hsel');
+if(sel){sel.addEventListener('change',function(){show(sel.value);});}
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-hyp]');
+ if(a){e.preventDefault();location.hash='h-'+a.getAttribute('data-hyp');}});
+window.addEventListener('hashchange',route);
+var first=document.querySelector('section.hyp');if(first&&!location.hash.startsWith('#h-')){show(first.getAttribute('data-id'));}
+route();})();
 """
 
 
@@ -187,6 +229,7 @@ def build(lab: Lab) -> str:
              f"<div class=tile><b class='{'warn' if pauses else ''}'>{esc(', '.join(pauses) or 'none')}</b>"
              "<span>pauses</span></div></div>")
 
+    cut = {"overview": len(s)}
     # owner inbox
     s.append(f"<h2>For the owner ({len(open_q)})</h2>")
     if open_q:
@@ -224,39 +267,19 @@ def build(lab: Lab) -> str:
     mtf = sum(map(briefs.multi_timeframe, cards))
     s.append(f"</table></div><div class=sub>{mtf} of {len(cards)} cards combine timeframes.</div>")
 
+    cut["hypotheses"] = len(s)
     # hypotheses
     s.append("<h2>Hypotheses</h2><div class=scroll><table><tr><th>id</th><th>title</th><th>family</th><th>horizon / group"
              "</th><th>status</th><th>died at</th><th>updated</th></tr>")
     for h, c in zip(hyps[::-1], cards[::-1]):
         tf = ", ".join((c.get("signal") or {}).get("timeframes") or [])
-        s.append(f"<tr><td class=mono><a href='#{h['id']}'>{h['id']}</a></td><td>{esc(h['title'])}</td>"
+        s.append(f"<tr><td class=mono><a href='#h-{h['id']}' data-hyp='{h['id']}'>{h['id']}</a></td><td>{esc(h['title'])}</td>"
                  f"<td class=mono>{esc(lab.canonical_family(h['family']))}</td>"
                  f"<td>{esc(briefs.horizon(c))} / {esc(briefs.group(c))}{(' · ' + esc(tf)) if tf else ''}</td>"
                  f"<td>{pill(h['status'])}</td><td class=mono>{esc((h['reject_stage'] or '') + ' ' + (h['reject_code'] or ''))}"
                  f"</td><td class=mono>{esc(h['updated_at'][:10])}</td></tr>")
     s.append("</table></div>")
-    for h, c in zip(hyps[::-1], cards[::-1]):
-        s.append(f"<details id='{h['id']}'><summary>{h['id']} · {esc(h['title'])} {pill(h['status'])}</summary>")
-        mech = c.get("mechanism") or {}
-        s.append(f"<p><b>Mechanism.</b> {esc(mech.get('why'))}</p><p><b>Signal.</b> "
-                 f"{esc((c.get('signal') or {}).get('description'))}</p>")
-        gs = gate_summary(lab, h["id"])
-        if gs:
-            s.append("<table><tr><th>gate</th><th>result</th><th>metrics</th><th>failed checks</th></tr>")
-            for g in gs:
-                metr = " · ".join(f"{k} {fmt(v)}" for k, v in g["metrics"].items())
-                extra = g["error"] or (", ".join(g["problems"]) if g["problems"] else "")
-                s.append(f"<tr><td class=mono>{g['gate']} v{g['v']}<br><span class=muted>{esc(g['ts'])}</span></td>"
-                         f"<td class='{'good' if g['passed'] else 'bad'}'>{'pass' if g['passed'] else 'fail'}"
-                         f"<br><span class=mono>{esc(g['code'] or '')}</span></td><td class=mono>{metr}"
-                         f"{('<br>' + esc(extra)) if extra else ''}</td><td class=mono>{esc(', '.join(g['failed']))}</td></tr>")
-            s.append("</table>")
-        s.append("<h3>Trace</h3><table>")
-        for e in report.trace(lab, h["id"]):
-            s.append(f"<tr><td class=mono style='white-space:nowrap'>{esc(e['ts'][:16])}</td><td>{esc(e['kind'])}</td>"
-                     f"<td>{esc(e['actor'])}</td><td>{esc(e['text'])[:900]}</td></tr>")
-        s.append("</table></details>")
-
+    cut["paper"] = len(s)
     # paper
     book = agents.paper_summary(lab)
     s.append(f"<h2>Paper book ({len(book)})</h2>")
@@ -270,6 +293,7 @@ def build(lab: Lab) -> str:
                  + f"<div class=sub>Sharpe {b['sharpe']:.2f} vs benchmark {b['bench_sharpe']:.2f} · max drawdown "
                    f"{b['max_dd']:.1%} (dev {fmt(b['dev_max_dd'])}) · G5 ready: {esc(b['g5_ready'])}</div>")
 
+    cut["ops"] = len(s)
     # agent runs and cycles
     s.append("<h2>Agent runs</h2><div class=scroll><table><tr><th>started</th><th>agent</th><th>hyp.</th><th>outcome</th>"
              "<th class=num>turns</th><th class=num>tokens in/out</th><th>error</th></tr>")
@@ -289,15 +313,28 @@ def build(lab: Lab) -> str:
                  f"</td><td>{esc(ran)}</td><td class=mono>{esc('; '.join(c.get('tick') or [])[:400])}</td></tr>")
     s.append("</table>")
 
+    cut["knowledge"] = len(s)
     # knowledge and lessons
     kb = knowledge.path(lab)
     s.append("<h2>Knowledge base</h2><div class=kb>" + (md(kb.read_text()) if kb.exists() else "<p>Empty.</p>") + "</div>")
     ls = lessons.path(lab)
     s.append("<h2>Lessons</h2><details><summary>per-hypothesis lessons (Librarian)</summary><div class=kb>"
              + (md(ls.read_text()) if ls.exists() else "<p>None yet.</p>") + "</div></details>")
-    s.append("<p class=sub>Static page generated by <code>lab dashboard</code>. Numbers are dev-period and paper "
-             "results of the lab's own judge; nothing here is investment advice.</p></main></body></html>")
-    return "\n".join(s)
+    names = [("overview", "Overview"), ("pipeline", "Pipeline"), ("hypotheses", "Hypotheses"), ("paper", "Paper"),
+             ("ops", "Operations"), ("knowledge", "Knowledge")]
+    bounds = [cut[k] for k, _ in names if k in cut] + [len(s)]
+    header = s[:cut["overview"]]
+    panels = {}
+    keys = [k for k, _ in names if k in cut]
+    for i, k in enumerate(keys):
+        panels[k] = "\n".join(s[bounds[i]:bounds[i + 1]])
+    panels["pipeline"] = pipeline_view.build(lab, md)
+    tabs = "".join(f"<input class=tab type=radio name=tab id='t-{k}'{' checked' if k == 'overview' else ''}>" for k, _ in names)
+    labels = "<div class=tabs>" + "".join(f"<label for='t-{k}'>{esc(v)}</label>" for k, v in names) + "</div>"
+    body = "<div class=panels>" + "".join(f"<div class=panel id='p-{k}'>{panels.get(k, '')}</div>" for k, _ in names) + "</div>"
+    foot = ("<p class=sub>Static page generated by <code>lab dashboard</code>. Numbers are dev-period and paper "
+            "results of the lab's own judge; nothing here is investment advice.</p>")
+    return "\n".join(header) + tabs + labels + body + foot + f"<script>{JS}</script></main></body></html>"
 
 
 def publish(lab: Lab, web: Path) -> Path:
