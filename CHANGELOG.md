@@ -46,6 +46,12 @@ Oprava zobrazení, žádná změna pravidel ani obchodů.
   +0,85 % místo 0). Nově se BTC oceňuje ve stejném okamžiku jako porovnávané portfolio; hodinové varianty cenou BTC
   z posledního hodinového běhu. Test hlídá, že BTC HOLD má vs BTC přesně 0.
 
+## v1.0.5 (2026-10-07)
+Oprava zobrazení, žádná změna pravidel ani obchodů.
+- Dashboard, graf vývoje kapitálu: křivky končily posledním uzavřením k 00:00 UTC, tabulka přitom ukazuje ocenění po
+  posledním plnění/běhu, takže graf a tabulka u stejného portfolia (zejména BTC HOLD) ukazovaly různé výnosy. Nově graf
+  končí dalším bodem „aktuálně“ se stejnou hodnotou jako tabulka (hodinové varianty z posledního hodinového běhu).
+
 ## Provozní změny (bez release, mimo připnuté soubory)
 - 2026-10-01: denní běh přesunut z 00:20 UTC na 06:00 Europe/Prague (04:00/05:00 UTC), opakování 10:00 a 14:00.
   Rozhodnutí stále vychází z denní svíčky uzavřené v 00:00 UTC; plnění proběhne o ~4–5 h později než v prvních dvou
