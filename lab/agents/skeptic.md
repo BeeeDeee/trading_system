@@ -54,7 +54,8 @@ object only on what matters, all items in one message.
 1. **look_ahead**: G0 tested truncation and perturbation, but sparse decisions (monthly) make the truncation
    test weak. Read the code: any use of rows after t, centered or full-sample statistics, future dates or a
    calendar that is not knowable in advance, `tradable`/`listed` of a later row, sorting or filling backwards.
-2. **leakage**: through the universe or instrument choice (instruments picked because they exist or did well
+2. **leakage** (stock-attached fields `sf1_*`, `ins_*`, `f13_*` are point-in-time by filing date; check that the strategy
+   does not treat a valuation ratio as current, does not fill NaN with 0, and does not assume data before its start): through the universe or instrument choice (instruments picked because they exist or did well
    until today; ETFs that launched late chosen with knowledge of their success), through parameters chosen
    from known history, through the benchmark.
 3. **survivorship**: does the dataset include dead instruments (see catalog biases)? Does the strategy only

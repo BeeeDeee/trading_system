@@ -1,0 +1,47 @@
+title: 'Calibration: profitability, insiders and institutions (attached data smoke test)'
+family: calibration-quality
+asset_classes:
+- us_equity
+universe:
+  kind: liq_n
+  n: 500
+mechanism:
+  why: 'Calibration card exercising the three stock-attached datasets: it ranks stocks by return on equity, insider
+    buying and institutional ownership. It is a loader test, not a hypothesis.'
+  counterparty: calibration, not a real hypothesis
+  why_not_arbitraged: calibration, not a real hypothesis
+signal:
+  description: 'Monthly, after the close of the first trading day: among universe members with a known return on
+    equity, rank by the sum of the cross-sectional ranks of sf1_art_roe, ins_buy_value_91d and f13_io (unknown =
+    median) and hold the top pct share with equal weights.'
+  params:
+    pct:
+      value: 0.2
+      grid:
+      - 0.1
+      - 0.2
+      - 0.3
+data_requirements:
+- dataset: sharadar_sep
+  frequency: 1d
+  period:
+  - '2009-01-02'
+  - '2020-12-31'
+- dataset: sharadar_sf1
+  frequency: 1q
+  fields:
+  - sf1_art_roe
+- dataset: sharadar_insiders
+  frequency: event
+  fields:
+  - ins_buy_value_91d
+- dataset: sharadar_13f
+  frequency: 1q
+  fields:
+  - f13_io
+holding_period:
+  typical_days: 21
+  rebalance: monthly
+market_exposure: long_only
+falsification_criteria:
+- 'Calibration run: only memory, runtime and look-ahead behaviour are of interest.'

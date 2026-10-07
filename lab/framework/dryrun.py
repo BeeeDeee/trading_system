@@ -107,8 +107,16 @@ def synthetic_view(card: dict, cat: dict, seed: int) -> DataView:
         f = np.where(perp[None, :] & listed, rng.normal(3e-4, 4e-4, (T, N)), np.nan)
         view = replace(view, extras={**view.extras, "funding": f, "funding_paid": np.nan_to_num(f),
                                      "basis": np.where(perp[None, :] & listed, rng.normal(0, 2e-3, (T, N)), np.nan)})
-    series = {}
+    series, attached_extras = {}, {}
     for r in reqs:                                                 # signal-only datasets (Archivist ingest)
+        if cat[r["dataset"]].get("loader") == "sep_attached":      # SF1 / insiders / 13F: (T, N) extras on the stocks
+            for f in r.get("fields") or []:
+                step = rng.random((T // 63 + 2, N)).astype(np.float32) * 10
+                m = np.repeat(step, 63, axis=0)[:T].copy()          # a new value about every quarter
+                m[: T // 8] = np.nan                                 # data starts later than the prices
+                m[~stocks[None, :] | ~listed] = np.nan
+                attached_extras[f] = m
+            continue
         if r["dataset"] in TRADABLE:
             continue
         fields = cat[r["dataset"]].get("fields") or r.get("fields") or []   # what the gate runner will attach
@@ -119,6 +127,7 @@ def synthetic_view(card: dict, cat: dict, seed: int) -> DataView:
             x = 20 + np.cumsum(rng.normal(0, 1, T))
             x[: T // 10] = np.nan                                 # starts later than the prices
             series[f"{r['dataset']}.{f}"] = x
+    view = replace(view, extras={**view.extras, **attached_extras}) if attached_extras else view
     return replace(view, series=series) if series else view
 
 

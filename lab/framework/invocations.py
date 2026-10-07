@@ -20,7 +20,7 @@ from pathlib import Path
 
 import yaml
 
-from lab.framework import agents, catalog, states, validate
+from lab.framework import agents, attached, catalog, states, validate
 from lab.framework.blackboard import Lab, LabError, sha256
 from lab.framework.db import Tx, dumps, now
 
@@ -142,6 +142,7 @@ def check_card(ws: Path, rel: str) -> tuple[list[str], list[str]]:
     errors += validate.grid_problems(card)
     warnings = [w for w in validate.grid_problems(card, both_sides=True) if w not in errors]
     if card.get("data_requirements"):
+        errors += attached.requirement_problems(card, catalog.load(ws / "catalog.yaml"))
         res = catalog.resolve(ws / "catalog.yaml", card["data_requirements"])
         errors += [f"dataset {r['dataset']} is not in the catalog (the card would go to BLOCKED_DATA)"
                    for r in res.missing]

@@ -11,7 +11,7 @@ Agents never call this. Everything here is code, so a hypothesis can pass a gate
 import json
 from difflib import SequenceMatcher
 
-from lab.framework import catalog, sentinel, validate
+from lab.framework import attached, catalog, sentinel, validate
 from lab.framework.blackboard import Lab, LabError
 from lab.framework.db import Tx, now
 from lab.framework.gates import Evaluator, run_gate, thresholds
@@ -111,6 +111,11 @@ def _spec_and_data(lab: Lab, hid: str, m) -> str:
         lab.send("QUESTION", "system", ask_to, hid,
                  {"question": f"{hid} stays in IDEA: " + "; ".join(grid), "in_reply_to": m["id"]})
         return "stays IDEA (parameter grid)"
+    att = attached.requirement_problems(card, catalog.load(lab.paths.catalog))
+    if att:
+        lab.send("QUESTION", "system", ask_to, hid,
+                 {"question": f"{hid} stays in IDEA: " + "; ".join(att), "in_reply_to": m["id"]})
+        return "stays IDEA (attached data fields)"
     dup = _duplicate_of(lab, hid, card)
     if dup:
         lab.send("QUESTION", "system", ask_to, hid,

@@ -71,6 +71,8 @@ class DataView:
 
     def columns(self, names: list[str]) -> "DataView":
         """The same view restricted to `names` (a strategy sees only its own instruments)."""
+        if tuple(names) == self.instruments:
+            return self                           # no copy of ~10 matrices of 70 MB each (single stocks)
         idx = [self.col(n) for n in names]
         return replace(self, instruments=tuple(names), asset_class=tuple(self.asset_class[i] for i in idx),
                        **{m: getattr(self, m)[:, idx] for m in MATRICES},

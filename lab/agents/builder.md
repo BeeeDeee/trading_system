@@ -64,7 +64,13 @@ def target_weights(data, params):
   hold only members), `extras["liq_rank"]` is the PIT liquidity rank (1 = most liquid); never read
   `extras["alt_universe"]` (it is the gate's alternative universe for G2). Perpetuals (`binance_perp_1d`,
   ids `BTCUSDT.P`): `extras["funding"]` the day's funding sum known after the close, `extras["basis"]`
-  perp/spot - 1; the engine charges `funding_paid` itself, do not subtract funding in the strategy. Datasets ingested by the Archivist (catalog
+  perp/spot - 1; the engine charges `funding_paid` itself, do not subtract funding in the strategy.
+  Stock-attached data requested in the card's `data_requirements[].fields` arrive as `data.extras["<field>"]`,
+  (T, N) float32, already point-in-time (a filing is visible from the day after its filing date): fundamentals
+  `sf1_art_roe`, `sf1_arq_revenue`, ...; insiders `ins_buy_value_91d` (0 where nobody filed, NaN before the data
+  starts), `ins_sell_n_365d`, ...; 13F `f13_io`, ... NaN means unknown: handle it explicitly (e.g. skip the stock),
+  never fill it with 0. Fundamentals change only when a company files, so signals built from them change slowly.
+  Datasets ingested by the Archivist (catalog
   `loader: generic`) arrive as `data.series["<dataset>.<key>"]` (keys = the requirement's `fields`, else the
   catalog's `fields`), already aligned by their clock: row t holds the last value known after the close of t,
   NaN before the first. Do not lag them again unless the card says so; handle the leading NaNs. The key

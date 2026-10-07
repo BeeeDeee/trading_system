@@ -70,7 +70,18 @@ returns, US-session volume share) gating a daily crypto signal. List the timefra
    ideas only, no named stocks; no forward data, so a stock idea can pass at most G4), `binance_spot_1d`
    (Binance spot pairs, by explicit list or universe kind `crypto_top_n` with `n`; shorts on spot carry no
    borrow cost in the engine, so use perps for short legs) and `binance_perp_1d` (perpetuals `BTCUSDT.P`
-   etc., funding charged to positions, funding and basis available as signals). Pick instruments that exist
+   etc., funding charged to positions, funding and basis available as signals).
+
+   **Stock-attached data** (list the dataset next to `sharadar_sep` and name the `fields`; at most 6 fields per
+   card in total, RAM): `sharadar_sf1` fundamentals as reported (`sf1_art_<column>` trailing twelve months,
+   `sf1_arq_<column>` quarter, e.g. `sf1_art_roe`, `sf1_art_netinc`, `sf1_arq_revenue`; usable from the day after
+   the SEC filing, valuation ratios are frozen at the filing date), `sharadar_insiders` open-market insider
+   purchases and sales by filing date (`ins_buy_value_91d`, `ins_sell_n_182d`, ... windows 91/182/365 days; from
+   2008), `sharadar_13f` institutional ownership (`f13_io`, `f13_d_io`, `f13_d_holders`, `f13_d_breadth`,
+   `f13_putcall`; quarter usable 46 days after its end; from 2013). They exist only for the stocks of
+   `sharadar_sep`, have no forward data, so such a card can pass at most G4.
+
+   Pick instruments that exist
    in the dev period (see `factsheets.md` for first price dates). Datasets with `loader: generic` are signal
    series (not tradable) that a strategy can read next to the tradable data. A card may also ask for a **new
    daily, free, public dataset** under a new id (e.g. `cboe_vix_1d`, with a clear `description` of the series):

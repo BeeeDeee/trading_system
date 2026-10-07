@@ -54,7 +54,8 @@ datasets:
       - "Consumed: research 2, 3, 10 and market_relations used 2010-2026."
 
   - id: sharadar_sf1
-    loader: false
+    loader: sep_attached
+    attaches_to: sharadar_sep
     asset_class: us_equity
     instruments: "fundamentals of US stocks (ARQ/ART dimensions, point-in-time by filing date column `date`)"
     frequency: 1q
@@ -67,11 +68,15 @@ datasets:
     cost_model: null
     forward_source: null   # SEC EDGAR XBRL is the planned free replacement
     known_biases:
+      - "Attached to sharadar_sep as daily matrices, at most 6 fields per card (RAM). Usable from the day after the SEC filing date; stale after 400 days; a later filing of an older period never overrides a newer one."
+      - "Valuation fields (pe, pb, ps, ev, evebitda, marketcap, price) are frozen at the filing date, they do not move with the price between filings."
+      - "Tickers are mapped through the SEP ticker table (current ticker per permaticker): reused tickers can mix two companies in old data."
       - "Point-in-time only via the filing date (`date`, Sharadar datekey); use ARQ/ART (as reported), never MRQ/MRT (restated)."
       - "Some restatements may be backfilled into as-reported rows."
 
   - id: sharadar_insiders
-    loader: false
+    loader: sep_attached
+    attaches_to: sharadar_sep
     asset_class: alt
     instruments: "Form 4 insider transactions"
     frequency: event
@@ -84,10 +89,13 @@ datasets:
     cost_model: null
     forward_source: null   # SEC EDGAR Form 4 is free
     known_biases:
+      - "Attached to sharadar_sep as daily matrices (open-market purchases P and sales S by filing date, trailing 91/182/365 calendar days). A row is one transaction, not one person. NaN before 2008 plus one window, 0 where nobody filed."
+      - "Usable from the day after the filing date, never from the transaction date."
       - "Use the filing date (`date`), not `transactiondate` (filings lag up to 2 business days, older ones more)."
 
   - id: sharadar_13f
-    loader: false
+    loader: sep_attached
+    attaches_to: sharadar_sep
     asset_class: alt
     instruments: "institutional holdings (13F)"
     frequency: 1q
@@ -100,6 +108,8 @@ datasets:
     cost_model: null
     forward_source: null
     known_biases:
+      - "Attached to sharadar_sep as daily matrices: the quarter ending D is usable from D + 46 days, stale after 166 days; data from 2013-06."
+      - "Institutional ownership (io) divides the value held by the market cap near the quarter end; positions of 13F filers only (no shorts, no non-US holders)."
       - "Quarter-end holdings become public up to 45 days later; the loader must lag by the filing date."
 
   - id: sharadar_sp500

@@ -1,0 +1,48 @@
+{
+ "name": "quality_stocks",
+ "status": "REJECTED",
+ "died_at": "G1",
+ "reason": "g1_sharpe_excess",
+ "gates": [
+  {
+   "gate": "G0",
+   "passed": true,
+   "reason": null,
+   "failed_checks": [],
+   "checks": {},
+   "headline": {}
+  },
+  {
+   "gate": "G1",
+   "passed": false,
+   "reason": "g1_sharpe_excess",
+   "failed_checks": [
+    "sharpe_diff_ci_lower",
+    "sharpe_excess"
+   ],
+   "checks": {
+    "decision_dates": 144.0,
+    "max_dd_vs_benchmark": 0.392238,
+    "mean_exposure": 0.998822,
+    "position_entries": 3721.0,
+    "sharpe_diff_ci_lower": -0.16831,
+    "sharpe_excess": -0.071556
+   },
+   "headline": {
+    "sharpe": 0.7414112996085602,
+    "bench_sharpe": 0.812966942481969,
+    "benchmark": "SPY_TR",
+    "cagr": 0.14625994104875373,
+    "bench_cagr": 0.1462721142157204,
+    "max_dd": 0.3922383559887026,
+    "mean_exposure": 0.9988215588568673
+   }
+  }
+ ],
+ "expected": {
+  "dev": "report only",
+  "holdout": "report only",
+  "source": "loader smoke test (no firm expectation)"
+ },
+ "seconds": 79
+}

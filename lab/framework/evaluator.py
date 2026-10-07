@@ -22,6 +22,7 @@ import numpy as np
 
 from qlab.validation.stats import expected_max_sharpe, pbo_cscv, probabilistic_sharpe
 
+from lab.framework import attached as attached_mod
 from lab.framework import catalog, costs, data, engine, metrics, strategy
 from lab.framework.blackboard import Lab
 from lab.framework.gates import Outcome, Trial, strategy_sha
@@ -128,10 +129,15 @@ class QlabEvaluator:
         reqs = card["data_requirements"]
         universe = card["universe"]
         unknown = [r["dataset"] for r in reqs if r["dataset"] not in TRADABLE
-                   and cat.get(r["dataset"], {}).get("loader") != "generic"]
+                   and cat.get(r["dataset"], {}).get("loader") not in ("generic", "sep_attached")]
         if unknown:
             raise NotImplementedError(f"no data adapter yet for {unknown}")
-        signal_ds = [r["dataset"] for r in reqs if r["dataset"] not in TRADABLE]
+        attached = {r["dataset"]: list(r.get("fields") or []) for r in reqs
+                    if cat.get(r["dataset"], {}).get("loader") == "sep_attached"}
+        problems = attached_mod.requirement_problems(card, cat)
+        if problems:
+            raise NotImplementedError("; ".join(problems))
+        signal_ds = [r["dataset"] for r in reqs if r["dataset"] not in TRADABLE and r["dataset"] not in attached]
         per_ds = strategy_instruments(card)
         strat_ds = list(per_ds)
 
@@ -154,6 +160,9 @@ class QlabEvaluator:
         views, strat_set = [], set()
         for ds, inst in load_ds.items():
             v = data.sharadar_sep(universe) if ds == "sharadar_sep" and inst is None else self.load(ds, inst)
+            if ds == "sharadar_sep":
+                for adset, fields in attached.items():
+                    v = attached_mod.attach(v, adset, fields, data.DATA_ROOT / "parquet" / data.SHARADAR)
             if universe["kind"] == "crypto_top_n" and ds == "binance_spot_1d":
                 v = replace(v, universe=data.crypto_top_n(v, universe["n"]))
             if ds in per_ds:
@@ -162,7 +171,7 @@ class QlabEvaluator:
         view = data.merge(views)
         for ds in dict.fromkeys(signal_ds):
             view = data.attach_generic(view, lab.paths.home, ds, cat[ds])
-        all_ds = strat_ds + signal_ds
+        all_ds = strat_ds + signal_ds + list(attached)
         start = max(data.as_date(cat[d]["range"][0]) for d in strat_ds)
         if any(r.get("period") for r in reqs):
             start = max([start] + [data.as_date(r["period"][0]) for r in reqs if r.get("period")])

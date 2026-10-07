@@ -16,7 +16,7 @@ import numpy as np
 
 from lab.framework import catalog, data
 
-VERSION = 3
+VERSION = 4
 ETF_TOP = 60
 DAY = np.timedelta64(1, "D")
 CRYPTO_TOP = 30
@@ -228,6 +228,13 @@ def _generic_sheet(cat: dict) -> str:
              "clock (next_morning = usable from the day after the observation).", ""]
     lines += [f"- {d['id']} ({d['asset_class']}, clock {d['clock']}, {d['range'][0]} .. {d['range'][1]}): "
               f"{d['instruments']}; keys: {', '.join(map(str, d.get('fields', [])))}" for d in gen]
+    att = [d for d in cat.values() if d.get("loader") == "sep_attached"]
+    if att:
+        from lab.framework import attached
+        lines += ["", "## Stock-attached datasets (`loader: sep_attached`)", "",
+                  "Daily matrices on the `sharadar_sep` stocks, point-in-time by filing date, requested with `fields` "
+                  f"(at most {attached.FIELD_CAP} per card). No forward data: such a card can pass at most G4.", ""]
+        lines += [f"- {d['id']} ({d['range'][0]} .. {d['range'][1]}): fields `{attached.GRAMMAR[d['id']]}`" for d in att]
     return "\n".join(lines) + "\n"
 
 
