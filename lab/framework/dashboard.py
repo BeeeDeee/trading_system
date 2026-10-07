@@ -17,7 +17,7 @@ from pathlib import Path
 
 import numpy as np
 
-from lab.framework import agents, briefs, knowledge, lessons, pipeline_view, report
+from lab.framework import agents, briefs, icons, knowledge, lessons, pipeline_view, report
 from lab.framework.blackboard import Lab
 from lab.framework.states import FUNNEL, TERMINAL
 
@@ -48,6 +48,10 @@ summary{cursor:pointer;font-weight:600}code,.mono{font-family:var(--mono);font-s
 .bar{height:8px;background:var(--accent);border-radius:4px;opacity:.75}
 .note{border-left:3px solid var(--warn);padding:4px 10px;margin:6px 0;background:var(--card)}
 .kb p{margin:4px 0 10px}svg{display:block;max-width:100%}a{color:var(--accent)}
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin:12px 0}
+.agent{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.agent b{font-size:15px}.agent .sub{margin-top:2px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:12.5px;margin:6px 0 2px}
 .tabs{display:flex;flex-wrap:wrap;gap:4px;margin:22px 0 0;border-bottom:1px solid var(--line)}
 .tabs label{padding:8px 14px;cursor:pointer;border:1px solid transparent;border-bottom:0;border-radius:8px 8px 0 0;color:var(--muted);font-weight:600}
 input.tab{position:absolute;opacity:0;pointer-events:none}
@@ -71,7 +75,7 @@ details.run{margin:6px 0;padding:4px 10px;background:var(--bg)}details.run summa
 .agentsays{border-left:3px solid var(--accent);padding-left:10px;margin:6px 0;max-height:420px;overflow:auto}
 .mech{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 10px;margin:6px 0;font-size:13px}
 table.checks{width:auto;min-width:380px}.pill.good{border-color:var(--good)}.pill.bad{border-color:var(--bad)}.pill.warn{border-color:var(--warn)}
-"""
+""" + icons.CSS
 
 
 JS = """

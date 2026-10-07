@@ -18,13 +18,21 @@ from datetime import datetime, timezone
 
 import yaml
 
-from lab.framework import headless
+from lab.framework import agents as agents_mod
+from lab.framework import headless, icons
 from lab.framework.blackboard import Lab
 from lab.framework.states import S, TERMINAL
 
-STAGES = [("idea", "Idea", "Scout"), ("data", "Data", "Archivist"), ("build", "Build + G0", "Builder"),
-          ("g1", "G1 basic", "judge"), ("g2", "G2 robust", "judge"), ("g3", "G3 trials", "judge"),
-          ("skeptic", "Skeptic", "Skeptic"), ("g4", "G4 holdout", "judge"), ("paper", "Paper · G5", "Sentinel")]
+STAGES = [("idea", "Idea", "Scout", "llm", "scout"), ("data", "Data", "Archivist + ingest", "mixed", "archivist"),
+          ("build", "Build + G0", "Builder + G0", "mixed", "builder"), ("g1", "G1 basic", "judge", "code", None),
+          ("g2", "G2 robust", "judge", "code", None), ("g3", "G3 trials", "judge", "code", None),
+          ("skeptic", "Skeptic", "Skeptic", "llm", "skeptic"), ("g4", "G4 holdout", "judge", "code", None),
+          ("paper", "Paper · G5", "paper runner", "mixed", "steward")]
+KIND_LABEL = {"llm": "LLM agent", "mixed": "LLM + code", "code": "code, no LLM"}
+ROLE = {"scout": "proposes hypotheses (data-blind)", "archivist": "finds data sources, writes fetchers",
+        "builder": "implements strategy and diagnostic", "skeptic": "reviews before the holdout",
+        "librarian": "writes lessons and knowledge", "chair": "merges families, parks, reopens",
+        "steward": "weekly paper-trading report"}
 STAGE_IDX = {k: i for i, (k, *_ ) in enumerate(STAGES)}
 REJECT_TO_STAGE = {"IDEA": "idea", "SPECIFIED": "idea", "BLOCKED_DATA": "data", "DATA_READY": "build", "G0": "build",
                    "IMPLEMENTED": "g1", "G1": "g1", "GATE_1": "g2", "G2": "g2", "GATE_2": "g3", "G3": "g3",
@@ -65,6 +73,36 @@ def ago(ts: str | None, now: datetime) -> str:
     if sec < 172800:
         return f"{sec / 3600:.1f} h"
     return f"{sec / 86400:.1f} d"
+
+
+def model_label(agent: str | None) -> str:
+    if not agent:
+        return ""
+    try:
+        m = agents_mod.spec(agent).model
+    except KeyError:
+        return ""
+    name = m.replace("claude-", "").split("-")
+    return (name[0].capitalize() + " " + ".".join(name[1:])) if len(name) > 1 else m
+
+
+def running_now(lab: Lab) -> set[tuple[str, str | None]]:
+    return {(r["agent"], r["hypothesis_id"]) for r in
+            lab.con.execute("SELECT agent, hypothesis_id FROM agent_invocations WHERE outcome IS NULL")}
+
+
+def mood_of(state: str, kind: str, agent: str | None, hid: str | None, running: set) -> str:
+    if state == "done":
+        return "done"
+    if state == "failed":
+        return "fail"
+    if state in ("pending", "skipped"):
+        return "sleep"
+    if state == "active":
+        if kind != "code" and ((agent, hid) in running or (agent, None) in running):
+            return "work"
+        return "wait"
+    return "idle"
 
 
 # ---------------------------------------------------------------------------- agent runs (with transcript summary)
@@ -244,6 +282,39 @@ TONE = {"done": "#1f7a4d", "failed": "#b3261e", "active": "#9a6700", "pending": 
         "parked": "#6b6a66"}
 
 
+def node_svg(x: float, y: float, bw: int, key: str, label: str, who: str, kind: str, agent: str | None,
+             state: str, mood: str, count: int | None = None, caption: str | None = None, count_tone: float = 0.0) -> str:
+    """One stage: robot or gear (mood = what it is doing), name, the actor, and what kind of worker it is."""
+    col = TONE[state] if state in TONE else TONE["pending"]
+    live = state in ("done", "failed", "active", "parked")
+    box_fill = "var(--accent)" if count is not None else col
+    fill_op = (0.10 + 0.5 * count_tone) if count is not None else (0.18 if live else 0.05)
+    dash = ' stroke-dasharray="4 3"' if (count is None and state in ("pending", "skipped")) else ""
+    sw = 2.4 if (count is None and state in ("active", "failed")) else 1.2
+    badge_col = icons.AGENT_COLOR.get(agent or "", icons.CODE_COLOR) if kind != "code" else icons.CODE_COLOR
+    model = model_label(agent) if agent and kind != "code" else ""
+    badge = {"code": "code, no LLM", "llm": f"LLM · {model}" if model else "LLM",
+             "mixed": f"{model} + code" if model else "LLM + code"}[kind]
+    return (f'<g><rect x="{x}" y="{y}" width="{bw}" height="106" rx="9" fill="{box_fill}" fill-opacity="{fill_op:.2f}" '
+            f'stroke="{col if count is None else "var(--line)"}" stroke-width="{sw}"{dash}/>'
+            f'<g transform="translate({x + bw / 2 - 17},{y + 5}) scale(.72)">{icons.icon(kind, agent, mood)}</g>'
+            + (f'<text x="{x + bw - 8}" y="{y + 22}" text-anchor="end" font-size="17" font-weight="700" fill="var(--fg)">{count}</text>'
+               if count is not None else "")
+            + f'<text x="{x + bw / 2}" y="{y + 62}" text-anchor="middle" font-size="13" font-weight="600" fill="var(--fg)">{esc(label)}</text>'
+            f'<text x="{x + bw / 2}" y="{y + 76}" text-anchor="middle" font-size="10.5" fill="{col if caption else "var(--muted)"}">'
+            f'{esc(caption or who)}</text>'
+            f'<rect x="{x + 6}" y="{y + 84}" width="{bw - 12}" height="15" rx="7.5" fill="{badge_col}" fill-opacity=".16" stroke="{badge_col}" stroke-opacity=".6"/>'
+            f'<text x="{x + bw / 2}" y="{y + 94.5}" text-anchor="middle" font-size="9" fill="var(--fg)">{esc(badge)}</text></g>')
+
+
+def legend_html() -> str:
+    return ('<div class=legend><span>' + icons.svg("llm", "scout", "idle", 22) + ' LLM agent (model named under it)</span>'
+            '<span>' + icons.svg("mixed", "builder", "idle", 22) + ' LLM writes, code checks</span>'
+            '<span>' + icons.svg("code", None, "idle", 22) + ' deterministic code, no LLM: the judge decides</span>'
+            '<span class=muted>mood: <b>animated</b> = running now · <b>…</b> = waiting its turn · '
+            '<b>smile</b> = done · <b>✕</b> = ended here · <b>asleep</b> = not reached</span></div>')
+
+
 def flow_svg(lab: Lab, hyps) -> str:
     """The lab at a glance: stages left to right, how many reached each, died there (reason), live ones as chips."""
     stories = {h["id"]: story(lab, h) for h in hyps}
@@ -261,61 +332,85 @@ def flow_svg(lab: Lab, hyps) -> str:
             for key, *_ in STAGES:
                 if st["stages"][key] == "active":
                     live[key].append(h["id"])
-    height = 96 + 14 * max([len(set(v)) for v in died.values()] + [1]) + 22 * max([len(v) for v in live.values()] + [0])
-    out = [f'<div class=flowwrap><svg viewBox="0 0 {w} {height}" role="img" aria-label="pipeline flow" class=flow>']
+    height = 132 + 14 * max([len(set(v)) for v in died.values()] + [1]) + 22 * max([len(v) for v in live.values()] + [0])
+    out = [f'<div class=flowwrap><svg viewBox="0 0 {w} {height}" role="img" aria-label="pipeline flow" class=flow>'
+           '<defs><marker id="ah" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">'
+           '<path d="M0,0 L7,3.5 L0,7 z" fill="var(--muted)"/></marker></defs>']
     top = max(reached.values() or [1])
-    for i, (key, label, who) in enumerate(STAGES):
+    running = running_now(lab)
+    for i, (key, label, who, kind, agent) in enumerate(STAGES):
         x = 8 + i * (bw + gap)
         r = reached.get(key, 0)
-        fill = 0.12 + 0.55 * (r / top if top else 0)
-        out.append(f'<rect x="{x}" y="6" width="{bw}" height="74" rx="8" fill="var(--accent)" fill-opacity="{fill:.2f}" '
-                   f'stroke="var(--line)"/>'
-                   f'<text x="{x + bw / 2}" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="var(--fg)">{esc(label)}</text>'
-                   f'<text x="{x + bw / 2}" y="46" text-anchor="middle" font-size="11" fill="var(--muted)">{esc(who)}</text>'
-                   f'<text x="{x + bw / 2}" y="68" text-anchor="middle" font-size="16" font-weight="700" fill="var(--fg)">{r}</text>')
+        busy = bool(live.get(key)) and any((agent, hid) in running for hid in live[key])
+        mood = "work" if busy else ("sleep" if r == 0 else "idle")
+        out.append(node_svg(x, 6, bw, key, label, who, kind, agent, "done" if r else "pending", mood, count=r,
+                            count_tone=(r / top if top else 0)))
         if i < n - 1:
-            out.append(f'<path d="M{x + bw + 2},43 l{gap - 4},0" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/>')
-        y = 100
+            out.append(f'<path d="M{x + bw + 2},58 l{gap - 4},0" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah)"/>')
+        y = 128
         for reason, cnt in Counter(died.get(key, [])).most_common(6):
             short = reason.split("_", 1)[1] if reason[:2] in ("g1", "g2", "g3", "g4", "g5", "g0") else reason
             short = short if len(short) <= 17 else short[:16] + "…"
             out.append(f'<text x="{x + 4}" y="{y}" font-size="10.5" fill="var(--bad)"><title>{esc(reason)}</title>✕ {cnt}× {esc(short)}</text>')
             y += 14
-        y = max(y, 100) + 8 if live.get(key) else y
+        y = max(y, 128) + 10 if live.get(key) else y
         for hid in live.get(key, []):
-            out.append(f'<a href="#h-{hid}" data-hyp="{hid}"><rect x="{x + 2}" y="{y - 11}" width="{bw - 4}" height="16" rx="8" '
+            out.append(f'<a href="#h-{hid}" data-hyp="{hid}"><rect x="{x + 2}" y="{y - 11}" width="{bw - 4}" height="17" rx="8.5" '
                        f'fill="var(--warn)" fill-opacity=".22" stroke="var(--warn)"/><text x="{x + bw / 2}" y="{y + 1}" '
                        f'text-anchor="middle" font-size="11" fill="var(--fg)">{hid}</text></a>')
-            y += 18
-    out.insert(1, '<defs><marker id="ah" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">'
-                  '<path d="M0,0 L7,3.5 L0,7 z" fill="var(--muted)"/></marker></defs>')
+            y += 22
     out.append("</svg></div>")
     return "".join(out)
 
 
-def strip_svg(st: dict) -> str:
-    """The pipeline of one hypothesis: nine nodes, coloured by state, loops as badges."""
+def strip_svg(lab: Lab, st: dict, hid: str, running: set) -> str:
+    """The pipeline of one hypothesis: nine workers, their mood is the state of the stage; loops as badges."""
     w, bw, gap = 1120, 108, 14
-    out = [f'<div class=flowwrap><svg viewBox="0 0 {w} 96" role="img" aria-label="hypothesis pipeline" class=flow>']
-    for i, (key, label, who) in enumerate(STAGES):
+    out = [f'<div class=flowwrap><svg viewBox="0 0 {w} 134" role="img" aria-label="hypothesis pipeline" class=flow>']
+    for i, (key, label, who, kind, agent) in enumerate(STAGES):
         x = 8 + i * (bw + gap)
         state = st["stages"][key]
-        col = TONE[state]
-        dash = ' stroke-dasharray="4 3"' if state in ("pending", "skipped") else ""
-        out.append(f'<rect x="{x}" y="8" width="{bw}" height="52" rx="8" fill="{col}" fill-opacity="{.22 if state in ("done", "failed", "active", "parked") else .06}" '
-                   f'stroke="{col}" stroke-width="{2.4 if state in ("active", "failed") else 1.2}"{dash}/>'
-                   f'<text x="{x + bw / 2}" y="29" text-anchor="middle" font-size="13" font-weight="600" fill="var(--fg)">{esc(label)}</text>'
-                   f'<text x="{x + bw / 2}" y="47" text-anchor="middle" font-size="11" fill="{col}">{state if state != "skipped" else "not needed"}</text>')
+        mood = mood_of(state, kind, agent, hid, running)
+        caption = {"skipped": "not needed", "active": "working" if mood == "work" else "its turn"}.get(state, state)
+        out.append(node_svg(x, 6, bw, key, label, who, kind, agent, state, mood, caption=caption))
         loops = st["loops"].get(key, 0)
         if loops:
-            out.append(f'<text x="{x + bw - 4}" y="74" text-anchor="end" font-size="11" fill="var(--warn)">↺ {loops}× back</text>')
+            out.append(f'<text x="{x + bw - 4}" y="126" text-anchor="end" font-size="11" fill="var(--warn)">↺ {loops}× back</text>')
         ts = st["entered"].get(key)
         if ts and state != "pending":
-            out.append(f'<text x="{x + 4}" y="74" font-size="10.5" fill="var(--muted)">{esc(ts[5:16].replace("T", " "))}</text>')
+            out.append(f'<text x="{x + 4}" y="126" font-size="10.5" fill="var(--muted)">{esc(ts[5:16].replace("T", " "))}</text>')
         if i < len(STAGES) - 1:
-            out.append(f'<path d="M{x + bw + 1},34 l{gap - 2},0" stroke="{col}" stroke-width="1.5"/>')
+            out.append(f'<path d="M{x + bw + 1},58 l{gap - 2},0" stroke="{TONE.get(state, TONE["pending"])}" stroke-width="1.5"/>')
     out.append("</svg></div>")
     return "".join(out)
+
+
+def team_html(lab: Lab) -> str:
+    """The workers: one card per LLM agent and one for the deterministic judge, with their activity."""
+    running = {r["agent"] for r in lab.con.execute("SELECT agent FROM agent_invocations WHERE outcome IS NULL")}
+    day = datetime.now(timezone.utc).date().isoformat()
+    cards = []
+    for a in ("scout", "archivist", "builder", "skeptic", "librarian", "chair", "steward"):
+        r = lab.con.execute("SELECT COUNT(*) n, SUM(outcome = 'applied') ok, MAX(started_at) last, SUM(tokens_in + tokens_out) tok "
+                            "FROM agent_invocations WHERE agent = ? AND COALESCE(error, '') != 'dry run'", (a,)).fetchone()
+        today = lab.con.execute("SELECT COUNT(*) FROM agent_invocations WHERE agent = ? AND substr(started_at, 1, 10) = ?",
+                                (a, day)).fetchone()[0]
+        last = lab.con.execute("SELECT outcome FROM agent_invocations WHERE agent = ? ORDER BY started_at DESC LIMIT 1", (a,)).fetchone()
+        mood = "work" if a in running else ("sleep" if not r["n"] else "fail" if last and last["outcome"] not in ("applied", None) else "idle")
+        status = ("working now" if a in running else "never run" if not r["n"] else
+                  "last run failed" if mood == "fail" else "idle")
+        cards.append(f"<div class=agent><svg viewBox='0 0 48 56' width=52 height=61 role=img aria-label='{a}'>{icons.robot(a, mood)}</svg>"
+                     f"<div><b>{a.capitalize()}</b> <span class=pill>{esc(status)}</span><div class=sub>{esc(ROLE[a])}</div>"
+                     f"<div class=sub>{esc(model_label(a))} · {today} today · {r['n'] or 0} runs"
+                     f"{(' · ' + format((r['tok'] or 0) / 1e6, '.1f') + ' M tokens') if r['tok'] else ''}"
+                     f"{(' · last ' + ago(r['last'], datetime.now(timezone.utc))) if r['last'] else ''}</div></div></div>")
+    g = lab.con.execute("SELECT COUNT(*) n, MAX(ts) last FROM gate_results").fetchone()
+    cards.append("<div class='agent code'><svg viewBox='0 0 48 56' width=52 height=61 role=img aria-label='judge'>"
+                 f"{icons.gear('idle')}</svg><div><b>The judge</b> <span class=pill>code</span><div class=sub>gates G0-G5, "
+                 "ingest, paper runner, Sentinel: deterministic, no LLM</div>"
+                 f"<div class=sub>{g['n']} gate results"
+                 f"{(' · last ' + ago(g['last'], datetime.now(timezone.utc))) if g['last'] else ''}</div></div></div>")
+    return "<div class=team>" + "".join(cards) + "</div>"
 
 
 # ---------------------------------------------------------------------------- stage details
@@ -438,23 +533,24 @@ def hypothesis_view(lab: Lab, h, now: datetime, sums: dict, md) -> str:
         if rec["days"]:
             by_stage["paper"].append(f"<div class=ev><b>Paper record</b>: {rec['days']} days since {esc(rec['first'])}, "
                                      f"{rec['entries']} entries, max drawdown {rec['max_dd']:.1%}</div>")
+    running = running_now(lab)
     parts = [f"<section class=hyp id='h-{hid}' data-id='{hid}'><h3>{hid} · {esc(h['title'])} "
              f"<span class='pill'>{esc(h['status'])}</span></h3>"
              f"<div class=sub>family {esc(lab.canonical_family(h['family']))} · {esc(card.get('market_exposure'))} · "
              f"{esc(', '.join(card.get('asset_classes') or []))} · created {esc(h['created_at'][:10])}"
              + (f" · died at <b>{esc(h['reject_stage'])}</b>: <span class=mono>{esc(h['reject_code'])}</span>" if h["reject_code"] else "")
-             + "</div>", strip_svg(st)]
+             + "</div>", strip_svg(lab, st, hid, running)]
     wait, tone = ("", "")
     if h["status"] not in {str(t) for t in TERMINAL}:
         wait, tone = waiting_for(lab, h, now)
         parts.append(f"<div class='note {tone}'>▶ <b>Now:</b> {esc(wait)}</div>")
-    for key, label, who in STAGES:
+    for key, label, who, kind, agent in STAGES:
         items = by_stage.get(key, [])
         state = st["stages"][key]
         if not items and state in ("pending", "skipped"):
             continue
         parts.append(f"<details class=stage {'open' if state in ('active', 'failed') else ''}><summary>"
-                     f"<span class='dot {state}'></span><b>{esc(label)}</b> <span class=muted>{esc(who)} · {state}"
+                     f"{icons.svg(kind, agent, mood_of(state, kind, agent, hid, running), 22)}<b>{esc(label)}</b> <span class=muted>{esc(who)} · {state}"
                      f"{' · ' + str(len(items)) + ' record' + ('s' if len(items) != 1 else '') if items else ''}</span>"
                      f"</summary>{''.join(items) or '<div class=sub>nothing recorded</div>'}</details>")
     if by_stage.get("after"):
@@ -473,7 +569,7 @@ def build(lab: Lab, md) -> str:
     live = [h for h in hyps if h["status"] not in {str(t) for t in TERMINAL} | {"PARKED"}]
     blockers = lab_blockers(lab, now)
     out = ["<h2>Pipeline</h2><div class=sub>Where every hypothesis is, where it is stuck and what each agent produced. "
-           "Click a hypothesis to open its pipeline.</div>", flow_svg(lab, hyps)]
+           "Click a hypothesis to open its pipeline.</div>", team_html(lab), legend_html(), flow_svg(lab, hyps)]
     out.append("<h3>Stuck or waiting</h3>")
     if blockers:
         out.append("<div>" + "".join(f"<div class='note {t}'>⚠ {esc(x)}</div>" for t, x in blockers) + "</div>")
