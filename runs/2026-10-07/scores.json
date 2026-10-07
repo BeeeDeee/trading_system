@@ -1,0 +1,367 @@
+{
+ "claude_volne": {
+  "comment": "Zhruba 65 % v trendových pozicích a 35 % v hotovosti kvůli neutrálnímu režimu a riziku ze strany dluhopisové volatility.",
+  "positions": [
+   {
+    "coin": "AVAX",
+    "invalidation": "Uzavření pod SMA20 nebo rel7 pod −5 p. b.",
+    "reason": "Silný relativní trend u maxima.",
+    "weight_pct": 18.0
+   },
+   {
+    "coin": "BTC",
+    "invalidation": "Denní uzavření pod 84 000 USD.",
+    "reason": "Jádro portfolia, cena v pásmu nad SMA.",
+    "weight_pct": 20.0
+   },
+   {
+    "coin": "NEAR",
+    "invalidation": "Pokles o více než 15 % z 30d maxima doprovázený rostoucím objemem prodejů.",
+    "reason": "Nejsilnější momentum v universu.",
+    "weight_pct": 12.0
+   },
+   {
+    "coin": "SOL",
+    "invalidation": "Pokles pod 112 USD nebo pod SMA20.",
+    "reason": "Kvalitní trend nad SMA50 a lepší výkon než BTC za 30 dní.",
+    "weight_pct": 15.0
+   }
+  ]
+ },
+ "coins": {
+  "ADA": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": -1,
+   "news": 0,
+   "note": "Za 3 dny +9,7 % s RSI 67 je krátkodobě natažená, vysoký podíl long účtů zvyšuje riziko vybírání zisků.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://blockonomi.com/cardano-ada-network-processes-43181-daily-transactions-while-holding-above-0-25-support/"
+   ],
+   "trend": 1
+  },
+  "AVAX": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.5,
+   "mr": -1,
+   "news": 0,
+   "note": "Silný trend jen 3 % pod 30d maximem, ale RSI 69 a +4,3 % za den naznačují krátkodobé natažení.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.52,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/markets/2026/10/06/smaller-altcoins-shine-as-bitcoin-stills-trades-around-usd85-000"
+   ],
+   "trend": 2
+  },
+  "BNB": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Nízká beta a bez nových zpráv, drží se blízko BTC.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.52,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 0
+  },
+  "BTC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Nad všemi SMA a v pásmu 84–87 tis., ETF přílivy stabilní, ale rostoucí volatilita dluhopisů brzdí.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.53,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/markets/2026/10/06/smaller-altcoins-shine-as-bitcoin-stills-trades-around-usd85-000",
+    "https://coindesk.com/daybook-us/2026/10/06/the-vix-of-bonds-is-rising-but-bitcoin-and-stocks-aren-t-hearing-it-yet"
+   ],
+   "trend": 1
+  },
+  "DOGE": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Vysoká beta bez vlastního příběhu, za BTC zaostává v 7d i 30d.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 0
+  },
+  "ENA": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Buybacky a konec inflace jsou započítané, v 7d zaostává o 5,5 p. b. a OI klesá.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.49,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/ethena/price-analysis/"
+   ],
+   "trend": 0
+  },
+  "ETH": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Glamsterdam na testnetu je očekávaný, ETH zaostává za BTC v 7d a objem klesá.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://finance.yahoo.com/personal-finance/investing/article/bitcoin-and-ethereum-prices-today-tuesday-october-6-2026-crypto-prices-rise-after-record-day-for-stocks-114334315.html"
+   ],
+   "trend": 0
+  },
+  "LTC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Stabilní trend nad SMA a nízká korelace s BTC, bez nových zpráv a s nízkou likviditou.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.52,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 1
+  },
+  "NEAR": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Silný trend (+108 % za 30 dní) s AI a Intents narativem, včerejší pokles o 4 % zatím jen ochlazuje přehřátí.",
+   "p_outperform_btc_7d": 0.52,
+   "p_up_7d": 0.53,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/markets/2026/10/06/smaller-altcoins-shine-as-bitcoin-stills-trades-around-usd85-000",
+    "https://whale-alert.io/stories/d4b801f6f8d413/NEAR-Protocol-Rises-54-in-a-Week-on-Short-Squeeze-AI-Rotation-and-Growing-Institutional-Interest"
+   ],
+   "trend": 2
+  },
+  "PUMP": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Zpětné odkupy jsou známé, trend je pozitivní, ale včera −4,4 % a vysoká volatilita.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.49,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://thedefiant.io/news/defi/pump-fun-s-pump-buybacks-top-usd400m-as-token-stays-flat"
+   ],
+   "trend": 1
+  },
+  "QNT": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": -1,
+   "news": 0,
+   "note": "Zprávu o The Clearing House už cena plně započítala (+296 % za 30 dní), teď je 29 % pod vrcholem a má extrémní volatilitu.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://en.cryptonomist.ch/2026/09/28/quant-price-surge-banks/"
+   ],
+   "trend": 1
+  },
+  "SOL": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Zdravý trend nad SMA50/100 a o 6,8 p. b. lepší než BTC za 30 dní, kniha s převahou nákupů.",
+   "p_outperform_btc_7d": 0.52,
+   "p_up_7d": 0.54,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 1
+  },
+  "SUI": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "jine",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Sui Basecamp 7.–8. 10. je očekávaný a hrozí „sell the news“, cena v 7d stagnuje proti BTC.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.webull.com/news/15661694767727616",
+    "https://www.coindesk.com/markets/2026/10/06/smaller-altcoins-shine-as-bitcoin-stills-trades-around-usd85-000"
+   ],
+   "trend": 1
+  },
+  "UNI": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Za 3 dny −5,4 % a 22 % pod maximem, takže je prostor pro odraz, ale CME futures až 19. 10. jsou známá věc.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://247wallst.com/investing/cryptocurrency/2026/09/24/can-uniswap-maintain-its-lead-over-ethereum-until-october-19/?.tsrc=rss"
+   ],
+   "trend": 0
+  },
+  "XRP": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Bez nového katalyzátoru (Swell až 27.–29. 10.), 10 % pod 30d maximem a s klesajícím objemem.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.mexc.com/news/360473"
+   ],
+   "trend": 0
+  },
+  "ZEC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Pod SMA20 a 19,5 % od maxima, korekce po velkém růstu, objem výrazně klesl.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 0
+  }
+ },
+ "date": "2026-10-07",
+ "events_7d": [
+  {
+   "date": "2026-10-07",
+   "title": "TOKEN2049 Singapur a Sui Basecamp (7.–8. 10.)",
+   "type": "jine"
+  },
+  {
+   "date": "2026-10-06",
+   "title": "Ethereum Glamsterdam aktivace na testnetu Sepolia",
+   "type": "upgrade"
+  },
+  {
+   "date": "2026-10-14",
+   "title": "US CPI za září",
+   "type": "makro"
+  },
+  {
+   "date": "2026-10-15",
+   "title": "US PPI za září",
+   "type": "makro"
+  }
+ ],
+ "regime": {
+  "label": "Neutrální, konsolidace",
+  "summary": "BTC se drží v pásmu kolem 85 tis. USD s neutrálním fundingem a stabilními přílivy do ETF, altcoiny s vlastním příběhem (NEAR, SUI, AVAX) vedou na 30 dní. Riziko představuje rostoucí volatilita dluhopisů (MOVE ~116) a hranice 84 tis., pod níž hrozí pokles k 80 tis."
+ },
+ "top10": [
+  {
+   "coin": "NEAR",
+   "reason": "Nejsilnější trend s narativem AI a Intents."
+  },
+  {
+   "coin": "AVAX",
+   "reason": "Silný trend u 30d maxima a nízká korelace s BTC."
+  },
+  {
+   "coin": "SOL",
+   "reason": "Kvalitní trend a převaha nákupních příkazů v knize."
+  },
+  {
+   "coin": "LTC",
+   "reason": "Stabilní trend a nízká beta."
+  },
+  {
+   "coin": "BNB",
+   "reason": "Defenzivní, s nízkou betou."
+  },
+  {
+   "coin": "ADA",
+   "reason": "Momentum, ale krátkodobě natažená."
+  },
+  {
+   "coin": "SUI",
+   "reason": "Silný 30d trend a riziko „sell the news“ po Basecampu."
+  },
+  {
+   "coin": "UNI",
+   "reason": "Možný odraz po poklesu."
+  },
+  {
+   "coin": "ETH",
+   "reason": "Neutrální, kopíruje BTC."
+  },
+  {
+   "coin": "XRP",
+   "reason": "Neutrální, bez katalyzátoru."
+  }
+ ]
+}
