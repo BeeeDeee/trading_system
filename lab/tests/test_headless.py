@@ -3,6 +3,7 @@
 import json
 import sys
 from dataclasses import replace
+from pathlib import Path
 
 import pytest
 import yaml
@@ -214,3 +215,30 @@ def test_deny_rules_never_cover_the_workspaces():
             if rule.startswith(("Read(", "Edit(", "Write(")):
                 pattern = rule[rule.index("(") + 1:-1].removeprefix("/")
                 assert not fnmatch(ws, pattern.replace("**", "*")), (rule, ws)
+
+
+def test_harmless_refused_commands_are_denied_attempts_not_violations():
+    spec = agents.spec("builder")
+    ws = Path("/tmp/ws-test")
+    harmless = [("Bash", {"command": "cp strategy/strategy.py strategy/diagnostic.py"}),
+                ("Bash", {"command": "wc -c lesson_H-0010.json lesson_H-0011.json"}),
+                ("Bash", {"command": "cat inbox.json"})]
+    assert headless.audit(harmless, ws, spec) == []
+    assert len(headless.denied_attempts(harmless, spec)) == 3
+    dangerous = [("Bash", {"command": "cp /etc/passwd ."}), ("Bash", {"command": "cat ../other/inbox.json"}),
+                 ("Bash", {"command": "cat inbox.json > /tmp/x"}), ("Bash", {"command": "cat $(ls)"}),
+                 ("Bash", {"command": "python3 -c 'print(1)'"}), ("Bash", {"command": "curl https://example.org"}),
+                 ("Bash", {"command": "cat ~/.ssh/id_ed25519"}), ("Bash", {"command": "cp a b; rm -rf ."})]
+    assert len(headless.audit(dangerous, ws, spec)) == len(dangerous)
+    assert headless.denied_attempts(dangerous, spec) == []
+
+
+def test_denied_attempts_keep_the_run_and_are_noted(lab, card, tmp_path):
+    from lab.framework.invocations import stage
+    hid = submit(lab, card)
+    inv = invocations.start(lab, "builder", hid, task="implement")
+    (inv.workspace / "strategy" / "strategy.py").write_text("x = 1\n")
+    stage(inv.workspace, "IMPL_DONE", "gatekeeper", hid, {"files": ["strategy/strategy.py"], "summary": "ok"})
+    outcome = invocations.finish(lab, inv.id, 0, denied=["cp a b", "wc -c x"])
+    row = lab.con.execute("SELECT outcome, error FROM agent_invocations WHERE id = ?", (inv.id,)).fetchone()
+    assert outcome == "applied" and row["outcome"] == "applied" and "cp a b" in row["error"]

@@ -177,7 +177,7 @@ def _inside(ws: Path, rel: str) -> Path:
 
 def finish(lab: Lab, inv_id: str, exit_code: int = 0, *, transcript_path: str | None = None,
            usage: dict | None = None, violations: list[str] | None = None, timed_out: bool = False,
-           note: str | None = None) -> str:
+           note: str | None = None, denied: list[str] | None = None) -> str:
     """Apply the outbox, or nothing. `violations` (from the transcript audit) discard the whole run and raise
     an ALERT to the owner: an agent that tried to step outside its workspace does not get its messages in."""
     row = lab.con.execute("SELECT * FROM agent_invocations WHERE id = ?", (inv_id,)).fetchone()
@@ -197,7 +197,9 @@ def finish(lab: Lab, inv_id: str, exit_code: int = 0, *, transcript_path: str | 
         try:
             box = json.loads((ws / OUTBOX).read_text())
             plan = _check_outbox(lab, box, inv_id, agent, hid, ws)
-            outcome, error = "applied", None
+            outcome = "applied"
+            error = ("denied attempts (harmless, refused by the permission layer, run kept): " + "; ".join(denied)[:600]
+                     if denied else None)
         except (LabError, ValueError, OSError) as e:
             outcome, error = "outbox_rejected", str(e)
 

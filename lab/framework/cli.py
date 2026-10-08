@@ -379,7 +379,7 @@ def _run_agent(lab: Lab, args) -> int:
         return 0
     res = runner(lab, inv)
     outcome = invocations.finish(lab, inv.id, res.exit_code, transcript_path=res.transcript_path, usage=res.usage,
-                                 violations=res.violations, timed_out=res.timed_out, note=res.note)
+                                 violations=res.violations, timed_out=res.timed_out, note=res.note, denied=res.denied)
     u = res.usage
     print(f"outcome    {outcome}  (exit {res.exit_code}, {u.get('wall_s')} s, {u.get('n_turns')} turns, "
           f"tokens in/out {u.get('tokens_in')}/{u.get('tokens_out')}, model {u.get('model')})")

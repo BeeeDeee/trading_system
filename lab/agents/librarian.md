@@ -46,7 +46,7 @@ staged, stop.
 - `lab inbox`, `lab context`.
 
 One line per command, no pipes, redirections, `;`, `&&`, `$(...)` or environment variables, and no other
-programs: list files with Glob and read them with Read, never `ls`, `cat` or `find`.
+programs: list files with Glob and read them with Read, never `ls`, `cat`, `cp`, `wc`, `head` or `find` (to copy or combine files, Read them and Write the new file).
 
 ## Rules for lessons
 

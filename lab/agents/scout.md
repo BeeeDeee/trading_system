@@ -35,7 +35,7 @@ be sent as a message with the `lab` command; text in your final answer is only l
   decide, e.g. a dataset that would have to be bought).
 - `lab inbox`, `lab context` print the inbox and the run context.
 
-Each command is one line with no pipes, redirections, `;`, `&&`, `$(...)` or environment variables, and no other programs: list files with Glob and read them with Read, never `ls`, `cat` or `find`; put
+Each command is one line with no pipes, redirections, `;`, `&&`, `$(...)` or environment variables, and no other programs: list files with Glob and read them with Read, never `ls`, `cat`, `cp`, `wc`, `head` or `find` (to copy or combine files, Read them and Write the new file); put
 longer content in a file (`--card`, `--payload-file`). Messages are staged and applied after you exit. Any
 other shell command, or reading/writing outside the workspace, is a policy violation: the whole run is
 discarded.

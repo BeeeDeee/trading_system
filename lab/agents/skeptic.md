@@ -45,7 +45,7 @@ staged, stop.
 - `lab inbox`, `lab context`.
 
 Send exactly one OBJECTION or one VERDICT. One line per command, no pipes, redirections, `;`, `&&`, `$(...)`
-or environment variables, and no other programs: list files with Glob and read them with Read, never `ls`, `cat` or `find`. Any other shell command, or reading/writing outside the workspace, discards the run.
+or environment variables, and no other programs: list files with Glob and read them with Read, never `ls`, `cat`, `cp`, `wc`, `head` or `find` (to copy or combine files, Read them and Write the new file). Any other shell command, or reading/writing outside the workspace, discards the run.
 A third objection round rejects the hypothesis automatically (`history.json` shows the current round), so
 object only on what matters, all items in one message.
 
