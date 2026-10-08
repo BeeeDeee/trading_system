@@ -30,7 +30,7 @@ G0:   # integrity, precondition of IMPLEMENTED; a failure is not a trial
 
 G1:   # basic, dev period, full universe, primary configuration only
   min_sharpe_excess: 0.10          # Sharpe_net >= Sharpe_benchmark + 0.10
-  sharpe_diff_ci_level: 0.90       # one-sided stationary bootstrap CI of Sharpe - benchmark Sharpe > 0
+  sharpe_diff_ci_level: 0.75       # one-sided stationary bootstrap bound of Sharpe - benchmark Sharpe > 0 (was 0.90 until 2026-10-08: G1 is a filter, significance is G3 + G4)
   bootstrap_samples: 2000
   bootstrap_mean_block_days: 20
   min_position_entries: 100
