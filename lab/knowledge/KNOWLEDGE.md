@@ -50,6 +50,12 @@ The catalog said Binance spot daily data runs to 2026-10-03 but the research 9 p
 
 *confidence high · 2026-10-06 · human · evidence: lab/data/catalog.yaml*
 
+### K-0023 Attached stock datasets fit in RAM with at most six fields
+
+SF1, insider and 13F fields are daily float32 matrices on the SEP stocks, 70 MB each. A LIQ-500 card with six fields peaks at 2.3 GB through G0-G2 on this machine (limit 2.8 GB for the cycle), three fields at 2.1 GB, so the per-card cap is six. Loading them takes seconds to a minute; fundamentals change only on filings, so signals built from them are slow.
+
+*confidence high · 2026-10-07 · human · evidence: calibration quality_stocks; PLAN decision log 2026-10-07*
+
 ## Methodology
 
 ### K-0005 Benchmark-relative binary switches start handicapped
@@ -139,3 +145,9 @@ ProtectKernelTunables, ProtectKernelModules, LockPersonality (and other options)
 The agents' settings denied Read(//srv/**) to protect the lab state; in production the workspaces live under /srv/research-lab/workspaces, so every file tool was denied and two Scout runs produced nothing. Deny rules must name the protected directories exactly; a test now checks that none covers a workspace. The Scouts reported the problem as owner questions instead of improvising, which is the intended behaviour.
 
 *confidence high · 2026-10-06 · human · evidence: PLAN decision log 2026-10-06; messages 70, 71*
+
+### K-0022 First production mechanism tests killed two ideas without a strategy run
+
+Two of the first cards with a mechanism test (ex-dividend price pressure, breakouts through stale 52-week highs, both LIQ-500 market-neutral, 5-day horizon) died at G1 on the event study: placebo percentiles 0.64 and 0.46, gross abnormal return per event covering only 4 % and 28 % of the round-trip cost. The strategy was never simulated, so each death cost a Scout run and a Builder run but no gate time, and the reason is mechanism-level, not 'the strategy lost to the benchmark'.
+
+*confidence high · 2026-10-07 · human · evidence: H-0010; H-0011; gate_results G1 mechanism*

@@ -250,5 +250,29 @@
   "actor": "human",
   "message_id": 81,
   "ts": "2026-10-06T21:37:53.060525+00:00"
+ },
+ {
+  "id": "K-0022",
+  "kind": "process",
+  "title": "First production mechanism tests killed two ideas without a strategy run",
+  "statement": "Two of the first cards with a mechanism test (ex-dividend price pressure, breakouts through stale 52-week highs, both LIQ-500 market-neutral, 5-day horizon) died at G1 on the event study: placebo percentiles 0.64 and 0.46, gross abnormal return per event covering only 4 % and 28 % of the round-trip cost. The strategy was never simulated, so each death cost a Scout run and a Builder run but no gate time, and the reason is mechanism-level, not 'the strategy lost to the benchmark'.",
+  "evidence": "[\"H-0010\",\"H-0011\",\"gate_results G1 mechanism\"]",
+  "confidence": "high",
+  "supersedes": null,
+  "actor": "human",
+  "message_id": 91,
+  "ts": "2026-10-07T06:57:32.868980+00:00"
+ },
+ {
+  "id": "K-0023",
+  "kind": "data",
+  "title": "Attached stock datasets fit in RAM with at most six fields",
+  "statement": "SF1, insider and 13F fields are daily float32 matrices on the SEP stocks, 70 MB each. A LIQ-500 card with six fields peaks at 2.3 GB through G0-G2 on this machine (limit 2.8 GB for the cycle), three fields at 2.1 GB, so the per-card cap is six. Loading them takes seconds to a minute; fundamentals change only on filings, so signals built from them are slow.",
+  "evidence": "[\"calibration quality_stocks\",\"PLAN decision log 2026-10-07\"]",
+  "confidence": "high",
+  "supersedes": null,
+  "actor": "human",
+  "message_id": 92,
+  "ts": "2026-10-07T06:57:33.277113+00:00"
  }
 ]
