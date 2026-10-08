@@ -92,7 +92,7 @@ def run_cycle(lab: Lab, evaluator: Evaluator | None, runners: dict[str, Runner],
         if isinstance(res, int):   # stub agents return an exit code
             res = RunResult(res)
         invocations.finish(lab, inv.id, res.exit_code, transcript_path=res.transcript_path, usage=res.usage,
-                           violations=res.violations, timed_out=res.timed_out, note=res.note)
+                           violations=res.violations, timed_out=res.timed_out, note=res.note, denied=res.denied)
         tick_fn()
         return task
     return None

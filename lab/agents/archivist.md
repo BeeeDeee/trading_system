@@ -33,7 +33,7 @@ staged, stop.
 - `lab inbox`, `lab context`.
 
 One line per command, no pipes, redirections, `;`, `&&`, `$(...)` or environment variables, and no other
-programs: list files with Glob and read them with Read, never `ls`, `cat` or `find`. Any other shell command,
+programs: list files with Glob and read them with Read, never `ls`, `cat`, `cp`, `wc`, `head` or `find` (to copy or combine files, Read them and Write the new file). Any other shell command,
 or reading/writing outside the workspace, discards the whole run. WebSearch and WebFetch are for finding
 sources and reading API documentation; never use them to look at the data itself.
 

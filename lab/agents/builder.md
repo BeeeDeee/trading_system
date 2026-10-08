@@ -32,7 +32,7 @@ message is staged, stop.
   as written (contradiction, missing data, unavoidable look-ahead). Then do not send IMPL_DONE.
 - `lab inbox`, `lab context`.
 
-One line per command, no pipes, redirections, `;`, `&&`, `$(...)` or environment variables, and no other programs: list files with Glob and read them with Read, never `ls`, `cat` or `find`. Any other shell
+One line per command, no pipes, redirections, `;`, `&&`, `$(...)` or environment variables, and no other programs: list files with Glob and read them with Read, never `ls`, `cat`, `cp`, `wc`, `head` or `find` (to copy or combine files, Read them and Write the new file). Any other shell
 command, or reading/writing outside the workspace, discards the whole run.
 
 ## The strategy contract

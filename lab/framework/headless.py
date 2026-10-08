@@ -41,6 +41,7 @@ class RunResult:
     violations: list[str] = field(default_factory=list)
     timed_out: bool = False
     note: str | None = None
+    denied: list[str] = field(default_factory=list)   # harmless commands the permission layer refused: run kept
 
 
 def command(spec: agents.AgentSpec, prompt: str, claude_bin: str = "claude") -> list[str]:
@@ -130,7 +131,7 @@ def audit(calls: list[tuple[str, dict]], ws: Path, spec: agents.AgentSpec) -> li
         if name == "Bash":
             problem = _bash_problem(str(inp.get("command", "")), spec.lab_verbs) if "Bash" in spec.tools \
                 else "Bash is not allowed"
-            if problem:
+            if problem and not _benign_denied(str(inp.get("command", "")), spec):
                 out.append(f"Bash {inp.get('command', '')[:200]!r}: {problem}")
         elif name in FILE_TOOLS:
             if name not in spec.tools:
@@ -146,6 +147,40 @@ def audit(calls: list[tuple[str, dict]], ws: Path, spec: agents.AgentSpec) -> li
         elif name not in spec.tools and name not in HARMLESS_TOOLS:
             out.append(f"tool {name} is not allowed")
     return out
+
+
+# Harmless shell commands an agent sometimes tries (cp, wc, cat ...). The permission layer (`dontAsk`, the allowed
+# `lab` verbs only) refuses them, so they have no effect; discarding a whole good run for them wasted real tokens
+# (2 of the first ~30 production runs). They are recorded as denied attempts, the run is kept. Anything with
+# operators, substitutions, an absolute or parent path, an interpreter or the network stays a violation.
+BENIGN = {"cp", "mv", "wc", "cat", "ls", "head", "tail", "grep", "diff", "echo", "mkdir", "touch", "sort", "uniq",
+          "pwd", "stat", "file", "tree", "test", "true", "date"}
+
+
+def _benign_denied(cmd: str, spec: agents.AgentSpec) -> bool:
+    if "Bash" not in spec.tools or _bash_problem(cmd, spec.lab_verbs) is None:
+        return False
+    if "\n" in cmd or "`" in cmd or "$(" in cmd or "${" in cmd:
+        return False
+    try:
+        lex = shlex.shlex(cmd, posix=True, punctuation_chars=True)
+        lex.whitespace_split = True
+        tokens = list(lex)
+    except ValueError:
+        return False
+    if not tokens or tokens[0] not in BENIGN or any(t and set(t) <= SHELL_OPERATORS for t in tokens):
+        return False
+    for t in tokens[1:]:
+        if t.startswith("-"):
+            continue
+        if t.startswith(("/", "~", "$")) or ".." in Path(t).parts:
+            return False
+    return True
+
+
+def denied_attempts(calls: list[tuple[str, dict]], spec: agents.AgentSpec) -> list[str]:
+    return [str(inp.get("command", ""))[:160] for name, inp in calls
+            if name == "Bash" and _benign_denied(str(inp.get("command", "")), spec)]
 
 
 def _bash_problem(cmd: str, verbs: tuple[str, ...]) -> str | None:
@@ -197,8 +232,9 @@ class ClaudeRunner:
         if use["is_error"] or (code != 0 and not timed_out):
             note = (f"{use['result_subtype'] or 'no result'}: {use['result_text'][:300]}"
                     f" | stderr: {stderr.read_text()[-300:]}")
-        return RunResult(code, str(transcript), use, audit(tool_calls(evs), inv.workspace, self.spec),
-                         timed_out, note)
+        calls = tool_calls(evs)
+        return RunResult(code, str(transcript), use, audit(calls, inv.workspace, self.spec), timed_out, note,
+                         denied_attempts(calls, self.spec))
 
 
 def _kill(p: subprocess.Popen) -> None:
