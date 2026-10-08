@@ -1,0 +1,84 @@
+{
+ "label": "2026-10-07T06",
+ "locked_at": "2026-10-07T06:02:04.083Z",
+ "locked_ms": 1791352924083,
+ "portfolios": {
+  "funding_kontra": {
+   "exits": {},
+   "info": {
+    "hold": "rebalanc jen v 00, 08, 16 UTC"
+   },
+   "keep": [],
+   "targets": null
+  },
+  "h_breakout": {
+   "exits": {},
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "h_kniha": {
+   "exits": {
+    "BNB": "signal"
+   },
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "h_momentum": {
+   "exits": {},
+   "info": {
+    "candidates": [
+     "PUMP",
+     "ENA",
+     "NEAR"
+    ]
+   },
+   "keep": [
+    "BNB",
+    "NEAR",
+    "PUMP"
+   ],
+   "targets": {}
+  },
+  "h_reverze": {
+   "exits": {
+    "ADA": "max_hold",
+    "AVAX": "max_hold",
+    "ETH": "max_hold"
+   },
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "llm_nacasovani": {
+   "exits": {},
+   "info": {
+    "waiting": []
+   },
+   "keep": [],
+   "targets": {
+    "ADA": 0.075,
+    "AVAX": 0.225,
+    "LTC": 0.15,
+    "NEAR": 0.25,
+    "SOL": 0.15,
+    "SUI": 0.15
+   }
+  },
+  "seance_usa": {
+   "exits": {},
+   "info": {
+    "in_session": false
+   },
+   "keep": [],
+   "targets": {}
+  }
+ }
+}
