@@ -82,3 +82,75 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not retune the volume threshold, reference window or hold, or swap the overhang for another gate: a long dense negative has no peak to refine. No other daily US large-cap event-follow book at this turnover.
 - open questions: An event study first: forward returns after volume-shock days by news direction and overhang sign, against delayed-entry and misaligned placebos, gross of costs, by era and in large caps. Real announcement dates (K-0004) would isolate true news days.
 - related: H-0007, H-0008, H-0006
+
+## H-0010 – Ex-dividend price pressure - LIQ-500 neutral, long payers before predicted ex-day, short just after, 5 days
+
+- family: `dividend-month-premium` · mechanism: flow_structural · instruments: US liquid stocks (LIQ-500), market-neutral: long regular quarterly payers in the sessions before a predicted ex-dividend day, short just after the ex-day, five-session windows, 1998 to 2020
+- outcome: rejected at G1 on the mechanism test: abnormal return was inside the placebo cloud and a tiny fraction of the round-trip cost; no strategy run
+- lesson: No ex-dividend price pressure visible in large liquid names. The event sample was large, so this is not a power problem. The pooled abnormal return faded across the three sub-periods (positive early, negative in the latest) and was far below the cost of trading every name twice per dividend cycle. Pre-ex and post-ex events were pooled in one test and the by-side run-up the card promised was not reported, so which leg is dead is unknown. The synthetic market has no dividends, so G0 look-ahead was vacuous and the regular-payer share was never reported.
+- avoid: Do not re-run the ex-day clock with another window length, the pre-ex leg alone, or another payer-regularity rule: the gap to costs is too wide for tuning to close. Do not file the same ex-day events under a new name (dividend capture, high-yield pressure).
+- open questions: The original dividend-month premium is monthly (predicted-dividend months against other months, month-long hold) and was not tested; it has a different cost profile but is likely weak in large caps. File it under the same family so the trials stay counted. A by-side diagnostic would tell whether the run-up exists at all.
+- related: H-0011, H-0015
+
+## H-0011 – 52-week-high anchoring - LIQ-500 market-neutral, long stocks that just broke through a stale 52-week high (not on a top-decile move day), short the rest, hold 5 days
+
+- family: `52-week-high-anchoring` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), market-neutral: long stocks closing above a stale 52-week high on a non-extreme day, short the rest, five-day hold, 1998 to 2020
+- outcome: rejected at G1 on the mechanism test: placebo sets of the same stocks earned more than the breakout events, and cost was not covered; no strategy run
+- lesson: The positive point estimate is not evidence of a breakout effect. The placebo average (same stocks, shifted dates) was higher than the event average, so stocks that make 52-week highs simply tend to do well in any week, probably winner drift rather than anything special about the crossing day. The sub-periods disagreed in sign (early era negative, middle strongly positive), and events cluster on few bull-market dates, so the effective sample is smaller than the event count. Longer horizons look larger, but the placebo drifts too and they are slower than the brief allows.
+- avoid: Do not retune gap_days, hold_days or the top-decile exclusion. Do not refile stale-high breakouts as momentum or near-high variants on the same universe: the card itself accepted that this is the breakout family of study 1.
+- open questions: A fair test of the anchoring story must net out stock-identity drift, for instance comparing breakout stocks with stocks matched on prior-year return and distance to the high, and probably needs a monthly horizon where the literature places the effect.
+- related: H-0009, H-0007
+
+## H-0012 – Non-routine insider purchase drift - LIQ-500 market-neutral, long stocks with a first open-market insider purchase filing after a half-year without any, hold 5 days
+
+- family: `insider-purchase-information` · mechanism: other · instruments: US liquid stocks (LIQ-500), market-neutral: long stocks with a first insider open-market purchase filing after a half-year quiet window, five-day hold, 2009 to 2020
+- outcome: rejected at G1 on the mechanism test: abnormal return after the filing was slightly negative and below the placebo middle; no strategy run
+- lesson: No post-filing drift in large liquid names. Entry is two sessions after the filing, the Form 4 is public at once and large caps are heavily followed, so any reaction is likely already in the price. Events are sparse and cluster in sell-offs, so the placebo distribution is wide: only an effect larger than costs could have shown, and none did. The middle sub-period was clearly negative, consistent with buying into declines that continued (the reversal confound the card named but never checked). The data holds only counts of purchase transactions, so the non-routine proxy is crude. G0 look-ahead was vacuous: the synthetic market produced no events.
+- avoid: Do not retune the quiet window (91 or 365 days) or the hold. Do not read this as proof that insider buying is uninformative; it shows only that the filing-day drift is not harvestable in LIQ-500.
+- open questions: Insider information may live in less-covered names, at longer horizons, or in features the loader lacks (purchase size, officer role, several insiders buying together). None is loadable today; size and role would be an Archivist task.
+- related: H-0009, H-0013
+
+## H-0013 – Peer lead-lag catch-up - LIQ-500 market-neutral, long stocks whose return-correlated peers rose last week while they themselves did not move much, short the mirror, hold 5 days
+
+- family: `peer-lead-lag-diffusion` · mechanism: cross_asset_information · instruments: US liquid stocks (LIQ-500), weekly dollar-neutral: long stocks whose most return-correlated peers rose while they did not move, short the mirror, five-day hold, 1998 to 2020
+- outcome: rejected at G1 on the mechanism test: abnormal return slightly negative, below the placebo middle, positive in at most one sub-period; no strategy run
+- lesson: A clear negative on the largest event sample of the batch, so not a power problem. Statistically chosen correlation peers carry no usable catch-up over a week in LIQ-500; this agrees with the earlier cross-market lead-lag scan and with the idea that diffusion in well-covered names is over within about a day. Only the very shortest horizon leaned positive, and by far less than costs; this is not an invitation to a one-day version. The book would rotate nearly all names weekly, so even a weak real effect could not be harvested. G0 look-ahead was vacuous (the synthetic market has too few names for the book to trade); the Builder repeated the checks by hand on a larger market.
+- avoid: Do not vary peers_k, formation_days or corr_window, and do not swap correlation peers for another clustering: it is the same test. No weekly full-rotation statistical-peer book.
+- open questions: Diffusion along explicit economic links (suppliers, customers, parents) or in less-covered names might differ, but neither link data nor small caps are loadable.
+- related: H-0007, H-0009
+
+## H-0014 – High-volume visibility premium - LIQ-500 market-neutral, weekly, long abnormal-volume stocks and short abnormally quiet stocks matched on past-week return, hold 5 days
+
+- family: `high-volume-visibility-premium` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), weekly market-neutral: long abnormal-volume stocks, short abnormally quiet ones, matched within past-week-return quintiles, five-day hold, 1998 to 2020
+- outcome: rejected at G1 on the mechanism test: high-volume against quiet stocks showed essentially zero abnormal return, mid-placebo; no strategy run
+- lesson: Flat result on the largest event sample in the lab, so not a power problem. The visibility premium of the literature builds over several weeks and sits in less visible firms; LIQ-500 stocks are always on screens, so a volume burst adds little new attention. The descriptive longer horizons did not turn positive either, so waiting longer would not help. The latest sub-period was negative. Matching on past-week return removed reversal by construction, and what remained was nothing, which suggests that earlier volume-based books owed their moves to returns, not volume. The long leg alone was not reported separately.
+- avoid: Do not retune reference_days, leg_quantile or the hold. Do not file another abnormal-volume cross-section on LIQ-500 under a new attention story (visibility, most-active lists, volume shock): with H-0009 this is the second dead volume-signal book.
+- open questions: Any volume effect probably lives in smaller or less covered names, or needs volume tied to an identified event; neither is loadable at present.
+- related: H-0009, H-0008
+
+## H-0015 – Filing-anchored earnings-announcement premium - LIQ-500 dollar-neutral, long stocks whose predicted announcement (last year's SF1-validated reaction day) is 3 days ahead, hold 5 days
+
+- family: `earnings-announcement-premium` · mechanism: calendar · instruments: US liquid stocks (LIQ-500), dollar-neutral: long before a predicted earnings reaction day, five-day hold, 1998 to 2020
+- outcome: rejected at G1 on the mechanism test: positive abnormal return, but no larger than placebo sets of the same stocks; no strategy run
+- lesson: Second trial of the family, and it did not settle the question left by H-0008. The placebo average was almost as high as the event average, so the positive number belongs to which stocks are picked (names with a clean earnings-day volume spike year after year), not to the dates. The card's own proxy check (do predicted days really show a volume spike) was not computed because the Builder had no output channel, so we still cannot say whether the date prediction worked or the premium is absent in large caps. Treat as: no evidence of an exploitable premium, proxy quality unknown.
+- avoid: Do not file a third volume-based date proxy, and do not tune lead_days or min_spike before the hit rate of the proxy is measured. Do not read a positive gross abnormal return without comparing it with the placebo average.
+- open questions: Real earnings dates (Archivist task, see K-0004), or a framework change so that proxy hit-rate diagnostics reach the gate output. With true dates, test announcement days against size- and beta-matched controls.
+- related: H-0008, H-0014
+
+## H-0016 – Turn-of-month beta spread - LIQ-500 dollar-neutral, long the top beta quintile and short the bottom quintile only over the 5-day month turn, flat otherwise
+
+- family: `turn-of-month-flows` · mechanism: calendar · instruments: US liquid stocks (LIQ-500), dollar-neutral: long the top beta quintile, short the bottom quintile, only over a five-session window at the month turn, flat otherwise, 1998 to 2020
+- outcome: mechanism test passed; rejected at G1 on the strategy: Sharpe far below the bar and the bootstrap bound against T-bills below zero
+- lesson: The first card to pass the mechanism check and then be simulated, so it separates the two questions: the month-turn window does reward high beta over low beta in LIQ-500 more than at other dates, but the premium is too small to trade alone. The book is invested about a fifth of the time, a beta spread at gross one has a net beta well under one, and the rest of the year earns cash, so the window's own Sharpe is the ceiling, as the card warned. The effect was weakest in the latest third of the sample, which fits publication decay. A passing mechanism with a failing strategy is not a refutation of the calendar flow.
+- avoid: Do not retune post_days, beta_lookback or the quintile cut to lift the Sharpe, and do not build another stand-alone window book against cash. Do not return to SPY/IEF switching (H-0001).
+- open questions: Use the window as a tilt on an always-invested benchmark (overweight equity or beta inside the window, same average exposure otherwise), judged against the constant mix as K-0005 asks. Several calendar windows (pre-holiday, option expiry) in one low-turnover overlay would raise exposure; each is a separate card with its own trial count.
+- related: H-0001, H-0002
+
+## H-0017 – Index-inclusion price-pressure reversal - S&P 500 universe, short stocks in their first days as index members, long the other members, hold 5 days
+
+- family: `index-inclusion-price-pressure` · mechanism: flow_structural · instruments: S&P 500 members: short stocks in their first sessions after joining the index, long the other members as hedge, five-day hold, 1998 to 2020
+- outcome: rejected at G1 on the mechanism test by a hair: right sign in every sub-period and cost covered, but the placebo percentile was just under the bar
+- lesson: The closest call of the batch and more a 'cannot tell' than a refutation. Only a few hundred events on fewer dates make the placebo distribution wide, so a gate that works for tens of thousands of events is close to a coin flip for a real effect of this size. In its favour: the right sign in every sub-period, a gross effect far above cost, and larger descriptive moves at longer horizons, which suggests the reversal runs slower than the five-day hold. Against: it faded from the early to the late sub-period, as expected once the effect is published, and a short book of a few single names is idiosyncratic. The gate stays the gate.
+- avoid: Do not resubmit the same events with hold 3 or 10, a changed seasoning filter or any tweak aimed at the percentile: that is a retry on the same data and counts as new trials.
+- open questions: A different card with many more events and a slower horizon where the reversal seems to live, or both additions and deletions in one test. Other index-driven events with more occurrences (annual reconstitutions) would raise power, but no such membership data is loadable today.
+- related: H-0002, H-0016

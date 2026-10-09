@@ -274,5 +274,65 @@
   "actor": "human",
   "message_id": 92,
   "ts": "2026-10-07T06:57:33.277113+00:00"
+ },
+ {
+  "id": "K-0024",
+  "kind": "market",
+  "title": "Large-cap short-horizon event anomalies vanish; mandated-flow events survive",
+  "statement": "Five-session event studies on documented US single-stock anomalies (ex-dividend run-up, stale 52-week-high breakouts, insider purchase filings, correlated-peer catch-up, abnormal volume, predicted earnings dates) found nothing distinguishable from time-shifted placebos among the most liquid stocks, and gross effects were far below spread cost. The only two events with an effect that cleared or nearly cleared the placebo bar were driven by mandated flows rather than information or sentiment: the month-turn beta spread and index inclusion. Together with K-0012 this suggests the large-cap short-horizon cross-section is efficient at this cost level, and the remaining candidates are flow events.",
+  "evidence": "[\"H-0010\",\"H-0011\",\"H-0012\",\"H-0013\",\"H-0014\",\"H-0015\",\"H-0016\",\"H-0017\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 127,
+  "ts": "2026-10-09T02:39:42.470554+00:00"
+ },
+ {
+  "id": "K-0025",
+  "kind": "method",
+  "title": "Read the placebo average, not the raw abnormal return",
+  "statement": "The placebo keeps the same stocks and shifts the dates, so it absorbs any drift that belongs to the stock selection (names with a clean earnings spike, stocks at 52-week highs). In H-0011 and H-0015 the raw abnormal return was positive and still no better than the placebo average. Cards and lessons should judge an event set against the placebo average and spread, and a positive gross number alone is not evidence of a mechanism. Event-matched controls (same prior return, size or distance to the high) would separate selection from timing.",
+  "evidence": "[\"H-0011\",\"H-0015\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 128,
+  "ts": "2026-10-09T02:39:42.474057+00:00"
+ },
+ {
+  "id": "K-0026",
+  "kind": "method",
+  "title": "The placebo gate has little power for sparse event sets",
+  "statement": "With a few hundred events on a few hundred dates the placebo distribution is wide, and a real effect that exceeds costs several times can still land just under the percentile bar (H-0017, which also lost a few placebo runs). The gate is a fixed threshold, not a statistic, so the verdict stands, but a Scout who wants to test a sparse event should widen the event set (more occurrences, both directions) instead of tweaking hold or filters on the same events, which would be counted as new trials of the same data. Reading near misses as a coin flip is more honest than reading them as promising.",
+  "evidence": "[\"H-0017\",\"H-0012\",\"decision K-0021\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 129,
+  "ts": "2026-10-09T02:39:42.476947+00:00"
+ },
+ {
+  "id": "K-0027",
+  "kind": "method",
+  "title": "A passing mechanism test does not make a tradable stand-alone window book",
+  "statement": "H-0016 is the first card whose event study cleared the placebo bar and was then simulated as a strategy: the month-turn beta spread exists but the book is invested about a fifth of the days, so its Sharpe is capped by the window's own Sharpe and it missed the absolute bar and the bootstrap bound against T-bills. Calendar windows should be tested as a tilt on an always-invested benchmark with the same average exposure (see K-0005), or combined into one overlay, not as flat-otherwise books against cash. The mechanism gate and the strategy gate answer different questions and should be read separately.",
+  "evidence": "[\"H-0016\",\"H-0001\",\"K-0005\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 130,
+  "ts": "2026-10-09T02:39:42.479887+00:00"
+ },
+ {
+  "id": "K-0028",
+  "kind": "framework",
+  "title": "G0 checks are vacuous when the synthetic market lacks the card's data, and card diagnostics cannot be reported",
+  "statement": "Three of eight cards in this batch had a G0 look-ahead check that exercised nothing on the synthetic market: no dividends (H-0010), no insider events (H-0012), and only 80 names so the book never traded (H-0013). The Builders substituted hand-made tests, which no gate reads. Separately, two cards promised sanity diagnostics (regular-payer share in H-0010, volume hit rate of the predicted earnings days in H-0015) that the Builders could not output because no channel to the gate result exists, so a failed proxy cannot be told from an absent effect. Extend the synthetic market or the diagnostic output, and the Skeptic should read the code of data-specific cards.",
+  "evidence": "[\"H-0010\",\"H-0012\",\"H-0013\",\"H-0015\"]",
+  "confidence": "high",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 131,
+  "ts": "2026-10-09T02:39:42.482661+00:00"
  }
 ]

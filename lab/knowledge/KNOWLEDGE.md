@@ -12,6 +12,12 @@ A weekly long/short on intraday-return reversal in LIQ-500 beat T-bills in dev o
 
 *confidence medium · 2026-10-06 · human · evidence: H-0007; research 5*
 
+### K-0024 Large-cap short-horizon event anomalies vanish; mandated-flow events survive
+
+Five-session event studies on documented US single-stock anomalies (ex-dividend run-up, stale 52-week-high breakouts, insider purchase filings, correlated-peer catch-up, abnormal volume, predicted earnings dates) found nothing distinguishable from time-shifted placebos among the most liquid stocks, and gross effects were far below spread cost. The only two events with an effect that cleared or nearly cleared the placebo bar were driven by mandated flows rather than information or sentiment: the month-turn beta spread and index inclusion. Together with K-0012 this suggests the large-cap short-horizon cross-section is efficient at this cost level, and the remaining candidates are flow events.
+
+*confidence medium · 2026-10-09 · librarian · evidence: H-0010; H-0011; H-0012; H-0013; H-0014; H-0015; H-0016; H-0017*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -88,6 +94,24 @@ Cards can declare an event and a horizon; the judge runs an event study against 
 
 *confidence medium · 2026-10-06 · human · evidence: lab/framework/diagnostic.py; canaries mechanism_**
 
+### K-0025 Read the placebo average, not the raw abnormal return
+
+The placebo keeps the same stocks and shifts the dates, so it absorbs any drift that belongs to the stock selection (names with a clean earnings spike, stocks at 52-week highs). In H-0011 and H-0015 the raw abnormal return was positive and still no better than the placebo average. Cards and lessons should judge an event set against the placebo average and spread, and a positive gross number alone is not evidence of a mechanism. Event-matched controls (same prior return, size or distance to the high) would separate selection from timing.
+
+*confidence medium · 2026-10-09 · librarian · evidence: H-0011; H-0015*
+
+### K-0026 The placebo gate has little power for sparse event sets
+
+With a few hundred events on a few hundred dates the placebo distribution is wide, and a real effect that exceeds costs several times can still land just under the percentile bar (H-0017, which also lost a few placebo runs). The gate is a fixed threshold, not a statistic, so the verdict stands, but a Scout who wants to test a sparse event should widen the event set (more occurrences, both directions) instead of tweaking hold or filters on the same events, which would be counted as new trials of the same data. Reading near misses as a coin flip is more honest than reading them as promising.
+
+*confidence medium · 2026-10-09 · librarian · evidence: H-0017; H-0012; decision K-0021*
+
+### K-0027 A passing mechanism test does not make a tradable stand-alone window book
+
+H-0016 is the first card whose event study cleared the placebo bar and was then simulated as a strategy: the month-turn beta spread exists but the book is invested about a fifth of the days, so its Sharpe is capped by the window's own Sharpe and it missed the absolute bar and the bootstrap bound against T-bills. Calendar windows should be tested as a tilt on an always-invested benchmark with the same average exposure (see K-0005), or combined into one overlay, not as flat-otherwise books against cash. The mechanism gate and the strategy gate answer different questions and should be read separately.
+
+*confidence medium · 2026-10-09 · librarian · evidence: H-0016; H-0001; K-0005*
+
 ## The judge (framework behaviour)
 
 ### K-0008 Gate runner fixes found by real hypotheses
@@ -113,6 +137,12 @@ G2's random-entry null drew random stocks from those listed in more than half of
 min_position_entries counted only flat-to-position entries: a delta-neutral funding carry has 4 entries but 156 weekly rebalances and was rejected at G1 despite a Sharpe of 8.4. For books invested at least half the time the rebalancing dates now count as bets (gates.yaml continuous_min_exposure).
 
 *confidence high · 2026-10-06 · human · evidence: docs/research-lab/calibration/funding_carry.json*
+
+### K-0028 G0 checks are vacuous when the synthetic market lacks the card's data, and card diagnostics cannot be reported
+
+Three of eight cards in this batch had a G0 look-ahead check that exercised nothing on the synthetic market: no dividends (H-0010), no insider events (H-0012), and only 80 names so the book never traded (H-0013). The Builders substituted hand-made tests, which no gate reads. Separately, two cards promised sanity diagnostics (regular-payer share in H-0010, volume hit rate of the predicted earnings days in H-0015) that the Builders could not output because no channel to the gate result exists, so a failed proxy cannot be told from an absent effect. Extend the synthetic market or the diagnostic output, and the Skeptic should read the code of data-specific cards.
+
+*confidence high · 2026-10-09 · librarian · evidence: H-0010; H-0012; H-0013; H-0015*
 
 ## How the lab works
 
