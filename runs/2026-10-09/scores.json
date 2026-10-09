@@ -1,0 +1,374 @@
+{
+ "claude_volne": {
+  "comment": "Do CPI 14. 10. držím defenzivní expozici kolem 40 % se zbytkem v hotovosti, prodávám NEAR a přidávám malou pozici v přeprodaném UNI.",
+  "positions": [
+   {
+    "coin": "AVAX",
+    "invalidation": "Uzavření pod 9,3 USD (zlom SMA50 trendu).",
+    "reason": "Střednědobý trend je stále pozitivní a záporný funding nabízí odraz.",
+    "weight_pct": 12.0
+   },
+   {
+    "coin": "BNB",
+    "invalidation": "Uzavření pod 700 USD nebo zaostávání za BTC o více než 4 % za týden.",
+    "reason": "Nízká beta, obranné krytí altů.",
+    "weight_pct": 10.0
+   },
+   {
+    "coin": "BTC",
+    "invalidation": "Denní uzavření pod 79 000 (EMA50).",
+    "reason": "Jádro portfolia, v risk-off nejodolnější.",
+    "weight_pct": 12.0
+   },
+   {
+    "coin": "UNI",
+    "invalidation": "Další pokles pod 6,5 USD nebo negativní zpráva o protokolu.",
+    "reason": "Mean reversion po −22 % za 3 dny bez negativní zprávy.",
+    "weight_pct": 7.0
+   }
+  ]
+ },
+ "coins": {
+  "ADA": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Smazala skok o 10 % z 5. 10. (−14 % za 3 dny); beta 1,64 a chybí katalyzátor.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.alpha-maven.com/story/crypto/cardano-climbs-10-in-rally-investingcom"
+   ],
+   "trend": 0
+  },
+  "AVAX": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Trend je nad SMA50 s rel30 +21,6 a nízkou korelací k BTC; záporný funding nabízí prostor k odrazu po −9,5 % za den.",
+   "p_outperform_btc_7d": 0.49,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://thedefiant.io/news/blockchains/avalanche-ecosystem-takes-off-as-avax-surges"
+   ],
+   "trend": 1
+  },
+  "BNB": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Nízká beta 0,66 je výhodou v risk-off; čtvrtletní burn je očekávaný, takže bez překvapení.",
+   "p_outperform_btc_7d": 0.52,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://watcher.guru/news/can-binances-bnb-coin-reclaim-1000-in-october-2026"
+   ],
+   "trend": -1
+  },
+  "BTC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Konsolidace pod SMA20, ale nad SMA50; makro (výnosy, ropa) brzdí, podpora kolem 79–82k.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.fxstreet.com/cryptocurrencies/news/bitcoin-price-forecast-btc-slips-below-84-500-amid-rising-liquidation-pressure-202610070806",
+    "https://www.investing.com/news/cryptocurrency-news/bitcoin-falls-as-iran-attacks-oil-surge-fuel-rate-fears-crypto-stocks-slip-4936200",
+    "https://www.kucoin.com/news/articles/crypto-daily-market-report-october-8-2026"
+   ],
+   "trend": 0
+  },
+  "DOGE": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Pod všemi krátkými SMA, rel30 −10,9 a beta 1,75; RSI 38,8 je jen mírně přeprodané.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.4,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "ENA": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Po předčasném uvolnění investorských tokenů 5. 10. přišel pokles o 17 % za 3 dny; nabídka zatím tlačí cenu dolů navzdory buybackům.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://beincrypto.com/crypto-token-unlocks-hype-ena-apt-october/"
+   ],
+   "trend": 0
+  },
+  "ETH": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Pod SMA20 i SMA50 a slabší než BTC, odlivy z ETH ETF; RSI 37,5 dává jen mírný prostor k odrazu.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.kucoin.com/news/articles/crypto-daily-market-report-october-8-2026"
+   ],
+   "trend": -1
+  },
+  "LTC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Střednědobý trend je pozitivní (rel30 +12, nad SMA50), krátkodobě ale −10 % za 3 dny; bez zpráv.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 1
+  },
+  "NEAR": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Po růstu o 92 % za 30 dní přišel propad o 16 % i přes integrace (Robinhood Chain, QTC); kritika inflace emisí a rostoucí OI se záporným fundingem signalizují tlak shortů.",
+   "p_outperform_btc_7d": 0.46,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.tradingview.com/news/coinmarketcal:187f14384094b:0-near-protocol-near-com-integrates-robinhood-chain-07-oct-2026/",
+    "https://www.coindesk.com/tech/2026/10/01/near-intents-hit-by-usd3-8-million-exploit-as-crypto-s-rough-year-of-hacks-continues",
+    "https://www.kucoin.com/news/articles/crypto-daily-market-report-october-8-2026"
+   ],
+   "trend": 1
+  },
+  "PUMP": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Drží se nad SMA20/50 díky průběžným buybackům a burnu z poloviny příjmů; ty jsou známé a v ceně.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://thedefiant.io/news/defi/pump-fun-s-pump-buybacks-top-usd400m-as-token-stays-flat"
+   ],
+   "trend": 1
+  },
+  "QNT": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": -1,
+   "news": 0,
+   "note": "Po parabolickém růstu o 250 % se koriguje (−36 % od maxima), stále je však o 25 % nad SMA20; listing na HTX je malý a už v ceně.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptoticker.io/en/quant-price-prediction-qnt-level-after-pullback/",
+    "https://www.fxstreet.com/cryptocurrencies/news/quant-price-forecast-qnt-rally-capped-at-key-resistance-poses-bearish-reversal-risk-202610070447"
+   ],
+   "trend": 1
+  },
+  "SOL": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Drží se nad SMA50, ale beta 1,44 při risk-off a −9 % za 3 dny; bez nové zprávy.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 0
+  },
+  "SUI": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Zprávy o 40M TPS v testu a o Samsung Wallet pád nezastavily; beta 2,0 je v risk-off nevýhoda, tlak dělají i nedávné unlocky.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.kucoin.com/news/articles/crypto-daily-market-report-october-8-2026"
+   ],
+   "trend": 1
+  },
+  "UNI": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 2,
+   "news": 0,
+   "note": "Propad o 21,6 % za 3 dny a o 35 % od maxima byl čistě likvidační, bez negativní zprávy; CME futures 19. 10. a rekordní poplatky podporují odraz.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/top-stories/6ac6810aab37453c3830621f/",
+    "https://www.cryptotimes.io/2026/10/07/uniswap-uni-drops-9-3-to-8-04-underperforming-bitcoin-and-ethereum-in-defi-selloff/",
+    "https://www.tokenpost.com/news/investing/28589"
+   ],
+   "trend": -1
+  },
+  "XRP": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Pod SMA20/50, objem −30 % a beta 1,6 v risk-off; záporný funding je jediná naděje na short squeeze.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -1
+  },
+  "ZEC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "První týden odlivů z ZEC ETF a −30 % od maxima; negativa jsou v ceně, druhá ETF žádost (Winklevoss) je spíš střednědobá.",
+   "p_outperform_btc_7d": 0.46,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/zcash/latest-updates/",
+    "https://www.coingabbar.com/en/zcash-price-prediction-october-2026"
+   ],
+   "trend": -1
+  }
+ },
+ "date": "2026-10-09",
+ "events_7d": [
+  {
+   "date": "2026-10-14",
+   "title": "US CPI za září (8:30 ET) – klíčové pro sazby a výnosy",
+   "type": "makro"
+  },
+  {
+   "date": "2026-10-12",
+   "title": "Unlock APT (mimo universe), jinak jen menší rutinní unlocky",
+   "type": "unlock"
+  },
+  {
+   "date": "2026-10-16",
+   "title": "Unlock ARB (mimo universe) – sentiment vůči altům",
+   "type": "unlock"
+  },
+  {
+   "date": "2026-10-09",
+   "title": "Geopolitika: Írán/Hormuz a ropa nad 100 USD – průběžné riziko",
+   "type": "jine"
+  }
+ ],
+ "regime": {
+  "label": "Risk-off, makro tlak (výnosy, ropa)",
+  "summary": "BTC spadl z ~86k na ~82k, protože ropa nad 100 USD (Hormuz) a výnosy 10/30letých dluhopisů na maximech od 2002 tlačí na riziková aktiva; altcoiny padají výrazně víc než BTC. Toky do ETF jsou smíšené, likvidace longů přes 0,5 mld USD denně, funding je u většiny altů neutrální až záporný."
+ },
+ "top10": [
+  {
+   "coin": "UNI",
+   "reason": "Silně přeprodaný po likvidacích bez fundamentální vady, CME futures na obzoru."
+  },
+  {
+   "coin": "BNB",
+   "reason": "Nejnižší beta v universu, obranná volba v risk-off."
+  },
+  {
+   "coin": "BTC",
+   "reason": "Benchmark; v risk-off alty obvykle zaostávají."
+  },
+  {
+   "coin": "AVAX",
+   "reason": "Pozitivní střednědobý trend, nízká korelace a záporný funding."
+  },
+  {
+   "coin": "PUMP",
+   "reason": "Trend nad SMA a stálé buybacky."
+  },
+  {
+   "coin": "LTC",
+   "reason": "Rel30 +12 a nad SMA50, beta kolem 1."
+  },
+  {
+   "coin": "QNT",
+   "reason": "Nízká korelace s BTC, ale vysoká volatilita po parabole."
+  },
+  {
+   "coin": "NEAR",
+   "reason": "Silný 30denní trend, ale zlomená krátkodobá dynamika."
+  },
+  {
+   "coin": "ZEC",
+   "reason": "Nízká korelace, přeprodaný po odlivech z ETF."
+  },
+  {
+   "coin": "SOL",
+   "reason": "Drží se nad SMA50, bez negativních zpráv."
+  }
+ ]
+}
