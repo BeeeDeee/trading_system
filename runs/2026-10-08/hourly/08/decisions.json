@@ -1,0 +1,90 @@
+{
+ "label": "2026-10-08T08",
+ "locked_at": "2026-10-08T08:02:03.652Z",
+ "locked_ms": 1791446523652,
+ "portfolios": {
+  "funding_kontra": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "QNT",
+     "AVAX",
+     "BTC",
+     "XRP",
+     "LTC"
+    ]
+   },
+   "keep": [],
+   "targets": {
+    "AVAX": 0.2,
+    "BTC": 0.2,
+    "LTC": 0.2,
+    "QNT": 0.2,
+    "XRP": 0.2
+   }
+  },
+  "h_breakout": {
+   "exits": {},
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "h_kniha": {
+   "exits": {
+    "BTC": "signal"
+   },
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "h_momentum": {
+   "exits": {},
+   "info": {
+    "candidates": [
+     "NEAR"
+    ]
+   },
+   "keep": [
+    "NEAR"
+   ],
+   "targets": {}
+  },
+  "h_reverze": {
+   "exits": {
+    "PUMP": "max_hold",
+    "ZEC": "max_hold"
+   },
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "llm_nacasovani": {
+   "exits": {},
+   "info": {
+    "waiting": []
+   },
+   "keep": [],
+   "targets": {
+    "ADA": 0.15,
+    "AVAX": 0.25,
+    "NEAR": 0.225,
+    "PUMP": 0.225,
+    "SUI": 0.15
+   }
+  },
+  "seance_usa": {
+   "exits": {},
+   "info": {
+    "in_session": false
+   },
+   "keep": [],
+   "targets": {}
+  }
+ }
+}
