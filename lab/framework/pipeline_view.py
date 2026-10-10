@@ -237,6 +237,11 @@ def lab_blockers(lab: Lab, now: datetime) -> list[tuple[str, str]]:
 def waiting_for(lab: Lab, h, now: datetime) -> tuple[str, str]:
     """(text, tone) for a live hypothesis: who has to act next."""
     hid, status = h["id"], h["status"]
+    ask = lab.con.execute("SELECT from_agent, payload_json FROM messages WHERE type = 'QUESTION' AND to_agent = 'human' "
+                          "AND handled_at IS NULL AND hypothesis_id = ? ORDER BY id DESC LIMIT 1", (hid,)).fetchone()
+    if ask:
+        return (f"waiting for the OWNER: {ask['from_agent']} asked: "
+                f"{json.loads(ask['payload_json'])['question'][:200]}  (answer with `lab ack <id> --reply ...` or park it)"), "bad"
     lock = lab.con.execute("SELECT invocation_id, lease_until FROM locks WHERE hypothesis_id = ?", (hid,)).fetchone()
     if lock and lock["lease_until"] > now.isoformat():
         return f"an agent run ({lock['invocation_id'].split('-')[0]}) holds it until {lock['lease_until'][11:16]} UTC", "warn"

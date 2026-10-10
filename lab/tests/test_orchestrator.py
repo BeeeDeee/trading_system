@@ -76,3 +76,13 @@ def test_infrastructure_failures_pause_and_cost_no_budget(lab, card, tmp_path):
     assert (lab.paths.home / "PAUSE").exists()
     assert any("paused" in m["payload_json"] for m in lab.inbox("human"))
     assert used_today(lab, NOON.date().isoformat()) == {}
+
+
+def test_an_unanswered_owner_question_stops_the_agent_loop(lab, card, tmp_path):
+    from lab.orchestrator import pending_tasks
+    hid = submit(lab, card)
+    assert [t.agent for t in pending_tasks(lab)] == ["builder"]
+    q = lab.send("QUESTION", "builder", "human", hid, {"question": "cannot implement this as written, please decide"})
+    assert pending_tasks(lab) == []                       # the Builder is not started again and again
+    lab.mark_handled([q], "human")
+    assert [t.agent for t in pending_tasks(lab)] == ["builder"]

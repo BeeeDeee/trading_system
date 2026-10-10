@@ -78,3 +78,18 @@ have nothing to combine.
 | **Futures data** (CME continuous contracts, e.g. via Norgate/CSI) | trend and carry across commodities, rates, FX: the best-documented risk premia | the ETF proxies we have are a weak substitute |
 
 Prices change and are not quoted here; ask before buying anything.
+
+## 6. Found by the morning checks (2026-10-10)
+
+- **Disk**: 49 GB, 89 % used (5.5 GB free); the sibling projects' data is 8.4 GB of derived panels. The lab's own runtime
+  (transcripts, caches, forward data, releases) grows by a few hundred MB per week; `lab usage` and the dashboard tile
+  show it. Candidate cleanups: prune transcripts older than 30 days, release directories (already limited to 5).
+- **Synthetic market realism for `lab try`/G0**: no dividends, no insider events, only 80 names (book always flat),
+  so the pre-check can pass vacuously (Librarian, #133). The real G0 on real dev data is not vacuous, but the Builder
+  gets weaker feedback than it could. Add event-like features and a larger synthetic universe.
+- **Diagnostic output channel**: a Builder's own sanity statistics (share of regular payers, hit rate of predicted
+  earnings days) have nowhere to go, so a death cannot be split into "failed proxy" and "absent premium". A small
+  `diagnostics` dict returned by `diagnostic.py` and stored in the gate result would do.
+- **Index-membership strategies**: the engine forbids weights on non-members of the card's universe, so an index
+  deletion leg (long a stock after it left the S&P 500) cannot be expressed (H-0018, parked). Needs a universe kind that
+  includes recent leavers, with the membership known point-in-time.

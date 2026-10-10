@@ -40,18 +40,28 @@ class Task:
     why: str
 
 
+def owner_questions(lab: Lab) -> set[tuple[str, str]]:
+    """(agent, hypothesis) pairs with an unanswered QUESTION to the owner."""
+    return {(r["from_agent"], r["hypothesis_id"]) for r in lab.con.execute(
+        "SELECT from_agent, hypothesis_id FROM messages WHERE type = 'QUESTION' AND to_agent = 'human' "
+        "AND handled_at IS NULL AND hypothesis_id IS NOT NULL")}
+
+
 def pending_tasks(lab: Lab, propose: str | None = None) -> list[Task]:
     """Agent work in priority order: unblock data, finish late stages, then early ones, then housekeeping.
     Chair's priorities will reorder hypotheses inside each rule (step 3)."""
     locked = {r[0] for r in lab.con.execute("SELECT hypothesis_id FROM locks WHERE lease_until > ?", (now(),))}
+    # an agent that asked the owner about a hypothesis (it cannot do its job as written) is not started again
+    # until the owner answers: a morning check found a Builder asking the same question in 7 runs
+    asked = owner_questions(lab)
     free = lambda status: [h["id"] for h in lab.hypotheses(status) if h["id"] not in locked]  # noqa: E731
     tasks = []
     if lab.inbox("archivist"):
         tasks.append(Task("archivist", None, "DATA_REQUEST in inbox"))
     tasks += [Task("skeptic", hid, "review before the holdout") for hid in free(S.SKEPTIC_REVIEW)]
     tasks += [Task("builder", hid, "fix" if lab.inbox("builder", hid) else "implement")
-              for hid in free(S.DATA_READY)]
-    tasks += [Task("scout", hid, "answer") for hid in free(S.IDEA) if lab.inbox("scout", hid)]
+              for hid in free(S.DATA_READY) if ("builder", hid) not in asked]
+    tasks += [Task("scout", hid, "answer") for hid in free(S.IDEA) if lab.inbox("scout", hid) and ("scout", hid) not in asked]
     if lab.inbox("chair"):
         tasks.append(Task("chair", None, "backlog"))
     if lab.inbox("librarian"):

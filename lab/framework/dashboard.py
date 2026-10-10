@@ -211,6 +211,10 @@ def build(lab: Lab) -> str:
         budget = yaml.safe_load((lab.paths.lab / "budget.yaml").read_text())
     except OSError:
         budget = {"daily": {}, "total_daily": 0}
+    import shutil
+    du = shutil.disk_usage(lab.paths.home if lab.paths.home.exists() else ".")
+    free_gb, disk_pct = du.free / 2**30, 100 * (1 - du.free / du.total)
+    disk_tone = "bad" if free_gb < 2 else "warn" if free_gb < 4 else ""
     pauses = [p.name for p in (lab.paths.home / "PAUSE", lab.paths.home / "RATE_LIMITED_UNTIL") if p.exists()]
     canary_ok = canaries.passed_for_current(lab)
     open_q = [m for m in lab.inbox("human")]
@@ -231,7 +235,8 @@ def build(lab: Lab) -> str:
              f"<div class=tile><b>{alive}</b><span>hypotheses in play</span></div>"
              f"<div class=tile><b>{funnel.get('PAPER', 0)}</b><span>paper trading</span></div>"
              f"<div class=tile><b class='{'warn' if pauses else ''}'>{esc(', '.join(pauses) or 'none')}</b>"
-             "<span>pauses</span></div></div>")
+             "<span>pauses</span></div>"
+             f"<div class=tile><b class='{disk_tone}'>{free_gb:.1f} GB</b><span>disk free ({disk_pct:.0f} % used)</span></div></div>")
 
     cut = {"overview": len(s)}
     # owner inbox

@@ -87,6 +87,7 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("--reason", required=True)
     s = sub.add_parser("import-local", help="owner: make fred_macro / fred_dtb3 (on disk) loadable as signal series")
     s.add_argument("dataset", choices=["fred_macro", "fred_dtb3", "binance_1h_features"])
+    sub.add_parser("usage", help="disk use of the lab's runtime state and the free space of the disk")
     s = sub.add_parser("pause", help="owner: stop agent runs (creates LAB_HOME/PAUSE); gates and ingest continue")
     s.add_argument("--reason", required=True)
     sub.add_parser("resume", help="owner: remove the PAUSE file")
@@ -277,6 +278,10 @@ def _direct(args) -> int:
             from lab.framework import ingest
             rep = ingest.import_local(lab.paths.home, lab.paths.catalog, args.dataset)
             print(f"{args.dataset}: {len(rep['keys'])} series, {rep['n_rows']} rows, holdout from {rep['holdout_from']}")
+        case "usage":
+            from lab.framework import report
+            for name, size in report.disk_usage(lab):
+                print(f"{size / 2**20:>9.1f} MB  {name}")
         case "pause":
             lab.paths.home.mkdir(parents=True, exist_ok=True)
             (lab.paths.home / "PAUSE").write_text(args.reason + "\n")

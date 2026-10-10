@@ -99,3 +99,16 @@ def export(lab: Lab, out_dir) -> str:
         (out / f"{table}.json").write_text(json.dumps(rows, indent=1, ensure_ascii=False, default=str) + "\n")
         counts[table] = len(rows)
     return " ".join(f"{t}={n}" for t, n in counts.items())
+
+
+def disk_usage(lab: Lab) -> list[tuple[str, int]]:
+    """Sizes of LAB_HOME's top-level entries and the free space of its disk (bytes), largest first."""
+    import shutil
+    from pathlib import Path
+
+    def size(p: Path) -> int:
+        return sum(f.stat().st_size for f in p.rglob("*") if f.is_file()) if p.is_dir() else p.stat().st_size
+    rows = [(f"LAB_HOME/{p.name}", size(p)) for p in sorted(lab.paths.home.iterdir())]
+    rows.sort(key=lambda r: -r[1])
+    free = shutil.disk_usage(lab.paths.home)
+    return rows + [("-- free on this disk", free.free), ("-- disk total", free.total)]
