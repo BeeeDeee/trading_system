@@ -1078,5 +1078,77 @@
   "message_id": null,
   "reason": "G1 failed (run 38, qlab-v1)",
   "ts": "2026-10-09T02:15:45.868153+00:00"
+ },
+ {
+  "id": 91,
+  "hypothesis_id": "H-0018",
+  "version": 1,
+  "from_status": null,
+  "to_status": "IDEA",
+  "actor": "scout",
+  "invocation_id": "scout-20261009T033503-b656ad",
+  "message_id": 135,
+  "reason": "created",
+  "ts": "2026-10-09T03:47:58.682071+00:00"
+ },
+ {
+  "id": 92,
+  "hypothesis_id": "H-0018",
+  "version": 1,
+  "from_status": "IDEA",
+  "to_status": "SPECIFIED",
+  "actor": "scout",
+  "invocation_id": "scout-20261009T033503-b656ad",
+  "message_id": 135,
+  "reason": "spec complete",
+  "ts": "2026-10-09T03:47:58.752753+00:00"
+ },
+ {
+  "id": 93,
+  "hypothesis_id": "H-0018",
+  "version": 1,
+  "from_status": "SPECIFIED",
+  "to_status": "DATA_READY",
+  "actor": "system",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "all data requirements resolve in the catalog",
+  "ts": "2026-10-09T03:47:58.816764+00:00"
+ },
+ {
+  "id": 94,
+  "hypothesis_id": "H-0019",
+  "version": 1,
+  "from_status": null,
+  "to_status": "IDEA",
+  "actor": "scout",
+  "invocation_id": "scout-20261009T053515-03b94f",
+  "message_id": 139,
+  "reason": "created",
+  "ts": "2026-10-09T05:47:32.431496+00:00"
+ },
+ {
+  "id": 95,
+  "hypothesis_id": "H-0019",
+  "version": 1,
+  "from_status": "IDEA",
+  "to_status": "SPECIFIED",
+  "actor": "scout",
+  "invocation_id": "scout-20261009T053515-03b94f",
+  "message_id": 139,
+  "reason": "spec complete",
+  "ts": "2026-10-09T05:47:32.501080+00:00"
+ },
+ {
+  "id": 96,
+  "hypothesis_id": "H-0019",
+  "version": 1,
+  "from_status": "SPECIFIED",
+  "to_status": "DATA_READY",
+  "actor": "system",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "all data requirements resolve in the catalog",
+  "ts": "2026-10-09T05:47:32.569293+00:00"
  }
 ]
