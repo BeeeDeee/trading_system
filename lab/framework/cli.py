@@ -279,7 +279,6 @@ def _direct(args) -> int:
             rep = ingest.import_local(lab.paths.home, lab.paths.catalog, args.dataset)
             print(f"{args.dataset}: {len(rep['keys'])} series, {rep['n_rows']} rows, holdout from {rep['holdout_from']}")
         case "usage":
-            from lab.framework import report
             for name, size in report.disk_usage(lab):
                 print(f"{size / 2**20:>9.1f} MB  {name}")
         case "pause":

@@ -118,7 +118,7 @@ def test_staged_cli_only_offers_send_inbox_context(lab, card, monkeypatch, capsy
     assert "LAB_WORKSPACE" not in os.environ
 
 
-@pytest.mark.parametrize("argv", [["status"], ["list"], ["inbox"], ["invocations"], ["catalog"], ["knowledge", "list"]])
+@pytest.mark.parametrize("argv", [["status"], ["list"], ["inbox"], ["invocations"], ["catalog"], ["usage"], ["knowledge", "list"]])
 def test_direct_commands_run(lab, card, monkeypatch, argv, capsys):
     """Every read-only direct command works on a populated lab (a local import once shadowed `report`)."""
     from lab.framework import paths
