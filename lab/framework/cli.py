@@ -98,6 +98,7 @@ def _parser() -> argparse.ArgumentParser:
     s = sub.add_parser("edgar-fetch", help="owner, network, long (resumable): fetch the SEC 8-K Item 2.02 filings of "
                                            "all SEP stocks, add dataset sec_8k_item202, unblock waiting hypotheses")
     s.add_argument("--limit", type=int, help="only the first N CIKs (a trial run; the entry is not added)")
+    s.add_argument("--contact", help="contact e-mail for the SEC User-Agent (default: $EDGAR_CONTACT); sent only to sec.gov")
     s = sub.add_parser("ack", help="owner: mark messages in the owner's inbox handled (optionally with a reply)")
     s.add_argument("ids", type=int, nargs="+")
     s.add_argument("--reply", help="answer, sent as a QUESTION back to the sender (agents) or logged (system)")
@@ -304,6 +305,8 @@ def _direct(args) -> int:
                     print(f"  {g['gate']} {'pass' if g['passed'] else 'FAIL'} {g['reason'] or ''} {g['failed_checks']}")
         case "edgar-fetch":
             from lab.framework import data, edgar
+            if args.contact:
+                os.environ["EDGAR_CONTACT"] = args.contact
             rep = edgar.build(lab.paths.home, data.DATA_ROOT / "parquet" / data.SHARADAR, limit=args.limit,
                               progress=lambda i, n: print(f"{i}/{n} CIKs", flush=True))
             print(json.dumps(rep))
