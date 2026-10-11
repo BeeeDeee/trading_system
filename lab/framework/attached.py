@@ -18,6 +18,14 @@ every field is a float32 matrix of about 70 MB and this machine has 3.9 GB):
                                   change in the log number of holders, in breadth (holders / filers), and the
                                   put-call imbalance. A quarter ending D is usable from D + 46 days.
 
+    ea_reaction_day               (dataset sec_8k_item202, SEC EDGAR, from 2004-08) 1 on the reaction session of
+                                  each primary form 8-K that lists Item 2.02 (earnings release): the first XNYS
+                                  session whose 16:00 ET close is at or after the EDGAR acceptance time (a filing
+                                  accepted after 16:00 ET maps to the next session). Known at the close of that
+                                  session, not before. 0 on other sessions, NaN before the company's first EDGAR
+                                  filing. Amendments (8-K/A) are dropped. Early-close days (13:00 ET) are treated
+                                  as 16:00: a filing between 13:00 and 16:00 on such a day maps to that day.
+
 Ids are the stocks of the SEP view (`E<permaticker>`); tickers are mapped through the SEP ticker table (a
 reused ticker can mix two companies in old data: a known bias).
 """
@@ -41,16 +49,18 @@ SF1_COLUMNS = (
     "ncfdebt ncfdiv ncff ncfi ncfinv ncfo ncfx netinc netinccmn netincdis netincnci netmargin opex opinc payables "
     "payoutratio pb pe pe1 ppnenet prefdivis price ps ps1 receivables retearn revenue rnd roa roe roic ros sbcomp "
     "sgna sharesbas shareswa shareswadil sps tangibles taxassets taxexp taxliabilities tbvps workingcapital").split()
-DATASETS = ("sharadar_sf1", "sharadar_insiders", "sharadar_13f")
+DATASETS = ("sharadar_sf1", "sharadar_insiders", "sharadar_13f", "sec_8k_item202")
 GRAMMAR = {
     "sharadar_sf1": "sf1_<art|arq>_<column>, e.g. sf1_art_roe (columns: " + ", ".join(SF1_COLUMNS[:12]) + ", ...)",
     "sharadar_insiders": "ins_<buy|sell>_<value|n>_<91d|182d|365d>, e.g. ins_buy_value_91d",
     "sharadar_13f": "f13_<" + "|".join(F13_FIELDS) + ">, e.g. f13_io",
+    "sec_8k_item202": "ea_reaction_day (1 on the reaction session of an earnings-release 8-K, 0 otherwise)",
 }
 _PATTERN = {
     "sharadar_sf1": re.compile(r"^sf1_(art|arq)_(\w+)$"),
     "sharadar_insiders": re.compile(r"^ins_(buy|sell)_(value|n)_(91d|182d|365d)$"),
     "sharadar_13f": re.compile(r"^f13_(\w+)$"),
+    "sec_8k_item202": re.compile(r"^(ea_reaction_day)$"),
 }
 
 
@@ -66,7 +76,7 @@ def requirement_problems(card: dict, catalog_entries: dict) -> list[str]:
     out, total = [], 0
     reqs = [r for r in card.get("data_requirements", []) if catalog_entries.get(r["dataset"], {}).get("loader") == "sep_attached"]
     if reqs and not any(r["dataset"] == "sharadar_sep" for r in card["data_requirements"]):
-        out.append("sharadar_sf1 / sharadar_insiders / sharadar_13f attach to sharadar_sep: add it as a requirement "
+        out.append("sharadar_sf1 / sharadar_insiders / sharadar_13f / sec_8k_item202 attach to sharadar_sep: add it as a requirement "
                    "(universe kind liq_n or sp500)")
     for r in reqs:
         fields = r.get("fields") or []
@@ -129,6 +139,49 @@ def window_sum_matrix(cols: np.ndarray, filed: np.ndarray, value: np.ndarray, da
     return out
 
 
+def reaction_matrix(cols: np.ndarray, day: np.ndarray, after_close: np.ndarray, first: np.ndarray,
+                    dates: np.ndarray) -> np.ndarray:
+    """(T, N) float32 event flags. `day` = the New York calendar date of each filing's acceptance, `after_close` =
+    accepted after 16:00 ET, `first[j]` = the first date EDGAR lists a filing of column j (NaT: unknown).
+    The reaction session is the first session on or after `day`, or strictly after it when `after_close`.
+    1 there, 0 elsewhere, NaN on sessions before `first`."""
+    T, N = len(dates), len(first)
+    out = np.zeros((T, N), dtype=np.float32)
+    idx = np.where(after_close, np.searchsorted(dates, day, side="right"), np.searchsorted(dates, day, side="left"))
+    keep = idx < T
+    out[idx[keep], cols[keep]] = 1.0
+    unknown = np.isnat(first)[None, :] | (dates[:, None] < first[None, :])
+    out[unknown] = np.nan
+    return out
+
+
+def _attach_8k(view, home: Path):
+    """The ea_reaction_day matrix from LAB_HOME/data/sec_8k_item202 (see edgar.py), mapped permaticker -> CIK."""
+    import polars as pl
+
+    from lab.framework import edgar
+    d = home / "data" / edgar.DATASET
+    if not (d / "filings.parquet").exists():
+        raise FileNotFoundError(f"{d}/filings.parquet is missing: run `lab edgar-fetch` first")
+    col_of = {int(n[1:]): j for j, n in enumerate(view.instruments) if n.startswith("E")}
+    from lab.framework import data as data_mod
+    cik = edgar.cik_map(data_mod.DATA_ROOT / "parquet" / data_mod.SHARADAR)
+    pairs = [(c, col_of[p]) for p, c in cik.items() if p in col_of]
+    cc = pl.DataFrame({"cik": [a for a, _ in pairs], "col": [b for _, b in pairs]},
+                      schema={"cik": pl.Int64, "col": pl.Int64})
+    first = np.full(view.shape[1], np.datetime64("NaT"), dtype="datetime64[D]")
+    f = pl.read_parquet(d / "first.parquet").join(cc, on="cik")
+    first[f["col"].to_numpy()] = f["first"].to_numpy().astype("datetime64[D]")
+    ev = (pl.read_parquet(d / "filings.parquet")
+          .with_columns(pl.col("accepted").str.to_datetime(time_zone="UTC").dt.convert_time_zone("America/New_York")
+                        .alias("et")).join(cc, on="cik"))
+    et = pl.col("et")
+    after = (et.dt.hour() > 16) | ((et.dt.hour() == 16) & ((et.dt.minute() > 0) | (et.dt.second() > 0)))
+    ev = ev.with_columns(et.dt.date().alias("day"), after.alias("after"))
+    return reaction_matrix(ev["col"].to_numpy(), ev["day"].to_numpy().astype("datetime64[D]"),
+                           ev["after"].to_numpy(), first, view.dates)
+
+
 # ---------------------------------------------------------------------------- loaders from the Sharadar parquet files
 
 def _ticker_cols(src: Path, instruments: tuple[str, ...]):
@@ -141,7 +194,7 @@ def _ticker_cols(src: Path, instruments: tuple[str, ...]):
                              ).select("ticker", "col")
 
 
-def attach(view, dataset: str, fields: list[str], src: Path):
+def attach(view, dataset: str, fields: list[str], src: Path, home: Path | None = None):
     """Add the requested fields of an attached dataset to `view.extras` (view = the SEP view)."""
     from dataclasses import replace
 
@@ -149,6 +202,10 @@ def attach(view, dataset: str, fields: list[str], src: Path):
     for f in fields:
         if (p := field_problem(dataset, f)):
             raise NotImplementedError(p)
+    if dataset == "sec_8k_item202":
+        if home is None:
+            raise ValueError("sec_8k_item202 lives in LAB_HOME: pass home")
+        return replace(view, extras={**view.extras, "ea_reaction_day": _attach_8k(view, home)})
     tick = _ticker_cols(src, view.instruments)
     dates, N = view.dates, view.shape[1]
     extras = dict(view.extras)

@@ -154,18 +154,23 @@ def _check_data(lab: Lab, hid: str) -> str:
     return f"BLOCKED_DATA ({reason})"
 
 
+def unblock(lab, reason: str, message_id: int | None = None) -> list[str]:
+    """BLOCKED_DATA -> DATA_READY for every hypothesis whose requirements the catalog now resolves."""
+    unblocked = []
+    for h in lab.hypotheses(S.BLOCKED_DATA):
+        if catalog.resolve(lab.paths.catalog, lab.card(h["id"])["data_requirements"]).ok:
+            lab.transition(h["id"], S.DATA_READY, "system", reason, message_id=message_id)
+            unblocked.append(h["id"])
+    return unblocked
+
+
 def _data_ready(lab, m, payload, evaluator):
     """Ingest (by the evaluator: fetch, validate, dev/holdout split, catalog entry), then unblock."""
     try:
         entry = evaluator.ingest(lab, payload)
     except ValueError as e:
         raise LabError(f"ingest of {payload['dataset']} failed: {e}") from None
-    unblocked = []
-    for h in lab.hypotheses(S.BLOCKED_DATA):
-        if catalog.resolve(lab.paths.catalog, lab.card(h["id"])["data_requirements"]).ok:
-            lab.transition(h["id"], S.DATA_READY, "system", f"dataset {payload['dataset']} ingested",
-                           message_id=m["id"])
-            unblocked.append(h["id"])
+    unblocked = unblock(lab, f"dataset {payload['dataset']} ingested", m["id"])
     return f"ingested {payload['dataset']} (holdout from {entry['holdout_from']}); unblocked {unblocked or 'none'}"
 
 

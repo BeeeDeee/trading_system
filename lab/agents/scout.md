@@ -78,7 +78,10 @@ returns, US-session volume share) gating a daily crypto signal. List the timefra
    the SEC filing, valuation ratios are frozen at the filing date), `sharadar_insiders` open-market insider
    purchases and sales by filing date (`ins_buy_value_91d`, `ins_sell_n_182d`, ... windows 91/182/365 days; from
    2008), `sharadar_13f` institutional ownership (`f13_io`, `f13_d_io`, `f13_d_holders`, `f13_d_breadth`,
-   `f13_putcall`; quarter usable 46 days after its end; from 2013). They exist only for the stocks of
+   `f13_putcall`; quarter usable 46 days after its end; from 2013), `sec_8k_item202` real earnings-release
+   dates (`ea_reaction_day`: 1 on the first session whose close is at or after the SEC acceptance time of an 8-K
+   with Item 2.02, 0 otherwise, NaN before the company's first filing; from 2004-08; once the owner has fetched it,
+   see the dataset list in the fact sheets). They exist only for the stocks of
    `sharadar_sep`, have no forward data, so such a card can pass at most G4.
 
    Pick instruments that exist

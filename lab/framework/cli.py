@@ -95,6 +95,9 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("name", nargs="?", help="fixture name (default: list)")
     s.add_argument("--no-holdout", action="store_true")
     s.add_argument("--root", type=Path, help="scratch directory (default: LAB_HOME/calibration)")
+    s = sub.add_parser("edgar-fetch", help="owner, network, long (resumable): fetch the SEC 8-K Item 2.02 filings of "
+                                           "all SEP stocks, add dataset sec_8k_item202, unblock waiting hypotheses")
+    s.add_argument("--limit", type=int, help="only the first N CIKs (a trial run; the entry is not added)")
     s = sub.add_parser("ack", help="owner: mark messages in the owner's inbox handled (optionally with a reply)")
     s.add_argument("ids", type=int, nargs="+")
     s.add_argument("--reply", help="answer, sent as a QUESTION back to the sender (agents) or logged (system)")
@@ -299,6 +302,16 @@ def _direct(args) -> int:
                 print(f"{res['name']}: {res['status']} {res['died_at'] or ''} {res['reason'] or ''} ({res['seconds']} s)")
                 for g in res["gates"]:
                     print(f"  {g['gate']} {'pass' if g['passed'] else 'FAIL'} {g['reason'] or ''} {g['failed_checks']}")
+        case "edgar-fetch":
+            from lab.framework import data, edgar
+            rep = edgar.build(lab.paths.home, data.DATA_ROOT / "parquet" / data.SHARADAR, limit=args.limit,
+                              progress=lambda i, n: print(f"{i}/{n} CIKs", flush=True))
+            print(json.dumps(rep))
+            if args.limit:
+                return 0
+            if edgar.DATASET not in catalog.load(lab.paths.catalog):
+                catalog.add(lab.paths.catalog, edgar.catalog_entry(rep))
+            print("unblocked:", tick.unblock(lab, f"dataset {edgar.DATASET} fetched") or "none")
         case "ack":
             rows = [lab.con.execute("SELECT * FROM messages WHERE id = ?", (i,)).fetchone() for i in args.ids]
             bad = [i for i, r in zip(args.ids, rows) if r is None or r["to_agent"] != HUMAN]

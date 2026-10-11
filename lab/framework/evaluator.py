@@ -162,7 +162,8 @@ class QlabEvaluator:
             v = data.sharadar_sep(universe) if ds == "sharadar_sep" and inst is None else self.load(ds, inst)
             if ds == "sharadar_sep":
                 for adset, fields in attached.items():
-                    v = attached_mod.attach(v, adset, fields, data.DATA_ROOT / "parquet" / data.SHARADAR)
+                    v = attached_mod.attach(v, adset, fields, data.DATA_ROOT / "parquet" / data.SHARADAR,
+                                              lab.paths.home)
             if universe["kind"] == "crypto_top_n" and ds == "binance_spot_1d":
                 v = replace(v, universe=data.crypto_top_n(v, universe["n"]))
             if ds in per_ds:
