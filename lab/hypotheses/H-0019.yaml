@@ -141,7 +141,10 @@ notes: 'Brief fit: US single stocks, cross-sectional, 5-day hold, mechanism test
   and because it measures the persistent program rate. Three SF1 fields (RAM limit 6). No forward data for stocks,
   so at most G4. The 2022 reference is after dev, so no publication-decay split applies; the literature prior is
   accepted.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_sharpe_excess
 history:
 - ts: '2026-10-09T05:47:32.431496+00:00'
   version: 1
@@ -164,3 +167,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-11T02:15:03.688856+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 39, qlab-v1)
+- ts: '2026-10-11T02:16:05.478049+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 40, qlab-v1)

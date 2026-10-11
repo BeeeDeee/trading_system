@@ -112,6 +112,18 @@ H-0016 is the first card whose event study cleared the placebo bar and was then 
 
 *confidence medium · 2026-10-09 · librarian · evidence: H-0016; H-0001; K-0005*
 
+### K-0030 A passing mechanism test is necessary, not sufficient: pooled events hide era fade, clustering and re-weighting costs
+
+Two cards now cleared the event-study gate and then failed the strategy gate with a net return close to cash: H-0016 (month-turn beta spread) and H-0019 (post-filing net-flow spread, the clearest pass so far). The pooled mean abnormal return per event overstates what a book earns because (1) the effect faded across sub-periods in both cases and the latest third is the one that predicts the future; (2) events cluster in a few weeks, so the book is invested a fraction of the time with small weights per name; (3) the strategy's daily re-equalising of weights adds turnover that the per-event round-trip cost ratio leaves out. Before filing a strategy on a passed mechanism, check the latest sub-period alone against cost, estimate the book's annual gross as events times weight times effect, and prefer a low-turnover tilt on an always-invested benchmark. Extends K-0027 from calendar windows to any clustered event set.
+
+*confidence medium · 2026-10-11 · librarian · evidence: H-0016; H-0019; K-0027; K-0021*
+
+### K-0031 Compare the placebo bar with the round-trip cost to tell a power problem from an untradable effect
+
+A mechanism failure at G1 is a 'cannot tell' only when the placebo bar (its upper percentile) lies above the round-trip cost, because then a tradable effect could still have missed it (H-0017, sparse events). When the bar lies below the cost, as in H-0020 with a very large event count and a narrow placebo cloud, any effect worth trading would have cleared it, so the failure means the effect is not tradable in that form. Event counts alone mislead: events within a date share one cross-section, so what matters is the width of the placebo cloud, which the gate result reports. This refines K-0026: widening the event set helps only if it narrows the cloud below the cost.
+
+*confidence medium · 2026-10-11 · librarian · evidence: H-0020; H-0017; H-0019; K-0026*
+
 ## The judge (framework behaviour)
 
 ### K-0008 Gate runner fixes found by real hypotheses
@@ -143,6 +155,12 @@ min_position_entries counted only flat-to-position entries: a delta-neutral fund
 Three of eight cards in this batch had a G0 look-ahead check that exercised nothing on the synthetic market: no dividends (H-0010), no insider events (H-0012), and only 80 names so the book never traded (H-0013). The Builders substituted hand-made tests, which no gate reads. Separately, two cards promised sanity diagnostics (regular-payer share in H-0010, volume hit rate of the predicted earnings days in H-0015) that the Builders could not output because no channel to the gate result exists, so a failed proxy cannot be told from an absent effect. Extend the synthetic market or the diagnostic output, and the Skeptic should read the code of data-specific cards.
 
 *confidence high · 2026-10-09 · librarian · evidence: H-0010; H-0012; H-0013; H-0015*
+
+### K-0029 The engine cannot hold stocks that have left the declared universe, so exit-from-universe events are untestable
+
+A card on the sp500 universe that must hold a stock after its removal from the index fails at G0 with g0_outside_universe: weights on non-members are refused. H-0018 (deletion leg of the index-change reversal) stalled this way, the Builder reported it in six of seven runs, and the card was parked by the owner at DATA_READY without ever becoming a trial. Any card whose key leg sits outside its own universe definition (deleted index members, names dropped from LIQ-500 after the event) has the same problem. The Scout's self-declared risk and the Builder's loud failure worked as intended, but the lab still paid several Builder runs before a human parked it.
+
+*confidence high · 2026-10-11 · librarian · evidence: H-0018; H-0017*
 
 ## How the lab works
 

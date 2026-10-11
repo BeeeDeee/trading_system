@@ -154,3 +154,30 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not resubmit the same events with hold 3 or 10, a changed seasoning filter or any tweak aimed at the percentile: that is a retry on the same data and counts as new trials.
 - open questions: A different card with many more events and a slower horizon where the reversal seems to live, or both additions and deletions in one test. Other index-driven events with more occurrences (annual reconstitutions) would raise power, but no such membership data is loadable today.
 - related: H-0002, H-0016
+
+## H-0018 – Index-change price-pressure reversal, both directions - S&P 500, short new members and long just-deleted stocks, hedged with other members, hold 5 days
+
+- family: `index-inclusion-price-pressure` · mechanism: flow_structural · instruments: S&P 500 members: short new members and long just-deleted stocks, hedged with the other members, five-day hold (never run)
+- outcome: parked before any gate: the deletion leg needs weights outside the S&P 500 universe, which the engine refuses (g0_outside_universe). Nothing was simulated.
+- lesson: A feasibility failure, not evidence about index-change pressure. The card named the risk and asked for a loud G0 failure instead of a silent drop of the deletion leg, and the Builder did that. The deletion side, where the literature finds the fuller reversal, cannot be tested under the sp500 universe kind, because a deleted stock stops being a member the day it becomes an event. The question H-0017 left open (more power through both directions) is still open.
+- avoid: Do not file a card whose key leg needs weights outside the declared universe (deleted index members, names dropped after the event): it stalls at G0 again. Do not drop the deletion leg quietly and resubmit addition-only events under a new id.
+- open questions: Can deletions be read inside a liq_n universe that uses S&P membership as an input? That loses additions outside the liquid set and needs a Chair or owner decision first. Other index-driven events with more occurrences are untested.
+- related: H-0017
+
+## H-0019 – Trading-window net flow - LIQ-500 dollar-neutral, after a new quarterly filing long net repurchasers and short net stock-compensation issuers, hold 5 days
+
+- family: `trading-window-flows` · mechanism: flow_structural · instruments: US liquid stocks (LIQ-500), dollar-neutral: after each new quarterly filing long net repurchasers and short heavy stock-compensation issuers, five-day hold, 1998 to 2020
+- outcome: mechanism test passed clearly (the strongest in the lab so far); rejected at G1 on the strategy: net Sharpe about level with T-bills, far below the absolute bar, bootstrap bound below zero.
+- lesson: Best mechanism result so far, still no strategy. The event average sat far above the placebo cloud and average, and gross covered the round-trip cost about twice. But the effect faded across all three sub-periods, the latest near the placebo level and below cost; longer horizons were as large, so it reads as a slow filing-linked drift (news or earnings season) more than a temporary flow concession; and clustered filings mean a book invested part of the time with small weights, plus daily re-equalising turnover the event cost ratio omits. Net return was about cash. No sign of a bug.
+- avoid: Do not retune quantile or hold_days, and do not refile it as buyback yield or net issuance. Do not read the mechanism pass as a tradable edge (K-0027).
+- open questions: Is the spread flow or news? A control matched on return around the filing would tell; true earnings dates (K-0004) would separate filing from announcement. If real, it needs a slow low-turnover tilt on an always-invested book against a same-exposure benchmark.
+- related: H-0016, H-0012, H-0015, H-0010
+
+## H-0020 – Option-expiration hedge-unwind cycle - LIQ-500 beta-neutral, long the most option-active (most liquid) names and short the least liquid through the monthly expiration week, reversed the week after
+
+- family: `option-expiration-hedging-flows` · mechanism: flow_structural · instruments: US liquid stocks (LIQ-500), beta-neutral: long the most liquid names and short the least liquid through the monthly option-expiration week, reversed the week after, 1999 to 2020
+- outcome: rejected at G1 on the mechanism test: pooled abnormal return positive but tiny, inside the placebo cloud (percentile below the bar), gross a small fraction of the round-trip cost; strategy not run.
+- lesson: No visible dealer-hedging cycle between the most and least liquid names, and not a power problem: the event count was huge, the placebo cloud narrow and its upper bar far below trading cost, so any tradable effect would have shown. The earliest sub-period leaned positive, the middle was about zero, the latest barely positive, which fits fading after publication and weekly options. Dollar volume only proxies option open interest, so no hedge pressure and a poor proxy are not separated. The expiration-week-only check the card promised was not reported.
+- avoid: Do not retune leg_n or lookback_days, drop the reversed week, or swap in another liquidity or size sort on the same dates. Many events do not mean power: they share a few dates and one cross-section.
+- open questions: A fair test needs option open interest (not loadable). Other pre-announced calendar flows (index reconstitution, pre-holiday) are separate cards and better tested as a tilt on an always-invested book (K-0027).
+- related: H-0016, H-0001, H-0017
