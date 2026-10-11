@@ -20,7 +20,7 @@ WEB="/srv/evening"
 SEED="${SEED:-$(ls -1t "$HOME"/ccode/evening_seed_*.tgz 2>/dev/null | head -1 || true)}"
 
 ask() { printf '\n\033[1m== %s\033[0m\n%s\n' "$1" "$2"; read -r -p "Provést? [y/N] " a; [ "$a" = "y" ] || [ "$a" = "Y" ]; }
-as_svc() { sudo -u "$SVC_USER" -H bash -lc "$1"; }
+as_svc() { (cd / && sudo -u "$SVC_USER" -H bash -lc "$1"); }
 
 step_user() {
   ask "Uživatel služby" "Vytvořím systémového uživatele '$SVC_USER' (bez sudo, bez hesla) a adresáře $WEB (web root) a $DATA." || return 0
