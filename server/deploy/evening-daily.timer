@@ -1,0 +1,14 @@
+[Unit]
+Description=evening bot: daily run after the US close (16:30 ET; 17:30 and 19:00 ET are no-ops once the day is done)
+
+[Timer]
+# New York time, so the US/Europe daylight-saving mismatch weeks do not move the run relative to the close.
+OnCalendar=Mon..Fri 16:30:00 America/New_York
+OnCalendar=Mon..Fri 17:30:00 America/New_York
+OnCalendar=Mon..Fri 19:00:00 America/New_York
+Persistent=true
+AccuracySec=1min
+Unit=evening-daily.service
+
+[Install]
+WantedBy=timers.target

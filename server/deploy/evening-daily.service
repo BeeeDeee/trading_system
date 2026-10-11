@@ -1,0 +1,29 @@
+[Unit]
+Description=evening paper-trading bot, daily run (paper trading, no real money)
+Wants=network-online.target
+After=network-online.target time-sync.target
+
+[Service]
+Type=oneshot
+User=evb
+Group=evb
+WorkingDirectory=/home/evb/evening-bot/server
+Environment=EVENING_ENV=/home/evb/.config/evening/env
+Environment=EVENING_DATA=/home/evb/evening-data
+Environment=EVENING_PUBLISH_DIR=/srv/evening
+ExecStart=/home/evb/evening-bot/server/run_daily.sh
+TimeoutStartSec=80min
+Nice=5
+# hardening: the run only writes its data dir, its home (claude session files) and the web root
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=tmpfs
+BindPaths=/home/evb
+ReadWritePaths=/srv/evening
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+UMask=0022
