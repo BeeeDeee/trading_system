@@ -23,12 +23,16 @@ PREFIX = {
     "perp_1d": "data/futures/um/monthly/klines/{sym}/1d/",
     "spot_1d": "data/spot/monthly/klines/{sym}/1d/",
     "mark_1d": "data/futures/um/monthly/markPriceKlines/{sym}/1d/",
+    "perp_15m": "data/futures/um/monthly/klines/{sym}/15m/",
+    "spot_15m": "data/spot/monthly/klines/{sym}/15m/",
 }
 ROOT_PREFIX = {
     "funding": "data/futures/um/monthly/fundingRate/",
     "perp_1d": "data/futures/um/monthly/klines/",
     "spot_1d": "data/spot/monthly/klines/",
     "mark_1d": "data/futures/um/monthly/markPriceKlines/",
+    "perp_15m": "data/futures/um/monthly/klines/",
+    "spot_15m": "data/spot/monthly/klines/",
 }
 MONTH_RE = re.compile(r"-(\d{4}-\d{2})\.zip$")
 
