@@ -310,3 +310,35 @@ datasets:
     location: LAB_HOME/data/binance_1h_features
     cost_model: null
     quality: 'lab import 2026-10-05: 900865 rows'
+
+  - id: sec_8k_item202
+    loader: sep_attached
+    attaches_to: sharadar_sep
+    asset_class: alt
+    instruments: 'earnings-release dates: form 8-K filings with Item 2.02 (SEC EDGAR),
+      as the daily flag ea_reaction_day on the stocks of sharadar_sep'
+    frequency: event
+    range:
+    - '2004-08-23'
+    - '2026-10-09'
+    clock: us_close
+    source: SEC EDGAR submissions API (data.sec.gov, free, public), fetched by the framework;
+      CIK from the secfilings URL of the Sharadar tickers table
+    location: LAB_HOME/data/sec_8k_item202
+    quality: 'lab edgar-fetch 2026-10-11: 387530 filings of 10218 of 17958 CIKs'
+    holdout_from: '2021-01-01'
+    cost_model: null
+    forward_source: null
+    known_biases:
+    - 'Attached to sharadar_sep as a daily (T, N) matrix: 1 on the reaction session
+      of each primary 8-K with Item 2.02, 0 on other sessions, NaN before the company''s
+      first EDGAR filing. Item 2.02 exists since the August 2004 8-K reform. Amendments
+      (8-K/A) are dropped.'
+    - Reaction session = first XNYS session whose 16:00 ET close is at or after the
+      EDGAR acceptance time; known at the close of that session, not before. Early-close
+      days (13:00 ET) are treated as 16:00.
+    - CIKs come from the Sharadar tickers table (the current CIK of a security); companies
+      that changed CIK or a reused CIK can miss or mix filings. A CIK EDGAR no longer
+      serves (404) has no filings and no data.
+    - 'Some firms file earnings releases under item 7.01 or as exhibits to other items:
+      they are missed. The EDGAR item list is as filed, never revised.'

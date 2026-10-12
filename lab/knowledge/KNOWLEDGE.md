@@ -18,6 +18,18 @@ Five-session event studies on documented US single-stock anomalies (ex-dividend 
 
 *confidence medium · 2026-10-09 · librarian · evidence: H-0010; H-0011; H-0012; H-0013; H-0014; H-0015; H-0016; H-0017*
 
+### K-0037 Earnings-announcement premium: absent as a tradable effect in large liquid US stocks, with real dates too
+
+Three tries now cover the premium around scheduled earnings releases in the liquid US universe: two with volume-based date proxies, whose failure could not be attributed, and one with real release dates from filings, which removes that excuse. With real dates the event set was large and spread over the whole sample, the sign was positive and not fading, but the effect was indistinguishable from placebo windows of the same stocks and smaller than the cost of trading it with a five-session window and weekly-scale rotation. The literature premium probably lives in less covered stocks or in the release session itself, neither of which the five-session LIQ-500 design can see. This supports K-0024 (short-horizon information and sentiment events in large caps are gone), now for dated earnings events. Date-based earnings ideas on other mechanisms (surprise, timing changes) are separate claims.
+
+*confidence medium · 2026-10-12 · librarian · evidence: H-0023; H-0008; H-0015; H-0024; K-0024*
+
+### K-0038 The month-turn high-beta advantage passes the placebo test but fades in the later years
+
+Two designs on the same month-turn window in liquid US stocks (a high-minus-low beta spread, and a long-only rotation between a high-beta and a low-beta quintile) both cleared the mechanism test against time-shifted placebos, and in both the effect was strongest in the earliest third of the sample and weakest in the latest, in the rotation reversing sign. The two cards share events and data, so this is one piece of evidence seen twice, not two confirmations. It fits a published flow effect that is being arbitraged away, or a beta payoff that depends on the bull-market era. The rotation also gave no drawdown protection relative to the market. A month-turn beta claim should be expected to fail sub-period and publication-decay checks unless a new design shows the latest years separately.
+
+*confidence medium · 2026-10-12 · librarian · evidence: H-0016; H-0025; K-0027; K-0030*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -38,12 +50,6 @@ The LIQ-1000 panel has 4 581 stocks; a card on LIQ-500 or the S&P 500 loads ~2 4
 
 *confidence high · 2026-10-06 · human · evidence: PLAN decision log 2026-10-05 (loaders); H-0007 G2 run*
 
-### K-0004 No earnings dates in the lab
-
-Sharadar SF1 filing dates exist on disk but there is no loader, and announcement dates are not in any loadable dataset. Earnings-event ideas can only use proxies (volume seasonality), which H-0008 showed to be weak.
-
-*confidence medium · 2026-10-06 · human · evidence: H-0008; catalog*
-
 ### K-0014 Only crypto has forward data
 
 Forward daily bars come from the Binance public API (spot and USD-M perps with funding), reachable from this VPS. ETFs and US stocks have no free forward source yet (Sharadar not renewed), so hypotheses on them are parked after G4 until the Archivist validates a source.
@@ -61,6 +67,12 @@ The catalog said Binance spot daily data runs to 2026-10-03 but the research 9 p
 SF1, insider and 13F fields are daily float32 matrices on the SEP stocks, 70 MB each. A LIQ-500 card with six fields peaks at 2.3 GB through G0-G2 on this machine (limit 2.8 GB for the cycle), three fields at 2.1 GB, so the per-card cap is six. Loading them takes seconds to a minute; fundamentals change only on filings, so signals built from them are slow.
 
 *confidence high · 2026-10-07 · human · evidence: calibration quality_stocks; PLAN decision log 2026-10-07*
+
+### K-0035 Real earnings-release dates now exist (sec_8k_item202), from late 2004 and with coverage gaps
+
+The EDGAR 8-K Item 2.02 flag (ea_reaction_day) replaces the volume proxies of H-0008 and H-0015 and was used first by H-0023. It starts with the August 2004 reform, so predicted dates (last year plus 52 weeks) exist from 2005; the 1998-2004 part of dev has no earnings events. The catalog quality line shows filings for only 10 218 of 17 958 CIKs, and the known biases say that CIKs EDGAR no longer serves and releases filed under other items are missed. Firms that delisted are the likely gaps, so event sets built on it may lean toward survivors; no one has measured how far. The dataset has no hit-rate output either: whether a rule such as 'last year plus 52 weeks' finds the actual release day was a declared diagnostic of H-0023 that never reached the gate result (see K-0033). Treat the dataset as usable but unvalidated for coverage in point-in-time liquid universes.
+
+*confidence medium · 2026-10-12 · librarian · supersedes K-0004 · evidence: H-0023; H-0008; H-0015; catalog sec_8k_item202*
 
 ## Methodology
 
@@ -118,11 +130,11 @@ Two cards now cleared the event-study gate and then failed the strategy gate wit
 
 *confidence medium · 2026-10-11 · librarian · evidence: H-0016; H-0019; K-0027; K-0021*
 
-### K-0031 Compare the placebo bar with the round-trip cost to tell a power problem from an untradable effect
+### K-0034 Compare the placebo bar with the round-trip cost: many events can still leave a bar above cost
 
-A mechanism failure at G1 is a 'cannot tell' only when the placebo bar (its upper percentile) lies above the round-trip cost, because then a tradable effect could still have missed it (H-0017, sparse events). When the bar lies below the cost, as in H-0020 with a very large event count and a narrow placebo cloud, any effect worth trading would have cleared it, so the failure means the effect is not tradable in that form. Event counts alone mislead: events within a date share one cross-section, so what matters is the width of the placebo cloud, which the gate result reports. This refines K-0026: widening the event set helps only if it narrows the cloud below the cost.
+A mechanism failure at G1 is a 'cannot tell' when the placebo bar (its upper percentile) lies above the round-trip cost, because a tradable effect could still miss it. H-0017 (sparse events) and now H-0024 (thousands of events on over a thousand dates) are such cases: right sign, gross above cost, percentile just under the bar, bar above cost. Event count does not cure it, because events within a date share one cross-section and earnings seasons cluster dates. When the bar lies below cost (H-0020) the failure means the effect is not tradable in that form. Widening the event set helps only if it narrows the cloud below the cost; tuning filters or horizon on the same events creates new trials. Read near misses as a coin flip, not as promise.
 
-*confidence medium · 2026-10-11 · librarian · evidence: H-0020; H-0017; H-0019; K-0026*
+*confidence medium · 2026-10-11 · librarian · supersedes K-0031 · evidence: H-0017; H-0020; H-0024; K-0026; K-0031*
 
 ## The judge (framework behaviour)
 
@@ -150,17 +162,17 @@ min_position_entries counted only flat-to-position entries: a delta-neutral fund
 
 *confidence high · 2026-10-06 · human · evidence: docs/research-lab/calibration/funding_carry.json*
 
-### K-0028 G0 checks are vacuous when the synthetic market lacks the card's data, and card diagnostics cannot be reported
+### K-0032 Events on young or departing stocks, or needing index membership, do not fit the point-in-time universes
 
-Three of eight cards in this batch had a G0 look-ahead check that exercised nothing on the synthetic market: no dividends (H-0010), no insider events (H-0012), and only 80 names so the book never traded (H-0013). The Builders substituted hand-made tests, which no gate reads. Separately, two cards promised sanity diagnostics (regular-payer share in H-0010, volume hit rate of the predicted earnings days in H-0015) that the Builders could not output because no channel to the gate result exists, so a failed proxy cannot be told from an absent effect. Extend the synthetic market or the diagnostic output, and the Skeptic should read the code of data-specific cards.
+Three cards in two families hit the same wall in different forms. H-0018 (deleted index members) failed at G0 because weights outside the S&P 500 universe are refused. H-0021 (IPO lockup expiry in LIQ-500) found zero events across the whole dev period, so G1 rejected it on the event count with no mechanism result; recent IPOs apparently never sit in the liquid universe at the event date (cause not confirmed). H-0022 (S&P changes read inside LIQ-500) was parked by the owner because the PIT S&P 500 mask is not available to liq_n cards, although the catalog lists alt_universe among the sharadar_sep extras. None produced evidence about its mechanism. Before a Builder run, a Scout should check that the event subject can be a member of the declared universe at the event date and that every input is delivered for that universe kind; a cheap event-count feasibility check would save runs.
 
-*confidence high · 2026-10-09 · librarian · evidence: H-0010; H-0012; H-0013; H-0015*
+*confidence medium · 2026-10-11 · librarian · supersedes K-0029 · evidence: H-0018; H-0021; H-0022; K-0029*
 
-### K-0029 The engine cannot hold stocks that have left the declared universe, so exit-from-universe events are untestable
+### K-0036 G0 look-ahead checks are vacuous for event cards, and diagnostics cannot be reported (now seven cards)
 
-A card on the sp500 universe that must hold a stock after its removal from the index fails at G0 with g0_outside_universe: weights on non-members are refused. H-0018 (deletion leg of the index-change reversal) stalled this way, the Builder reported it in six of seven runs, and the card was parked by the owner at DATA_READY without ever becoming a trial. Any card whose key leg sits outside its own universe definition (deleted index members, names dropped from LIQ-500 after the event) has the same problem. The Scout's self-declared risk and the Builder's loud failure worked as intended, but the lab still paid several Builder runs before a human parked it.
+Seven event or window cards since H-0010 had a G0 look-ahead check that exercised little or nothing: no dividends (H-0010), no insider events (H-0012), too few names for the book to trade (H-0013), constant dollar volume (H-0024), no lockup events (H-0021), and now only two events for H-0023's earnings dates and a single event date for H-0025's month-turn switches on the synthetic market. Builders substituted hand-made tests (a random quarterly-filing market in H-0023), which no gate reads. Declared diagnostics also have no channel to the gate result: regular-payer share (H-0010), volume hit rate (H-0015, H-0024), date-prediction hit rate (H-0023), and the switch A/B split and the static low-beta control (H-0025). Two of these are the very thing that decides whether a negative is about the idea or the proxy. Extend the synthetic market with the data the card needs (volume spikes, dividends, filings, listings, filing flags per quarter) and add a diagnostic output channel; until then the Skeptic should read the event code of data-specific cards, and Scouts should not rely on a declared diagnostic being reported.
 
-*confidence high · 2026-10-11 · librarian · evidence: H-0018; H-0017*
+*confidence high · 2026-10-12 · librarian · supersedes K-0033 · evidence: H-0010; H-0012; H-0013; H-0015; H-0021; H-0023; H-0024; H-0025; K-0028*
 
 ## How the lab works
 
@@ -199,3 +211,11 @@ The agents' settings denied Read(//srv/**) to protect the lab state; in producti
 Two of the first cards with a mechanism test (ex-dividend price pressure, breakouts through stale 52-week highs, both LIQ-500 market-neutral, 5-day horizon) died at G1 on the event study: placebo percentiles 0.64 and 0.46, gross abnormal return per event covering only 4 % and 28 % of the round-trip cost. The strategy was never simulated, so each death cost a Scout run and a Builder run but no gate time, and the reason is mechanism-level, not 'the strategy lost to the benchmark'.
 
 *confidence high · 2026-10-07 · human · evidence: H-0010; H-0011; gate_results G1 mechanism*
+
+## Superseded
+
+- K-0004 No earnings dates in the lab
+- K-0028 G0 checks are vacuous when the synthetic market lacks the card's data, and card diagnostics cannot be reported
+- K-0029 The engine cannot hold stocks that have left the declared universe, so exit-from-universe events are untestable
+- K-0031 Compare the placebo bar with the round-trip cost to tell a power problem from an untradable effect
+- K-0033 G0 look-ahead checks are vacuous for event cards, and diagnostics cannot be reported (now five cards)
