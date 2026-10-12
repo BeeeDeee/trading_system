@@ -1,0 +1,449 @@
+{
+ "date": "2026-10-12",
+ "llm_ok": true,
+ "locked_at": "2026-10-12T04:02:48.100Z",
+ "locked_ms": 1791777768100,
+ "portfolios": {
+  "b_btc": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_btc_eth": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_cash": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_ew20": {
+   "exits": {},
+   "info": {
+    "rebalance": true
+   },
+   "kind": "benchmark",
+   "targets": {
+    "ADA": 0.0588235294,
+    "AVAX": 0.0588235294,
+    "BNB": 0.0588235294,
+    "BTC": 0.0588235294,
+    "DOGE": 0.0588235294,
+    "ENA": 0.0588235294,
+    "ETH": 0.0588235294,
+    "NEAR": 0.0588235294,
+    "ONDO": 0.0588235294,
+    "PUMP": 0.0588235294,
+    "SOL": 0.0588235294,
+    "SUI": 0.0588235294,
+    "TAO": 0.0588235294,
+    "UNI": 0.0588235294,
+    "WLD": 0.0588235294,
+    "XRP": 0.0588235294,
+    "ZEC": 0.0588235294
+   }
+  },
+  "b_mcap10": {
+   "exits": {},
+   "info": {
+    "rebalance": true
+   },
+   "kind": "benchmark",
+   "targets": {
+    "ADA": 0.0040904758,
+    "AVAX": 0.0020949067,
+    "BNB": 0.0434464602,
+    "BTC": 0.7295991317,
+    "DOGE": 0.0058975946,
+    "ETH": 0.1349982485,
+    "NEAR": 0.0033289907,
+    "SOL": 0.0285593735,
+    "XRP": 0.0385416432,
+    "ZEC": 0.0094431752
+   }
+  },
+  "bez_brany": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ONDO",
+     "AVAX",
+     "ADA",
+     "TAO",
+     "SUI",
+     "NEAR",
+     "PUMP",
+     "ENA",
+     "UNI",
+     "BNB"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1034482759,
+    "AVAX": 0.1034482759,
+    "BNB": 0.0344827586,
+    "ENA": 0.1034482759,
+    "NEAR": 0.1034482759,
+    "ONDO": 0.1551724138,
+    "PUMP": 0.1034482759,
+    "SUI": 0.1034482759,
+    "TAO": 0.1034482759,
+    "UNI": 0.0862068966
+   }
+  },
+  "btc_filtr": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ONDO",
+     "AVAX",
+     "ADA",
+     "NEAR",
+     "PUMP"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1875,
+    "AVAX": 0.1875,
+    "NEAR": 0.1875,
+    "ONDO": 0.25,
+    "PUMP": 0.1875
+   }
+  },
+  "claude_volne": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ADA",
+     "AVAX",
+     "BTC",
+     "NEAR",
+     "ONDO",
+     "PUMP",
+     "UNI"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1,
+    "AVAX": 0.12,
+    "BTC": 0.15,
+    "NEAR": 0.08,
+    "ONDO": 0.1,
+    "PUMP": 0.05,
+    "UNI": 0.06
+   }
+  },
+  "inv_vol": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ONDO",
+     "AVAX",
+     "ADA",
+     "NEAR",
+     "PUMP"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.234879497,
+    "AVAX": 0.2480941586,
+    "NEAR": 0.166396478,
+    "ONDO": 0.2095156715,
+    "PUMP": 0.1411141949
+   }
+  },
+  "jen_mr": {
+   "exits": {
+    "SOL": "max_hold"
+   },
+   "info": {
+    "selected": [
+     "DOGE",
+     "UNI",
+     "XRP",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "DOGE": 0.25,
+    "UNI": 0.25,
+    "XRP": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "jen_trend": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "NEAR",
+     "ONDO",
+     "WLD",
+     "ADA",
+     "SUI",
+     "ENA",
+     "TAO",
+     "PUMP",
+     "AVAX"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1111111111,
+    "AVAX": 0.1111111111,
+    "ENA": 0.1111111111,
+    "NEAR": 0.1111111111,
+    "ONDO": 0.1111111111,
+    "PUMP": 0.1111111111,
+    "SUI": 0.1111111111,
+    "TAO": 0.1111111111,
+    "WLD": 0.1111111111
+   }
+  },
+  "jen_zpravy": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "kontrarian": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "DOGE",
+     "ETH",
+     "XRP",
+     "BNB",
+     "SOL",
+     "ZEC",
+     "BTC",
+     "WLD",
+     "UNI",
+     "ADA"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1,
+    "BNB": 0.1,
+    "BTC": 0.1,
+    "DOGE": 0.1,
+    "ETH": 0.1,
+    "SOL": 0.1,
+    "UNI": 0.1,
+    "WLD": 0.1,
+    "XRP": 0.1,
+    "ZEC": 0.1
+   }
+  },
+  "mech_momentum": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "NEAR",
+     "PUMP",
+     "ONDO",
+     "AVAX",
+     "WLD",
+     "ADA"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.0597469487,
+    "AVAX": 0.1675767472,
+    "NEAR": 0.25,
+    "ONDO": 0.1752116067,
+    "PUMP": 0.210422252,
+    "WLD": 0.1370424455
+   }
+  },
+  "nahodny": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ADA",
+     "BNB",
+     "NEAR",
+     "ONDO",
+     "PUMP",
+     "SOL",
+     "SUI",
+     "UNI",
+     "WLD",
+     "XRP"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1,
+    "BNB": 0.1,
+    "NEAR": 0.1,
+    "ONDO": 0.1,
+    "PUMP": 0.1,
+    "SOL": 0.1,
+    "SUI": 0.1,
+    "UNI": 0.1,
+    "WLD": 0.1,
+    "XRP": 0.1
+   }
+  },
+  "pravdepodobnost": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "rovne": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ONDO",
+     "AVAX",
+     "ADA",
+     "NEAR",
+     "PUMP"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.2,
+    "AVAX": 0.2,
+    "NEAR": 0.2,
+    "ONDO": 0.2,
+    "PUMP": 0.2
+   }
+  },
+  "skore_vol": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ONDO",
+     "AVAX",
+     "ADA",
+     "NEAR",
+     "PUMP"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.2228502406,
+    "AVAX": 0.2353881187,
+    "NEAR": 0.1578745511,
+    "ONDO": 0.25,
+    "PUMP": 0.1338870897
+   }
+  },
+  "stop": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ONDO",
+     "AVAX",
+     "ADA",
+     "NEAR",
+     "PUMP"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1875,
+    "AVAX": 0.1875,
+    "NEAR": 0.1875,
+    "ONDO": 0.25,
+    "PUMP": 0.1875
+   }
+  },
+  "top3": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ONDO",
+     "AVAX",
+     "ADA"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.3,
+    "AVAX": 0.3,
+    "ONDO": 0.4
+   }
+  },
+  "tydenni": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ONDO",
+     "AVAX",
+     "ADA",
+     "NEAR",
+     "PUMP"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1875,
+    "AVAX": 0.1875,
+    "NEAR": 0.1875,
+    "ONDO": 0.25,
+    "PUMP": 0.1875
+   }
+  },
+  "vol_target": {
+   "exits": {},
+   "info": {
+    "overlay": "vol portfolia 91 % → expozice ×0.55",
+    "selected": [
+     "ONDO",
+     "AVAX",
+     "ADA",
+     "NEAR",
+     "PUMP"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1032703992,
+    "AVAX": 0.1032703992,
+    "NEAR": 0.1032703992,
+    "ONDO": 0.1376938657,
+    "PUMP": 0.1032703992
+   }
+  },
+  "zaklad": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ONDO",
+     "AVAX",
+     "ADA",
+     "NEAR",
+     "PUMP"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ADA": 0.1875,
+    "AVAX": 0.1875,
+    "NEAR": 0.1875,
+    "ONDO": 0.25,
+    "PUMP": 0.1875
+   }
+  }
+ },
+ "scores_sha256": "2eaac01f44bc0195dae00896c8b9b8c3445473ba26b8c2fde77476522f444ed3"
+}
