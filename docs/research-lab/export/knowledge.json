@@ -454,5 +454,29 @@
   "actor": "librarian",
   "message_id": 190,
   "ts": "2026-10-12T03:06:37.508776+00:00"
+ },
+ {
+  "id": "K-0039",
+  "kind": "market",
+  "title": "Large-cap earnings-date events fail the placebo test: premium, surprise, delay",
+  "statement": "Real release dates now support three claims in liquid US stocks over a five-session window: a long premium around the predicted date (H-0023), surprise drift at concurrent filings (H-0024) and a short on late releases (H-0026). None cleared the placebo bar. Surprise drift is a near miss whose bar lies above cost, so it is a 'cannot tell'; the delay signal has a bar below cost and reversed sign in the latest third, so it is not tradable in this form. Large-cap releases are pre-announced and heavily covered, so timing and surprise are likely priced quickly. With K-0024, further date-based earnings cards in this universe have a low prior unless they change the horizon to the release session, the stocks to less-covered names, or the data to announced dates.",
+  "evidence": "[\"H-0023\",\"H-0024\",\"H-0026\",\"K-0024\",\"K-0034\"]",
+  "confidence": "medium",
+  "supersedes": "K-0037",
+  "actor": "librarian",
+  "message_id": 198,
+  "ts": "2026-10-12T04:37:03.657537+00:00"
+ },
+ {
+  "id": "K-0040",
+  "kind": "framework",
+  "title": "G0 look-ahead checks are vacuous for event cards; diagnostics cannot be reported (eight cards)",
+  "statement": "Eight event or window cards since H-0010 had a G0 look-ahead check that exercised little or nothing on the synthetic market: no dividends (H-0010), no insider events (H-0012), too few names (H-0013), constant volume (H-0024), no lockups (H-0021), two events (H-0023), one event date (H-0025), and now H-0026, whose synthetic filing flags cannot produce an overdue event although the real dev set had thousands. Builders substitute hand-made tests that no gate reads. Declared diagnostics have no channel to the gate result (payer share, volume and date hit rates, switch split, static control, overdue-rule hit rate). Extend the synthetic market with the data each card needs and add a diagnostic output channel; until then the Skeptic should read the event code, and Scouts should not count on a declared diagnostic being reported.",
+  "evidence": "[\"H-0010\",\"H-0012\",\"H-0013\",\"H-0015\",\"H-0021\",\"H-0023\",\"H-0024\",\"H-0025\",\"H-0026\",\"K-0028\"]",
+  "confidence": "high",
+  "supersedes": "K-0036",
+  "actor": "librarian",
+  "message_id": 199,
+  "ts": "2026-10-12T04:37:03.661143+00:00"
  }
 ]

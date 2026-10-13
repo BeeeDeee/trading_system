@@ -18,17 +18,17 @@ Five-session event studies on documented US single-stock anomalies (ex-dividend 
 
 *confidence medium · 2026-10-09 · librarian · evidence: H-0010; H-0011; H-0012; H-0013; H-0014; H-0015; H-0016; H-0017*
 
-### K-0037 Earnings-announcement premium: absent as a tradable effect in large liquid US stocks, with real dates too
-
-Three tries now cover the premium around scheduled earnings releases in the liquid US universe: two with volume-based date proxies, whose failure could not be attributed, and one with real release dates from filings, which removes that excuse. With real dates the event set was large and spread over the whole sample, the sign was positive and not fading, but the effect was indistinguishable from placebo windows of the same stocks and smaller than the cost of trading it with a five-session window and weekly-scale rotation. The literature premium probably lives in less covered stocks or in the release session itself, neither of which the five-session LIQ-500 design can see. This supports K-0024 (short-horizon information and sentiment events in large caps are gone), now for dated earnings events. Date-based earnings ideas on other mechanisms (surprise, timing changes) are separate claims.
-
-*confidence medium · 2026-10-12 · librarian · evidence: H-0023; H-0008; H-0015; H-0024; K-0024*
-
 ### K-0038 The month-turn high-beta advantage passes the placebo test but fades in the later years
 
 Two designs on the same month-turn window in liquid US stocks (a high-minus-low beta spread, and a long-only rotation between a high-beta and a low-beta quintile) both cleared the mechanism test against time-shifted placebos, and in both the effect was strongest in the earliest third of the sample and weakest in the latest, in the rotation reversing sign. The two cards share events and data, so this is one piece of evidence seen twice, not two confirmations. It fits a published flow effect that is being arbitraged away, or a beta payoff that depends on the bull-market era. The rotation also gave no drawdown protection relative to the market. A month-turn beta claim should be expected to fail sub-period and publication-decay checks unless a new design shows the latest years separately.
 
 *confidence medium · 2026-10-12 · librarian · evidence: H-0016; H-0025; K-0027; K-0030*
+
+### K-0039 Large-cap earnings-date events fail the placebo test: premium, surprise, delay
+
+Real release dates now support three claims in liquid US stocks over a five-session window: a long premium around the predicted date (H-0023), surprise drift at concurrent filings (H-0024) and a short on late releases (H-0026). None cleared the placebo bar. Surprise drift is a near miss whose bar lies above cost, so it is a 'cannot tell'; the delay signal has a bar below cost and reversed sign in the latest third, so it is not tradable in this form. Large-cap releases are pre-announced and heavily covered, so timing and surprise are likely priced quickly. With K-0024, further date-based earnings cards in this universe have a low prior unless they change the horizon to the release session, the stocks to less-covered names, or the data to announced dates.
+
+*confidence medium · 2026-10-12 · librarian · supersedes K-0037 · evidence: H-0023; H-0024; H-0026; K-0024; K-0034*
 
 ## Data
 
@@ -168,11 +168,11 @@ Three cards in two families hit the same wall in different forms. H-0018 (delete
 
 *confidence medium · 2026-10-11 · librarian · supersedes K-0029 · evidence: H-0018; H-0021; H-0022; K-0029*
 
-### K-0036 G0 look-ahead checks are vacuous for event cards, and diagnostics cannot be reported (now seven cards)
+### K-0040 G0 look-ahead checks are vacuous for event cards; diagnostics cannot be reported (eight cards)
 
-Seven event or window cards since H-0010 had a G0 look-ahead check that exercised little or nothing: no dividends (H-0010), no insider events (H-0012), too few names for the book to trade (H-0013), constant dollar volume (H-0024), no lockup events (H-0021), and now only two events for H-0023's earnings dates and a single event date for H-0025's month-turn switches on the synthetic market. Builders substituted hand-made tests (a random quarterly-filing market in H-0023), which no gate reads. Declared diagnostics also have no channel to the gate result: regular-payer share (H-0010), volume hit rate (H-0015, H-0024), date-prediction hit rate (H-0023), and the switch A/B split and the static low-beta control (H-0025). Two of these are the very thing that decides whether a negative is about the idea or the proxy. Extend the synthetic market with the data the card needs (volume spikes, dividends, filings, listings, filing flags per quarter) and add a diagnostic output channel; until then the Skeptic should read the event code of data-specific cards, and Scouts should not rely on a declared diagnostic being reported.
+Eight event or window cards since H-0010 had a G0 look-ahead check that exercised little or nothing on the synthetic market: no dividends (H-0010), no insider events (H-0012), too few names (H-0013), constant volume (H-0024), no lockups (H-0021), two events (H-0023), one event date (H-0025), and now H-0026, whose synthetic filing flags cannot produce an overdue event although the real dev set had thousands. Builders substitute hand-made tests that no gate reads. Declared diagnostics have no channel to the gate result (payer share, volume and date hit rates, switch split, static control, overdue-rule hit rate). Extend the synthetic market with the data each card needs and add a diagnostic output channel; until then the Skeptic should read the event code, and Scouts should not count on a declared diagnostic being reported.
 
-*confidence high · 2026-10-12 · librarian · supersedes K-0033 · evidence: H-0010; H-0012; H-0013; H-0015; H-0021; H-0023; H-0024; H-0025; K-0028*
+*confidence high · 2026-10-12 · librarian · supersedes K-0036 · evidence: H-0010; H-0012; H-0013; H-0015; H-0021; H-0023; H-0024; H-0025; H-0026; K-0028*
 
 ## How the lab works
 
@@ -219,3 +219,5 @@ Two of the first cards with a mechanism test (ex-dividend price pressure, breako
 - K-0029 The engine cannot hold stocks that have left the declared universe, so exit-from-universe events are untestable
 - K-0031 Compare the placebo bar with the round-trip cost to tell a power problem from an untradable effect
 - K-0033 G0 look-ahead checks are vacuous for event cards, and diagnostics cannot be reported (now five cards)
+- K-0036 G0 look-ahead checks are vacuous for event cards, and diagnostics cannot be reported (now seven cards)
+- K-0037 Earnings-announcement premium: absent as a tradable effect in large liquid US stocks, with real dates too

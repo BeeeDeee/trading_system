@@ -226,3 +226,12 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not retune post_days, beta_lookback or leg_quantile, or change the benchmark, to close the margin: new trials on the same data. No fourth month-turn beta book without a new reason.
 - open questions: Is it the month-turn flow or low beta plus an equal-weight tilt? Only a same-universe control separates them. A small month-turn tilt on an always-invested cap-weighted book would cost far less; other calendar windows are separate cards.
 - related: H-0016, H-0001, H-0019
+
+## H-0026 – Overdue earnings release - LIQ-500 market-neutral, short stocks whose Item 2.02 release is several sessions past last year's same-quarter date, hedged with the other members, hold 5 days
+
+- family: `earnings-date-delay-signal` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), market-neutral: short stocks whose earnings release is late versus last year's date, hedged with other members
+- outcome: rejected at G1: right sign on average, but under the placebo bar and gross below round-trip cost; strategy not run
+- lesson: Not a power problem: the placebo upper bar lies below the round-trip cost, so a tradable effect would have cleared it (K-0034). Overdue stocks underperformed slightly on average, but the latest third reversed sign (one of the card's own kill conditions) and the one-session horizon was wrong-signed. The flag fires on a sizeable share of firm-quarters, so benign delays (calendar shifts, other filing items, dataset gaps) probably dilute it. Large-cap release dates are pre-announced, so lateness is likely priced. The rule's hit rate was never reported (K-0036).
+- avoid: Do not retune delay_sessions or hold_days, or move to the longer horizon that looks larger descriptively: new trials on the same events. Do not refile the same anniversary rule as late reporter or disclosure-timing; it shares data and date prediction with earnings-announcement-premium, so those trials count together.
+- open questions: A cleaner delay event (explicit late-filing notice, or announced versus expected dates) might behave differently, but neither is loadable today. Less-covered names are untested. The release-session reaction after an overdue flag was not isolated.
+- related: H-0023, H-0024, H-0015, H-0008, H-0019

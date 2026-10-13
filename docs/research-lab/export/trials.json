@@ -383,5 +383,60 @@
   "sharpe": 0.029382449551697155,
   "n_obs": 5349,
   "ts": "2026-10-12T02:52:54.631315+00:00"
+ },
+ {
+  "id": 36,
+  "family": "earnings-date-delay-signal",
+  "hypothesis_id": "H-0026",
+  "version": 1,
+  "run_id": 52,
+  "config_sha256": "dc57c783ba397f95|mechanism",
+  "sharpe": null,
+  "n_obs": 5792,
+  "ts": "2026-10-12T04:14:50.796565+00:00"
+ },
+ {
+  "id": 37,
+  "family": "trading-window-flows",
+  "hypothesis_id": "H-0027",
+  "version": 1,
+  "run_id": 54,
+  "config_sha256": "3447cbc02f940000|mechanism",
+  "sharpe": null,
+  "n_obs": 13521,
+  "ts": "2026-10-12T05:46:12.606631+00:00"
+ },
+ {
+  "id": 38,
+  "family": "post-earnings-announcement-drift",
+  "hypothesis_id": "H-0028",
+  "version": 1,
+  "run_id": 56,
+  "config_sha256": "aa2db45f7a5d88f7|mechanism",
+  "sharpe": null,
+  "n_obs": 11539,
+  "ts": "2026-10-12T06:47:50.193482+00:00"
+ },
+ {
+  "id": 39,
+  "family": "post-earnings-announcement-drift",
+  "hypothesis_id": "H-0028",
+  "version": 1,
+  "run_id": 56,
+  "config_sha256": "aa2db45f7a5d88f7",
+  "sharpe": -0.009005205931136748,
+  "n_obs": 4119,
+  "ts": "2026-10-12T06:47:50.195359+00:00"
+ },
+ {
+  "id": 40,
+  "family": "short-term-momentum",
+  "hypothesis_id": "H-0029",
+  "version": 1,
+  "run_id": 58,
+  "config_sha256": "e2eac4cddd16ec74|mechanism",
+  "sharpe": null,
+  "n_obs": 41851,
+  "ts": "2026-10-13T02:20:14.038917+00:00"
  }
 ]
