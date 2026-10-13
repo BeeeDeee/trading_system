@@ -26,7 +26,7 @@ DAILY_VOL = {"us_etf": 0.012, "us_equity": 0.02, "crypto_spot": 0.04, "crypto_pe
 SYNTHETIC_PAIRS = 40
 SYNTHETIC_STOCKS = 80
 TEST_TIMEOUT_S = 300
-TEST_EXTRA_IMPORTS = ("pytest", "strategy")
+TEST_EXTRA_IMPORTS = ("pytest", "strategy", "lab.framework.intraday")
 
 
 def instruments(card: dict, cat: dict) -> tuple[list[str], list[str], int | None]:
@@ -158,6 +158,9 @@ def _ffill(a: np.ndarray) -> np.ndarray:
 def run(ws: Path) -> tuple[bool, list[str]]:
     """Everything `lab try` checks. Returns (ok, report lines)."""
     card = yaml.safe_load((ws / "card.yaml").read_text())
+    from lab.framework import intraday
+    if intraday.is_intraday(card):
+        return intraday.dry_run(ws)
     cat = catalog.load(ws / "catalog.yaml")
     gates = yaml.safe_load((ws / "gates.yaml").read_text())
     th = gates["G0"]

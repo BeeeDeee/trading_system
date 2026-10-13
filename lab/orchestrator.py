@@ -196,8 +196,8 @@ def production_cycle(lab: Lab, policy_path: Path, *, agents: bool = True, dry_ru
             return rec | {"skipped": "another cycle is running"}
         if evaluator is None:
             if canaries.passed_for_current(lab):
-                from lab.framework.evaluator import QlabEvaluator
-                evaluator = QlabEvaluator()
+                from lab.framework.intraday import RoutingEvaluator
+                evaluator = RoutingEvaluator()
             else:
                 rec["warning"] = "canaries have not passed for the current framework: no gates, no ingest"
         policy = Policy.load(policy_path)

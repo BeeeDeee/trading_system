@@ -78,8 +78,22 @@ def test_librarian_definition_and_workspace(lab, card):
 def test_scout_brief_targets_the_least_explored_cell(lab, card):
     from lab.framework import briefs
     first = briefs.choose(lab)
-    assert first == {"horizon": "short", "group": "crypto", "multi_timeframe": False}
-    submit(lab, dict(card, asset_classes=["crypto_spot"], holding_period={"typical_days": 2, "rebalance": "daily"}))
+    assert first == {"horizon": "scalp", "group": "crypto", "multi_timeframe": False}
+    assert "SCALPING" in briefs.text(first) and "binance_perp_15m" in briefs.text(first)
+    crypto = dict(card, asset_classes=["crypto_spot"], holding_period={"typical_days": 0.2, "rebalance": "daily"})
+    submit(lab, crypto)
+    assert briefs.choose(lab)["horizon"] == "short"                      # the scalping cell is now explored once
+    submit(lab, dict(crypto, holding_period={"typical_days": 2, "rebalance": "daily"}, title="another"))
     b = briefs.choose(lab)
-    assert (b["horizon"], b["group"]) != ("short", "crypto") and b["multi_timeframe"]
+    assert (b["horizon"], b["group"]) not in (("short", "crypto"), ("scalp", "crypto")) and b["multi_timeframe"]
     assert "Combine timeframes" in briefs.text(b)
+
+
+def test_scalping_cell_is_crypto_only_and_counts_double(lab):
+    from lab.framework import briefs
+    assert briefs.SCALP_WEIGHT == 2.0
+    seen = set()
+    for _ in range(3):
+        b = briefs.choose(lab)
+        seen.add((b["horizon"], b["group"]))
+    assert all(g == "crypto" for h, g in seen if h == "scalp")

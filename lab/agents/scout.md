@@ -57,7 +57,27 @@ usually carries a **brief** (horizon, asset group, sometimes "combine timeframes
 with a real mechanism fits. Signals can combine timeframes, e.g. a monthly trend regime gating a daily
 reversal entry, or hourly-derived daily features (`binance_1h_features`: realized vol, Asia/Europe/US session
 returns, US-session volume share) gating a daily crypto signal. List the timeframes in `signal.timeframes`
-(`1h`, `1d`, `1w`, `1mo`, `1q`, `1y`). Intraday holding (entering and exiting within a day) is not possible yet.
+(`15m`, `1h`, `1d`, `1w`, `1mo`, `1q`, `1y`). Daily cards decide at most once a day and trade at the next open.
+
+### Scalping cards (crypto only, `15m`)
+
+A card with `15m` (or `5m`, when that data exists) in `signal.timeframes` is judged by a separate **intraday
+branch**: Binance USD-M perpetuals as 15-minute candles (dataset `binance_perp_15m`, ids like `BTCUSDT`, no `.P`),
+2020 on, long and short, decisions after every closed candle, fills at the next candle's open. Declare
+`data_requirements` with dataset `binance_perp_15m` and frequency `15m` (no `fields` needed: the strategy gets
+open, high, low, close, quote volume, number of trades, taker-buy volume and funding), `universe` kind
+`crypto_top_n` with `n` between 5 and 30 (point-in-time by 30-day quote volume) or `instruments` with a short list,
+`holding_period.typical_days` below 1, and a `signal.params` grid as usual. Do **not** declare a `mechanism_test`
+(the intraday judge has none). Higher timeframes (1h, 4h) may be part of the signal: list them too.
+
+What the intraday judge demands, so design for it: at least 300 trades in the 2020-2022 dev period; net Sharpe
+>= 0.5 after costs; a positive mean net trade (bootstrap bound); robustness to a one-candle later fill, to doubled
+costs, to the parameter neighbors and to three sub-periods; and a better result than the same trades placed at
+random times. **Costs decide everything**: every change of position pays a 5 bps taker fee plus 1.5-15 bps slippage
+(by liquidity), so a round trip costs 13 bps or more. A signal that earns 5 bps per trade gross is dead. Prefer
+rare, selective entries on an event with a counterparty (forced liquidations and the rebound after them,
+funding-settlement flows, session opens, taker-flow imbalance, volatility compression before expansion) over
+indicator crossovers. The paper bots are daily, so a scalping card can pass at most G4 (holdout).
 
 ## What makes a good card
 

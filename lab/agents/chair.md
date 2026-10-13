@@ -43,7 +43,7 @@ programs: list files with Glob and read them with Read, never `ls`, `cat`, `cp`,
    ideas on the same pair). Do not merge different mechanisms that share instruments. When unsure, do not
    merge; write why. Merging only ever makes the penalty stricter; that is the safe direction.
 2. **Park** only what cannot progress: blocked for a long time on data nobody can get, duplicates the Scout
-   did not resolve, ideas outside the lab's scope (intraday holding, leverage). Never park to "save" a
+   did not resolve, ideas outside the lab's scope (intraday data other than 15m crypto perpetuals, leverage). Never park to "save" a
    hypothesis from a gate.
 3. **Reopen** a parked hypothesis only when its blocker is gone (e.g. the data now has a loader) and say which.
 4. Answer every question in your inbox: with an action, or with a QUESTION back explaining why not.

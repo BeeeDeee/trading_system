@@ -116,6 +116,43 @@ The framework does execution, costs, cash, benchmarks and all statistics. Do not
 anything about performance, and do not add filters, stops, volatility scaling or parameters that are not in
 the card. Every parameter in the card's `signal.params` must be read from `params` (G2 varies them).
 
+## Scalping cards (`15m` / `5m` in `signal.timeframes`)
+
+These cards use a different contract; everything above about daily data does not apply except the static rules,
+determinism and point-in-time discipline. `strategy/strategy.py`:
+
+```python
+import numpy as np
+from lab.framework.intraday_api import zscore, log_return, hold_for, normalize_gross   # helpers below
+
+PARAMS = {...}            # the card's primary values
+
+def target_positions(data, params):
+    ...                   # return a (T, N) float array of target positions over data.instruments
+```
+
+`data` is an `IntradayView`: `data.times` datetime64[m] (UTC open time of each candle), `data.instruments`,
+`data.o h l c` (T, N) float32, `data.qv` quote volume (USD), `data.nt` number of trades, `data.tbq` taker-buy quote
+volume (`tbq / qv` is the buy share of the flow), `data.funding` the rate a long pays on the settlement candle
+(0 elsewhere), `data.real` a candle exists, `data.tradable`, `data.universe` (point-in-time membership: hold only
+members), `data.bars_per_day` (96 for 15m), `data.col(name)`. Row t is a candle that has CLOSED; you decide after it
+and the engine fills at the open of row t + 1. The engine charges fees, slippage and funding; do not model them.
+
+- Point-in-time as always: G0 truncates the data after random rows and replaces the future with noise; rows <= t
+  may not change. Use only the helpers of `lab.framework.intraday_api`: `shift(x, k)` (k >= 0), `rolling_sum/mean/std/
+  max/min(x, n)`, `ema`, `log_return(c, k)`, `true_range`, `atr`, `zscore(x, n)` (rolling), `cross_rank`,
+  `block_value(x, k, how)` for higher timeframes (the value of the last COMPLETED block of k candles, e.g. k = 4 for
+  1h and 16 for 4h on 15m data; the current unfinished block is never used), `hold_for(signal, n)` (turn +1/-1 entry
+  signals into positions held n candles), `normalize_gross(w)`. Never use `np.roll` with a negative shift, centered
+  windows, full-sample statistics or sorting by future values.
+- A NaN row means "no decision, keep positions"; zeros mean flat. Signed positions, gross <= 1 per row.
+- Vectorized numpy over all rows (about 100,000 rows x up to 40 instruments); G0 and G2 call the function dozens
+  of times. A Python loop over rows is allowed only if it is trivial.
+- Stops and targets are part of the strategy only if the card says so; implement them with vectorized logic or a
+  simple loop over instruments, never by looking at future candles.
+- `lab try` runs G0 on a 60-day synthetic market and prints trades and turnover (no returns). Your tests go in
+  `strategy/test_strategy.py` as before, using `lab.framework.intraday.synthetic_view()` for data.
+
 ## The diagnostic (only when the card has `mechanism_test`)
 
 Also write `strategy/diagnostic.py` and list it in IMPL_DONE `files`:

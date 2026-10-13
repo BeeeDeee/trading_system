@@ -99,6 +99,9 @@ def _parser() -> argparse.ArgumentParser:
                                            "all SEP stocks, add dataset sec_8k_item202, unblock waiting hypotheses")
     s.add_argument("--limit", type=int, help="only the first N CIKs (a trial run; the entry is not added)")
     s.add_argument("--contact", help="contact e-mail for the SEC User-Agent (default: $EDGAR_CONTACT); sent only to sec.gov")
+    s = sub.add_parser("intraday-build", help="owner: build the 15m / 5m crypto perpetual panel for the scalping branch "
+                                              "from the raw Binance zips (long, writes under LAB_DATA_ROOT/derived)")
+    s.add_argument("--tf", choices=["15m", "5m"], default="15m")
     s = sub.add_parser("ack", help="owner: mark messages in the owner's inbox handled (optionally with a reply)")
     s.add_argument("ids", type=int, nargs="+")
     s.add_argument("--reply", help="answer, sent as a QUESTION back to the sender (agents) or logged (system)")
@@ -236,10 +239,10 @@ def _direct(args) -> int:
                 evaluator = StubEvaluator(allow=os.environ.get("LAB_ALLOW_STUB") == "1")
             elif not args.no_gates:
                 from lab.framework import canaries
-                from lab.framework.evaluator import QlabEvaluator
+                from lab.framework.intraday import RoutingEvaluator
                 if not canaries.passed_for_current(lab):
                     raise LabError("canaries have not passed for the current framework; run `lab canaries`")
-                evaluator = QlabEvaluator()
+                evaluator = RoutingEvaluator()
             for line in tick.tick(lab, evaluator, phase=args.phase):
                 print(line)
         case "canaries":
@@ -264,8 +267,8 @@ def _direct(args) -> int:
             return _run_agent(lab, args)
         case "rerun-g0":
             from lab.framework import canaries
-            from lab.framework.evaluator import QlabEvaluator
             from lab.framework.gates import run_gate
+            from lab.framework.intraday import RoutingEvaluator
             if lab.hypothesis(args.hid)["status"] != S.DATA_READY:
                 raise LabError(f"{args.hid} is not in DATA_READY")
             if not (lab.paths.strategies / args.hid / "strategy.py").exists():
@@ -274,9 +277,9 @@ def _direct(args) -> int:
                 raise LabError("canaries have not passed for the current framework; run `lab canaries`")
             lab.send("ALERT", "system", "human", args.hid, {"severity": "info",
                      "text": f"G0 re-run by the owner: {args.reason}"})
-            out = run_gate(lab, args.hid, "G0", QlabEvaluator())
+            out = run_gate(lab, args.hid, "G0", RoutingEvaluator())
             print(f"G0 {'passed' if out.passed else 'failed: ' + str(out.reason_code)}")
-            for line in tick.tick(lab, QlabEvaluator()):
+            for line in tick.tick(lab, RoutingEvaluator()):
                 print(line)
         case "import-local":
             from lab.framework import ingest
@@ -315,6 +318,12 @@ def _direct(args) -> int:
             if edgar.DATASET not in catalog.load(lab.paths.catalog):
                 catalog.add(lab.paths.catalog, edgar.catalog_entry(rep))
             print("unblocked:", tick.unblock(lab, f"dataset {edgar.DATASET} fetched") or "none")
+        case "intraday-build":
+            from lab.framework import data, intraday_data
+            snap = "binance_2026-10-03"
+            meta = intraday_data.build(data.DATA_ROOT / "raw" / snap, data.DATA_ROOT / "derived" / snap /
+                                       f"lab_intraday_{args.tf}", args.tf)
+            print(f"{args.tf}: {len(meta['symbols'])} symbols, {meta['n_rows']} rows")
         case "ack":
             rows = [lab.con.execute("SELECT * FROM messages WHERE id = ?", (i,)).fetchone() for i in args.ids]
             bad = [i for i, r in zip(args.ids, rows) if r is None or r["to_agent"] != HUMAN]

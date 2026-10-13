@@ -68,6 +68,8 @@ def build(catalog_path: Path) -> str:
     if cat.get("binance_perp_1d", {}).get("loader"):
         parts.append(_perp_sheet(cat["binance_perp_1d"]))
     parts.append(_generic_sheet(cat))
+    if any(d.get("loader") == "intraday" for d in cat.values()):
+        parts.append(_intraday_sheet(cat, catalog_path))
     parts.append(_correlations(weekly, min(data.as_date(cat[d]["holdout_from"]) for d in
                                            ("sharadar_sfp", "binance_spot_1d") if d in cat)))
     parts.append(_no_loader(cat))
@@ -219,6 +221,27 @@ def _perp_sheet(entry: dict) -> str:
                  f"{y}: {int(v.listed[(v.dates >= np.datetime64(f'{y}-01-01')) & (v.dates <= np.datetime64(f'{y}-12-31'))].any(axis=0).sum())}"
                  for y in range(int(str(v.dates[0])[:4]), int(str(v.dates[-1])[:4]) + 1)) + "."]
     return "\n".join(lines) + "\n"
+
+
+def _intraday_sheet(cat: dict, catalog_path: Path) -> str:
+    import yaml
+    gates = catalog_path.parent.parent / "gates.yaml"
+    cfg = (yaml.safe_load(gates.read_text()).get("intraday") or {}) if gates.exists() else {}
+    cost = cfg.get("cost", {})
+    lines = ["## Scalping data (`loader: intraday`: 5m / 15m crypto perpetuals)", "",
+             "Cards whose `signal.timeframes` contain `5m` or `15m` are judged by the separate intraday gates. They trade",
+             "USD-M perpetuals (ids `BTCUSDT`, no `.P`), long and short, no leverage, 24/7. A row is a candle that has",
+             "closed; the decision of row t is filled at the OPEN of candle t + 1. Fields: o h l c, quote volume `qv`,",
+             "number of trades `nt`, taker-buy quote volume `tbq`, `funding` (what a long pays on the settlement candle).",
+             "Universe: the point-in-time top-n by 30-day quote volume (`crypto_top_n`, n up to 40) or an explicit list.", ""]
+    if cost:
+        tiers = ", ".join(f">= {t[0]:,.0f} USD: {t[1]} bps" for t in cost["tiers"][:-1]) + f", else {cost['tiers'][-1][1]} bps"
+        lines += [f"Costs are charged per side on every change of position: {cost['fee_bps']} bps taker fee + slippage by the",
+                  f"30-day median daily quote volume ({tiers}); the gates also run 2x costs and a one-candle later fill.", ""]
+    lines += ["Scalping lives or dies on costs: a signal needs a gross move per trade well above the round trip (about",
+              "2 x 7 bps at the most liquid names). Slow, rare, high-conviction entries survive costs; frequent small",
+              "ones do not. The dev period is 2020-2022, the holdout (2023 on) is opened once by the judge.", ""]
+    return "\n".join(lines)
 
 
 def _generic_sheet(cat: dict) -> str:
