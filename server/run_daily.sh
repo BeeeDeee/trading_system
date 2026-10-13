@@ -27,8 +27,8 @@ echo "$TEXT"
 if [ -n "$WEB" ]; then
   python3 -m evening report --publish "$WEB" || echo "UPOZORNĚNÍ: dashboard se nevygeneroval" >&2
 fi
-# notify only when this invocation did something (not for "už existuje")
-if [ -n "${NTFY_TOPIC:-}" ] && ! grep -q "už existuje" <<<"$TEXT"; then
+# notify only when this invocation did something (not for "už existuje" nor a planned retry while waiting for Nasdaq)
+if [ -n "${NTFY_TOPIC:-}" ] && ! grep -qE "už existuje|další pokus" <<<"$TEXT"; then
   curl -fsS -m 20 -H "Title: $(head -n1 <<<"$TEXT")" -d "$(tail -n +2 <<<"$TEXT")" "${NTFY_SERVER:-https://ntfy.sh}/$NTFY_TOPIC" >/dev/null || true
 fi
 exit "$RC"
