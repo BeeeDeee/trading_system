@@ -40,7 +40,7 @@ step_repo() {
     REPO_URL="$MIRROR"
     as_svc "git config --global --add safe.directory '$MIRROR'"
   fi
-  if [ -d "$APP/.git" ]; then as_svc "git -C $APP pull -q '$REPO_URL' $BRANCH"; else as_svc "git clone --branch $BRANCH --single-branch '$REPO_URL' $APP"; fi
+  if as_svc "test -d $APP/.git"; then as_svc "git -C $APP pull -q '$REPO_URL' $BRANCH"; else as_svc "git clone --branch $BRANCH --single-branch '$REPO_URL' $APP"; fi
   as_svc "cd $APP && git log --oneline -1 && python3 tools/verify_manifest.py"
 }
 
