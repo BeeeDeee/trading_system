@@ -243,6 +243,10 @@ def run(data_dir, date=None, dry_run=False, force=False, scores_file=None, free_
             if rows:
                 hist[t] = rows
         spy, stock, cc_warn = crosscheck(rows_all, today, date, len(st.ids("days")))
+        if (not dry_run and not force and date == ny.date().isoformat() and ny.hour < 19
+                and (spy["other"] is None or stock["other"] is None)):
+            # Yahoo's same-evening close can still be provisional; without the Nasdaq confirmation wait for the next timer slot (19:00 ET = last)
+            raise Fail("Nasdaq zatím nepotvrdil uzavírací ceny; další pokus v dalším časovém okně (naposledy 19:00 ET)")
         chk, hist, prev, nn = check_with_split(cfg, hist, prev, today, work, "today")
         notes += nn
         if chk["errors"]:
