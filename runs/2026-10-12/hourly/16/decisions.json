@@ -1,0 +1,100 @@
+{
+ "label": "2026-10-12T16",
+ "locked_at": "2026-10-12T16:03:41.488Z",
+ "locked_ms": 1791821021488,
+ "portfolios": {
+  "funding_kontra": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "PUMP",
+     "BNB",
+     "ONDO",
+     "AVAX",
+     "XRP"
+    ]
+   },
+   "keep": [],
+   "targets": {
+    "AVAX": 0.2,
+    "BNB": 0.2,
+    "ONDO": 0.2,
+    "PUMP": 0.2,
+    "XRP": 0.2
+   }
+  },
+  "h_breakout": {
+   "exits": {},
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "h_kniha": {
+   "exits": {
+    "BTC": "signal",
+    "ONDO": "signal"
+   },
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "h_momentum": {
+   "exits": {},
+   "info": {
+    "candidates": [
+     "BNB",
+     "ETH"
+    ]
+   },
+   "keep": [
+    "BNB",
+    "ONDO"
+   ],
+   "targets": {
+    "ETH": 0.3333333333
+   }
+  },
+  "h_reverze": {
+   "exits": {},
+   "info": {
+    "signals": []
+   },
+   "keep": [
+    "SOL"
+   ],
+   "targets": {}
+  },
+  "llm_nacasovani": {
+   "exits": {},
+   "info": {
+    "waiting": []
+   },
+   "keep": [],
+   "targets": {
+    "ADA": 0.1875,
+    "AVAX": 0.1875,
+    "NEAR": 0.1875,
+    "ONDO": 0.25,
+    "PUMP": 0.1875
+   }
+  },
+  "seance_usa": {
+   "exits": {},
+   "info": {
+    "in_session": true
+   },
+   "keep": [],
+   "targets": {
+    "BNB": 0.2,
+    "BTC": 0.2,
+    "ETH": 0.2,
+    "SOL": 0.2,
+    "XRP": 0.2
+   }
+  }
+ }
+}
