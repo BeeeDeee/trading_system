@@ -1,6 +1,6 @@
 # Změna infrastruktury: běh večerního bota z Claude cloudu na vlastní server
 
-Rozhodnuto: 2026-10-10 (uživatel: cutover hned, ne až po 2026-11-25). Datum prvního serverového běhu doplnit při cutoveru: ______
+Rozhodnuto: 2026-10-10 (uživatel: cutover hned, ne až po 2026-11-25). Poslední cloudový den: 2026-10-13 (naimportován z DB artefaktu, replay 12/12 OK). První serverový běh: 2026-10-14 (timer zapnut 2026-10-13).
 
 ## Co se NEMĚNÍ (pin v1.1.2)
 - `engine/engine.py` (sha256 6206c93d…), `config/config.json` (sha256 c2be59cd…) – byte-identické, hash se kontroluje při každém běhu.
