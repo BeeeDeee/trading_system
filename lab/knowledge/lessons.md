@@ -181,3 +181,57 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not retune leg_n or lookback_days, drop the reversed week, or swap in another liquidity or size sort on the same dates. Many events do not mean power: they share a few dates and one cross-section.
 - open questions: A fair test needs option open interest (not loadable). Other pre-announced calendar flows (index reconstitution, pre-holiday) are separate cards and better tested as a tilt on an always-invested book (K-0027).
 - related: H-0016, H-0001, H-0017
+
+## H-0021 – IPO lockup-expiry supply overhang - LIQ-500 beta-neutral, short stocks around the 180th calendar day after their first trading day, hedged with the other members, hold 5 days
+
+- family: `new-listing-overhang` · mechanism: flow_structural · instruments: US liquid stocks (LIQ-500), beta-neutral: short each stock around the end of its standard six-month IPO lockup, hedged with the other members, five-day hold, 1998 to 2020 (no event ever fired)
+- outcome: rejected at G1 on the event count: no lockup events at all in dev, so no mechanism result and no strategy run. Untestable, not refuted.
+- lesson: The test could not tell. A point-in-time liquid universe apparently never holds a stock when its lockup ends: recent IPOs are not among the most liquid names after six months, or the liquidity pool needs more history. The Builder's literal rule (fire only if the stock is a member on the first eligible day, otherwise never) makes a miss permanent. The card named this risk and the gate reported the empty set as designed. Nothing is learned about lockup pressure. G0 look-ahead was vacuous.
+- avoid: Do not resubmit lockup events in LIQ-500 or the S&P 500 with another lead, hold or lockup length: an empty event set stays empty. Do not infer that lockups carry no price effect.
+- open questions: A cheap feasibility count of listing age at membership, before any card, would show whether the lab sees young stocks at all. Lockup events likely need a wider or listing-age-aware universe, which RAM limits (K-0003) may forbid: an owner or Chair decision. Borrow cost of recent IPOs is not modelled either.
+- related: H-0004, H-0018, H-0022
+
+## H-0022 – S&P 500 change price-pressure reversal, both directions, read inside LIQ-500 - long liquid stocks just deleted from the index, short just-added ones, dollar-neutral, hold 5 days
+
+- family: `index-inclusion-price-pressure` · mechanism: flow_structural · instruments: US liquid stocks (LIQ-500) with S&P 500 membership as an input: long liquid stocks just deleted from the index, short just-added ones, dollar-neutral, five-day hold (never built or run)
+- outcome: parked by the owner before any gate: the PIT S&P 500 mask is not available to LIQ-500 cards. Nothing simulated.
+- lesson: A feasibility failure, the second in this family. The card was the workaround H-0018 proposed (read S&P membership as an input inside LIQ-500), but the input is not delivered for that universe kind, although the catalog lists the extra. Both routes to the deletion leg are now closed: inside the S&P universe a deleted stock cannot be held (H-0018); inside LIQ-500 the membership signal is missing. H-0017's open question (more power from both directions) cannot be asked with today's loaders.
+- avoid: Do not file a third both-direction index-change card, or rebuild this one on a proxy for membership, until the owner confirms the loader supplies the PIT S&P mask for the declared universe. Do not resubmit addition-only events with new holds: that is H-0017 again.
+- open questions: The membership history exists on disk but has no loader; adding one, or exposing the mask to LIQ-500 cards, is an owner or Archivist task. Then additions plus deletions in one liquid universe remain the natural way to give the placebo test more power than H-0017 had.
+- related: H-0017, H-0018
+
+## H-0023 – Earnings-announcement premium on real 8-K dates - LIQ-500 dollar-neutral, long a 5-session window around last year's Item 2.02 date + 52 weeks
+
+- family: `earnings-announcement-premium` · mechanism: calendar · instruments: US liquid stocks (LIQ-500), dollar-neutral, long a five-session window around the predicted release date
+- outcome: rejected at G1 on the mechanism test: right sign, many events, but inside the placebo cloud and gross below round-trip cost; strategy not run
+- lesson: First test with real release dates, so it settles what H-0008 and H-0015 could not. Many events, right sign, no fade, yet indistinguishable from placebo windows of the same stocks, and the placebo upper bar sits about at the round-trip cost while the event gross is below it. Any effect in LIQ-500 is smaller than the cost of trading it this way; not a power problem. The one-session horizon was negative, so no pre-announcement run-up shape. The card's date hit-rate was never reported, and the dataset misses some firms.
+- avoid: Do not retune window_days, the lead or the 45-day rule, nor refile the same dates as a run-up or attention premium: a fourth trial of the same test. Do not read the positive gross as support (K-0025).
+- open questions: The premium may sit in less covered names or in the release session itself, which a five-session LIQ-500 window cannot see. Surprise or date-shift conditioning is a different claim and must name its mechanism (Chair decision on H-0024/H-0019).
+- related: H-0008, H-0015, H-0024, H-0019
+
+## H-0024 – Concurrent-filing earnings-surprise drift - LIQ-500 dollar-neutral, long/short top/bottom quintile earnings change at filings that coincide with a volume spike, hold 5 days
+
+- family: `post-earnings-announcement-drift` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), dollar-neutral: long the best and short the worst earnings-change quintile at quarterly filings that coincide with a volume spike, five-day hold, 1998 to 2020
+- outcome: rejected at G1 on the mechanism test: abnormal return positive, cost covered, many events, but the placebo percentile stayed under the bar. The strategy was not run.
+- lesson: Nearer 'cannot tell' than refuted. Unlike H-0011 and H-0015 the placebo average was near zero, so this is not stock selection. But the placebo upper bar lay above the round-trip cost and the gross was only modestly above cost, so the effect could miss the bar. Dense events share a few earnings seasons, so the cloud stays wide (K-0031). Sub-periods were unstable, not fading: first and latest positive, middle negative. Longer horizons were not smaller, which fits drift. Whether the volume filter finds the release day is unknown (K-0028).
+- avoid: Do not retune quantile or vol_mult, or move to the longer horizon the descriptive numbers seem to favour: same events, new trials aimed at the percentile. A part-time clustered book would earn little even if real (K-0030).
+- open questions: True announcement dates (H-0023 waits on them) would replace the volume proxy. Is this the same filing-season news drift that H-0019 saw as a net-flow spread? A control conditioning on filing window and surprise together would separate them. Follow-ups should be slow tilts on an always-invested book.
+- related: H-0019, H-0009, H-0015, H-0008, H-0023, H-0017
+
+## H-0025 – Turn-of-month beta rotation, always invested - LIQ-500 long-only, high-beta quintile over the month turn (day -1 to +3), low-beta quintile the rest of the month
+
+- family: `turn-of-month-flows` · mechanism: calendar · instruments: US liquid stocks (LIQ-500), long-only: high-beta quintile over the month turn, low-beta quintile otherwise
+- outcome: mechanism test passed; rejected at G1 on the strategy: Sharpe margin over SPY a hair under the fixed bar, bootstrap bound above zero. G2 not reached.
+- lesson: The always-invested tilt asked for by K-0027 did far better than the flat-otherwise book of H-0016, but do not read the miss as promising. The pooled spread decayed across eras and was negative in the latest third, so G2's sub-period and publication checks would likely have killed it. Drawdown was as deep as the benchmark's. The comparison is confounded: an equal-weight liquid-stock book against cap-weighted SPY, with no static low-beta control and no switch A/B split (no channel). Full rotation twice a month leaves costs close to the gross effect.
+- avoid: Do not retune post_days, beta_lookback or leg_quantile, or change the benchmark, to close the margin: new trials on the same data. No fourth month-turn beta book without a new reason.
+- open questions: Is it the month-turn flow or low beta plus an equal-weight tilt? Only a same-universe control separates them. A small month-turn tilt on an always-invested cap-weighted book would cost far less; other calendar windows are separate cards.
+- related: H-0016, H-0001, H-0019
+
+## H-0026 – Overdue earnings release - LIQ-500 market-neutral, short stocks whose Item 2.02 release is several sessions past last year's same-quarter date, hedged with the other members, hold 5 days
+
+- family: `earnings-date-delay-signal` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), market-neutral: short stocks whose earnings release is late versus last year's date, hedged with other members
+- outcome: rejected at G1: right sign on average, but under the placebo bar and gross below round-trip cost; strategy not run
+- lesson: Not a power problem: the placebo upper bar lies below the round-trip cost, so a tradable effect would have cleared it (K-0034). Overdue stocks underperformed slightly on average, but the latest third reversed sign (one of the card's own kill conditions) and the one-session horizon was wrong-signed. The flag fires on a sizeable share of firm-quarters, so benign delays (calendar shifts, other filing items, dataset gaps) probably dilute it. Large-cap release dates are pre-announced, so lateness is likely priced. The rule's hit rate was never reported (K-0036).
+- avoid: Do not retune delay_sessions or hold_days, or move to the longer horizon that looks larger descriptively: new trials on the same events. Do not refile the same anniversary rule as late reporter or disclosure-timing; it shares data and date prediction with earnings-announcement-premium, so those trials count together.
+- open questions: A cleaner delay event (explicit late-filing notice, or announced versus expected dates) might behave differently, but neither is loadable today. Less-covered names are untested. The release-session reaction after an overdue flag was not isolated.
+- related: H-0023, H-0024, H-0015, H-0008, H-0019
