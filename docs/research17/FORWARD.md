@@ -1,6 +1,6 @@
 # Výzkum 17 – forward paper test LEAD na altcoinech: protokol
 
-Verze 0.1 · 2026-10-14 · Stav: **návrh protokolu, čeká na schválení vlastníkem**.
+Verze 1.0 · 2026-10-14 · Stav: **schváleno, běží**.
 Provádí §10 pre-registrace výzkumu 17 (`PREREGISTRATION.md`). Pravidlo, náklady a univerzum se **nemění**. Tento
 dokument jen určuje, jak se data po 2026-09-30 sbírají, jak se z nich počítá a kdy se rozhoduje. Po commitu
 verze 1.0 platí: změny = řádek v §9 s důvodem, **před** dalším vyhodnocením.
@@ -85,3 +85,4 @@ skluz a rozhodnout o velikosti pozic (nový dokument).
 | Datum | Změna |
 |---|---|
 | 2026-10-14 | Verze 0.1, návrh. |
+| 2026-10-14 | Verze 1.0 schválena vlastníkem beze změn (primární portfolio = 10 altcoinů, prodloužení po 3 měsících při < 30 událostech). Před zmrazením a prvním stažením se nestahovala ani nezkoumala žádná data po 2026-09-30. |
