@@ -345,6 +345,10 @@ def evaluate(panels: dict, members: dict, asof: date, n_rnd: int = N_RND, n_boot
             "eth_reference_weight1": stats(eth_ref.daily, eth_ref.rets if len(eth_ref.rets) else None),
             "per_symbol": per_sym,
         }
+        out["daily"] = {"dates": [str(d) for d in dates], "ret": [float(x) for x in daily]}
+        out["trades"] = sorted(({"sym": s, "entry": str(np.datetime64(int(t) * 900, "s")), "ret": float(x)}
+                                for s, r in base.items() for t, x in zip(r.entries, r.rets)),
+                               key=lambda x: x["entry"])
         m = dates.astype("datetime64[M]")
         out["by_month"] = {str(k): float(np.prod(1 + daily[m == k]) - 1) for k in np.unique(m)}
         if len(dates) > 1:

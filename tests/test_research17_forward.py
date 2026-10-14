@@ -211,6 +211,10 @@ def test_evaluate_matches_the_engine_and_reports_pending_months():
         # the first month of the forward test holds both members, the next one only AAAUSDT
         assert set(out["members_used"]) == {"2026-10", "2026-11"}
     assert set(out["per_symbol"]) <= {"AAAUSDT", "BBBUSDT"}
+    assert len(out["daily"]["dates"]) == out["days"] and len(out["trades"]) == out["n_trades"]
+    assert out["daily"]["dates"][0] == "2026-10-01" and out["trades"] == sorted(out["trades"], key=lambda x: x["entry"])
+    assert all(x["entry"] >= "2026-10-01" for x in out["trades"])
+    assert sum(x["ret"] for x in out["trades"]) == pytest.approx(sum(v["n"] * v["mean"] for v in out["per_symbol"].values()))
 
 
 def test_evaluate_ignores_data_after_asof_and_history_start_is_not_traded():
@@ -244,3 +248,92 @@ def test_fetch_days_raises_on_server_errors_instead_of_ending_quietly(tmp_path, 
     monkeypatch.setattr(dl, "_get", get)
     with pytest.raises(urllib.error.HTTPError):
         F.fetch_days("perp", "AAAUSDT", date(2026, 10, 1), date(2026, 10, 3), out=tmp_path)
+
+
+# ---------------------------------------------------------------- operations: health, alerts, dashboard
+
+from datetime import datetime, timezone  # noqa: E402
+
+from qlab.research17 import dashboard, ops  # noqa: E402
+
+TODAY = date(2026, 10, 20)
+FWD_OK = {"asof": "2026-10-19", "stale_symbols": {}, "pending_months": []}
+
+
+def test_parse_download_picks_error_records_and_exit_code():
+    out = "{'market': 'perp', 'symbol': 'A', 'new': 3}\n{'symbol': 'B', 'error': 'URLError: dns'}\nerrors: 1\n"
+    assert ops.parse_download(out, 1) == ["{'symbol': 'B', 'error': 'URLError: dns'}"]
+    assert ops.parse_download("errors: 0\n", 0) == []
+    assert "kódem 2" in ops.parse_download("traceback...", 2)[0]
+
+
+def test_problems_cover_each_failure_mode():
+    ok = {"download": {"errors": [], "exit": 0}, "status": {"exit": 0}}
+    assert ops.problems(ok, FWD_OK, TODAY) == []
+    assert "stahování: 1 chyb" in ops.problems({**ok, "download": {"errors": ["x"], "exit": 1}}, FWD_OK, TODAY)[0]
+    p = ops.problems({**ok, "status": {"exit": 1, "error": "boom"}}, None, TODAY)
+    assert len(p) == 1 and "status selhal" in p[0]
+    assert "chybí výsledek" in ops.problems(ok, None, TODAY)[0]
+    assert "data zaostávají" in ops.problems(ok, {**FWD_OK, "asof": "2026-10-15"}, TODAY)[0]
+    assert ops.problems(ok, {**FWD_OK, "asof": "2026-10-17"}, TODAY) == []                  # 3 days is still fine
+    assert "zastaralá data u: AAAUSDT" in ops.problems(ok, {**FWD_OK, "stale_symbols": {"AAAUSDT": "2026-10-10"}}, TODAY)[0]
+    pend = {**FWD_OK, "asof": "2026-11-02", "pending_months": ["2026-11"]}
+    assert ops.problems(ok, pend, date(2026, 11, 3)) == []                                    # ZIPs not published yet
+    assert "2026-11" in ops.problems(ok, {**pend, "asof": "2026-11-08"}, date(2026, 11, 9))[0]
+
+
+def test_notify_never_raises_and_needs_a_topic():
+    assert ops.notify(None, "t", "b") is False
+    seen = []
+    assert ops.notify("topic", "Chyba: stažení", "těžká zpráva", post=lambda r: seen.append(r)) is True
+    r = seen[0]
+    assert r.full_url == "https://ntfy.sh/topic" and r.data.decode() == "těžká zpráva"
+    assert r.get_header("Title") == "Chyba: sta?en?" and r.get_header("Priority") == "high"
+
+    def boom(_):
+        raise OSError("no network")
+    assert ops.notify("topic", "t", "b", post=boom) is False
+
+
+def test_run_age():
+    now = datetime(2026, 10, 20, 12, tzinfo=timezone.utc)
+    assert ops.run_age_days({"last_run": "2026-10-13T12:00:00+00:00"}, now) == pytest.approx(7)
+    assert ops.run_age_days({}, now) is None
+
+
+def _forward_out():
+    return F.evaluate(PANELS, MEMBERS, ASOF, n_rnd=20, n_boot=100) | {"commit": "abc", "rule_hash": "r" * 64,
+                                                                    "data_hash": "d" * 64}
+
+
+def test_dashboard_renders_numbers_alerts_and_escapes_html():
+    fwd = _forward_out()
+    fwd["trades"][0] = {**fwd["trades"][0], "sym": "<script>alert(1)</script>"}
+    state = {"last_run": "2026-10-19T06:30:00+00:00", "last_ok": "2026-10-12T06:30:00+00:00",
+             "download": {"exit": 1, "errors": ["x"]}, "status": {"exit": 0}, "alerts": ["stahování: 1 chyb <b>"]}
+    page = dashboard.render(fwd, state, datetime(2026, 10, 20, tzinfo=timezone.utc), date(2026, 10, 1),
+                            date(2027, 3, 31), 30)
+    assert "PROBLÉM" in page and "stahování: 1 chyb &lt;b&gt;" in page and "<script>alert" not in page
+    assert f"{fwd['n_events']}" in page and "<svg" in page and "Neprůkazné" in page and "Citlivost" in page
+    assert "2026-12-20" in page or "2026-12" in page
+    assert "chybí" in page or fwd["pending_months"] == []
+    assert page.count("<script") == 0                                  # static page: CSP-friendly, nothing to run
+
+
+def test_dashboard_handles_no_forward_result_and_ok_state():
+    page = dashboard.render(None, {"download": {}, "status": {}, "alerts": []}, datetime(2026, 10, 20, tzinfo=timezone.utc),
+                            date(2026, 10, 1), date(2027, 3, 31), 30)
+    assert "OK" in page and "Zatím není žádný výsledek" in page
+    stale = dashboard.render(None, {"last_run": "2026-10-01T06:30:00+00:00", "alerts": []},
+                             datetime(2026, 10, 20, tzinfo=timezone.utc), date(2026, 10, 1), date(2027, 3, 31), 30)
+    assert "cron neběží" in stale
+
+
+@pytest.mark.skipif(not list(Path("docs/research17/results").glob("forward_2*.json")), reason="no forward status yet")
+def test_dashboard_renders_the_committed_status_file():
+    f = json.loads(sorted(Path("docs/research17/results").glob("forward_2*.json"))[-1].read_text())
+    if "daily" not in f:
+        pytest.skip("status file predates the daily/trades fields")
+    page = dashboard.render(f, {"alerts": [], "download": {}, "status": {}}, datetime.now(timezone.utc),
+                            date(2026, 10, 1), date(2027, 3, 31), 30)
+    assert f["asof"] in page and str(f["n_events"]) in page

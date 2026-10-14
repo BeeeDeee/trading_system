@@ -66,7 +66,10 @@ Jinak **zamítnuto**. Další pravidla (stanovena předem, aby nešlo zastavit p
   dokládá, že výsledek vznikl před pozdějšími daty.
 - `… final` je povoleno až při `asof ≥ 2027-03-31` (resp. konci prodloužení) a ≥ 30 událostech, jednou, zapíše
   `results/forward_final.json` s rozhodnutím podle §4.
-- Průběžný režim: 1× týdně `download` + `status` a commit. Při chybě stahování se nic neinterpoluje.
+- Průběžný režim: 1× týdně (cron, `scripts/r17_forward_weekly.sh`) `download` + `status`, kontrola zdraví
+  (`qlab.research17.ops`), obnova dashboardu (`qlab.research17.dashboard`, záložka „LEAD forward“ v portalu) a upozornění
+  přes ntfy při chybě stahování, selhání statusu, zaostávajících datech, zastaralých symbolech nebo chybějícím členství.
+  Nové `forward_<datum>.json` se commituje ručně. Při chybě stahování se nic neinterpoluje.
 
 ## 7. Co forward neověřuje
 
@@ -86,3 +89,4 @@ skluz a rozhodnout o velikosti pozic (nový dokument).
 |---|---|
 | 2026-10-14 | Verze 0.1, návrh. |
 | 2026-10-14 | Verze 1.0 schválena vlastníkem beze změn (primární portfolio = 10 altcoinů, prodloužení po 3 měsících při < 30 událostech). Před zmrazením a prvním stažením se nestahovala ani nezkoumala žádná data po 2026-09-30. |
+| 2026-10-14 | Provozní doplněk (nemění pravidlo ani rozhodnutí): týdenní běh, upozornění a dashboard; `forward_<datum>.json` obsahuje navíc denní výnosy a seznam obchodů. |
