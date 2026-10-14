@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dashboardy</title>
+<style>
+:root{--bg:#f4f5f4;--bar:#fbfcfb;--ink:#18211d;--muted:#5a6760;--rule:#d5dbd7;--accent:#2f6ba8;--accent-bg:#e4edf6}
+@media (prefers-color-scheme:dark){:root{--bg:#101513;--bar:#161d1a;--ink:#e3e9e5;--muted:#9aa8a1;--rule:#2a3430;--accent:#4f8ad0;--accent-bg:#1a2a3b}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+nav{display:flex;align-items:center;gap:4px;padding:6px 12px;background:var(--bar);border-bottom:1px solid var(--rule);overflow-x:auto}
+nav button,nav a{font:inherit;color:var(--muted);background:none;border:0;border-radius:6px;padding:7px 12px;cursor:pointer;white-space:nowrap;text-decoration:none}
+nav button:hover,nav a:hover{background:var(--accent-bg)}
+nav button[aria-selected=true]{color:var(--accent);background:var(--accent-bg);font-weight:600}
+nav button:focus-visible,nav a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.sp{flex:1}
+main{flex:1;position:relative;min-height:0}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
+iframe[hidden],.msg[hidden]{display:none}
+.msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center;color:var(--muted)}
+.msg a{color:var(--accent)}
+</style>
+</head>
+<body>
+<nav role="tablist" aria-label="Dashboardy">
+  <button role="tab" data-tab="crypto" aria-selected="false">Crypto paper bot</button>
+  <button role="tab" data-tab="lab" aria-selected="false">Research Lab</button>
+  <button role="tab" data-tab="evening" aria-selected="false">Večerní bot</button>
+  <span class="sp"></span>
+  <button id="reload" title="Znovu načíst aktuální záložku" aria-label="Znovu načíst">↻</button>
+  <a id="pop" href="#" target="_blank" rel="noopener" title="Otevřít v samostatném okně" aria-label="Otevřít v samostatném okně">↗</a>
+</nav>
+<main>
+  <iframe id="f-crypto" title="Crypto paper bot" hidden></iframe>
+  <iframe id="f-lab" title="Research Lab" hidden></iframe>
+  <iframe id="f-evening" title="Večerní bot" hidden></iframe>
+  <div class="msg" id="m-evening" hidden>
+    <div>Večerní bot ještě neběží na tomto serveru.</div>
+    <div>Zatím ho najdeš jen v Claude aplikaci: <a href="https://claude.ai/artifact/CgJr4SMobQ7AcnV2y6RUbG" target="_blank" rel="noopener noreferrer">Deník večerního bota</a></div>
+  </div>
+</main>
+<script>
+(function(){
+  var TABS = {crypto:"/crypto/", lab:"/lab/", evening:"/evening/"};
+  var loaded = {};
+  var cur = null;
+  var buttons = document.querySelectorAll("nav [data-tab]");
+  function store(k, v){ try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch(e){} return null; }
+  function show(name){
+    if (!TABS[name]) name = "crypto";
+    cur = name;
+    store("portal.tab", name);
+    if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
+    buttons.forEach(function(b){ b.setAttribute("aria-selected", String(b.dataset.tab === name)); });
+    Object.keys(TABS).forEach(function(k){ document.getElementById("f-" + k).hidden = (k !== name); });
+    document.getElementById("m-evening").hidden = true;
+    document.getElementById("pop").href = TABS[name];
+    document.title = document.querySelector('[data-tab="' + name + '"]').textContent + " · Dashboardy";
+    if (loaded[name]) return;
+    if (name === "evening") {
+      fetch(TABS.evening, {method:"HEAD", credentials:"same-origin", cache:"no-store"}).then(function(r){
+        if (cur !== "evening") return;
+        if (r.ok) { loaded.evening = true; document.getElementById("f-evening").src = TABS.evening; }
+        else { document.getElementById("f-evening").hidden = true; document.getElementById("m-evening").hidden = false; }
+      }).catch(function(){ document.getElementById("m-evening").hidden = false; });
+      return;
+    }
+    loaded[name] = true;
+    document.getElementById("f-" + name).src = TABS[name];
+  }
+  buttons.forEach(function(b){ b.addEventListener("click", function(){ show(b.dataset.tab); }); });
+  document.getElementById("reload").addEventListener("click", function(){
+    var f = document.getElementById("f-" + cur);
+    if (f.src) f.src = f.src; else { loaded[cur] = false; show(cur); }
+  });
+  window.addEventListener("hashchange", function(){ var h = location.hash.slice(1); if (TABS[h] && h !== cur) show(h); });
+  var h0 = location.hash.slice(1);
+  show(TABS[h0] ? h0 : (store("portal.tab") || "crypto"));
+})();
+</script>
+</body>
+</html>
