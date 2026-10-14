@@ -1,6 +1,6 @@
 # Výzkum 16 – Dávka 1: osm rodin intradenních strategií na 15m datech (pre-registrace)
 
-Verze 1.0 · 2026-10-14 · Stav: **schváleno, implementace**.
+Verze 1.0 · 2026-10-14 · Stav: **schváleno, vývoj**.
 Navazuje na výzkum 15 (MTF 4h/1h/15m, zamítnut 4 ze 6). První dávka „vymyšlených“ strategií: osm rodin
 s jednoduchým mechanismem, každá s malou mřížkou, všechny kandidáty se počítají do N. Po commitu verze 1.0
 platí: změny = nový pokus v registru a řádek v §12.
@@ -137,3 +137,5 @@ sekundární koš altcoinů z výzkumu 15 (top 10 podle objemu, jen u rodin, kte
 |---|---|
 | 2026-10-14 | Verze 0.1, návrh. |
 | 2026-10-14 | Verze 1.0 schválena vlastníkem beze změn (dotaz na rozdělení období zodpovězen, §7 platí). |
+| 2026-10-14 | Upřesnění implementace (rozhodnuto při psaní kódu, před jakýmkoli výpočtem nad cenami; pravidla §4–8 se nemění): (a) σ = sm. odchylka (ddof 1) 15m log výnosů mezi dvěma reálnými svíčkami v okně 672 svíček končícím *k*, nutno ≥ 75 % platných, jinak bez signálu. (b) ORB: rozpětí jen ze dnů, kde jsou všechny svíčky rozpětí reálné; kandidát dne je první průraz (u LONG první průraz nahoru); nevstoupí-li (meze rizika), den je vyčerpán. (c) SQZ, RANGE, SHOCK, PULL, LEAD: kandidátem je každá svíčka splňující podmínku; během pozice se ignorují, po výstupu platí další. PULL: setup = 1h bar s RSI ≤ *L* (≥ 100 − *L*) a režimem ve směru při jeho uzavření, aktivní svíčky 4j+4 … 4j+19. (d) FUND: ostré nerovnosti (> *q*-kvantil, < (1−*q*)-kvantil 270 předchozích záznamů, lineární interpolace), protože sazby se kupí na 0,01 %; „neostré“ by v klidu otevíralo short při každé základní sazbě. (e) CME: F = close svíčky končící pá 16:00 Chicago, *k* = svíčka začínající ne 17:00 Chicago; obě musí být reálné; ETH od víkendu, jehož pátek je ≥ 2021-02-08. (f) B_RND vystupuje jen časem (bez stopu a cíle); u CME stejné vstupní svíčky jako P_f, náhodná strana, délka z obchodů P_f; ORB nejpozději 23:45 téhož dne. Kvóty (měsíc, strana) nemusí jít vždy naplnit (FUND: 72 h na 3 svíčkách denně), pak se naplní, co jde. (g) Minimálně 30 obchodů platí pro výběr P_f na vývoji. (h) Neprojde-li bránou žádná rodina, holdout se neotevírá. (i) Mřížka FUND „LS“ = long i short podle §4, „LONG“ = jen long při sazbě pod (1−*q*)-kvantilem. |
+| 2026-10-14 | **Zveřejnění:** před commitem kódu proběhl smoke test `r16_dev.py` na vývojových datech (registr do scratchpadu, B_RND jen 20 běhů), viděl jsem tedy vývojová čísla všech 30 variant. Kód ani pravidla jsem po něm neměnil. Ostrý vývojový běh (1000 běhů nuly) následuje po commitu kódu. |
