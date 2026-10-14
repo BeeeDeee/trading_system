@@ -139,7 +139,10 @@ notes: 'Brief fit: short horizon (5 sessions), US single stocks, cross-sectional
   liq_n with n = 500 (Chair decision, not a silent switch). G0 note (K-0040): the synthetic market needs a few release
   flags and peer structure for the look-ahead check to exercise the code; the Skeptic should read the event code
   for the t vs t-1 release exclusion and for peers computed from data before the month start.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_costs
 history:
 - ts: '2026-10-12T07:47:59.820776+00:00'
   version: 1
@@ -162,3 +165,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-13T03:31:15.339122+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 59, qlab-v1)
+- ts: '2026-10-13T03:32:39.943526+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 60, qlab-v1)

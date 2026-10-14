@@ -30,6 +30,24 @@ Real release dates now support three claims in liquid US stocks over a five-sess
 
 *confidence medium · 2026-10-12 · librarian · supersedes K-0037 · evidence: H-0023; H-0024; H-0026; K-0024; K-0034*
 
+### K-0041 The trading-window net-flow spread does not survive a move from the filing date to the real release date
+
+The net-repurchaser-minus-stock-compensation-supplier spread in liquid US stocks passed the event-study gate clearly when anchored to the quarterly filing (H-0019) but fell short of the placebo bar when anchored to the real earnings release (H-0027), where it also built slowly with the horizon, had nothing in the first sessions and reversed sign in the latest third. A flow concentrated just after the trading window opens would show up at the release anchor and early horizons; it did not. The filing-anchored result is better read as filing-linked news or earnings-season drift, or as a slow style difference between repurchasers and issuers that the placebo (same stocks) cannot net out. Treat the trading-window flow family as closed for five-session books in LIQ-500; any remaining claim is a slow tilt, to be argued as a style premium.
+
+*confidence medium · 2026-10-13 · librarian · evidence: H-0019; H-0027; K-0025; K-0030*
+
+### K-0044 Weekly return-sort effects in the most liquid US stocks are smaller than cost, in either sign
+
+Past-month-return effects in liquid US stocks have now been tested with a reversal sign (H-0007, K-0012), with a conditional continuation sign (H-0029, highest-turnover stocks) and with a reversal sign after removing earnings sessions and adjusting for correlated peers in the S&P 500 (H-0030). None gave a tradable five-session effect: H-0029 was inside the placebo cloud with a bar below cost and a negative latest third, H-0030 cleared the placebo bar but earned well under round-trip cost, and H-0007 was early-era and small-name. Conditioning the sort (news, turnover, intraday split, peers) changes the sign or the significance, not the order of magnitude relative to cost. A further conditioner on the same one-month sort in the large-cap universe has a low prior; a cost-light implementation or a less-covered universe would be a different claim.
+
+*confidence medium · 2026-10-13 · librarian · evidence: H-0007; H-0029; H-0030; K-0012; K-0024*
+
+### K-0046 The release-session reaction drift reproduces on the same events in three book designs, and the long side alone shows it
+
+Three cards built on the same real-release-date reaction events (a long/short book, a fixed-slot long/short book, and a long-only tilt on positive reactions) each cleared the placebo bar with gross above cost and a positive sign in every third of the sample. They share events, so this is one piece of evidence seen three times, not three confirmations. What is new: the positive side alone carries drift, so the effect is not only a short-side artifact, and within the positive-only set it weakens from the earliest to the latest third while staying positive. The effect is real in an equal-weight event study but small next to cost: the market-neutral books lost to T-bills, and the long-only tilt on an always-invested core came nearest to a pass, beating the market on the point estimate with a reliable bound but not by the required margin.
+
+*confidence low · 2026-10-14 · librarian · supersedes K-0043 · evidence: H-0028; H-0031; H-0033; K-0043*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -124,17 +142,17 @@ H-0016 is the first card whose event study cleared the placebo bar and was then 
 
 *confidence medium · 2026-10-09 · librarian · evidence: H-0016; H-0001; K-0005*
 
-### K-0030 A passing mechanism test is necessary, not sufficient: pooled events hide era fade, clustering and re-weighting costs
-
-Two cards now cleared the event-study gate and then failed the strategy gate with a net return close to cash: H-0016 (month-turn beta spread) and H-0019 (post-filing net-flow spread, the clearest pass so far). The pooled mean abnormal return per event overstates what a book earns because (1) the effect faded across sub-periods in both cases and the latest third is the one that predicts the future; (2) events cluster in a few weeks, so the book is invested a fraction of the time with small weights per name; (3) the strategy's daily re-equalising of weights adds turnover that the per-event round-trip cost ratio leaves out. Before filing a strategy on a passed mechanism, check the latest sub-period alone against cost, estimate the book's annual gross as events times weight times effect, and prefer a low-turnover tilt on an always-invested benchmark. Extends K-0027 from calendar windows to any clustered event set.
-
-*confidence medium · 2026-10-11 · librarian · evidence: H-0016; H-0019; K-0027; K-0021*
-
 ### K-0034 Compare the placebo bar with the round-trip cost: many events can still leave a bar above cost
 
 A mechanism failure at G1 is a 'cannot tell' when the placebo bar (its upper percentile) lies above the round-trip cost, because a tradable effect could still miss it. H-0017 (sparse events) and now H-0024 (thousands of events on over a thousand dates) are such cases: right sign, gross above cost, percentile just under the bar, bar above cost. Event count does not cure it, because events within a date share one cross-section and earnings seasons cluster dates. When the bar lies below cost (H-0020) the failure means the effect is not tradable in that form. Widening the event set helps only if it narrows the cloud below the cost; tuning filters or horizon on the same events creates new trials. Read near misses as a coin flip, not as promise.
 
 *confidence medium · 2026-10-11 · librarian · supersedes K-0031 · evidence: H-0017; H-0020; H-0024; K-0026; K-0031*
+
+### K-0048 Fixed event slots did not close the gap between a passing event study and a failing market-neutral book
+
+Four cards cleared the event-study gate and then failed the strategy gate (H-0016, H-0019, H-0028, H-0031). H-0031 removed the first suspect of K-0042, weight normalization, with fixed risk-scaled slots and a liquid net hedge; exposure was about two fifths and the net Sharpe was still below T-bills, so the card's own stop rule fired. Remaining suspects: hedge basket not matched to the study's equal-weight benchmark, costs on names that just moved several deviations, squeezes, and cash handling (unverified whether idle cash earns the T-bill rate). The gate gives no gross/net or long/short split. The long-only tilt H-0033 came close, pointing at the short, hedge or cash side. Event gross covered cost by a modest multiple in both books. Do not file more market-neutral reaction-following books until the output decomposes.
+
+*confidence medium · 2026-10-14 · librarian · supersedes K-0042 · evidence: H-0016; H-0019; H-0028; H-0031; H-0033; K-0042*
 
 ## The judge (framework behaviour)
 
@@ -168,11 +186,11 @@ Three cards in two families hit the same wall in different forms. H-0018 (delete
 
 *confidence medium · 2026-10-11 · librarian · supersedes K-0029 · evidence: H-0018; H-0021; H-0022; K-0029*
 
-### K-0040 G0 look-ahead checks are vacuous for event cards; diagnostics cannot be reported (eight cards)
+### K-0047 G0 now reports real event counts and look-ahead cuts for event cards; Skeptic messages still absent
 
-Eight event or window cards since H-0010 had a G0 look-ahead check that exercised little or nothing on the synthetic market: no dividends (H-0010), no insider events (H-0012), too few names (H-0013), constant volume (H-0024), no lockups (H-0021), two events (H-0023), one event date (H-0025), and now H-0026, whose synthetic filing flags cannot produce an overdue event although the real dev set had thousands. Builders substitute hand-made tests that no gate reads. Declared diagnostics have no channel to the gate result (payer share, volume and date hit rates, switch split, static control, overdue-rule hit rate). Extend the synthetic market with the data each card needs and add a diagnostic output channel; until then the Skeptic should read the event code, and Scouts should not count on a declared diagnostic being reported.
+K-0045 said G0 reported no event or position count and was vacuous for event cards on the 80-name synthetic market. For H-0031, H-0032 and H-0033 the G0 metrics contain events_in_dev (14678, 15554, 7524) that match the G1 event counts (14678, 15547, 7524) and an events_lookahead_failures block with 25 cuts and no failures, so the gate-side check appears to run on the real event set now. Not verified: where the 25 cuts fall (whether they hit event rows). The Builder-side lab try still shows zero events on the synthetic market (their summaries), and G0 for H-0010 to H-0030 stays as K-0045 described. cases.json again has no Skeptic message for any of the three cards although each Builder summary asked the Skeptic to read the event code; either the Skeptic did not run or its messages are not captured.
 
-*confidence high · 2026-10-12 · librarian · supersedes K-0036 · evidence: H-0010; H-0012; H-0013; H-0015; H-0021; H-0023; H-0024; H-0025; H-0026; K-0028*
+*confidence medium · 2026-10-14 · librarian · supersedes K-0045 · evidence: H-0031; H-0032; H-0033; K-0045*
 
 ## How the lab works
 
@@ -217,7 +235,12 @@ Two of the first cards with a mechanism test (ex-dividend price pressure, breako
 - K-0004 No earnings dates in the lab
 - K-0028 G0 checks are vacuous when the synthetic market lacks the card's data, and card diagnostics cannot be reported
 - K-0029 The engine cannot hold stocks that have left the declared universe, so exit-from-universe events are untestable
+- K-0030 A passing mechanism test is necessary, not sufficient: pooled events hide era fade, clustering and re-weighting costs
 - K-0031 Compare the placebo bar with the round-trip cost to tell a power problem from an untradable effect
 - K-0033 G0 look-ahead checks are vacuous for event cards, and diagnostics cannot be reported (now five cards)
 - K-0036 G0 look-ahead checks are vacuous for event cards, and diagnostics cannot be reported (now seven cards)
 - K-0037 Earnings-announcement premium: absent as a tradable effect in large liquid US stocks, with real dates too
+- K-0040 G0 look-ahead checks are vacuous for event cards; diagnostics cannot be reported (eight cards)
+- K-0042 A passing mechanism test can still end in a book below cash, even without fade
+- K-0043 The market's own release-session reaction predicts same-direction returns in liquid stocks
+- K-0045 G0 look-ahead checks stay vacuous for cards with minimum-size rules (now eleven cards)
