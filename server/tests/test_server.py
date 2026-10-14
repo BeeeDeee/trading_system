@@ -151,6 +151,30 @@ class FakeWorld(unittest.TestCase):
         self.assertEqual(rec["status"], "failed")
         self.assertIn("Křížová kontrola", rec["message"])
 
+    def test_nasdaq_lag_saves_day_and_confirms_later(self):
+        self.market(["2026-09-22", "2026-09-23"])
+        full = self.fake_nasdaq
+        prices.nasdaq_rows = lambda tk, days=12: {d: v for d, v in full(tk).items() if d < "2026-09-22"}   # Nasdaq lags
+        rec = self.run_day("2026-09-22")
+        self.assertEqual(rec["status"], "ok", rec)
+        self.assertIsNotNone(self.st.get("days", "2026-09-22"))
+        self.assertTrue(self.st.get("runs", "2026-09-22")["spy_crosscheck"]["pending"])
+        prices.nasdaq_rows = lambda tk, days=12: {d: v for d, v in full(tk).items() if d < "2026-09-23"}
+        rec = self.run_day("2026-09-23")
+        c = self.st.get("runs", "2026-09-22")["spy_crosscheck"]
+        self.assertEqual((c["pending"], c["diff_pct"]), (False, 0.0), c)
+        self.assertNotIn("Zpětná", rec["message"])
+
+    def test_late_nasdaq_disagreement_is_reported(self):
+        self.market(["2026-09-22", "2026-09-23"])
+        full = self.fake_nasdaq
+        prices.nasdaq_rows = lambda tk, days=12: {d: v for d, v in full(tk).items() if d < "2026-09-22"}
+        self.run_day("2026-09-22")
+        prices.nasdaq_rows = lambda tk, days=12: {d: ([v[0], v[1], v[2], v[3] * 1.01] if d == "2026-09-22" else v) for d, v in full(tk).items() if d < "2026-09-23"}
+        rec = self.run_day("2026-09-23")
+        self.assertEqual(rec["status"], "warning", rec)
+        self.assertIn("Zpětná kontrola 2026-09-22", rec["message"])
+
     def test_dry_run_leaves_real_data(self):
         self.market(["2026-09-22"])
         self.run_day("2026-09-22", dry_run=True)

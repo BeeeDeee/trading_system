@@ -119,11 +119,7 @@ def crosscheck(rows_primary, today, date, ordinal):
         prim = (today.get("close") or {}).get(tk)
         rec = {"ticker": tk, "primary": prim, "other": None, "other_source": "api.nasdaq.com (historical)", "diff_pct": None}
         try:
-            for attempt in range(2):
-                other = prices.nasdaq_rows(tk).get(date)
-                if other:
-                    break
-                time.sleep(20)
+            other = prices.nasdaq_rows(tk).get(date)
             rec["other"] = other[3] if other else None
         except prices.FetchError as e:
             warns.append(f"Křížová kontrola {tk} nedostupná: {e}")
@@ -131,11 +127,45 @@ def crosscheck(rows_primary, today, date, ordinal):
             rec["diff_pct"] = round((prim / rec["other"] - 1) * 100, 3)
             if abs(rec["diff_pct"]) > 0.3:
                 raise Fail(f"Křížová kontrola {tk}: Yahoo {prim} vs Nasdaq {rec['other']} ({rec['diff_pct']:+.2f} %)")
-        elif not warns or tk not in warns[-1]:
-            warns.append(f"Křížová kontrola {tk}: Nasdaq zatím nemá řádek pro {date}")
+        else:
+            rec["pending"] = True                                   # Nasdaq publishes the day later; confirm_pending() settles it
         out.append(rec)
     return out[0], out[1], warns
 
+
+
+def confirm_pending(st, today_date):
+    """Nasdaq's historical table lags by hours/days. Confirm the Yahoo closes of earlier days whose cross-check was pending.
+    -> list of warnings (disagreement > 0.3 %, or still unconfirmed after 4 days)."""
+    out, cache = [], {}
+    for d in sorted(st.ids("runs")):
+        r = st.get("runs", d)
+        if not r or d >= today_date or r.get("status") not in ("ok", "warning"):
+            continue
+        changed = False
+        for key in ("spy_crosscheck", "stock_crosscheck"):
+            c = r.get(key)
+            if not c or c.get("other") is not None or not c.get("primary"):
+                continue
+            tk = c["ticker"]
+            try:
+                if tk not in cache:
+                    cache[tk] = prices.nasdaq_rows(tk)
+            except prices.FetchError:
+                continue
+            row = cache[tk].get(d)
+            if row:
+                c["other"], c["pending"] = row[3], False
+                c["diff_pct"] = round((c["primary"] / row[3] - 1) * 100, 3)
+                changed = True
+                if abs(c["diff_pct"]) > 0.3:
+                    out.append(f"Zpětná kontrola {d} {tk}: Yahoo {c['primary']} vs Nasdaq {row[3]} ({c['diff_pct']:+.2f} %)")
+            elif len(cal.trading_days_between(dt.date.fromisoformat(d), dt.date.fromisoformat(today_date))) > 4 and not c.get("stale"):
+                c["stale"], changed = True, True
+                out.append(f"Nasdaq nepotvrdil {d} {tk} ani po 4 obchodních dnech")
+        if changed:
+            st.put("runs", d, r)
+    return out
 
 # ---------------------------------------------------------------- saving
 def save_day(st, out, today, scores, hist, date):
@@ -243,10 +273,6 @@ def run(data_dir, date=None, dry_run=False, force=False, scores_file=None, free_
             if rows:
                 hist[t] = rows
         spy, stock, cc_warn = crosscheck(rows_all, today, date, len(st.ids("days")))
-        if (not dry_run and not force and date == ny.date().isoformat() and ny.hour < 19
-                and (spy["other"] is None or stock["other"] is None)):
-            # Yahoo's same-evening close can still be provisional; without the Nasdaq confirmation wait for the next timer slot (19:00 ET = last)
-            raise Fail("Nasdaq zatím nepotvrdil uzavírací ceny; další pokus v dalším časovém okně (naposledy 19:00 ET)")
         chk, hist, prev, nn = check_with_split(cfg, hist, prev, today, work, "today")
         notes += nn
         if chk["errors"]:
@@ -304,8 +330,10 @@ def run(data_dir, date=None, dry_run=False, force=False, scores_file=None, free_
         save_day(st, out, read_json(os.path.join(work, "today_today.json")), scores, hist, date)
 
         # --- 8. run record
-        warn = bool(chk["warnings"] or catchup or cc_warn or val["errors"] or errs or any("Chybí" in n or "Model" in n or "Split" in n for n in notes))
-        msg = (f"Běh v pořádku: ceny {chk['tickers_ok']} titulů z Yahoo (křížová kontrola Nasdaq), "
+        retro = confirm_pending(st, date)
+        notes += retro
+        warn = bool(retro or chk["warnings"] or catchup or cc_warn or val["errors"] or errs or any("Chybí" in n or "Model" in n or "Split" in n for n in notes))
+        msg = (f"Běh v pořádku: ceny {chk['tickers_ok']} titulů z Yahoo (Nasdaq potvrdí zpětně), "
                f"{sum(len(v.get('fills') or []) for v in d['variants'].values())} plnění.") if not warn else \
             "Běh dokončen s upozorněním: " + "; ".join((chk["warnings"] + cc_warn + notes)[:4])
         rec = finish("warning" if warn else "ok", msg, source="yahoo finance chart API (OHLC) + api.nasdaq.com (křížová kontrola)",

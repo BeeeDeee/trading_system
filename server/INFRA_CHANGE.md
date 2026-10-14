@@ -11,6 +11,7 @@ Rozhodnuto: 2026-10-10 (uživatel: cutover hned, ne až po 2026-11-25). Posledn�
 - Harness: Claude cloud scheduled task -> `claude -p` na serveru (nástroje WebSearch, WebFetch, Read, Write; `--restricted`).
 - Zdroj cen: stockanalysis.com (z IP serveru blokováno, 403) -> Yahoo chart API + křížová kontrola Nasdaq API (SPY + rotující akcie, tolerance 0,3 %).
   Dopad změřen na 796 hodnotách: 54 se liší (6,8 %), max 0,23 %, hlavně otevírací ceny ETF; vliv na equity ≤ 1,3 USD z 10 000.
+- Kontrola proti Nasdaq: Nasdaq doplňuje historii se zpožděním (týž večer ani po 17:00 ET řádek není). Den se proto uloží hned s cenami z Yahoo (`pending`) a Nasdaq je potvrdí zpětně při dalším běhu; rozdíl > 0,3 % nebo nepotvrzeno po 4 obchodních dnech = upozornění v run záznamu a ntfy. Rozhodnuto 2026-10-14.
 - Úložiště: DB artefaktu -> soubory (`~/evening-data`), dashboard `/evening/` na serveru.
 - Plánování: systemd timer po–pá 16:30 / 17:30 / 19:00 America/New_York.
 - Záznamy od cutoveru nesou `code.source = "server"`.
