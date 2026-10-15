@@ -48,6 +48,12 @@ Three cards built on the same real-release-date reaction events (a long/short bo
 
 *confidence low · 2026-10-14 · librarian · supersedes K-0043 · evidence: H-0028; H-0031; H-0033; K-0043*
 
+### K-0049 Crypto forced-flow rebounds exist before stress but a taker cannot keep them
+
+The conditional rebound after fast, high-volume, taker-dominated moves in liquid crypto perps (H-0035, both directions) left a positive average trade after modeled taker costs and beat random-timed trades, so a liquidity-provision effect appears to exist. It did not survive costs at twice the model, and its profit sat in the first two thirds of the 2020-2022 dev period while the last third lost. Together with the hourly reversal finding of study mrel-1h (harvestable only as a maker) and the daily dip-buy H-0006 (could not tell), the pattern is that crypto reversal is paid to whoever provides liquidity at the stress moment and is small or negative for a taker who enters a candle later with optimistic slippage. The effect looked faster than the hold: the result halved with a one-candle later fill. Whether it is absent in sustained crashes is untested.
+
+*confidence low · 2026-10-14 · librarian · evidence: H-0035; H-0006; prior_studies mrel-1h*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -191,6 +197,18 @@ Three cards in two families hit the same wall in different forms. H-0018 (delete
 K-0045 said G0 reported no event or position count and was vacuous for event cards on the 80-name synthetic market. For H-0031, H-0032 and H-0033 the G0 metrics contain events_in_dev (14678, 15554, 7524) that match the G1 event counts (14678, 15547, 7524) and an events_lookahead_failures block with 25 cuts and no failures, so the gate-side check appears to run on the real event set now. Not verified: where the 25 cuts fall (whether they hit event rows). The Builder-side lab try still shows zero events on the synthetic market (their summaries), and G0 for H-0010 to H-0030 stays as K-0045 described. cases.json again has no Skeptic message for any of the three cards although each Builder summary asked the Skeptic to read the event code; either the Skeptic did not run or its messages are not captured.
 
 *confidence medium · 2026-10-14 · librarian · supersedes K-0045 · evidence: H-0031; H-0032; H-0033; K-0045*
+
+### K-0050 G2 random-timing null is deeply negative in two cards, so passing it may only measure costs
+
+In H-0007 (weekly US stocks) and H-0035 (fifteen-minute crypto perps) the random-entry or random-timing null passed with a median Sharpe far below zero. For H-0035 the strategy's modeled cost drag was about half of its gross, which implies a matched-turnover random book should lose roughly the size of the strategy's own Sharpe, not several times it; the null's median was several times worse. Either the null trades more or costs more than the real book, or the null is dominated by something other than timing. Until the null's turnover, exposure and cost per trade are reported next to the strategy's, a pass on this check should not be read as evidence of timing skill. Asked to the owner in the H-0035 message.
+
+*confidence low · 2026-10-14 · librarian · evidence: H-0007; H-0035; K-0017*
+
+### K-0051 The point-in-time universe rule also forces early exits in crypto perp cards
+
+K-0032 recorded that the engine refuses weights outside the declared point-in-time universe for stock events. H-0035 shows the same rule on crypto_top_n: a position held across a universe update was refused at G0, and the Builder had to close such trades at the first decision row outside the universe, contradicting the card's 'closed on schedule' clause. The deviation touched few trades, but the clause cannot be honored and a Scout should not promise it. Event cards on a rolling top-n universe should state an exit rule that tolerates leaving the universe. Separately, the intraday data has no forward source, so such cards can pass at most G4.
+
+*confidence medium · 2026-10-14 · librarian · evidence: H-0035; H-0018; K-0032; catalog binance_perp_15m*
 
 ## How the lab works
 

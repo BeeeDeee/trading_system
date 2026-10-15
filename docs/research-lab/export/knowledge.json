@@ -574,5 +574,41 @@
   "actor": "librarian",
   "message_id": 252,
   "ts": "2026-10-14T02:07:54.676922+00:00"
+ },
+ {
+  "id": "K-0049",
+  "kind": "market",
+  "title": "Crypto forced-flow rebounds exist before stress but a taker cannot keep them",
+  "statement": "The conditional rebound after fast, high-volume, taker-dominated moves in liquid crypto perps (H-0035, both directions) left a positive average trade after modeled taker costs and beat random-timed trades, so a liquidity-provision effect appears to exist. It did not survive costs at twice the model, and its profit sat in the first two thirds of the 2020-2022 dev period while the last third lost. Together with the hourly reversal finding of study mrel-1h (harvestable only as a maker) and the daily dip-buy H-0006 (could not tell), the pattern is that crypto reversal is paid to whoever provides liquidity at the stress moment and is small or negative for a taker who enters a candle later with optimistic slippage. The effect looked faster than the hold: the result halved with a one-candle later fill. Whether it is absent in sustained crashes is untested.",
+  "evidence": "[\"H-0035\",\"H-0006\",\"prior_studies mrel-1h\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 262,
+  "ts": "2026-10-14T04:38:03.677590+00:00"
+ },
+ {
+  "id": "K-0050",
+  "kind": "framework",
+  "title": "G2 random-timing null is deeply negative in two cards, so passing it may only measure costs",
+  "statement": "In H-0007 (weekly US stocks) and H-0035 (fifteen-minute crypto perps) the random-entry or random-timing null passed with a median Sharpe far below zero. For H-0035 the strategy's modeled cost drag was about half of its gross, which implies a matched-turnover random book should lose roughly the size of the strategy's own Sharpe, not several times it; the null's median was several times worse. Either the null trades more or costs more than the real book, or the null is dominated by something other than timing. Until the null's turnover, exposure and cost per trade are reported next to the strategy's, a pass on this check should not be read as evidence of timing skill. Asked to the owner in the H-0035 message.",
+  "evidence": "[\"H-0007\",\"H-0035\",\"K-0017\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 263,
+  "ts": "2026-10-14T04:38:03.685339+00:00"
+ },
+ {
+  "id": "K-0051",
+  "kind": "framework",
+  "title": "The point-in-time universe rule also forces early exits in crypto perp cards",
+  "statement": "K-0032 recorded that the engine refuses weights outside the declared point-in-time universe for stock events. H-0035 shows the same rule on crypto_top_n: a position held across a universe update was refused at G0, and the Builder had to close such trades at the first decision row outside the universe, contradicting the card's 'closed on schedule' clause. The deviation touched few trades, but the clause cannot be honored and a Scout should not promise it. Event cards on a rolling top-n universe should state an exit rule that tolerates leaving the universe. Separately, the intraday data has no forward source, so such cards can pass at most G4.",
+  "evidence": "[\"H-0035\",\"H-0018\",\"K-0032\",\"catalog binance_perp_15m\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 264,
+  "ts": "2026-10-14T04:38:03.692144+00:00"
  }
 ]

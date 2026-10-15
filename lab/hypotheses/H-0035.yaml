@@ -116,7 +116,10 @@ notes: 'Family: short-term-reversal, reused on purpose. H-0006 (crypto liquidati
   a one-hour cascade is visible on 15m candles. Funding is not used as a signal (kept to two grid parameters); a
   funding-crowding split would be a separate card. References are theory of liquidity provision, not a published
   backtest of this rule; they are cited because the mechanism rests on them, accepting the literature-prior trials.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G2
+  reason_code: g2_sharpe_costs_x2
 history:
 - ts: '2026-10-14T02:38:25.522994+00:00'
   version: 1
@@ -139,3 +142,24 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-14T04:08:08.815651+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 68, qlab)
+- ts: '2026-10-14T04:08:18.100269+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: GATE_1
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 passed (run 69, qlab)
+- ts: '2026-10-14T04:12:52.394340+00:00'
+  version: 1
+  from: GATE_1
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G2 failed (run 70, qlab)

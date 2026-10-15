@@ -105,6 +105,7 @@ def events(data, params):
 def target_positions(data, params):
     hold = int(params["hold_candles"])
     ev = events(data, params)
+    universe = np.asarray(data.universe, dtype=bool)
     T, N = ev.shape
     pos = np.zeros((T, N), dtype=np.float64)
     for j in range(N):
@@ -114,6 +115,12 @@ def target_positions(data, params):
             if t <= busy_until:
                 continue         # already in a position: ignore (no extension, reversal or pyramiding)
             # decided after close t, filled at open t+1; target 0 from row t+hold -> exit at open t+1+hold
-            pos[t:t + hold, j] = SLOT * float(ev[t, j])
-            busy_until = t + hold
+            end = min(t + hold, T)
+            # Engine constraint (G0): positions may be held only while the instrument is a universe member.
+            # If it leaves the universe at row k inside the hold, the target goes to 0 at row k (exit at open k+1).
+            out = np.flatnonzero(~universe[t:end, j])
+            if out.size:
+                end = t + int(out[0])
+            pos[t:end, j] = SLOT * float(ev[t, j])
+            busy_until = end
     return pos

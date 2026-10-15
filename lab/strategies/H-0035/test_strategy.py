@@ -184,6 +184,24 @@ def test_new_position_after_exit():
     assert np.all(pos[t + 9:t + 17, 0] == -1.0 / 20)
 
 
+def test_universe_exit_closes_position_early():
+    v = make_view(T=1000)
+    t = 800
+    inject(v, t, 0, -0.05)
+    v.universe[t + 3:t + 5, 0] = False            # leaves the universe at row t+3, back at t+5
+    pos = target_positions(v, PARAMS)
+    assert np.all(pos[t:t + 3, 0] == 1.0 / 20)
+    assert np.all(pos[t + 3:, 0] == 0)              # forced exit at open t+4, not re-opened on re-entry
+    assert np.all(pos[~v.universe] == 0)
+    # leaving the universe after the scheduled exit changes nothing
+    v2 = make_view(T=1000)
+    inject(v2, t, 0, -0.05)
+    v2.universe[t + 8:, 0] = False
+    pos2 = target_positions(v2, PARAMS)
+    assert np.all(pos2[t:t + 8, 0] == 1.0 / 20)
+    assert np.all(pos2[t + 8:, 0] == 0)
+
+
 def test_point_in_time_truncation():
     v = make_view(T=1000)
     inject(v, 800, 0, -0.05)
@@ -202,3 +220,5 @@ def test_synthetic_gross_and_determinism():
     assert np.array_equal(a, b)
     assert np.all(np.abs(a).sum(axis=1) <= 1.0 + 1e-12)
     assert set(np.unique(a)).issubset({-1.0 / 20, 0.0, 1.0 / 20})
+    if data.universe is not None:
+        assert np.all(a[~np.asarray(data.universe, dtype=bool)] == 0)

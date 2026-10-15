@@ -298,3 +298,12 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not enlarge the tilt budget, max_name_weight, z_threshold or hold_days to close the margin: new trials on the same events, with more tracking error and cost. Do not bring shorts or a hedge basket back (H-0028, H-0031).
 - open questions: A control that separates the tilt from the core, and a cheaper or slower way to take the same long-side drift, deserve a card. The era decay needs to be looked at on its own before more PEAD trials are spent.
 - related: H-0028, H-0031, H-0024
+
+## H-0035 – Intraday liquidation-cascade rebound on Binance perps - fade 1-hour moves of 4+ sigma on 3x volume dominated by aggressive takers, both sides, hold 2 hours
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: Binance USD-M perps, top liquid names, 15-minute candles, both sides, two-hour hold
+- outcome: passed G1; rejected at G2: net Sharpe at doubled costs was not positive and the last third of dev lost, so one block carried more than all the profit
+- lesson: Passed G1 but died at G2 on cost and era. Modeled costs took about half of gross, so doubling them left nothing. The first two thirds of dev earned and the last lost, so one block carried more than the whole profit. Neighbors paid more with larger moves and shorter holds, and a one-candle delay roughly halved the result: the rebound is real but front-loaded, and a late taker pays for the first part. Random-timed books lost heavily, mostly cost drag, so that pass says little about timing. A position leaving the universe mid-hold broke G0; the Builder closed such trades early, a small deviation from the card.
+- avoid: Do not refile the rule with the best-looking neighbor (higher threshold, shorter hold): dev-selected, a new trial on the same events. Do not trust modeled slippage at cascade moments.
+- open questions: Why did the last third of dev lose: cascades running on in a persistent crash? An era split of the same events would tell; the holdout is untouched. A maker-style entry cannot be simulated here.
+- related: H-0006, H-0007, H-0030
