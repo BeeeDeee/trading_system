@@ -477,6 +477,8 @@ class IntradayEvaluator:
         dev_w = self.targets(lab, hid, dev_view, params)
         dev = self._stats(self.run(lab, hid, dev_view, params, cfg, w=dev_w),
                           self.window(dev_w, len(dev_view.times)), dev_view.periods_per_year())
+        dev["_trades"] = None
+        del dev_view, dev_w                       # the full panel (5m: ~3 GB) must not sit next to the dev one
         view = self.context(card, "full")
         w = self.targets(lab, hid, view, params)
         start = int((view.times < np.datetime64(HOLDOUT_FROM, "m")).sum())
