@@ -1,0 +1,370 @@
+{
+ "claude_volne": {
+  "comment": "Defenzivně: ~35 % v riziku (BTC a dva nejsilnější alty), zbytek v hotovosti kvůli jestřábímu makru a slabosti altů.",
+  "positions": [
+   {
+    "coin": "AVAX",
+    "invalidation": "Uzavření pod 9,2 USD (ztráta SMA50) nebo další týden zaostávání za BTC.",
+    "reason": "Stále nad SMA50 se silným rel30, korekce bez fundamentálního zhoršení.",
+    "weight_pct": 7.0
+   },
+   {
+    "coin": "BTC",
+    "invalidation": "Denní uzavření pod 78 000 USD nebo horší PPI se zrychlením odlivů z ETF.",
+    "reason": "Jádro portfolia, v risk-off drží lépe než alty.",
+    "weight_pct": 20.0
+   },
+   {
+    "coin": "NEAR",
+    "invalidation": "Pád pod 4,3 USD nebo obrat ETF přílivů na odlivy.",
+    "reason": "Lídr AI rotace s ETF přílivy, korekce −17 % nabízí lepší vstupní poměr.",
+    "weight_pct": 8.0
+   }
+  ]
+ },
+ "coins": {
+  "ADA": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Třídenní pokles −8,8 % při stále kladném rel30; záporný funding nahrává krátkému odrazu.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 0
+  },
+  "AVAX": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Nad SMA50 a silný rel30 +28, korekce −8,7 % za 3 dny bez nových negativních zpráv.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 1
+  },
+  "BNB": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Nízká beta (0,67) je v risk-off defenzivní, ale trend je mírně pod SMA20/50.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -1
+  },
+  "BTC": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "jine",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Pod SMA20, ale nad SMA50/100; horší CPI už v ceně, riziko dalších jestřábích dat (PPI).",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.tokenpost.com/news/investing/32191",
+    "https://finance.yahoo.com/personal-finance/investing/article/bitcoin-and-ethereum-prices-today-wednesday-october-14-2026-crypto-prices-sliding-after-higher-inflation-report-133306768.html"
+   ],
+   "trend": 0
+  },
+  "DOGE": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Hluboko pod SMA20/50, vysoká beta 1,76 a žádný katalyzátor.",
+   "p_outperform_btc_7d": 0.4,
+   "p_up_7d": 0.4,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "ENA": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Konec emisí je pozitivní, ale je to stará zpráva; −17,6 % za 3 dny a pod SMA20.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/ethena/price-analysis/"
+   ],
+   "trend": -1
+  },
+  "ETH": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Pod SMA20 i SMA50, slabý vůči BTC a přeplněné longy (L/S 3,4) převažují nad přeprodaností.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.tokenpost.com/news/investing/32191"
+   ],
+   "trend": -1
+  },
+  "NEAR": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Lídr AI rotace (rel30 +93) s přílivy do Bitwise ETF, po −17 % za 3 dny ochlazený, ale velmi volatilní.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://u.today/near-claims-crown-in-cryptos-pivot-to-ai-wintermute",
+    "https://coinmarketcap.com/cmc-ai/near-protocol/latest-updates/"
+   ],
+   "trend": 1
+  },
+  "ONDO": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Pokles −14,6 % za 3 dny z nedostatku poptávky, pod SMA20, bez nových zpráv.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.tokenpost.com/news/investing/30679"
+   ],
+   "trend": -1
+  },
+  "PUMP": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Týden −23 % a slabá kniha; spekulativní token bez nového katalyzátoru.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -1
+  },
+  "SOL": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Týden −10 % a RSI 38 dávají prostor k odrazu, ale trend vůči BTC slabý.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -1
+  },
+  "SUI": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Kladný měsíční trend a pokračující ETF přílivy, ale beta 2,06 v risk-off škodí.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coincentral.com/sui-price-etf-inflows-reach-five-straight-weeks-heres-what-the-chart-says"
+   ],
+   "trend": 1
+  },
+  "TAO": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": 0,
+   "note": "AI narativ drží rel30 +12, ale nejvyšší beta (2,3) je při dalším poklesu BTC zátěž.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://subnetradar.com/news"
+   ],
+   "trend": 0
+  },
+  "UNI": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "listing",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": 0,
+   "note": "−34 % od 30d max a pod SMA20/50; CME futures 19. 10. jsou známé, malý dopad.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://247wallst.com/investing/cryptocurrency/2026/09/24/can-uniswap-maintain-its-lead-over-ethereum-until-october-19/?.tsrc=rss"
+   ],
+   "trend": -1
+  },
+  "WLD": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Růst bez zpráv a podezření z wash tradingu; vysoká beta 1,75.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptoticker.io/en/worldcoin-price-wld-rally-without-news/"
+   ],
+   "trend": 0
+  },
+  "XRP": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Dlouhodobě slabý vůči BTC (rel30 −10,9) a klesající OI; wXRP na Solaně nic nemění.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.fxstreet.com/cryptocurrencies/solana"
+   ],
+   "trend": -1
+  },
+  "ZEC": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Po zářijovém růstu pokračuje vyprchávání (−32 % od 30d max) s opakovanými likvidacemi longů.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coingabbar.com/en/zcash-price-prediction-october-2026"
+   ],
+   "trend": -1
+  }
+ },
+ "date": "2026-10-15",
+ "events_7d": [
+  {
+   "date": "2026-10-15",
+   "title": "US PPI za září",
+   "type": "makro"
+  },
+  {
+   "date": "2026-10-19",
+   "title": "CME spouští futures na UNI (podléhá schválení)",
+   "type": "listing"
+  },
+  {
+   "date": "2026-10-16",
+   "title": "Unlock ARB, 17. 10. CRO, 20. 10. ZRO (mimo univerzum, sentiment altů)",
+   "type": "unlock"
+  }
+ ],
+ "regime": {
+  "label": "Risk-off, zvýšená volatilita",
+  "summary": "Horší CPI (3,7 % r/r vs 3,6 %) zvýšilo šance na zvýšení sazeb 28. 10., BTC spadl k 81,6k a likvidace longů dosáhly ~455 mil. USD. Altcoiny výrazně zaostávají za BTC, funding je neutrální až záporný."
+ },
+ "top10": [
+  {
+   "coin": "NEAR",
+   "reason": "Nejsilnější relativní trend a ETF přílivy, korekce ochladila RSI."
+  },
+  {
+   "coin": "BNB",
+   "reason": "Nízká beta, defenzivní v risk-off prostředí."
+  },
+  {
+   "coin": "AVAX",
+   "reason": "Nad SMA50, silný rel30, korekce bez negativních zpráv."
+  },
+  {
+   "coin": "SOL",
+   "reason": "Přeprodaný po týdnu −10 %, vysoká likvidita."
+  },
+  {
+   "coin": "ADA",
+   "reason": "Kladný rel30, záporný funding, možný odraz."
+  },
+  {
+   "coin": "SUI",
+   "reason": "Kladný měsíční trend a ETF přílivy, ale vysoká beta."
+  },
+  {
+   "coin": "TAO",
+   "reason": "AI narativ, ale beta 2,3."
+  },
+  {
+   "coin": "UNI",
+   "reason": "CME futures 19. 10. a mean-reversion po −34 %."
+  },
+  {
+   "coin": "ENA",
+   "reason": "Konec emisí, přeprodaný po −17,6 % za 3 dny."
+  },
+  {
+   "coin": "ETH",
+   "reason": "Blízko 30d minima, ale slabý trend a přeplněné longy."
+  }
+ ]
+}
