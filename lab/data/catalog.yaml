@@ -362,3 +362,65 @@ datasets:
       serves (404) has no filings and no data.
     - 'Some firms file earnings releases under item 7.01 or as exhibits to other items:
       they are missed. The EDGAR item list is as filed, never revised.'
+
+  - id: treasury_auctions_1d
+    loader: generic
+    asset_class: macro
+    instruments: 'Treasury auction calendar of nominal fixed-coupon Notes and Bonds
+      with original term >= 5 years (5y, 7y, 10y, 20y, 30y; new issues and reopenings;
+      bills, 2y, 3y, 4y, TIPS and FRNs excluded). Keys: next_coupon5_sessions (XNYS
+      sessions from d to the next such auction after d that was announced on or before
+      d; absent if none announced), last_coupon5_sessions (sessions since the most recent
+      such auction, 0 on the auction day), next_coupon5_offering_usd (announced offering
+      amount in USD of the next auction, summed if several fall on one day). Calendar
+      series, signal only, not tradable.'
+    frequency: 1d
+    range:
+    - '1998-01-21'
+    - '2026-10-01'
+    clock: us_close
+    source: U.S. Treasury Fiscal Data API, dataset Treasury Securities Auctions Data,
+      endpoint /services/api/fiscal_service/v1/accounting/od/auctions_query (free, public,
+      no key, U.S. government open data)
+    quality: 'lab ingest 2026-10-14: 12798 rows, 3 series, see LAB_HOME/data/treasury_auctions_1d/report.json'
+    holdout_from: '2021-01-01'
+    known_biases:
+    - 'Derived calendar: values are computed from the auction_date and announcemt_date
+      of each record and an XNYS calendar coded in the fetcher (regular holiday rules
+      plus the special closures 2001-09-11..14, 2004-06-11, 2007-01-02, 2012-10-29/30,
+      2018-12-05, 2025-01-09). A wrong closure shifts session counts by one for the
+      days around it. Calendar starts 1998-01-01, so there are no rows before that.'
+    - Announcement dates are taken as published in the dataset (announcemt_date) and
+      a record with an announcement date after its auction date is dropped; the dataset
+      is a current snapshot, so a later correction of an announcement date is not visible,
+      but no auction is used before its recorded announcement date. Announcements come
+      at 11:00 or 15:00 ET on the announcement date, so they are known by the close
+      of that day.
+    - Offering amount is the announced offering (offering_amt) as stored today; Treasury
+      sometimes changes sizes, and a size change after the announcement is not in the
+      series as of the announcement day. Do not use it as an exact point-in-time figure.
+    - Auctions on a day the NYSE is closed are counted on the next XNYS session. Results
+      are public about 13:00 ET on the auction day, so last_coupon5_sessions = 0 is
+      known at the close of the auction day.
+    - Only auctions already announced are visible, so the last rows depend on how far
+      ahead Treasury has announced; a next-auction value is absent for days after the
+      last announced auction (not filled). The next auction uses a strict future day,
+      so on an auction day it points to the following auction.
+    - 'Original term is read from original_security_term: new issues and reopenings
+      of 5y, 7y, 10y, 20y, 30y plus a few old odd terms (e.g. 5y2m, 6y11m, 15y1m); the
+      set of maturities offered changed over the history (e.g. the 20y bond returned
+      in 2020), so the cluster structure is not constant over the period.'
+    - next_* keys are present only on days when a next auction has already been announced;
+      Treasury announces each auction about one week ahead (the quarterly tentative
+      schedule is not in this dataset), so about 60 % of sessions have no next_* value
+      (absent, not filled) and the next auction is rarely visible more than about 5-8
+      sessions ahead.
+    forward_source: same Fiscal Data API endpoint (refetch the full history daily; new
+      auctions appear when announced); also TreasuryDirect upcoming-auction schedule
+    calendar: XNYS
+    fields:
+    - last_coupon5_sessions
+    - next_coupon5_offering_usd
+    - next_coupon5_sessions
+    location: LAB_HOME/data/treasury_auctions_1d
+    cost_model: null

@@ -6,5 +6,13 @@
   "reason": "Same mechanism: predictable institutional month-end flows (pension/60-40 rebalancing) pressuring SPY vs IEF in the last days of the month, same instruments and dev period. Only the direction rule differs (always long equity in the window vs sign of month-to-date drift). Merging makes the multiple-testing penalty stricter, the safe direction.",
   "message_id": 53,
   "ts": "2026-10-05T20:00:36.260168+00:00"
+ },
+ {
+  "from_family": "short-term-momentum",
+  "into_family": "short-term-reversal",
+  "actor": "chair",
+  "reason": "H-0029 sorts LIQ-500 stocks on the same past-month return as the reversal trials (study 5, H-0007, H-0030, H-0006) and trades its sign, only conditioned on turnover. It tests the same cross-section with the opposite sign, so the trials are one question; separate names would hide them from the multiple-testing count. Merging only makes the penalty stricter. K-0044 already treats these as one claim.",
+  "message_id": 228,
+  "ts": "2026-10-13T03:36:54.073938+00:00"
  }
 ]

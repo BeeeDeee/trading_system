@@ -235,3 +235,75 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not retune delay_sessions or hold_days, or move to the longer horizon that looks larger descriptively: new trials on the same events. Do not refile the same anniversary rule as late reporter or disclosure-timing; it shares data and date prediction with earnings-announcement-premium, so those trials count together.
 - open questions: A cleaner delay event (explicit late-filing notice, or announced versus expected dates) might behave differently, but neither is loadable today. Less-covered names are untested. The release-session reaction after an overdue flag was not isolated.
 - related: H-0023, H-0024, H-0015, H-0008, H-0019
+
+## H-0027 – Release-anchored trading-window net flow - LIQ-500 dollar-neutral, at each real 8-K earnings release long net repurchasers and short net stock-compensation suppliers, hold 5 days
+
+- family: `trading-window-flows` · mechanism: flow_structural · instruments: US liquid stocks (LIQ-500), dollar-neutral: at each real earnings release long net repurchasers and short net stock-compensation suppliers, five-session hold, 2004 to 2020
+- outcome: rejected at G1 on the mechanism test: placebo percentile under the bar, gross just under round-trip cost, latest third wrong sign; strategy not run
+- lesson: The release-anchored version did not reproduce H-0019's pass, so that pass was probably filing-linked drift, not a flow concentrated just after the trading window opens. The effect built slowly with the horizon (nothing in the first sessions, larger at the longest horizons), the slow-drift shape the card named as a kill condition; the latest third reversed sign, another declared kill condition. Gross sat just under round-trip cost and the placebo bar about at cost, so the percentile miss is a near miss, but the two declared failures make it a refutation of the window-flow story in this form.
+- avoid: Do not retune leg_quantile, hold_days or the net-flow score, move to the longer horizon that looks larger, or refile the same events as buyback yield, net issuance or insider selling after the release: a third trial of the same idea. Do not read the positive gross as support (K-0025).
+- open questions: If net-flow information exists it is slow and style-like (repurchasers versus issuers), so it would need a low-turnover tilt on an always-invested book against a same-exposure benchmark (K-0027, K-0030), and it should be argued as a style premium, not a calendar flow. Event-matched controls were not run.
+- related: H-0019, H-0028, H-0023
+
+## H-0028 – Earnings-reaction drift on real 8-K release dates - LIQ-500 dollar-neutral, follow the sign of a large standardized release-session reaction, hold 5 days
+
+- family: `post-earnings-announcement-drift` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), dollar-neutral: follow the sign of a large release-session reaction on real earnings dates, five-session hold, 2004 to 2020
+- outcome: mechanism test passed clearly; rejected at G1 on the strategy: net Sharpe below T-bills and the bootstrap bound of the difference below zero, with a deep drawdown for a market-neutral book
+- lesson: Strongest mechanism result in the lab, and the book still lost to T-bills. Following a large standardized release-session reaction earned same-direction abnormal returns, far above the placebo cloud, above cost, positive in every third including the latest, mostly in the first sessions after entry. Yet the dollar-neutral book, invested about half the time, earned less than cash. This is not the fade or thin exposure of H-0016/H-0019, so the gap is unexplained: event weights shrink when many names report together, hedge-basket turnover, and a generic cost tier for names that just moved several deviations. The gate output has no gross/net split.
+- avoid: Do not retune z_threshold or hold_days, and do not refile the same reaction-following events as earnings momentum or announcement-return continuation: they share events and count together. Do not read the mechanism pass as a tradable edge (K-0030).
+- open questions: Reconcile event study and book first: gross by sleeve, event-weighted versus equal-weighted, cost of the hedge basket, and cost on reaction-day opens. The market's own reaction looks like a better surprise measure than the accounting change of H-0024. A lower-turnover implementation, or a tilt on an always-invested book, is the natural next form.
+- related: H-0024, H-0023, H-0026, H-0019
+
+## H-0029 – Turnover-conditioned short-term momentum - LIQ-500 dollar-neutral, weekly: among the highest-turnover stocks of the past month, long the past-month winners and short the past-month losers, hold 5 days
+
+- family: `short-term-momentum` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), weekly dollar-neutral: among the highest-turnover stocks of the past month, long past-month winners and short losers, five-session hold, 1998 to 2020
+- outcome: rejected at G1 on the mechanism test: small positive gross, inside the placebo cloud, gross a small fraction of round-trip cost, latest third negative; strategy not run
+- lesson: The turnover-split momentum claim is not visible in LIQ-500 at a weekly horizon. Not a power problem: the event sample was very large, the placebo bar sat below round-trip cost and gross covered only a fraction of cost, so a tradable effect would have shown. The first two thirds leaned positive and the latest reversed, the early-era pattern of the other one-month-return books (study 5, H-0007, K-0012), and the descriptive horizons were not monotone. The paper forms and holds monthly; here selection rolls weekly with heavy overlap, so even a real effect would face high turnover.
+- avoid: Do not add turnover, volume or size conditioners to the one-month return sort in LIQ-500 (high-turnover momentum, low-turnover reversal, size splits): another look at the same cross-section. Do not retune formation_days or quantile.
+- open questions: A monthly-rebalanced version has a different cost profile but the latest-third reversal and the wide gap to cost give it a low prior. The conditioning may live in less-covered names, which are not loadable.
+- related: H-0007, H-0009, H-0014, H-0030
+
+## H-0030 – No-news shock reversal in the S&P 500 - dollar-neutral, buy peer-adjusted daily losers and sell winners on sessions without an 8-K earnings release, staggered 5-day hold, 2005-2020
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: S&P 500 members, daily dollar-neutral: long peer-adjusted one-day losers, short winners, on sessions without an earnings release, staggered five-session hold, 2005 to 2020
+- outcome: rejected at G1: the no-news reversal cleared the placebo test, but gross per event covered only a fraction of round-trip cost; strategy not run
+- lesson: The reversal exists but is untradable at this horizon. Removing earnings sessions and netting out correlated peers left a real effect, positive in all three blocks, with a huge event set, so not a power problem; but it is well under the cost of trading each cohort in and out. It was strongest early, nearly absent in the middle and partly back late, and it grew with the horizon, unlike a fast liquidity concession: a five-session hold may be too short. Other news (M&A, guidance) stays in the sample. Strategy gates were not reached. G0 was vacuous until the Builder altered the flag test (K-0045).
+- avoid: Do not refile this sort with another conditioner (more news filters, peer count, leg size, hold of three or seven sessions): K-0044 says conditioning changes significance, not size relative to cost. No daily-rebalanced taker book on it.
+- open questions: Does the reversal live at a monthly or slower horizon with much lower turnover? That would be one new trial in the same family, argued from the slow build seen here, not tuned. Whether the peer adjustment or the news exclusion carried the significance was not separated.
+- related: H-0007, H-0029, H-0006, H-0028
+
+## H-0031 – Earnings-reaction drift, fixed risk-scaled event slots - LIQ-500, follow large 8-K release-session reactions, no gross normalization, liquid net hedge, hold 5 days
+
+- family: `post-earnings-announcement-drift` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), market-neutral: follow large standardized release-session reactions with fixed risk-scaled slots, net hedge in the 100 most liquid members, five-session hold, 2004 to 2020
+- outcome: mechanism test passed clearly again; rejected at G1 on the strategy: net Sharpe below T-bills, bootstrap bound of the difference below zero, exposure above the floor
+- lesson: The reaction drift passed again, far above the placebo cloud, above cost and positive in every third, yet the fixed-slot book, invested a bit under half the time, earned less than cash. Un-normalized slots were the main fix proposed after H-0028, so weight normalization is not what separates study from book. Gross covered cost by only a modest multiple, so the hedge, higher costs on names that just moved several deviations and the T-bill hurdle left nothing. The gap is still not decomposed: the gate gives no gross/net or long/short split.
+- avoid: The card's own stop rule has fired: no further market-neutral reaction-following book with a new weighting, hedge basket, z_threshold, hold_days or event_weight. Do not read the mechanism pass as a tradable edge.
+- open questions: Gate output with gross versus net and long versus short sleeves would show where the return went. The long-only tilt on an always-invested core (H-0033) came much closer, which points at the short side, hedge or cash handling as the main suspects.
+- related: H-0028, H-0033, H-0024
+
+## H-0032 – Fundamental anomalies resolved at earnings news - LIQ-500 dollar-neutral, long good-composite / short bad-composite stocks only in a 5-session window around their predicted 8-K release, hold 5 days
+
+- family: `anomalies-at-earnings-news` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), dollar-neutral: long good / short bad accruals-profitability-asset-growth composite, held only in a five-session window around the predicted 8-K release, 2005 to 2020
+- outcome: rejected at G1 on the mechanism test: event average above the placebo average but under the placebo 95th-percentile bar, gross below round-trip cost, latest third negative; strategy not run
+- lesson: No sign that fundamental anomalies concentrate at earnings news in LIQ-500. The window earned more than the always-on placebo average but stayed below its upper bar, and the bar sat about at cost, so this is not tradable in this form and not just a power problem. It faded era by era and turned negative in the latest third, a declared kill condition that fits decay after publication. The first session was flat and the effect grew with the horizon: the slow shape of an always-on anomaly, not an announcement-day jump. The hit rate of the predicted dates was never reported, so some dilution is possible.
+- avoid: Do not retune half_window or leg_quantile, add anomalies, or refile the composite as quality or accruals at earnings: the predicted-date rule is shared with H-0023 and H-0026, so those trials count together. No short-window books on slow fundamentals in LIQ-500.
+- open questions: If the composite earns anything it is a slow style tilt at low turnover on an always-invested book, not a window effect. Measuring how often the predicted window contains the real release would settle the dilution question.
+- related: H-0023, H-0026, H-0028, H-0019
+
+## H-0033 – Positive earnings-reaction tilt on a cap-weighted core - LIQ-500 long-only, overweight stocks after a large positive 8-K release-session reaction for 5 days, no shorts, no hedge basket
+
+- family: `post-earnings-announcement-drift` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), long-only: cap-weighted core plus an overweight on large positive release-session reactions, five-session hold, vs SPY
+- outcome: rejected at G1: mechanism passed, the book beat SPY on the point estimate and the bootstrap bound of the Sharpe difference was above zero, but the margin stayed under the fixed bar
+- lesson: Closest the family has come. The positive side alone shows the drift, above the placebo bar, well above cost, positive in all thirds, so H-0028's pass did not live only in the short side. But the effect weakened from each third to the next, and the tilt is a limited share of a core that mostly tracks the market, so the extra risk-adjusted return was too small for the margin. No core-only or random-tilt control is reported, so how much of the difference to SPY is tilt and how much is the liquid core is unknown. A G2 sub-period check would probably have been hard.
+- avoid: Do not enlarge the tilt budget, max_name_weight, z_threshold or hold_days to close the margin: new trials on the same events, with more tracking error and cost. Do not bring shorts or a hedge basket back (H-0028, H-0031).
+- open questions: A control that separates the tilt from the core, and a cheaper or slower way to take the same long-side drift, deserve a card. The era decay needs to be looked at on its own before more PEAD trials are spent.
+- related: H-0028, H-0031, H-0024
+
+## H-0035 – Intraday liquidation-cascade rebound on Binance perps - fade 1-hour moves of 4+ sigma on 3x volume dominated by aggressive takers, both sides, hold 2 hours
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: Binance USD-M perps, top liquid names, 15-minute candles, both sides, two-hour hold
+- outcome: passed G1; rejected at G2: net Sharpe at doubled costs was not positive and the last third of dev lost, so one block carried more than all the profit
+- lesson: Passed G1 but died at G2 on cost and era. Modeled costs took about half of gross, so doubling them left nothing. The first two thirds of dev earned and the last lost, so one block carried more than the whole profit. Neighbors paid more with larger moves and shorter holds, and a one-candle delay roughly halved the result: the rebound is real but front-loaded, and a late taker pays for the first part. Random-timed books lost heavily, mostly cost drag, so that pass says little about timing. A position leaving the universe mid-hold broke G0; the Builder closed such trades early, a small deviation from the card.
+- avoid: Do not refile the rule with the best-looking neighbor (higher threshold, shorter hold): dev-selected, a new trial on the same events. Do not trust modeled slippage at cascade moments.
+- open questions: Why did the last third of dev lose: cascades running on in a persistent crash? An era split of the same events would tell; the holdout is untouched. A maker-style entry cannot be simulated here.
+- related: H-0006, H-0007, H-0030
