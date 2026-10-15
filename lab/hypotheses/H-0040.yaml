@@ -103,7 +103,10 @@ notes: 'PROVENANCE (read before the verdict). This is not a fresh idea. It is th
   close; (5) a follower that leaves the universe is closed early (the lab forbids holding non-members; research
   17 let the position run to its 4-hour exit). The grid includes k_sigma = 2.5 although research 17 found k_sigma
   = 2.0 unprofitable; that is intended (honest neighbourhood test), do not narrow it.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G2
+  reason_code: g2_median_neighbor_sharpe_ratio
 history:
 - ts: '2026-10-14T18:35:20.520397+00:00'
   version: 1
@@ -126,3 +129,24 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-15T17:05:49.186487+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 82, qlab)
+- ts: '2026-10-15T17:05:53.236458+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: GATE_1
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 passed (run 83, qlab)
+- ts: '2026-10-15T17:10:21.677258+00:00'
+  version: 1
+  from: GATE_1
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G2 failed (run 84, qlab)

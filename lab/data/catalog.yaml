@@ -424,3 +424,65 @@ datasets:
     - next_coupon5_sessions
     location: LAB_HOME/data/treasury_auctions_1d
     cost_model: null
+
+  - id: macro_release_calendar_1d
+    loader: generic
+    asset_class: macro
+    instruments: 'Scheduled US macro announcement calendar (signal only, not tradable).
+      Keys per XNYS session d: next_cpi_sessions, next_empsit_sessions, next_fomc_sessions
+      = XNYS sessions from d to the next CPI release / Employment Situation release
+      / scheduled FOMC statement day strictly after d (never 0), and next_release_sessions
+      = the minimum of the three.'
+    frequency: 1d
+    range:
+    - '1998-01-02'
+    - '2026-10-01'
+    clock: us_close
+    source: 'CPI and Employment Situation release dates: ALFRED/FRED release dates (alfred.stlouisfed.org/release/downloaddates,
+      release ids 10 ''Consumer Price Index'' and 50 ''Employment Situation'', text
+      download, free, no key; the dates are the BLS publication dates). Scheduled FOMC
+      meetings: Federal Reserve Board, federalreserve.gov/monetarypolicy/fomchistorical<year>.htm
+      (1997-2020) and fomccalendars.htm (2021-2027), free public web pages.'
+    quality: 'lab ingest 2026-10-15: 28924 rows, 4 series, see LAB_HOME/data/macro_release_calendar_1d/report.json'
+    holdout_from: '2021-01-01'
+    known_biases:
+    - 'Realized, not vintage, schedules: ALFRED holds the dates on which CPI and Employment
+      Situation were actually released, not the schedule published in advance. BLS and
+      the Fed publish these a year or more ahead, so the realized date was known two
+      sessions ahead except after rare reschedulings. Known exceptions: the Oct-Nov
+      2013 shutdown (CPI/jobs releases moved) and the Oct-Dec 2025 shutdown (September
+      2025 CPI on 2025-10-24, November 2025 CPI on 2025-12-18, delayed jobs reports,
+      October 2025 CPI not released): on those days the dataset uses the late date,
+      which was not known at the time of the originally scheduled date, so a window
+      around a postponed release carries look-ahead of up to several weeks.'
+    - 'FOMC: only scheduled meetings, statement day = last day of the meeting. Unscheduled
+      meetings and conference calls (e.g. 2001-09-17, 2008-10-08, 2020-03-02, 2020-03-15,
+      and the extra 2003-09-15 meeting beside the scheduled 2003-09-16) are excluded,
+      as is the scheduled 2020-03-17/18 meeting that was cancelled after the 2020-03-15
+      emergency action, and notation votes. Statements were not issued after every meeting
+      before 2000 and the announcement time differs by era, so the same day is not equally
+      informative across eras. Meeting dates are as shown on today''s Fed pages. Future
+      FOMC dates (2026-2027) are included as scheduled by the Fed.'
+    - 'Event dates on a day the NYSE is closed (for example an Employment Situation
+      release on Good Friday) are counted on the next XNYS session. The XNYS calendar
+      is coded in the fetcher (regular holiday rules, Juneteenth from 2022, special
+      closures 2001-09-11..14, 2004-06-11, 2007-01-02, 2012-10-29/30, 2018-12-05, 2025-01-09):
+      a wrong closure shifts counts by one for nearby days.'
+    - Rows stop at the last session for which all three schedules have a later date
+      in the sources (CPI and jobs dates come from ALFRED, which has no future dates),
+      so the newest rows end a few weeks before the fetch day; no partial or filled
+      rows. Before 1998-01-02 there are no rows.
+    - 'Time of day is not in the series: CPI and jobs are released at 08:30 ET, FOMC
+      statements in the afternoon; all are known by the close of the release day.'
+    forward_source: same ALFRED endpoints (rid=10 and rid=50) refetched daily and the
+      Fed fomccalendars.htm page; ALFRED lists a CPI or jobs date only once released,
+      so for dates ahead use the BLS schedule pages (bls.gov/schedule/news_release/cpi.htm
+      and empsit.htm).
+    calendar: XNYS
+    fields:
+    - next_cpi_sessions
+    - next_empsit_sessions
+    - next_fomc_sessions
+    - next_release_sessions
+    location: LAB_HOME/data/macro_release_calendar_1d
+    cost_model: null

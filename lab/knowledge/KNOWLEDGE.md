@@ -54,6 +54,24 @@ The conditional rebound after fast, high-volume, taker-dominated moves in liquid
 
 *confidence low · 2026-10-14 · librarian · evidence: H-0035; H-0006; prior_studies mrel-1h*
 
+### K-0052 Short-horizon effects that clear the pooled placebo test are usually weakest or reversed in the latest third of dev
+
+Across the lab's event studies that cleared or came near the placebo bar, the effect is typically largest in the earliest third of the dev period and smallest in the latest, in several cases with the opposite sign: month-turn beta, index inclusion, trading-window flow, short-horizon reversal, weekday mood in speculative stocks, twin-ETF gaps and perp funding crowding. Only earnings-reaction drift stayed positive in every third, and it also weakened. A pooled event study therefore overstates what a card can expect going forward, and the pooled pass hides one-episode results. A Scout should expect decay by default and state the latest-third sign as a kill condition. Three equal blocks of one history cannot separate publication decay from a change of regime or cost level.
+
+*confidence medium · 2026-10-15 · librarian · evidence: H-0016; H-0017; H-0025; H-0027; H-0029; H-0032; H-0035; H-0036; H-0037; H-0039; K-0038; K-0046*
+
+### K-0056 Stress rebounds: positive on average, near generic drift, weakest lately
+
+A rebound after forced selling appears as a positive pooled average in three settings: daily crypto dip-buying (H-0006, could not tell), fifteen-minute crypto cascades (H-0035) and stocks against Treasuries after sessions where stocks fell and long Treasuries rose (H-0041). In each the effect is near, not clearly beyond, what time-shifted placebo windows give, and the latest third of dev is the weakest or negative, possibly because stress episodes ran on instead of reversing (not verified by an era or episode split). For the ETF case random windows already favour equities over Treasuries, so the raw gap overstates the event. Studies 6 and 7 found the same for VIX-conditioned reversal: a market-level bounce, not a selection effect, and no gain over holding the market. New stress-rebound cards in other assets are largely the same evidence again, not independent confirmations. A Scout should state how the design separates a one-off shock from a persistent crash.
+
+*confidence low · 2026-10-15 · librarian · evidence: H-0041; H-0035; H-0006; K-0049; K-0052; prior_studies 6-7*
+
+### K-0058 BTC-led altcoin catch-up is parameter-fragile in the lab
+
+The rule 'long lagging altcoins after a BTC hourly jump beyond k sigma, hold four hours' looks strong on the dev period at the primary setting but its edge needs a high threshold: lower thresholds lose most of it and the result is dominated by one sub-period. It failed G2 on neighbor stability and block concentration, while survival under delay and doubled costs was fine. A narrowed grid after the fact would be a new trial, not a rescue.
+
+*confidence medium · 2026-10-15 · human · evidence: H-0040 G2 run 84*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -160,6 +178,12 @@ Four cards cleared the event-study gate and then failed the strategy gate (H-001
 
 *confidence medium · 2026-10-14 · librarian · supersedes K-0042 · evidence: H-0016; H-0019; H-0028; H-0031; H-0033; K-0042*
 
+### K-0053 The cost check now binds more often than the placebo test, and near-cost results are sensitive to the cost tier
+
+H-0030, H-0036 and H-0039 passed the placebo percentile (H-0039 by a hair) and failed only on gross against round-trip cost; H-0036 and H-0039 ended within a fifth of the cost, H-0030 well under. H-0037 failed both. The cost ratio prices the event legs only: hedge baskets, the weekend or overnight holds, and tier choices (taker spread, perp tier) enter only when a strategy runs, so a ratio close to one is neither a safe bound nor a refutation. Before filing a daily or weekly rotation of a taker book, a Scout should write down the expected gross per event against the cost tier of the instrument, and treat a card whose gross is a fraction of cost as untradable regardless of the placebo result. This extends K-0034 (placebo bar against cost) to the cost check itself.
+
+*confidence medium · 2026-10-15 · librarian · evidence: H-0030; H-0036; H-0037; H-0039; K-0034; K-0044*
+
 ## The judge (framework behaviour)
 
 ### K-0008 Gate runner fixes found by real hypotheses
@@ -192,12 +216,6 @@ Three cards in two families hit the same wall in different forms. H-0018 (delete
 
 *confidence medium · 2026-10-11 · librarian · supersedes K-0029 · evidence: H-0018; H-0021; H-0022; K-0029*
 
-### K-0047 G0 now reports real event counts and look-ahead cuts for event cards; Skeptic messages still absent
-
-K-0045 said G0 reported no event or position count and was vacuous for event cards on the 80-name synthetic market. For H-0031, H-0032 and H-0033 the G0 metrics contain events_in_dev (14678, 15554, 7524) that match the G1 event counts (14678, 15547, 7524) and an events_lookahead_failures block with 25 cuts and no failures, so the gate-side check appears to run on the real event set now. Not verified: where the 25 cuts fall (whether they hit event rows). The Builder-side lab try still shows zero events on the synthetic market (their summaries), and G0 for H-0010 to H-0030 stays as K-0045 described. cases.json again has no Skeptic message for any of the three cards although each Builder summary asked the Skeptic to read the event code; either the Skeptic did not run or its messages are not captured.
-
-*confidence medium · 2026-10-14 · librarian · supersedes K-0045 · evidence: H-0031; H-0032; H-0033; K-0045*
-
 ### K-0050 G2 random-timing null is deeply negative in two cards, so passing it may only measure costs
 
 In H-0007 (weekly US stocks) and H-0035 (fifteen-minute crypto perps) the random-entry or random-timing null passed with a median Sharpe far below zero. For H-0035 the strategy's modeled cost drag was about half of its gross, which implies a matched-turnover random book should lose roughly the size of the strategy's own Sharpe, not several times it; the null's median was several times worse. Either the null trades more or costs more than the real book, or the null is dominated by something other than timing. Until the null's turnover, exposure and cost per trade are reported next to the strategy's, a pass on this check should not be read as evidence of timing skill. Asked to the owner in the H-0035 message.
@@ -209,6 +227,24 @@ In H-0007 (weekly US stocks) and H-0035 (fifteen-minute crypto perps) the random
 K-0032 recorded that the engine refuses weights outside the declared point-in-time universe for stock events. H-0035 shows the same rule on crypto_top_n: a position held across a universe update was refused at G0, and the Builder had to close such trades at the first decision row outside the universe, contradicting the card's 'closed on schedule' clause. The deviation touched few trades, but the clause cannot be honored and a Scout should not promise it. Event cards on a rolling top-n universe should state an exit rule that tolerates leaving the universe. Separately, the intraday data has no forward source, so such cards can pass at most G4.
 
 *confidence medium · 2026-10-14 · librarian · evidence: H-0035; H-0018; K-0032; catalog binance_perp_15m*
+
+### K-0054 H-0038 had events at G0 and none at G1; H-0039 got no universe at G0
+
+K-0047 said G0 events_in_dev matches the G1 event count. That still holds for H-0036 and H-0039 (counts agree to within a fraction of a percent) and for H-0037 (1040 against 1006). It fails for H-0038: G0 counted 241 events and passed its look-ahead cuts, G1 counted zero events with a null abnormal return, so the mechanism was never measured. Possible causes, unconfirmed: a two-instrument universe (TLT, SHY) leaves no peer set for the abnormal return; a tradable or universe mask is missing for the generic auction dataset (the catalog gives it no cost model and calls it signal only); an event definition used by G0 but not G1. Separately, H-0039 first crashed at G0 because the gate passed no crypto_top_n universe on the daily perp data; the Builder computed its own top twenty by 30-day dollar volume, so the event set may differ from the judge's universe definition. Skeptic messages are again absent for all four cards. K-0047 stands for its other points.
+
+*confidence low · 2026-10-15 · librarian · supersedes K-0047 · evidence: H-0036; H-0037; H-0038; H-0039; K-0047; K-0051*
+
+### K-0055 The G1 event study needs unmarked peers on each date: marking every universe instrument gives zero events
+
+H-0041 marked all five universe instruments on event dates, as its card said. The Builder tried it in the lab: marking five gave zero events, marking three gave zero, marking two gave events, and dates with only two unmarked instruments with data were dropped. The abnormal return is measured against the unmarked peers, so the judge seems to need at least three per date (inferred from behaviour, code not read). Same symptom as H-0038 (two-instrument universe, events at G0, none at G1, K-0054), which this makes the leading explanation. Consequences: the card as written could not run; the Builder narrowed the measured claim (SPY against IEF, not against TLT) and G1 and G0 event counts then agreed (482 both); nothing in the card schema warns of the peer rule. Also events() returns a single mask, so a declared complementary event set (equity drops on days when Treasuries fell) cannot be reported, the old diagnostic-channel gap again. Skeptic messages are absent for this card too.
+
+*confidence medium · 2026-10-15 · librarian · evidence: H-0041; H-0038; K-0054*
+
+### K-0057 lab try knows instruments named by the strategy (intraday crypto_top_n)
+
+Intraday crypto_top_n cards may name a leader or exclusion (e.g. BTCUSDT, ETHUSDT) in strategy.py. Since commit 405b0961 the Builder's lab try adds instrument-like string literals (…USDT) to the synthetic market; before, data.col('BTCUSDT') crashed in lab try (synthetic names were AAAUSDT..FFFUSDT) although real G0 on real data was unaffected. A Builder rewrite after such a block may not reuse earlier code (old workspace files are gone), so re-verify parity with the card's reference.
+
+*confidence high · 2026-10-15 · human · evidence: H-0040 message 288*
 
 ## How the lab works
 
@@ -262,3 +298,4 @@ Two of the first cards with a mechanism test (ex-dividend price pressure, breako
 - K-0042 A passing mechanism test can still end in a book below cash, even without fade
 - K-0043 The market's own release-session reaction predicts same-direction returns in liquid stocks
 - K-0045 G0 look-ahead checks stay vacuous for cards with minimum-size rules (now eleven cards)
+- K-0047 G0 now reports real event counts and look-ahead cuts for event cards; Skeptic messages still absent
