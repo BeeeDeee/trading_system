@@ -188,6 +188,27 @@ datasets:
       - "Positions are constant fractions of equity inside a trade (no drift rebalancing); no liquidation model (gross <= 1)."
       - "Consumed: research 15 used BTC/ETH and the basket 2020-2026 at 15m."
 
+  - id: binance_perp_5m
+    loader: intraday
+    asset_class: crypto_perp
+    instruments: "Binance USD-M perpetuals (107 symbols that were ever in the point-in-time monthly top 10 by volume, 2020-2026) as 5-minute candles; the card's universe is the PIT top-n by 30-day quote volume (crypto_top_n, n <= 40) or an explicit list. IntradayView fields: o h l c, qv (quote volume), nt (trades), tbq (taker-buy quote volume), funding (rate a long pays, on the settlement candle), real, listed, universe"
+    frequency: 5m
+    range: ["2020-01-01", "2026-09-30"]
+    clock: crypto
+    calendar: "24/7 (UTC)"
+    source: "data.binance.vision (free), snapshot binance_2026-10-03, built by lab.framework.intraday_data"
+    location: "strategy_backtester_2026_sep/data/derived/binance_2026-10-03/lab_intraday_5m"
+    quality: "lab intraday-build; candle gaps repeat the previous close and are not tradable"
+    holdout_from: "2023-01-01"
+    cost_model: crypto_perp_intraday
+    forward_source: null   # the paper bots are daily: an intraday card can pass at most G4
+    known_biases:
+      - "Basket = symbols that were ever in the monthly top 10 of research 15 (survivorship toward symbols that became liquid); the PIT top-n inside it is point-in-time."
+      - "Fills are modeled at the next candle's open with a fee + slippage tier by liquidity; real queue position, partial fills, latency and spread widening in fast markets are not modeled, so scalping results are optimistic."
+      - "Positions are constant fractions of equity inside a trade (no drift rebalancing); no liquidation model (gross <= 1)."
+      - "Consumed: research 15 used BTC/ETH and the basket 2020-2026 at 15m (the 5m panel itself is untouched by research)."
+      - "Cross-checked against the 15m panel (BTC): open, close and volume agree on all but 1-4 of 236,640 15m candles (gap rows)."
+
   - id: binance_funding
     loader: false
     asset_class: crypto_perp
