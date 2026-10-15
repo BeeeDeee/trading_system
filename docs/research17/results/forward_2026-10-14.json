@@ -1,0 +1,211 @@
+{
+ "asof": "2026-10-14",
+ "days": 14,
+ "period": [
+  "2026-10-01",
+  "2026-10-14"
+ ],
+ "members_used": {
+  "2026-10": [
+   "ZECUSDT",
+   "SOLUSDT",
+   "XRPUSDT",
+   "HYPEUSDT",
+   "NEARUSDT",
+   "DOGEUSDT",
+   "UNIUSDT",
+   "BNBUSDT",
+   "SUIUSDT",
+   "LSKUSDT"
+  ]
+ },
+ "pending_months": [],
+ "followers": [
+  "BNBUSDT",
+  "DOGEUSDT",
+  "HYPEUSDT",
+  "LSKUSDT",
+  "NEARUSDT",
+  "SOLUSDT",
+  "SUIUSDT",
+  "UNIUSDT",
+  "XRPUSDT",
+  "ZECUSDT"
+ ],
+ "stale_symbols": {},
+ "n_events": 2,
+ "n_trades": 2,
+ "P_stats": {
+  "sharpe": 6.556382870790794,
+  "cagr": 0.06413613223979775,
+  "max_dd": 0.0,
+  "days": 14,
+  "n_trades": 2,
+  "mean_trade": 0.011934026042785817,
+  "median_trade": 0.011934026042785817,
+  "hit_rate": 1.0
+ },
+ "mean_trade_ci90_events": [
+  0.011934026042785817,
+  0.005665230007520616,
+  0.018202822078051017
+ ],
+ "primary_criterion": {
+  "sharpe_gt_0": true,
+  "mean_trade_gt_0": true,
+  "min_events": 30,
+  "enough_events": false,
+  "meets": true
+ },
+ "null_p": 0.07592407592407592,
+ "null_median": -3.257140259691087,
+ "scenarios": {
+  "base": {
+   "sharpe": 6.556382870790794,
+   "cagr": 0.06413613223979775,
+   "max_dd": 0.0,
+   "days": 14,
+   "n_trades": 2,
+   "mean_trade": 0.011934026042785817,
+   "median_trade": 0.011934026042785817,
+   "hit_rate": 1.0
+  },
+  "cost75": {
+   "sharpe": 6.619036091303919,
+   "cagr": 0.0669107238646176,
+   "max_dd": 0.0,
+   "days": 14,
+   "n_trades": 2,
+   "mean_trade": 0.01244007348810483,
+   "median_trade": 0.01244007348810483,
+   "hit_rate": 1.0
+  },
+  "x2": {
+   "sharpe": 6.234369628905899,
+   "cagr": 0.05310836426943566,
+   "max_dd": 0.0,
+   "days": 14,
+   "n_trades": 2,
+   "mean_trade": 0.009911101263665012,
+   "median_trade": 0.009911101263665012,
+   "hit_rate": 1.0
+  },
+  "delay1": {
+   "sharpe": 7.023609997507592,
+   "cagr": 0.05410672885370027,
+   "max_dd": 0.0,
+   "days": 14,
+   "n_trades": 2,
+   "mean_trade": 0.01008354446051607,
+   "median_trade": 0.01008354446051607,
+   "hit_rate": 1.0
+  },
+  "nofund": {
+   "sharpe": 6.562919158328115,
+   "cagr": 0.06441327262085528,
+   "max_dd": 0.0,
+   "days": 14,
+   "n_trades": 2,
+   "mean_trade": 0.011984602776791031,
+   "median_trade": 0.011984602776791031,
+   "hit_rate": 1.0
+  },
+  "nolag": {
+   "sharpe": 1.7753058166658893,
+   "cagr": 0.27241265154796945,
+   "max_dd": 0.014835791678495691,
+   "days": 14,
+   "n_trades": 30,
+   "mean_trade": 0.0032857159245706018,
+   "median_trade": -0.0015335845183863661,
+   "hit_rate": 0.4666666666666667
+  },
+  "btc_perp_leader": {
+   "sharpe": 6.556382870790794,
+   "cagr": 0.06413613223979775,
+   "max_dd": 0.0,
+   "days": 14,
+   "n_trades": 2,
+   "mean_trade": 0.011934026042785817,
+   "median_trade": 0.011934026042785817,
+   "hit_rate": 1.0
+  }
+ },
+ "eth_reference_weight1": {
+  "sharpe": 0.0,
+  "cagr": 0.0,
+  "max_dd": 0.0,
+  "days": 14
+ },
+ "per_symbol": {
+  "HYPEUSDT": {
+   "n": 1,
+   "mean": 0.005665230007520616,
+   "contribution": 0.00057402193408661
+  },
+  "LSKUSDT": {
+   "n": 1,
+   "mean": 0.018202822078051017,
+   "contribution": 0.001812129451723698
+  }
+ },
+ "daily": {
+  "dates": [
+   "2026-10-01",
+   "2026-10-02",
+   "2026-10-03",
+   "2026-10-04",
+   "2026-10-05",
+   "2026-10-06",
+   "2026-10-07",
+   "2026-10-08",
+   "2026-10-09",
+   "2026-10-10",
+   "2026-10-11",
+   "2026-10-12",
+   "2026-10-13",
+   "2026-10-14"
+  ],
+  "ret": [
+   0.0,
+   0.00057402193408661,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.001812129451723698,
+   0.0
+  ]
+ },
+ "trades": [
+  {
+   "sym": "HYPEUSDT",
+   "entry": "2026-10-02T04:45:00",
+   "ret": 0.005665230007520616
+  },
+  {
+   "sym": "LSKUSDT",
+   "entry": "2026-10-13T01:30:00",
+   "ret": 0.018202822078051017
+  }
+ ],
+ "by_month": {
+  "2026-10": 0.0023871915878630467
+ },
+ "by_year": {
+  "2026": {
+   "sharpe": 6.556382870790794,
+   "ret": 0.0023871915878630467
+  }
+ },
+ "commit": "fecd40f4",
+ "rule_hash": "509267ac0f610c38d3b177f91a9bf226780a3869a7243a5e40c77a83ec598520",
+ "data_hash": "7d4c3e77e5ceae2652b30f6ca30dabc76c27e66127f14cfccd4596a413cebe06",
+ "created_at": "2026-10-15T19:15:31.669866+00:00"
+}

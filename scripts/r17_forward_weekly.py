@@ -3,8 +3,8 @@
     uv run python scripts/r17_forward_weekly.py [--test-alert]
 
 Called by scripts/r17_forward_weekly.sh (cron). Does NOT commit: review and commit
-docs/research17/results/forward_<asof>.json by hand. Alerts go to ntfy when NTFY_TOPIC is set (env file
-~/.config/r17-forward/env, see the .sh wrapper); the dashboard always shows them.
+docs/research17/results/forward_<asof>.json by hand. Alerts go to ntfy when NTFY_TOPIC is set (optional, env file
+~/.config/r17-forward/env); the dashboard and the portal banner (status.json) always show them.
 Env: LEAD_DASH_DIR (default /srv/lead-forward/site, falls back to runs/lead_dashboard when not writable).
 """
 
@@ -65,6 +65,11 @@ tmp = out / ".index.html.tmp"
 tmp.write_text(page)
 tmp.replace(out / "index.html")
 print(f"dashboard: {out / 'index.html'}")
+# machine-readable status for the portal's warning banner (shown above every tab)
+st = out / ".status.json.tmp"
+st.write_text(json.dumps({"title": "LEAD forward", "last_run": state["last_run"], "stale_days": ops.STALE_RUN_DAYS,
+                          "alerts": state["alerts"]}, ensure_ascii=False))
+st.replace(out / "status.json")
 
 if state["alerts"]:
     topic = os.environ.get("NTFY_TOPIC")
