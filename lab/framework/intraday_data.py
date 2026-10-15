@@ -203,9 +203,15 @@ def load(out_dir: Path, top_n: int = 20, stage: str = "dev", symbols: list[str] 
     n = meta["n_rows"] if stage == "full" else int((times < np.datetime64(HOLDOUT_FROM, "m")).sum())
     keep = [meta["symbols"].index(s) for s in symbols] if symbols else list(range(len(meta["symbols"])))
     names = tuple(meta["symbols"][k] for k in keep)
-    a = {k: np.load(out_dir / f"{k}.npy", mmap_mode="r")[:n][:, keep].astype(np.float32) for k in (*FIELDS, "real")}
-    real = a.pop("real").astype(bool)
-    listed = np.maximum.accumulate(real, axis=0)
     bpd = 1440 // TF_MINUTES[tf]
+    rd = lambda k, cols: np.load(out_dir / f"{k}.npy", mmap_mode="r")[:n][:, cols].astype(np.float32)
+    real_all = rd("real", keep).astype(bool)
+    uni_all = pit_universe(rd("qv", keep), real_all, bpd, top_n)
+    if not symbols:                                                    # a symbol that is never a member is never traded:
+        keep = [k for k, m in zip(keep, uni_all.any(axis=0)) if m]     # leave it out (the 5m panel would not fit the judge)
+    names = tuple(meta["symbols"][k] for k in keep)
+    a = {k: rd(k, keep) for k in FIELDS}
+    real = rd("real", keep).astype(bool)
+    listed = np.maximum.accumulate(real, axis=0)
     uni = pit_universe(a["qv"], real, bpd, top_n)
     return IntradayView(times=times[:n], tf=tf, instruments=names, real=real, listed=listed, universe=uni, **a)
