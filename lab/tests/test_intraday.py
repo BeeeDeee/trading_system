@@ -156,3 +156,37 @@ def test_a_signal_free_strategy_does_not_pass_g1(lab, evaluator):
 def test_g5_is_not_available(lab, evaluator):
     out = evaluator.evaluate(lab, "H-9001", CARD, "G5", {})
     assert not out.passed and out.reason_code == "g5_no_forward_data"
+
+
+LEADER = '''
+import numpy as np
+from lab.framework.intraday_api import hold_for, normalize_gross
+
+LEADER = "BTCUSDT"
+
+def target_positions(data, params):
+    lead = data.col(LEADER)
+    sig = np.zeros(data.shape)
+    sig[1:, :] = (data.c[1:, lead] > data.c[:-1, lead] * 1.01)[:, None]
+    sig[:, lead] = 0.0
+    return normalize_gross(hold_for(sig, 4) / data.shape[1]) * data.universe
+'''
+
+
+def test_named_instruments_are_taken_from_string_literals():
+    assert I.named_instruments(LEADER + "\nX = 'ETHUSDT'\nY = 'BTCUSDT'\nZ = 'not a name'") == ("BTCUSDT", "ETHUSDT")
+    assert I.named_instruments("def broken(:") == ()
+
+
+def test_dry_run_synthetic_market_contains_instruments_named_by_the_strategy(lab, tmp_path):
+    import yaml
+    ws = tmp_path / "ws"
+    (ws / "strategy").mkdir(parents=True)
+    (ws / "card.yaml").write_text(yaml.safe_dump(CARD))
+    (ws / "gates.yaml").write_text(lab.paths.gates.read_text())
+    (ws / "strategy" / "strategy.py").write_text(LEADER)
+    (ws / "strategy" / "test_strategy.py").write_text("def test_ok():\n    assert True\n")
+    ok, lines = I.dry_run(ws)
+    assert ok, lines
+    assert any("G0 integrity on synthetic data: passed" in x for x in lines)
+    assert any("7 perpetuals" in x for x in lines)             # 6 default names + BTCUSDT

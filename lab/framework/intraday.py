@@ -171,6 +171,22 @@ def random_timing(pos_targets: np.ndarray, rng, min_shift: int) -> np.ndarray:
 SYN_NAMES = ("AAAUSDT", "BBBUSDT", "CCCUSDT", "DDDUSDT", "EEEUSDT", "FFFUSDT")
 
 
+def named_instruments(source: str) -> tuple[str, ...]:
+    """Instrument-like string literals of a strategy (e.g. a leader 'BTCUSDT'), in order of first appearance."""
+    import ast
+    import re
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return ()
+    found: list[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str) and re.fullmatch(r"[A-Z0-9]{2,15}USDT", node.value):
+            if node.value not in found:
+                found.append(node.value)
+    return tuple(found)
+
+
 def synthetic_view(tf: str = "15m", days: int = 90, names=SYN_NAMES, seed: int = 7) -> IntradayView:
     rng = np.random.default_rng(seed)
     step = {"15m": 15, "5m": 5}[tf]
@@ -507,6 +523,9 @@ def dry_run(ws) -> tuple[bool, list[str]]:
     cfg = yaml.safe_load((ws / "gates.yaml").read_text())["intraday"]
     path = ws / "strategy" / "strategy.py"
     names = tuple(card["universe"].get("instruments") or SYN_NAMES)
+    if not card["universe"].get("instruments") and path.exists():
+        # a crypto_top_n card may name instruments (a leader, an exclusion): the synthetic market must contain them
+        names += tuple(n for n in named_instruments(path.read_text()) if n not in names)
     tf = card_tf(card)
     view = synthetic_view(tf, days=60, names=names, seed=int(hashlib.sha256(
         json.dumps(card.get("signal", {}), sort_keys=True, default=str).encode()).hexdigest()[:8], 16))
