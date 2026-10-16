@@ -226,11 +226,12 @@ def run(data_dir, date=None, dry_run=False, force=False, scores_file=None, free_
 
         # --- data (Yahoo chart API, 6 months of rows: today, catch-up days, backfill)
         rows_all, errs = prices.fetch_all(U, "6mo")
-        today = prices.day_prices(rows_all, U, date)
-        if len(today["close"]) < len(U) and wait_s:
+        if len(prices.day_prices(rows_all, U, date)["close"]) < len(U) and wait_s:
             time.sleep(wait_s)                                                  # the daily row may be late; one re-fetch
             rows_all, errs = prices.fetch_all(U, "6mo")
-            today = prices.day_prices(rows_all, U, date)
+        fixes = prices.repair_ohlc(rows_all, U)                                 # inconsistent Yahoo bars -> Nasdaq
+        notes += [f for f in fixes if "OHLC z Nasdaq" in f]
+        today = prices.day_prices(rows_all, U, date)
         if errs:
             notes.append("Yahoo: " + "; ".join(errs[:3]))
         write_json(os.path.join(work, "yahoo_rows.json"), rows_all)

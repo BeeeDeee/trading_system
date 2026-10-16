@@ -60,6 +60,27 @@ class Prices(unittest.TestCase):
         t = prices.day_prices(rows, ["SPY", "QQQ"], "2026-09-22")
         self.assertEqual(t["close"], {"SPY": 1.5})
 
+    def test_repair_ohlc_from_nasdaq(self):
+        real = prices.nasdaq_rows
+        try:
+            bad = {"2026-10-16": [773.24, 773.23, 760.64, 763.25]}       # open above high (Yahoo, 2026-10-16)
+            good = {"2026-10-16": [773.2, 773.23, 760.64, 763.25]}
+            prices.nasdaq_rows = lambda tk, days=12: good
+            rows = {"SPY": dict(bad)}
+            notes = prices.repair_ohlc(rows, ["SPY"])
+            self.assertEqual(rows["SPY"], good)
+            self.assertIn("OHLC z Nasdaq", notes[0])
+            prices.nasdaq_rows = lambda tk, days=12: {}                  # Nasdaq lags -> left alone, engine will fail
+            rows = {"SPY": dict(bad)}
+            self.assertIn("ještě nemá", prices.repair_ohlc(rows, ["SPY"])[0])
+            self.assertEqual(rows["SPY"], bad)
+            prices.nasdaq_rows = lambda tk, days=12: {"2026-10-16": [773.2, 773.23, 760.64, 780.0]}   # close disagrees
+            rows = {"SPY": dict(bad)}
+            self.assertIn("nesedí", prices.repair_ohlc(rows, ["SPY"])[0])
+            self.assertEqual(rows["SPY"], bad)
+        finally:
+            prices.nasdaq_rows = real
+
 
 class FakeWorld(unittest.TestCase):
     """A synthetic market on real trading days (2026-09-08 .. 09-21 stored, runs for 09-22 and later)."""

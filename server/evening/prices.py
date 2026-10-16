@@ -103,6 +103,37 @@ def fetch_all(universe, rng="6mo"):
     return rows, errs
 
 
+def _consistent(row):
+    o, h, l, c = row                                   # same rule as the engine's data check
+    return l <= min(o, c) + 1e-6 and h >= max(o, c) - 1e-6 and l > 0
+
+
+def repair_ohlc(rows_all, universe, tol_pct=0.3):
+    """Yahoo occasionally serves an internally inconsistent bar (e.g. open 1 cent above high). Replace such a row with
+    Nasdaq's row for the same date when that one is consistent and its close agrees within `tol_pct`.
+    Modifies rows_all in place. -> notes (what was replaced / could not be)."""
+    notes = []
+    for tk in universe:
+        bad = [d for d, r in (rows_all.get(tk) or {}).items() if not _consistent(r)]
+        if not bad:
+            continue
+        try:
+            alt = nasdaq_rows(tk)
+        except FetchError as e:
+            notes.append(f"{tk}: nekonzistentní OHLC u Yahoo, Nasdaq nedostupný ({e})")
+            continue
+        for d in sorted(bad):
+            y, n = rows_all[tk][d], alt.get(d)
+            if n is None:
+                notes.append(f"{tk} {d}: nekonzistentní OHLC u Yahoo, Nasdaq řádek ještě nemá")
+            elif not _consistent(n) or abs(y[3] / n[3] - 1) * 100 > tol_pct:
+                notes.append(f"{tk} {d}: nekonzistentní OHLC u Yahoo, Nasdaq {n} nesedí")
+            else:
+                rows_all[tk][d] = [_r(v) for v in n]
+                notes.append(f"{tk} {d}: OHLC z Nasdaq (Yahoo {y} nekonzistentní)")
+    return notes
+
+
 def day_prices(rows_all, universe, date):
     """today.json for `date` from fetched rows; tickers without a row for that date are left out."""
     t = {"date": date, "open": {}, "high": {}, "low": {}, "close": {}}
