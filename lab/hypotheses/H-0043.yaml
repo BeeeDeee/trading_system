@@ -168,7 +168,10 @@ notes: 'Brief fit: short horizon (5 sessions), cross-asset: the signal comes fro
   licence; if the lab''s copy of BAMLH0A0HYM2 or BAMLC0A0CM does not cover 2003-2020 the Builder must fail loudly
   (K-0010) rather than run on a short window. No mechanism parameters were tuned: 2 standard deviations, 5 sessions
   and a 252-session regression are round defaults.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_events
 history:
 - ts: '2026-10-15T17:17:12.898744+00:00'
   version: 1
@@ -191,3 +194,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-16T02:43:01.130491+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 87, qlab)
+- ts: '2026-10-16T02:43:01.313700+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 88, qlab)

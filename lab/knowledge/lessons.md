@@ -344,6 +344,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - open questions: Does the unwind exist outside the 2021 leverage boom? A per-era report and a tie-free score (funding relative to its own history or to basis) would say; the holdout is untouched. The Builder built its own top-twenty universe because the gate supplied none.
 - related: H-0035, H-0006, H-0004
 
+## H-0040 – BTC-led catch-up in lagging altcoins - after a 1-hour BTC jump of 3+ sigma, long each top-volume altcoin that has moved less than half as much, hold 4 hours
+
+- family: `btc-lead-altcoin-lag` · mechanism: cross_asset_information · instruments: Binance USD-M perps, 15-minute candles: long lagging top-volume altcoins after a large one-hour BTC upward jump, four-hour hold, dev 2020 to 2022
+- outcome: passed G1; rejected at G2: neighbours too far below the primary, and one dev third carried most of the return
+- lesson: Strong at the primary setting and robust where short-horizon crypto rules usually die: it survived doubled costs and a one-candle later fill, and every neighbour stayed positive. It failed on stability. The edge rose with the jump threshold, so the lowest threshold in the grid lost most of it, and one third of dev carried most of the return while the latest third lost. Trades cluster on BTC jump days, so independent episodes are far fewer than the trade count. Earlier owner research saw the same weakness in later years, so the 2023 to 2026 holdout is contaminated and cannot arbitrate.
+- avoid: Do not narrow the grid to the higher thresholds, switch the leader to spot BTC or ETH, add the short side, or change the lag ratio or hold after seeing this: dev-selected variants of a rule already tried in dozens of earlier configurations (research 15 to 17) are new trials, not rescues (K-0058). Do not refile it as altcoin beta catch-up or leader-follower under another name.
+- open questions: The owner's forward paper test (from 2026-10-01) is the only clean out-of-sample evidence; wait for it. A new card could ask whether the lag lives in particular follower liquidity tiers, or needs a news-driven BTC jump rather than a liquidation cascade (overlaps H-0035). An episode split of the losing block is untested.
+- related: H-0035, H-0039, H-0013, H-0006
+
 ## H-0041 – Flight-to-safety reversal - after a session where US stocks fall sharply while long Treasuries rally, tilt a 60/40 SPY/IEF book to 100 % SPY for 5 sessions
 
 - family: `short-term-reversal` · mechanism: liquidity_provision · instruments: SPY, IEF and TLT daily ETFs 2002-2020: tilt of a stock-bond mix to all SPY for a week after stocks fall and TLT rises
@@ -352,3 +361,21 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not retune the multiple, hold or TLT condition, or add a VIX or credit conditioner: same events, new trials. Do not refile stress rebounds of equities against bonds under a new name; studies 6 and 7 share the mechanism. Do not mark every universe instrument as an event.
 - open questions: Is this only the market bounce after stress of studies 6 and 7, and does the Treasuries-up condition add anything? The control (equity drops with Treasuries falling) could not be reported and needs its own card. A per-episode view (2008, 2020) would show if the latest-third loss is one crash.
 - related: H-0003, H-0006, H-0030, H-0035, H-0038
+
+## H-0042 – Macro-announcement beta premium - shift IEF into the 3 highest-beta ETFs over scheduled CPI, payrolls and FOMC days, 2 sessions
+
+- family: `macro-announcement-premium` · mechanism: risk_premium · instruments: ten US ETFs: high-beta against low-beta over two sessions around CPI, payrolls and FOMC days, 2002 to 2020
+- outcome: rejected at G1 on the mechanism test: right sign and positive in every third of dev, but under the placebo upper bar, and gross per event was below the round-trip cost; strategy not run
+- lesson: The announcement-day beta spread across ETFs is positive in every third of dev but sits inside the cloud of time-shifted placebo windows of the same ETFs, and gross is below round-trip cost. The placebo upper bar is itself below cost, so this is an effect too small to trade in this form, not a power problem. The placebo average was positive too (equities beat bonds and gold in any window), so part of the raw gain is generic drift. The gain shows at the two-session horizon only and is gone at three and five sessions: it sits on the announcement session and is not kept. Weakest in the latest third. The tilt never ran.
+- avoid: Do not retune tilt, beta_lookback or the window, and do not split the same events into CPI, payrolls and FOMC subsets after seeing this: new trials on the same dates. Do not refile as pre-FOMC drift or announcement-day beta on these ten ETFs.
+- open questions: A beta sort inside equities on announcement days removes the equity-versus-bond drift, but the month-turn beta spread faded (K-0038): state the latest-third sign as a kill condition. A split by release type could not be reported by the gate.
+- related: H-0016, H-0025, H-0023, H-0041
+
+## H-0043 – Credit-ETF gap to its bond index - tilt the IEF sleeve of a 60/40 book into HYG/JNK/LQD for 5 days after the ETF falls well below what its ICE BofA OAS and Treasury yields imply
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: HYG, JNK and LQD tilted out of the IEF sleeve of a SPY/IEF mix after the ETF falls below what ICE BofA spreads and Treasury yields imply; SPY, IEF, TLT and SHY as unmarked peers; 2003 to 2020
+- outcome: rejected at G1 on the event count: zero events in the mechanism test and already zero at G0, so no mechanism result and no strategy run. Untestable, not refuted.
+- lesson: The test could not tell, and a zero here looks like a data or pipeline fault, not a market result. A two-sigma residual gap should fire regularly in any healthy series over many years, so an empty set points at the inputs: the lab's copy of the ICE BofA spread series may start late or be thin, the valid-day rule (all four FRED series present and changed) may drop most days, or gaps may blank the 252-session regression window. The Builder could not enforce the card's coverage check at G0 and asked for verification. Nothing is learned about credit-ETF gaps to bond value.
+- avoid: Do not refile with other z_entry or gap_days values: the empty set does not depend on them, and a lower threshold cannot fix missing data. Do not resubmit before the cause is known; a plain rerun after a data fix is a Chair decision on trial counting. Do not count this as evidence against H-0037's open question.
+- open questions: Once the spread series are confirmed to cover the period, the card's question stands: does the wrapper's excess move against bond value revert, or does the ETF lead the evaluated index (the death the card predicted)? A cheap event-count and coverage check by year before filing would avoid another empty run.
+- related: H-0037, H-0038, H-0021, H-0041

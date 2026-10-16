@@ -168,7 +168,10 @@ notes: 'Brief fit: short horizon (two sessions) and cross-asset: the signal come
   weakened in later years, so the latest third is a declared kill condition rather than something tuned around.
   No ETF forward source exists, so this card can pass at most G4. Ten instruments with three marked on each side
   leaves at least three unmarked peers per date (K-0055).'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-10-15T07:15:01.088787+00:00'
   version: 1
@@ -198,3 +201,17 @@ history:
   agent: system
   invocation_id: null
   reason: dataset macro_release_calendar_1d ingested
+- ts: '2026-10-16T02:12:20.451677+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 85, qlab)
+- ts: '2026-10-16T02:12:20.939924+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 86, qlab)
