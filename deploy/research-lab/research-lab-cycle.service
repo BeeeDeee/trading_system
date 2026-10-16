@@ -20,7 +20,7 @@ ExecStart=/srv/research-lab/app/.venv/bin/lab cycle
 TimeoutStartSec=4h
 Nice=10
 # 3.9 GB machine shared with the cpb bots: the whole cycle (gates included) stays below this
-MemoryMax=2800M
+MemoryMax=3400M
 CPUQuota=200%
 # sudo -u labagent needs privileges. NoNewPrivileges is off, and so must be every option that implies it
 # (ProtectKernelTunables/Modules/Logs, LockPersonality, RestrictSUIDSGID, SystemCallFilter, PrivateDevices, ...):
