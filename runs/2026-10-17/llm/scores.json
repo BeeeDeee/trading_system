@@ -1,0 +1,52 @@
+{
+ "date": "2026-10-17",
+ "regime": {
+  "label": "Neutrální, konsolidace",
+  "summary": "BTC (~81,6k) se drží nad SMA50 a ubránil 80k, ale je pod SMA20; ETF toky jsou smíšené po odlivu 679 mil. USD minulý týden, funding je neutrální a objemy altcoinů klesají. Dominance BTC ~60 %, majors slabší než BTC, relativní síla zůstává jen u AI tokenů (NEAR, TAO) a WLD."
+ },
+ "events_7d": [
+  {"date": "2026-10-26", "title": "Ethereum Glamsterdam na testnetu Hoodi (těsně za 7denním oknem, může se o něm mluvit předem)", "type": "upgrade"},
+  {"date": "2026-10-28", "title": "FOMC (28.–29. 10.), trh čeká snížení o 25 bp; až za oknem, ale může hýbat sentimentem dopředu", "type": "makro"},
+  {"date": "2026-10-20", "title": "Unlocky mimo universe (ZRO, AXS 20. 10., ZORA 23. 10.), pro sledované coiny žádný velký unlock nenalezen", "type": "unlock"}
+ ],
+ "coins": {
+  "BTC": {"trend": 0, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.5, "p_up_7d": 0.5, "expected_move_7d_pct": 0.3, "event": false, "event_type": "none", "risk_flag": false, "note": "Konsolidace mezi SMA20 a SMA50, 80k drží jako podpora, ETF toky bez jasného směru.", "sources": ["https://www.coindesk.com/daybook-us/2026/10/16/traders-will-soon-be-able-to-bet-on-whether-coinbase-robinhood-and-marathon-will-hit-their-targets", "https://www.kucoin.com/news/flash/bitcoin-etfs-record-679m-in-weekly-outflows-amid-uptober-slump"]},
+  "ETH": {"trend": -1, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.45, "p_up_7d": 0.47, "expected_move_7d_pct": -0.5, "event": false, "event_type": "none", "risk_flag": false, "note": "Pod SMA20 i SMA50 a za BTC o 7 % za 30 dní, RSI 39 dává jen mírný prostor k odrazu.", "sources": ["https://basisdesk.news/crypto-market-today"]},
+  "BNB": {"trend": -1, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.48, "p_up_7d": 0.48, "expected_move_7d_pct": -0.3, "event": false, "event_type": "none", "risk_flag": false, "note": "Slabý trend u 30d minima, ale nízká beta ho v klidném trhu drží blízko BTC.", "sources": []},
+  "XRP": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.44, "p_up_7d": 0.46, "expected_move_7d_pct": -1.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Pod všemi krátkými SMA, 21 % pod 30d max a objem −45 %, takže je přeprodaný bez katalyzátoru.", "sources": ["https://basisdesk.news/crypto-market-today"]},
+  "SOL": {"trend": -1, "mr": 1, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.47, "p_up_7d": 0.48, "expected_move_7d_pct": -0.5, "event": false, "event_type": "none", "risk_flag": false, "note": "Pod SMA20 a SMA50, RSI 39, funding téměř nulový, takže chybí tah i výraznější přeprodanost.", "sources": []},
+  "ZEC": {"trend": -1, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.44, "p_up_7d": 0.45, "expected_move_7d_pct": -1.5, "event": false, "event_type": "none", "risk_flag": false, "note": "Po likvidacích dlouhých pozic je 32 % pod 30d max, včera −5,9 %, trend vs BTC se zlomil.", "sources": ["https://coinmarketcap.com/top-stories/6ac7c554dd67e817b90fb542/"]},
+  "DOGE": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.43, "p_up_7d": 0.45, "expected_move_7d_pct": -1.5, "event": false, "event_type": "none", "risk_flag": false, "note": "Pod všemi SMA včetně SMA100 a s betou 1,8 nemá v konsolidaci výhodu.", "sources": []},
+  "ADA": {"trend": 0, "mr": 1, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.47, "p_up_7d": 0.47, "expected_move_7d_pct": -0.5, "event": false, "event_type": "none", "risk_flag": false, "note": "Za 30 dní lepší než BTC, ale týden −7 % pod SMA20, takže je to smíšený obraz a mírný potenciál k odrazu.", "sources": []},
+  "NEAR": {"trend": 2, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.52, "p_up_7d": 0.5, "expected_move_7d_pct": 1.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Nejsilnější trend v universe díky rotaci do AI (+86 % vs BTC za 30 d), ale volatilita 167 % a klesající OI zvyšují riziko korekce.", "sources": ["https://blockchain.news/news/20261016-price-prediction-near-10-surge-collides-with-shrinking-open", "https://coinmarketcap.com/cmc-ai/near-protocol/latest-updates/"]},
+  "AVAX": {"trend": 1, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.5, "p_up_7d": 0.49, "expected_move_7d_pct": 0.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Nad SMA50 a +26 % vs BTC za 30 d, ale pod SMA20 a objem −43 %, takže momentum slábne.", "sources": []},
+  "UNI": {"trend": 0, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.48, "p_up_7d": 0.47, "expected_move_7d_pct": -0.5, "event": false, "event_type": "none", "risk_flag": false, "note": "33 % pod 30d max a pod SMA20, fee switch je dávno v ceně a beta 2 je v konsolidaci nevýhoda.", "sources": []},
+  "SUI": {"trend": 1, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.49, "p_up_7d": 0.48, "expected_move_7d_pct": 0.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Silný měsíc (+36 % vs BTC), ale týden pod SMA20, beta 2,1 a slabé TVL brzdí pokračování.", "sources": []},
+  "TAO": {"trend": 1, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.51, "p_up_7d": 0.49, "expected_move_7d_pct": 0.3, "event": false, "event_type": "none", "risk_flag": false, "note": "AI narativ drží relativní sílu (+1,5 % vs BTC za 7 d), cena je mezi SMA20 a SMA50 a bez nového katalyzátoru.", "sources": ["https://www.coingabbar.com/en/bittensor-price-prediction-tao-october-2026-analysis"]},
+  "ENA": {"trend": 0, "mr": 1, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.48, "p_up_7d": 0.46, "expected_move_7d_pct": -1.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Po jednorázovém uvolnění 1,41 mld ENA (5. 10.) je 32 % pod 30d max, trh tlak z nabídky ještě vstřebává.", "sources": ["https://pluang.com/en/news-feed/pembukaan-token-ena-oktober-2026-dampak-dan-penjelasan"]},
+  "PUMP": {"trend": -1, "mr": 1, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.48, "p_up_7d": 0.46, "expected_move_7d_pct": -0.5, "event": false, "event_type": "none", "risk_flag": false, "note": "Po unlocku (12.–14. 10.) za týden −17 %, ale L/S 0,75 ukazuje přeplněné shorty, takže je možný short squeeze.", "sources": ["https://www.bitrue.com/blog/pump-token-unlock"]},
+  "ONDO": {"trend": 1, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.49, "p_up_7d": 0.48, "expected_move_7d_pct": 0.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Nad SMA50 a +24 % vs BTC za 30 d, ale týden ztrácí a pod SMA20 chybí nová zpráva.", "sources": []},
+  "WLD": {"trend": 2, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.52, "p_up_7d": 0.5, "expected_move_7d_pct": 0.8, "event": false, "event_type": "none", "risk_flag": false, "note": "Nejlepší struktura trendu (blízko SMA20, +13 % nad SMA50, +3 % vs BTC za 7 d) a roste OI, riziko jsou opakované OTC prodeje.", "sources": ["https://cryptobriefing.com/worldcoin-otc-sale-binance-falconx/?rand=59535"]}
+ },
+ "top10": [
+  {"coin": "NEAR", "reason": "Nejsilnější relativní trend, rotace do AI pokračuje."},
+  {"coin": "WLD", "reason": "Nejčistší trendová struktura, tento týden roste vs BTC."},
+  {"coin": "TAO", "reason": "AI narativ, týden lehce lepší než BTC."},
+  {"coin": "AVAX", "reason": "Nad SMA50, silný měsíc, nízká korelace s BTC."},
+  {"coin": "SUI", "reason": "Silný 30d trend, ale vysoká beta."},
+  {"coin": "ONDO", "reason": "Drží se nad SMA50, RWA narativ."},
+  {"coin": "BNB", "reason": "Nízká beta, v klidném trhu drží s BTC."},
+  {"coin": "ADA", "reason": "30d lepší než BTC, mírně přeprodaná."},
+  {"coin": "PUMP", "reason": "Unlock za námi, přeplněné shorty, takže je možný squeeze."},
+  {"coin": "ENA", "reason": "Přeprodaná po unlocku, 30d trend stále kladný."}
+ ],
+ "claude_volne": {
+  "comment": "Opatrná expozice asi 38 % s jádrem v BTC a malými sázkami na relativní sílu (AI, WLD), zbytek v hotovosti kvůli konsolidaci a klesajícím objemům altcoinů.",
+  "positions": [
+   {"coin": "BTC", "weight_pct": 20, "reason": "Jádro portfolia, drží se nad SMA50 a 80k funguje jako podpora.", "invalidation": "Denní uzavření pod 78k nebo série odlivů z ETF nad 500 mil. USD."},
+   {"coin": "NEAR", "weight_pct": 8, "reason": "Nejsilnější trend v universe, AI rotace.", "invalidation": "Pokles pod 4,5 USD nebo ztráta více než 8 % vs BTC za 3 dny."},
+   {"coin": "TAO", "weight_pct": 5, "reason": "Relativní síla AI sektoru, týden lepší než BTC.", "invalidation": "Pokles pod 250 USD nebo zlom pod SMA50 s rostoucím rozdílem vs BTC."},
+   {"coin": "WLD", "weight_pct": 5, "reason": "Nejlepší trendová struktura a rostoucí OI.", "invalidation": "Zpráva o dalším velkém OTC prodeji nebo pokles pod 0,46 USD."}
+  ]
+ }
+}
