@@ -72,6 +72,18 @@ Across the lab's event studies that cleared or came near the placebo bar, the ef
 
 *confidence medium · 2026-10-15 · librarian · supersedes K-0052 · evidence: H-0016; H-0017; H-0025; H-0027; H-0029; H-0032; H-0035; H-0036; H-0037; H-0039; H-0040; K-0038; K-0046*
 
+### K-0063 Fed-calendar equity premia against bonds: positive on average, near the placebo bar, not tradable, weakest lately
+
+Two designs on the Fed's pre-announced calendar, the scheduled announcement sessions (H-0042) and the even-week cycle of FOMC time (H-0045), both gave a positive equity-over-bond or high-beta-over-low-beta average that was inside or just under the time-shifted placebo cloud. The two live at different horizons: the announcement design shows its gain on the announcement session only, while the cycle design shows nothing at one session and builds over several, so the cycle result is not the announcement-day effect again. Both are weakest in the latest third of dev, which includes publication, and gross is thin relative to cost. A design that marks both sides (even long, odd short) gives a placebo mean near zero, which is a cleaner test than the one-sided H-0042, where part of the gain was generic equity drift. A further Fed-calendar card on equities and Treasuries has a low prior unless it changes the instrument (index futures, equity-only comparison) or the horizon; this extends K-0060 without superseding it.
+
+*confidence low · 2026-10-16 · librarian · evidence: H-0042; H-0045; K-0060; K-0034*
+
+### K-0065 Macro-calendar cards on asset-class ETFs fail in three designs; reaction drift is single-stock only
+
+Three designs built on the scheduled US macro calendar (announcement-session beta premium, H-0042; even-week FOMC-cycle tilt, H-0045; cross-asset reaction drift, H-0047) all ended at the event-study gate. The first two gave a positive but unreliable average, weakest lately (K-0063). The third, which follows the release-day reaction instead of fixing a side, found the opposite sign: the most extreme reactions did slightly worse than peers over the next sessions, with the same sign in every third of dev and the placebo mean near zero. So continuation after scheduled news, the lab's best mechanism result in single stocks with real release dates (K-0046), does not appear across asset-class ETFs, consistent with the owner's daily lead-lag scan (mrel). The wrong-signed result is not an invitation to the mirror trade: its size is of the order of round-trip cost, and the test cannot tell whether release days matter or any large ETF day behaves this way (K-0056). Treat macro calendar x ETFs as a low prior unless the instrument or horizon changes.
+
+*confidence low · 2026-10-16 · librarian · evidence: H-0047; H-0042; H-0045; K-0046; K-0063; K-0056; prior_studies mrel*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -172,17 +184,17 @@ A mechanism failure at G1 is a 'cannot tell' when the placebo bar (its upper per
 
 *confidence medium · 2026-10-11 · librarian · supersedes K-0031 · evidence: H-0017; H-0020; H-0024; K-0026; K-0031*
 
-### K-0048 Fixed event slots did not close the gap between a passing event study and a failing market-neutral book
-
-Four cards cleared the event-study gate and then failed the strategy gate (H-0016, H-0019, H-0028, H-0031). H-0031 removed the first suspect of K-0042, weight normalization, with fixed risk-scaled slots and a liquid net hedge; exposure was about two fifths and the net Sharpe was still below T-bills, so the card's own stop rule fired. Remaining suspects: hedge basket not matched to the study's equal-weight benchmark, costs on names that just moved several deviations, squeezes, and cash handling (unverified whether idle cash earns the T-bill rate). The gate gives no gross/net or long/short split. The long-only tilt H-0033 came close, pointing at the short, hedge or cash side. Event gross covered cost by a modest multiple in both books. Do not file more market-neutral reaction-following books until the output decomposes.
-
-*confidence medium · 2026-10-14 · librarian · supersedes K-0042 · evidence: H-0016; H-0019; H-0028; H-0031; H-0033; K-0042*
-
 ### K-0053 The cost check now binds more often than the placebo test, and near-cost results are sensitive to the cost tier
 
 H-0030, H-0036 and H-0039 passed the placebo percentile (H-0039 by a hair) and failed only on gross against round-trip cost; H-0036 and H-0039 ended within a fifth of the cost, H-0030 well under. H-0037 failed both. The cost ratio prices the event legs only: hedge baskets, the weekend or overnight holds, and tier choices (taker spread, perp tier) enter only when a strategy runs, so a ratio close to one is neither a safe bound nor a refutation. Before filing a daily or weekly rotation of a taker book, a Scout should write down the expected gross per event against the cost tier of the instrument, and treat a card whose gross is a fraction of cost as untradable regardless of the placebo result. This extends K-0034 (placebo bar against cost) to the cost check itself.
 
 *confidence medium · 2026-10-15 · librarian · evidence: H-0030; H-0036; H-0037; H-0039; K-0034; K-0044*
+
+### K-0064 A strong mechanism pass did not carry over to a long-only always-invested tilt
+
+Several cards cleared the event-study gate and then failed the strategy gate (H-0016, H-0019, H-0028, H-0031, H-0046). K-0048 suspected hedge basket, shorts, costs and cash, because the long-only tilt H-0033 came close. H-0046 removes most of that: a long-only tilt on an always-invested book, no shorts, hedge or cash, with the strongest placebo score so far and gross several times cost, still lost to the constant mix on Sharpe. Remaining suspects: the study pools four equity ETFs against four bond peers while the book trades SPY and IEF only; the effect built over several sessions while the book held one; the earliest third carries most of the mean; and the benchmark or book construction is unverified (return, drawdown and Sharpe disagreed oddly; owner asked). A rough estimate suggests the Sharpe margin was within reach had the study effect carried over. Scouts should state the expected annual gain for the traded instruments only next to the required margin.
+
+*confidence low · 2026-10-16 · librarian · supersedes K-0048 · evidence: H-0046; H-0033; H-0031; H-0028; H-0025; H-0019; H-0016; K-0048; K-0053*
 
 ## The judge (framework behaviour)
 
@@ -311,5 +323,6 @@ H-0040 is the first card that is an earlier owner rule re-run through the lab (r
 - K-0043 The market's own release-session reaction predicts same-direction returns in liquid stocks
 - K-0045 G0 look-ahead checks stay vacuous for cards with minimum-size rules (now eleven cards)
 - K-0047 G0 now reports real event counts and look-ahead cuts for event cards; Skeptic messages still absent
+- K-0048 Fixed event slots did not close the gap between a passing event study and a failing market-neutral book
 - K-0050 G2 random-timing null is deeply negative in two cards, so passing it may only measure costs
 - K-0052 Short-horizon effects that clear the pooled placebo test are usually weakest or reversed in the latest third of dev

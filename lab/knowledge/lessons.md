@@ -379,3 +379,39 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile with other z_entry or gap_days values: the empty set does not depend on them, and a lower threshold cannot fix missing data. Do not resubmit before the cause is known; a plain rerun after a data fix is a Chair decision on trial counting. Do not count this as evidence against H-0037's open question.
 - open questions: Once the spread series are confirmed to cover the period, the card's question stands: does the wrapper's excess move against bond value revert, or does the ETF lead the evaluated index (the death the card predicted)? A cheap event-count and coverage check by year before filing would avoid another empty run.
 - related: H-0037, H-0038, H-0021, H-0041
+
+## H-0045 – FOMC-cycle equity tilt - 60/40 SPY/IEF book overweight SPY in even weeks and underweight in odd weeks of FOMC cycle time, weekly switches
+
+- family: `macro-announcement-premium` · mechanism: risk_premium · instruments: SPY against IEF in a 60/40 book, overweight SPY in even weeks and underweight in odd weeks of FOMC cycle time; TLT, SHY, LQD as unmarked peers; daily ETFs 2002 to 2020
+- outcome: rejected at G1: gross covered cost, but the placebo percentile was just under the bar, which itself lies above cost; latest third negative; strategy not run
+- lesson: No reliable FOMC-cycle premium of SPY over bonds in 2002-2020. Marking both even weeks (long) and odd weeks (short) left the placebo mean near zero, so this is not generic equity drift. Gross cleared cost but stayed just under a placebo bar that itself lies above cost: closer to 'cannot tell' than refuted. Against it: nothing at one session (so it is not the H-0042 announcement day), gone at ten, the first two thirds carried it and the latest third, after publication, reversed, and doubled costs would very likely have erased it.
+- avoid: Do not retune tilt, offset or the week definition, split the same dates by cycle week or by FOMC meeting, or refile as pre-FOMC drift, Fed-information premium or even-week effect: same dates, new trials that count under macro-announcement-premium. Do not read the positive gross as support without the placebo bar and the latest-third sign.
+- open questions: The paper's effect may sit in the equity premium itself, not against Treasuries: an equity-only even-versus-odd test is a different card. An era split of the latest third is untested; ETFs have no forward data, so G4 is the ceiling.
+- related: H-0042, H-0041, H-0025
+
+## H-0046 – Threshold-rebalancing pressure - when a simulated 60/40 SPY/IEF book drifts past its band, tilt a 60/40 book against the rebalancers' next-session trade for one session
+
+- family: `rebalancing-flow-pressure` · mechanism: flow_structural · instruments: a 60/40 SPY/IEF book tilted for one session against a simulated threshold rebalancer; event study on SPY, VTI, DIA and IWM against bond ETF peers; daily ETFs 2003 to 2020
+- outcome: rejected at G1: mechanism test passed clearly (above placebo, gross several times cost), but the tilt book's Sharpe was below the 60/40 benchmark and the bootstrap bound was below zero
+- lesson: Strongest placebo result in the lab and gross well above cost, yet an always-invested SPY/IEF tilt did not beat the plain mix, so thin exposure, shorts, hedges or cash are not the whole gap between study and book. Differences: four equity ETFs against four bond peers versus SPY and IEF only; the effect built over about five sessions and was gone by ten, so the fixed one-session hold caught part; it shrank each third. The generic reversal of the stock-minus-bond spread after large relative moves is unseparated. Benchmark-relative return, drawdown and Sharpe disagreed oddly (asked owner).
+- avoid: Do not refile with a longer hold, another threshold_pp or tilt, other ETFs, or the same breach days under a new name (band breach, pension rebalancing): same events, new trials. Do not read the mechanism pass as a tradable edge or as proof that rebalancers cause it.
+- open questions: A control card: large relative stock-bond moves that do not breach the band, and bond-driven versus equity-driven breaches, to separate rebalancing from generic spread reversal. An equity-only or futures test may fit the paper better.
+- related: H-0002, H-0041, H-0044, H-0033, H-0025, H-0045
+
+## H-0047 – Post-macro-release drift across asset classes - on CPI, payrolls and FOMC days, long the ETFs with the largest vol-standardized reaction and short the smallest, hold 5 sessions, dollar-neutral
+
+- family: `post-macro-announcement-drift` · mechanism: cross_asset_information · instruments: 19 US asset-class ETFs, long/short by release-day reaction on CPI, payrolls and FOMC days, five-session hold, 2002 to 2020
+- outcome: rejected at G1 on the mechanism test: abnormal return after the release-day reaction had the wrong sign, below the placebo cloud, negative in every third of dev; strategy not run
+- lesson: The continuation claim failed in the wrong direction. Ranked by release-day reaction, the extreme ETFs did slightly worse than their unmarked peers, with the same sign in every third (no decay story), nothing at the first session and growing out to ten. Not a power problem: both sides were marked, so the placebo mean was near zero, and the placebo upper bar was at about round-trip cost. Slow-capital drift after macro news is not visible across asset-class ETFs, and the stock-level reaction drift (K-0046) does not carry over. The reversal is of the order of cost, so a mirror trade would roughly break even before any real friction.
+- avoid: Do not flip the sign and refile as macro-release reversal or overreaction: a dev-selected variant on the same events, a new trial of this family. Do not retune top_k or hold_days, split by CPI, payrolls or FOMC, or swap ETFs.
+- open questions: Release days are not separated from any large day: a reversal may be generic ETF behaviour (H-0037, H-0041, K-0056) and the calendar may add nothing. A non-release-day control would tell.
+- related: H-0042, H-0045, H-0041, H-0037, H-0028, H-0033
+
+## H-0048 – Month-end Treasury index-extension tilt - 60/40 SPY/IEF book that holds its bond sleeve in TLT instead of IEF over the last 2 sessions of each month
+
+- family: `bond-index-extension-flow` · mechanism: flow_structural · instruments: 60/40 SPY/IEF book with the bond sleeve held in TLT over the last two sessions of each month; SHY, LQD, AGG, TIP as unmarked peers; daily ETFs 2002 to 2020
+- outcome: rejected at G1: placebo bar cleared narrowly and positive in every third, but gross per event was about half of round-trip cost; strategy not run
+- lesson: The month-end duration concession shows up in TLT minus IEF but is too small to trade. It cleared the placebo bar narrowly, with a placebo mean near zero (not generic duration drift), stayed positive in every third while shrinking toward the latest, and sat on the last session with a give-back at five and ten sessions, as the paper predicts. Gross was about half the round-trip cost and the placebo bar lies below cost, so this is not a power problem; gross also fell well short of the card's own forecast. A long-minus-belly pair probably cancels the common part of the concession, which IEF already earns.
+- avoid: Do not retune window_sessions (the gain is bunched at the last session, the round trip is paid either way), swap in other long ETFs, or refile as index extension or month-end duration demand: same dates, new trials. No post-window short leg after seeing the give-back.
+- open questions: Is the concession mainly in holding duration at all over the window (duration against bills), not long against belly? That changes average duration against the benchmark (K-0005) and needs its own exposure argument. ETFs have no forward data; G4 is the ceiling.
+- related: H-0001, H-0002, H-0038, H-0046, H-0016
