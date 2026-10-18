@@ -1,0 +1,390 @@
+{
+ "claude_volne": {
+  "comment": "V risk-off režimu s rizikem prolomení 80k držím nízkou expozici (~31 %), zbytek v hotovosti; TAO a WLD prodávám kvůli vysoké betě bez výhody.",
+  "positions": [
+   {
+    "coin": "BTC",
+    "invalidation": "Denní uzavření pod 79 000 USD.",
+    "reason": "Jádro portfolia, alty v risk-off ztrácejí vůči BTC.",
+    "weight_pct": 20.0
+   },
+   {
+    "coin": "NEAR",
+    "invalidation": "Uzavření pod 4,3 USD nebo další týden výrazně slabší než BTC.",
+    "reason": "Nejsilnější 30d relativní trend, ETF poptávka a návrh snížení emise.",
+    "weight_pct": 6.0
+   },
+   {
+    "coin": "SOL",
+    "invalidation": "Problém při aktivaci Alpenglow nebo uzavření pod 98 USD.",
+    "reason": "Malá sázka na úspěšnou aktivaci Alpenglow 21. 10. po přeprodání.",
+    "weight_pct": 5.0
+   }
+  ]
+ },
+ "coins": {
+  "ADA": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Rekordní on-chain aktivita už je známá, cena za týden −12 % a pod SMA20/50 s nízkým objemem.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://thecryptobasic.com/2026/10/17/cardano-cup-and-handle-pattern-eyes-73-rally-if-ada-price-reclaims-this-level"
+   ],
+   "trend": -1
+  },
+  "AVAX": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "unlock",
+   "expected_move_7d_pct": -1.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Helicon a RWA příliv už jsou v ceně; malý unlock 24. 10. (~16 mil. USD) a cena pod SMA20.",
+   "p_outperform_btc_7d": 0.46,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/top-stories/6ad3aabeb1404a7a98749bc8/",
+    "https://tokenradar.ai/blog/token-unlocks-this-month"
+   ],
+   "trend": 0
+  },
+  "BNB": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Bez nových zpráv, nízká beta (0,7) z něj dělá relativně defenzivní alt v risk-off prostředí.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -1
+  },
+  "BTC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Konsolidace kolem SMA50 nad zónou 80k, slabý zájem a jestřábí Fed brzdí, ale likvidace již odezněly.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.cryptotimes.io/2026/10/17/bitcoin-price-holds-81k-amid-315m-liquidations-google-searches-hit-multi-year-low/",
+    "https://cryptoticker.io/en/crypto-crash-reason-bitcoin-ethereum-october-2026/"
+   ],
+   "trend": 0
+  },
+  "DOGE": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Pod všemi SMA včetně SMA100 a s betou 1,8 v risk-off prostředí bez vlastního katalyzátoru.",
+   "p_outperform_btc_7d": 0.4,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "ENA": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Pokračující deleveraging a pochybnosti o USDe táhnou cenu dolů (−15 % za týden), odraz je spíš krátký.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/ethena/latest-updates/"
+   ],
+   "trend": -1
+  },
+  "ETH": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Pod SMA20/50 a slabší než BTC za 30 dní, přeplněné longy (L/S 3,1) a odtoky z ETH fondů.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coingabbar.com/en/crypto-etf-news-today-bitcoin-ethereum-xrp-sol-outflow"
+   ],
+   "trend": -1
+  },
+  "NEAR": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Nejsilnější 30d trend (+48 % vs BTC, ETF, návrh snížení emise), ale korekce od maxima a slabá kniha (−0,24).",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/near-protocol/latest-updates/",
+    "https://cryptobriefing.com/near-protocol-jumps-16-trading-surge/"
+   ],
+   "trend": 1
+  },
+  "ONDO": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Bez nových zpráv, korekce po silném měsíci a velmi nízký objem.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 0
+  },
+  "PUMP": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Po −21 % za týden přeprodaný, převaha shortů (L/S 0,86) a denní buybacky dávají šanci na odraz, trend ale klesá.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.tokenpost.com/news/investing/33024",
+    "https://www.cryptotimes.io/2026/10/15/pump-funs-pump-token-drops-13-7-as-crypto-market-sell-off-deepens/"
+   ],
+   "trend": -1
+  },
+  "SOL": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "upgrade",
+   "expected_move_7d_pct": -0.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Alpenglow 21. 10. je dlouho známý katalyzátor, cena po poklesu (RSI 37) jej nezapočítává přehnaně, ale riziko sell-the-news.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/academy/article/solana-alpenglow-mainnet-oct-21-anza",
+    "https://solanafloor.com/news/alpenglow-mainnet-activation-set-october-21-need-to-know"
+   ],
+   "trend": -1
+  },
+  "SUI": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Po silném měsíci prudká týdenní korekce (−12 %), beta 2,1 v risk-off prostředí je nevýhodou.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 0
+  },
+  "TAO": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 0,
+   "news": 0,
+   "note": "AI narativ a příliv do Grayscale trustu jsou známé, cena kolem SMA50 s nejvyšší betou (2,3) v univerzu.",
+   "p_outperform_btc_7d": 0.46,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/bittensor/latest-updates/"
+   ],
+   "trend": 0
+  },
+  "UNI": {
+   "conviction": 2,
+   "event": true,
+   "event_type": "listing",
+   "expected_move_7d_pct": -2.0,
+   "mr": 0,
+   "news": 0,
+   "note": "CME futures od 19. 10. jsou očekávané, OI na víceletém maximu a trh hraje sell-the-news s možností hedgingových shortů.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/top-stories/6ad372cdb1404a7a98746524/",
+    "https://www.kucoin.com/news/flash/uniswap-open-interest-hits-six-year-high-ahead-of-cme-futures-launch"
+   ],
+   "trend": -1
+  },
+  "WLD": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Růst bez fundamentu tažený korejskou spekulací a podezřením na wash trading; záporný funding mírně podporuje squeeze.",
+   "p_outperform_btc_7d": 0.46,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptoticker.io/en/worldcoin-price-wld-rally-without-news/",
+    "https://cryptonews.net/news/analytics/33604127/"
+   ],
+   "trend": 0
+  },
+  "XRP": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Hluboko pod SMA20/50 u 30denního minima, ETF mírné odtoky a přeplněné longy (L/S 2,9).",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coingabbar.com/en/crypto-etf-news-today-bitcoin-ethereum-xrp-sol-outflow"
+   ],
+   "trend": -2
+  },
+  "ZEC": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "upgrade",
+   "expected_move_7d_pct": -1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Binární rozhodnutí o NU7 20. 10.; schválení je očekávané, ale převaha shortů (L/S 0,87) dává prostor pro squeeze proti slabému 30d trendu.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://crypto.news/zcash-targets-nov-5-for-nu7-mainnet-upgrade/",
+    "https://cryptoticker.io/en/zcash-liquidations-nu7-decision/"
+   ],
+   "trend": -2
+  }
+ },
+ "date": "2026-10-18",
+ "events_7d": [
+  {
+   "date": "2026-10-19",
+   "title": "Start CME futures na UNI (a BCH)",
+   "type": "listing"
+  },
+  {
+   "date": "2026-10-20",
+   "title": "Zcash: finální rozhodnutí o mainnet aktivaci NU7 (cíl 5. 11.)",
+   "type": "upgrade"
+  },
+  {
+   "date": "2026-10-21",
+   "title": "Solana Alpenglow – aktivace na mainnetu (~14:50 UTC)",
+   "type": "upgrade"
+  },
+  {
+   "date": "2026-10-24",
+   "title": "Avalanche unlock cca 16 mil. USD",
+   "type": "unlock"
+  },
+  {
+   "date": "2026-10-28",
+   "title": "FOMC rozhodnutí (těsně za 7denním oknem, trh bude předem pozicovat)",
+   "type": "makro"
+  }
+ ],
+ "regime": {
+  "label": "Risk-off, konsolidace nad 80k",
+  "summary": "BTC se drží kolem 81,5k po vlně likvidací (15. 10. téměř 1 mld USD) a jestřábích signálech Fedu; ETF toky smíšené, altcoiny ztrácejí vůči BTC zhruba dvojnásobně. Glassnode vidí možné dno těsně nad 80k, prolomení by otevřelo další pokles."
+ },
+ "top10": [
+  {
+   "coin": "SOL",
+   "reason": "Alpenglow 21. 10. jako konkrétní katalyzátor po poklesu na RSI 37."
+  },
+  {
+   "coin": "ZEC",
+   "reason": "Rozhodnutí o NU7 20. 10. a převaha shortů – asymetrický squeeze."
+  },
+  {
+   "coin": "BNB",
+   "reason": "Nízká beta, defenzivní volba v risk-off prostředí."
+  },
+  {
+   "coin": "NEAR",
+   "reason": "Nejsilnější střednědobý trend a ETF poptávka."
+  },
+  {
+   "coin": "PUMP",
+   "reason": "Přeprodaný se shorty a buybacky, šance na odraz."
+  },
+  {
+   "coin": "WLD",
+   "reason": "Záporný funding a kladná nerovnováha knihy, ale spekulativní."
+  },
+  {
+   "coin": "TAO",
+   "reason": "Drží se u SMA50, AI narativ, vysoká beta je riziko."
+  },
+  {
+   "coin": "AVAX",
+   "reason": "Fundamenty RWA solidní, malý unlock."
+  },
+  {
+   "coin": "ONDO",
+   "reason": "Nad SMA50, bez negativních zpráv."
+  },
+  {
+   "coin": "ETH",
+   "reason": "Přeprodaný vůči SMA, ale slabší než BTC."
+  }
+ ]
+}
