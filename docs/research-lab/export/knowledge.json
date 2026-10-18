@@ -778,5 +778,77 @@
   "actor": "librarian",
   "message_id": 361,
   "ts": "2026-10-16T14:07:41.479422+00:00"
+ },
+ {
+  "id": "K-0066",
+  "kind": "market",
+  "title": "Perp funding does not tell forced crash selling from informational selling on a daily horizon",
+  "statement": "Two daily designs have used the perpetual-futures funding market as a state variable in liquid Binance perps over the 2020-2022 dev window. A cross-section on the funding level (H-0039) gave a small multi-day price effect that barely cleared the placebo bar and sat in one episode. A crash-day split on the change in funding (H-0049: flushed versus unflushed coins among same-day relative losers, both sides marked, same-date unmarked peers as the base, so the generic market bounce is netted out and the placebo mean sits near zero) gave nothing at the first day and the wrong sign at the multi-day horizons, worst in the latest third, the bear market. So once the generic stress bounce of K-0056 is removed, a funding-based flush label did not add a rebound and may have marked persistent selling. Funding looks like a weak and regime-dependent separator, not a reliable detector of forced liquidations. Whether it works at intraday frequency or for makers is untested, and the dev window holds one boom-and-bust cycle.",
+  "evidence": "[\"H-0049\",\"H-0039\",\"H-0006\",\"K-0056\",\"K-0060\",\"K-0049\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 371,
+  "ts": "2026-10-17T04:06:44.691326+00:00"
+ },
+ {
+  "id": "K-0067",
+  "kind": "process",
+  "title": "The G1 reason code can name the event count while the mechanism was measured and failed; the count was visible at G0",
+  "statement": "H-0049 is registered as g1_mechanism_events (193 events against a minimum of 200), but G1 also measured the mechanism: abnormal return wrong-signed, placebo percentile 0.21, cost ratio negative, latest third clearly negative. A Scout reading only the registry would take it for a power or sparsity problem that more events could cure. This is the opposite of K-0062, where an empty event set reads as a mechanism failure. The G0 result already reported events_in_dev = 193, below the minimum, and the card had expected several hundred events a year while the judge found about 44 a year; no check compared the two before G1. Suggested handling: report all failing checks in the registry reason, flag at G0 or in the Builder summary when events_in_dev is under the G1 minimum, and have Scouts state an expected event count for the dev window and check it before filing (K-0032). Skeptic messages were again absent for this card (K-0054, K-0055).",
+  "evidence": "[\"H-0049\",\"K-0062\",\"K-0054\",\"K-0055\",\"K-0032\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 372,
+  "ts": "2026-10-17T04:06:44.699692+00:00"
+ },
+ {
+  "id": "K-0068",
+  "kind": "market",
+  "title": "Mechanical stock-bond flow: the study effect appeared only when the trigger was a large stock-bond move",
+  "statement": "Three daily-ETF cards tried to trade mechanical stock-bond reallocation pressure. The month-end rule on month-to-date drift (H-0002) carried almost no edge. The threshold-drift trigger (H-0046) passed the event study clearly, but its events were large relative stock-bond move days, so generic spread reversal could not be separated from rebalancer flow, and the book lost to the plain mix. The volatility-control trigger (H-0050) removed that confound: the event day is quiet and the cause lies many sessions earlier. There the average was slightly wrong-signed, inside the placebo cloud, and negative in the latest third. The simplest reading is that the H-0046 pass was mostly generic reversal after large moves (K-0056), not rebalancer flow. The H-0050 sample was thin and clustered in high-volatility regimes, so this is a lean, not a refutation. A further mechanical-flow card on daily ETFs has a low prior unless the flow is observed where it trades (futures, closing auction) or a control separates it from stress reversal.",
+  "evidence": "[\"H-0050\",\"H-0046\",\"H-0002\",\"K-0056\",\"K-0064\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 379,
+  "ts": "2026-10-17T05:37:53.452518+00:00"
+ },
+ {
+  "id": "K-0069",
+  "kind": "framework",
+  "title": "G1 event-count code can hide a measured mechanism failure; date tripwires cannot fire at G0",
+  "statement": "H-0049 (193 events against a minimum of 200) and H-0050 (172 marked events on 43 event dates) are both registered as g1_mechanism_events, yet G1 measured the mechanism in both: wrong-signed average, placebo percentile far under the bar, negative cost ratio, weak latest third. A Scout reading the registry takes them for sparsity problems more events would cure; the sign says otherwise (the opposite of K-0062). New in H-0050: the card wrote its tripwire in event dates (flag if under 50 dates), but G0 reports marked events (four ETFs per date), so it showed 172 and the tripwire could not fire; the dates appeared only in G1 metrics. Both Scouts forecast event rates far above the real count. Skeptic messages were absent again. Suggested: list all failing checks in the registry reason; report event dates next to marked events at G0 and flag counts under the G1 minimum; Scouts state expected dates and marked events separately.",
+  "evidence": "[\"H-0049\",\"H-0050\",\"K-0062\",\"K-0054\",\"K-0032\"]",
+  "confidence": "medium",
+  "supersedes": "K-0067",
+  "actor": "librarian",
+  "message_id": 381,
+  "ts": "2026-10-17T05:37:53.489745+00:00"
+ },
+ {
+  "id": "K-0070",
+  "kind": "market",
+  "title": "Macro-calendar cards fail in four designs; moving to a volatility ETP did not help",
+  "statement": "Four designs on the scheduled US macro calendar have ended at the event-study gate: announcement-session beta premium (H-0042), even-week FOMC-cycle tilt (H-0045), cross-asset reaction drift (H-0047) and short volatility over release windows through a VIX-futures ETP (H-0052). The last was the route K-0063 and K-0065 left open. It gave a positive average, but placebo windows of the same instrument already earned over half of it through roll-down, the effect grew with the horizon like generic carry, and the first third of dev was flat while the middle third carried most (not the early-heavy decay of K-0060). The placebo bar lay above cost although gross was several times cost, because a volatility ETP is noisy. A release-time volatility crush is not visible in daily ETP bars. A further macro-calendar card on daily ETFs has a low prior; implied volatility or index futures measured directly are untested and not loadable.",
+  "evidence": "[\"H-0052\",\"H-0047\",\"H-0045\",\"H-0042\",\"K-0063\",\"K-0065\",\"K-0034\",\"K-0025\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": "K-0065",
+  "actor": "librarian",
+  "message_id": 390,
+  "ts": "2026-10-17T08:07:32.494860+00:00"
+ },
+ {
+  "id": "K-0071",
+  "kind": "method",
+  "title": "Slow-horizon event studies: the placebo bar sits several times above cost, so only a large effect can pass G1",
+  "statement": "H-0054 (about three-month residual momentum) and H-0055 (about two-month variance-risk tilt) are, as far as the lessons show, the first cards with a primary horizon beyond a month that reached a mechanism verdict. Both had gross several times round-trip cost, the right sign in every third and a placebo mean near or below zero, and both ended under the percentile bar (mid-eighties percentile) with a bar roughly seven times cost. At the five-session horizon of earlier cards the bar sat near cost (K-0034). The cloud widens with the horizon while cost does not, and monthly or weekly signals give overlapping windows with few independent episodes. The brief's one-to-six-month horizon therefore meets the least powerful form of the G1 mechanism test: an effect must be several times cost to pass, and near misses are 'cannot tell' (K-0026). A Scout should state the expected placebo bar next to expected gross and cost; widening the event set helps only if it adds independent dates. Whether G1 should use a horizon-aware bar for slow claims is a judge-design question for the owner.",
+  "evidence": "[\"H-0054\",\"H-0055\",\"K-0026\",\"K-0034\",\"H-0052\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 405,
+  "ts": "2026-10-18T02:08:30.526626+00:00"
  }
 ]

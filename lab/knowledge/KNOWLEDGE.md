@@ -78,11 +78,23 @@ Two designs on the Fed's pre-announced calendar, the scheduled announcement sess
 
 *confidence low · 2026-10-16 · librarian · evidence: H-0042; H-0045; K-0060; K-0034*
 
-### K-0065 Macro-calendar cards on asset-class ETFs fail in three designs; reaction drift is single-stock only
+### K-0066 Perp funding does not tell forced crash selling from informational selling on a daily horizon
 
-Three designs built on the scheduled US macro calendar (announcement-session beta premium, H-0042; even-week FOMC-cycle tilt, H-0045; cross-asset reaction drift, H-0047) all ended at the event-study gate. The first two gave a positive but unreliable average, weakest lately (K-0063). The third, which follows the release-day reaction instead of fixing a side, found the opposite sign: the most extreme reactions did slightly worse than peers over the next sessions, with the same sign in every third of dev and the placebo mean near zero. So continuation after scheduled news, the lab's best mechanism result in single stocks with real release dates (K-0046), does not appear across asset-class ETFs, consistent with the owner's daily lead-lag scan (mrel). The wrong-signed result is not an invitation to the mirror trade: its size is of the order of round-trip cost, and the test cannot tell whether release days matter or any large ETF day behaves this way (K-0056). Treat macro calendar x ETFs as a low prior unless the instrument or horizon changes.
+Two daily designs have used the perpetual-futures funding market as a state variable in liquid Binance perps over the 2020-2022 dev window. A cross-section on the funding level (H-0039) gave a small multi-day price effect that barely cleared the placebo bar and sat in one episode. A crash-day split on the change in funding (H-0049: flushed versus unflushed coins among same-day relative losers, both sides marked, same-date unmarked peers as the base, so the generic market bounce is netted out and the placebo mean sits near zero) gave nothing at the first day and the wrong sign at the multi-day horizons, worst in the latest third, the bear market. So once the generic stress bounce of K-0056 is removed, a funding-based flush label did not add a rebound and may have marked persistent selling. Funding looks like a weak and regime-dependent separator, not a reliable detector of forced liquidations. Whether it works at intraday frequency or for makers is untested, and the dev window holds one boom-and-bust cycle.
 
-*confidence low · 2026-10-16 · librarian · evidence: H-0047; H-0042; H-0045; K-0046; K-0063; K-0056; prior_studies mrel*
+*confidence low · 2026-10-17 · librarian · evidence: H-0049; H-0039; H-0006; K-0056; K-0060; K-0049*
+
+### K-0068 Mechanical stock-bond flow: the study effect appeared only when the trigger was a large stock-bond move
+
+Three daily-ETF cards tried to trade mechanical stock-bond reallocation pressure. The month-end rule on month-to-date drift (H-0002) carried almost no edge. The threshold-drift trigger (H-0046) passed the event study clearly, but its events were large relative stock-bond move days, so generic spread reversal could not be separated from rebalancer flow, and the book lost to the plain mix. The volatility-control trigger (H-0050) removed that confound: the event day is quiet and the cause lies many sessions earlier. There the average was slightly wrong-signed, inside the placebo cloud, and negative in the latest third. The simplest reading is that the H-0046 pass was mostly generic reversal after large moves (K-0056), not rebalancer flow. The H-0050 sample was thin and clustered in high-volatility regimes, so this is a lean, not a refutation. A further mechanical-flow card on daily ETFs has a low prior unless the flow is observed where it trades (futures, closing auction) or a control separates it from stress reversal.
+
+*confidence low · 2026-10-17 · librarian · evidence: H-0050; H-0046; H-0002; K-0056; K-0064*
+
+### K-0070 Macro-calendar cards fail in four designs; moving to a volatility ETP did not help
+
+Four designs on the scheduled US macro calendar have ended at the event-study gate: announcement-session beta premium (H-0042), even-week FOMC-cycle tilt (H-0045), cross-asset reaction drift (H-0047) and short volatility over release windows through a VIX-futures ETP (H-0052). The last was the route K-0063 and K-0065 left open. It gave a positive average, but placebo windows of the same instrument already earned over half of it through roll-down, the effect grew with the horizon like generic carry, and the first third of dev was flat while the middle third carried most (not the early-heavy decay of K-0060). The placebo bar lay above cost although gross was several times cost, because a volatility ETP is noisy. A release-time volatility crush is not visible in daily ETP bars. A further macro-calendar card on daily ETFs has a low prior; implied volatility or index futures measured directly are untested and not loadable.
+
+*confidence low · 2026-10-17 · librarian · supersedes K-0065 · evidence: H-0052; H-0047; H-0045; H-0042; K-0063; K-0065; K-0034; K-0025; K-0060*
 
 ## Data
 
@@ -196,6 +208,12 @@ Several cards cleared the event-study gate and then failed the strategy gate (H-
 
 *confidence low · 2026-10-16 · librarian · supersedes K-0048 · evidence: H-0046; H-0033; H-0031; H-0028; H-0025; H-0019; H-0016; K-0048; K-0053*
 
+### K-0071 Slow-horizon event studies: the placebo bar sits several times above cost, so only a large effect can pass G1
+
+H-0054 (about three-month residual momentum) and H-0055 (about two-month variance-risk tilt) are, as far as the lessons show, the first cards with a primary horizon beyond a month that reached a mechanism verdict. Both had gross several times round-trip cost, the right sign in every third and a placebo mean near or below zero, and both ended under the percentile bar (mid-eighties percentile) with a bar roughly seven times cost. At the five-session horizon of earlier cards the bar sat near cost (K-0034). The cloud widens with the horizon while cost does not, and monthly or weekly signals give overlapping windows with few independent episodes. The brief's one-to-six-month horizon therefore meets the least powerful form of the G1 mechanism test: an effect must be several times cost to pass, and near misses are 'cannot tell' (K-0026). A Scout should state the expected placebo bar next to expected gross and cost; widening the event set helps only if it adds independent dates. Whether G1 should use a horizon-aware bar for slow claims is a judge-design question for the owner.
+
+*confidence low · 2026-10-18 · librarian · evidence: H-0054; H-0055; K-0026; K-0034; H-0052*
+
 ## The judge (framework behaviour)
 
 ### K-0008 Gate runner fixes found by real hypotheses
@@ -264,6 +282,12 @@ Three cards ended on the event count with no mechanism result: H-0021 (empty by 
 
 *confidence low · 2026-10-16 · librarian · evidence: H-0043; H-0038; H-0021; K-0054; K-0032*
 
+### K-0069 G1 event-count code can hide a measured mechanism failure; date tripwires cannot fire at G0
+
+H-0049 (193 events against a minimum of 200) and H-0050 (172 marked events on 43 event dates) are both registered as g1_mechanism_events, yet G1 measured the mechanism in both: wrong-signed average, placebo percentile far under the bar, negative cost ratio, weak latest third. A Scout reading the registry takes them for sparsity problems more events would cure; the sign says otherwise (the opposite of K-0062). New in H-0050: the card wrote its tripwire in event dates (flag if under 50 dates), but G0 reports marked events (four ETFs per date), so it showed 172 and the tripwire could not fire; the dates appeared only in G1 metrics. Both Scouts forecast event rates far above the real count. Skeptic messages were absent again. Suggested: list all failing checks in the registry reason; report event dates next to marked events at G0 and flag counts under the G1 minimum; Scouts state expected dates and marked events separately.
+
+*confidence medium · 2026-10-17 · librarian · supersedes K-0067 · evidence: H-0049; H-0050; K-0062; K-0054; K-0032*
+
 ## How the lab works
 
 ### K-0010 Fail loudly on missing inputs
@@ -326,3 +350,5 @@ H-0040 is the first card that is an earlier owner rule re-run through the lab (r
 - K-0048 Fixed event slots did not close the gap between a passing event study and a failing market-neutral book
 - K-0050 G2 random-timing null is deeply negative in two cards, so passing it may only measure costs
 - K-0052 Short-horizon effects that clear the pooled placebo test are usually weakest or reversed in the latest third of dev
+- K-0065 Macro-calendar cards on asset-class ETFs fail in three designs; reaction drift is single-stock only
+- K-0067 The G1 reason code can name the event count while the mechanism was measured and failed; the count was visible at G0

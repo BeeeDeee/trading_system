@@ -507,3 +507,163 @@ datasets:
     - next_release_sessions
     location: LAB_HOME/data/macro_release_calendar_1d
     cost_model: null
+
+  - id: cftc_cot_legacy_1d
+    loader: generic
+    asset_class: macro
+    instruments: 'CFTC Commitments of Traders, legacy report, futures only, 18 markets
+      keyed by CFTC contract market code: 088691 gold (COMEX), 084691 silver (COMEX),
+      067651 WTI crude (NYMEX), 023651 natural gas Henry Hub (NYMEX), 111659 RBOB gasoline
+      (NYMEX, reports from 2006-02-14), 002602 corn (CBOT), 001602 SRW wheat (CBOT),
+      005602 soybeans (CBOT), 085692 copper (COMEX), 076651 platinum (NYMEX), 075651
+      palladium (NYMEX), 080732 sugar No. 11 (ICE US), 099741 euro FX, 097741 Japanese
+      yen, 096742 British pound, 232741 Australian dollar, 090741 Canadian dollar, 092741
+      Swiss franc (all CME). Weekly reports, one row per release date. Keys per market:
+      <code>.nc_long, <code>.nc_short (non-commercial long/short positions, all, contracts),
+      <code>.open_interest (total, all), <code>.asof_date (as-of date of the report
+      as days since 1970-01-01; Tuesday, or Monday when Tuesday was a federal holiday).
+      Each value is stamped on the PUBLIC RELEASE DATE, not the as-of date. Reports
+      run from the 2004-01-05 release to the 2025-09-26 release. Signal only, not tradable.'
+    frequency: 1d
+    range:
+    - '2004-01-05'
+    - '2025-09-26'
+    clock: us_close
+    source: CFTC Public Reporting Portal (Socrata API), dataset 6dca-aqww 'Legacy -
+      Futures Only', https://publicreporting.cftc.gov/resource/6dca-aqww.json (free,
+      public, US government open data, no key). Release dates computed by rule from
+      the as-of date, see known_biases.
+    quality: 'lab ingest 2026-10-17: 80040 rows, 72 series, see LAB_HOME/data/cftc_cot_legacy_1d/report.json'
+    holdout_from: '2021-01-01'
+    known_biases:
+    - 'The source gives only the as-of date (Tuesday). The release date is COMPUTED:
+      the Friday of the as-of week (3:30 pm ET); if a federal holiday (or a known executive-order
+      closure) falls on Wednesday, Thursday or Friday of that week, the next business
+      day after that Friday (normally Monday); holidays on Monday or Tuesday do not
+      move it. Checked against CFTC release schedule examples (2021-01-01 Friday holiday
+      -> Monday 2021-01-04; 2026-01-01 Thursday holiday -> Monday 2026-01-05; Monday
+      MLK week unchanged), but not against every historical week. Unscheduled closures
+      (snowstorms, hurricanes, a single-agency IT problem) are not in the rule: a report
+      released a day or more later than the rule would be stamped EARLY by that much.
+      The release date is not a session of XNYS when it falls on Good Friday; the stamp
+      is still the real publication day (use the first session on or after it).'
+    - 'Federal government shutdowns: catch-up publication dates were only found as plans,
+      never as the dates actually published, so every shutdown-affected report is DROPPED
+      rather than stamped early: as-of 2013-10-01 to 2013-11-05, as-of 2018-12-24 to
+      2019-03-05 (6 and 11 weekly reports missing), and everything from as-of 2025-09-30
+      on (the series stops with the report released 2025-09-26; 2026 data are not included
+      although the source has them, because the October-November 2025 catch-up dates
+      are unverified). Consumers must treat the gap weeks as missing, never fill them.'
+    - 'Tuesday federal holidays: the report describes Monday, not Tuesday, and is still
+      released on the Friday; the asof_date key carries the true as-of date, so a flow
+      between two reports is 7 days only if both asof_date values differ by 7. Federal
+      holidays on Wed/Thu/Fri give an as-of Tuesday report released the following Monday.
+      One Wednesday as-of (2007-01-03, after the 2007-01-02 closure) is stamped conservatively
+      on the Monday.'
+    - 'Revisions: the Socrata portal serves the current vintage; CFTC occasionally corrects
+      a past report and a correction is not visible with its date. Values are treated
+      as the first release; the effect is believed small.'
+    - 'Contract codes: none of the 18 codes changed in 2004-2025; only the market and
+      exchange names changed within a code (IMM->CME, CSCE/NYBOT->ICE Futures U.S.,
+      WHEAT->WHEAT-SRW, CRUDE OIL LIGHT SWEET->WTI-PHYSICAL, NAT GAS NYME->NATURAL GAS,
+      COPPER- #1->COPPER-GRADE #1, GASOLINE BLENDSTOCK (RBOB)->GASOLINE RBOB); the fetcher
+      checks the name prefix of every row. RBOB 111659 has reports only from 2006-02-14
+      (no chain to the NY Harbor unleaded contract: it has no history under this code),
+      so the series is shorter than the other 17.'
+    - 'Coverage: 1118 reports per market 2004-01-05 to 2025-09-26 (Swiss franc 1116
+      and Australian dollar 1117: a few weeks missing or with non-positive open interest
+      at the source and skipped, not filled); gaps of more than 7 days are holiday-delayed
+      Mondays and the two shutdown gaps (about 84 days after 2018-12-21).'
+    - Legacy futures-only non-commercial = large traders classified as non-commercial
+      by the CFTC (reporting-level classification by the trader's own declaration, a
+      trader is either commercial or non-commercial in a market); spread positions are
+      separate and not in nc_long / nc_short. Positions are for the CFTC-defined contract,
+      which can include the exchange's mini or look-alike contracts in the same code;
+      open_interest is the all-months total. The classification of a trader can change
+      between reports without notice.
+    - 'Positions are as of Tuesday close and published three days later: stale by the
+      time the report is usable; the data is weekly, so each market has one value per
+      week and none on other days.'
+    forward_source: Same Socrata endpoint (https://publicreporting.cftc.gov/resource/6dca-aqww.json),
+      refetched weekly after the Friday 15:30 ET release; the release date of new rows
+      follows the same rule and must be checked against the CFTC release schedule page
+      (https://www.cftc.gov/MarketReports/CommitmentsofTraders/ReleaseSchedule/index.htm)
+      and the special announcements page (https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalSpecialAnnouncements/index.htm),
+      especially for the October-November 2025 shutdown catch-up (not covered) and holiday
+      weeks.
+    calendar: XNYS
+    fields:
+    - 001602.asof_date
+    - 001602.nc_long
+    - 001602.nc_short
+    - 001602.open_interest
+    - 002602.asof_date
+    - 002602.nc_long
+    - 002602.nc_short
+    - 002602.open_interest
+    - 005602.asof_date
+    - 005602.nc_long
+    - 005602.nc_short
+    - 005602.open_interest
+    - 023651.asof_date
+    - 023651.nc_long
+    - 023651.nc_short
+    - 023651.open_interest
+    - 067651.asof_date
+    - 067651.nc_long
+    - 067651.nc_short
+    - 067651.open_interest
+    - 075651.asof_date
+    - 075651.nc_long
+    - 075651.nc_short
+    - 075651.open_interest
+    - 076651.asof_date
+    - 076651.nc_long
+    - 076651.nc_short
+    - 076651.open_interest
+    - 080732.asof_date
+    - 080732.nc_long
+    - 080732.nc_short
+    - 080732.open_interest
+    - 084691.asof_date
+    - 084691.nc_long
+    - 084691.nc_short
+    - 084691.open_interest
+    - 085692.asof_date
+    - 085692.nc_long
+    - 085692.nc_short
+    - 085692.open_interest
+    - 088691.asof_date
+    - 088691.nc_long
+    - 088691.nc_short
+    - 088691.open_interest
+    - 090741.asof_date
+    - 090741.nc_long
+    - 090741.nc_short
+    - 090741.open_interest
+    - 092741.asof_date
+    - 092741.nc_long
+    - 092741.nc_short
+    - 092741.open_interest
+    - 096742.asof_date
+    - 096742.nc_long
+    - 096742.nc_short
+    - 096742.open_interest
+    - 097741.asof_date
+    - 097741.nc_long
+    - 097741.nc_short
+    - 097741.open_interest
+    - 099741.asof_date
+    - 099741.nc_long
+    - 099741.nc_short
+    - 099741.open_interest
+    - 111659.asof_date
+    - 111659.nc_long
+    - 111659.nc_short
+    - 111659.open_interest
+    - 232741.asof_date
+    - 232741.nc_long
+    - 232741.nc_short
+    - 232741.open_interest
+    location: LAB_HOME/data/cftc_cot_legacy_1d
+    cost_model: null
