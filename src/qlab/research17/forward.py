@@ -27,6 +27,7 @@ from qlab.research15.setup import epoch_15m
 
 FORWARD_START = date(2026, 10, 1)
 FORWARD_END = date(2027, 3, 31)
+MEMBERS_END = date(2028, 10, 31)         # membership is computed this far for research 18 (docs/research18, 24 months)
 BASE_SNAPSHOT = "binance_2026-10-03"
 LAST_BASE_MONTH = "2026-09"
 MIN_EVENTS = 30
@@ -134,9 +135,9 @@ def volumes_of(sym: str) -> tuple[np.ndarray, np.ndarray]:
     return d, q[idx]
 
 
-def forward_months() -> list[date]:
+def forward_months(end: date = FORWARD_END) -> list[date]:
     out, y, m = [], FORWARD_START.year, FORWARD_START.month
-    while (y, m) <= (FORWARD_END.year, FORWARD_END.month):
+    while (y, m) <= (end.year, end.month):
         out.append(date(y, m, 1))
         y, m = (y + 1, 1) if m == 12 else (y, m + 1)
     return out
@@ -165,7 +166,7 @@ def refresh_members(today: date, workers: int = 8, out: Path = RAW) -> dict:
     with ThreadPoolExecutor(workers) as ex:
         res = list(ex.map(one, elig))
     errors = [r for r in res if "error" in r]
-    members = uni.monthly_members({s: volumes_of(s) for s in elig}, forward_months())
+    members = uni.monthly_members({s: volumes_of(s) for s in elig}, forward_months(MEMBERS_END))
     f = out / "members.json"
     if f.exists():
         check_stable(json.loads(f.read_text())["members"], members)
