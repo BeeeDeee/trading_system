@@ -55,7 +55,7 @@ box-shadow:0 4px 18px rgba(0,0,0,.18);border-radius:8px;padding:6px 9px;font-siz
 .kbd{font-size:11px;border:1px solid var(--axis);border-radius:4px;padding:0 4px;color:var(--ink2)}
 .small{font-size:12px}
 </style></head><body><main>
-<h1>LEAD forward – 30 variant na historii 2020–2026</h1>
+<h1>LEAD forward – 30 variant + H2 (research 18) na historii 2020–2026</h1>
 <div class="muted" id="sub"></div>
 
 <div class="bar"><div class="row">
@@ -139,6 +139,15 @@ takže u V26/V27 nahrazuje jejich vlastní. Křivky = vybrané varianty.</p>
 <details class="explain"><summary>Tabulka všech symbolů</summary><div class="tw" style="max-height:420px;overflow:auto"><table id="symtbl"></table></div></details>
 <div id="c-sym"></div></section>
 
+<section id="s-h2"><h2>H2: filtr „BTC nad 200denním průměrem“</h2>
+<p class="lead">H2 je V01_base, kde se vstupuje jen když je BTC spot v okamžiku signálu nad průměrem svých posledních 200 dní. Níže: H2 proti V01, vliv filtru na každou variantu a jak často byl BTC nad průměrem.</p>
+<div class="chips"><button id="h2btn">Zobrazit H2 vs V01_base v grafech</button></div>
+<div class="tw"><table id="h2cmp"></table></div>
+<div class="two"><div><h3>Průměr obchodu podle polohy BTC vůči MA200 při vstupu (všechny varianty)</h3><div class="tw" style="max-height:520px;overflow:auto"><table id="gsplit"></table></div></div>
+<div><h3>Kolik času byl BTC nad MA200 (podle roku)</h3><div id="gyears"></div>
+<h3>Sharpe po letech: V01 a H2</h3><div id="h2years"></div></div></div>
+<div id="c-h2"></div></section>
+
 <section id="s-corr"><h2>Korelace variant</h2>
 <p class="lead">Korelace denních výnosů. Varianty sdílejí tytéž události BTC, takže 30 variant není 30 nezávislých pokusů.</p>
 <div class="tw" id="corr"></div><div id="c-corr"></div></section>
@@ -154,13 +163,14 @@ takže u V26/V27 nahrazuje jejich vlastní. Křivky = vybrané varianty.</p>
 </main><div id="tip"></div>
 <script>
 const D=__DATA__, C=__COMMENTS__;
-const H=D.hist, V=H.variants, NAMES=Object.keys(V), DATES=H.dates, ND=DATES.length, SYMS=H.symbols, FWD=D.fwd.variants;
+const H=D.hist, V=H.variants, NAMES=Object.keys(V), ORIG=NAMES.filter(n=>n!=='H2_btc200'), DATES=H.dates, ND=DATES.length, SYMS=H.symbols, FWD=D.fwd.variants;
 const DAY0=Math.round(Date.parse(DATES[0]+'T00:00:00Z')/864e5), SQ=Math.sqrt(365);
 const REASON=['stop','cíl','čas','konec dat'], WD=['po','út','st','čt','pá','so','ne'];
 const SLOTS=['--c1','--c2','--c3','--c4','--c5','--c6','--c7','--c8'];
 const BENCH=Object.keys(H.bench), BCOL=['--ink2','--muted'];
 // ------------------------------------------------------------ helpers
 const $=id=>document.getElementById(id);
+const lab=n=>n+(V[n]&&V[n].alias?' · '+V[n].alias:'');
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fin=x=>x!=null&&isFinite(x);
 const cz=s=>s.replace('-','−').replace('.',',');
@@ -257,18 +267,19 @@ function hbar(el,{rows,fmt=f,color='var(--c1)'}){ // rows [{label,v,tip}]
  s+=`<line class="ax" x1="${x0}" x2="${x0}" y1="0" y2="${h}"/>`;el.innerHTML=`<svg viewBox="0 0 ${W} ${h}">${s}</svg>`}
 // ------------------------------------------------------------ derived data
 const tradeCache={};
-function trades(n){if(!tradeCache[n])tradeCache[n]=V[n].trades.map(t=>({t:t[0],day:dayOf(t[0]),sym:t[1],r:t[2],why:t[3],hold:t[4],z:t[5],lag:t[6],btc30:t[7],ev:t[8]}));return tradeCache[n]}
+function trades(n){if(!tradeCache[n])tradeCache[n]=V[n].trades.map(t=>({t:t[0],day:dayOf(t[0]),sym:t[1],r:t[2],why:t[3],hold:t[4],z:t[5],lag:t[6],btc30:t[7],ev:t[8],g:t[9]}));return tradeCache[n]}
 const inR=tr=>tr.filter(t=>t.day>=S.r0&&t.day<=S.r1);
 const dailyR=n=>V[n].daily.slice(S.r0,S.r1+1);
 // ------------------------------------------------------------ sections
 function renderHeader(){const b=V.V01_base,ok=Math.abs(b.stats.sharpe-D.final.sharpe)<1e-6&&b.n_trades===D.final.n_trades;
  $('sub').innerHTML=`Období ${H.period[0]} … ${H.period[1]} · ${H.n_followers} altcoinů (měsíční top 10 perpů bez BTC/ETH) · vůdce BTC spot · denní mřížka ${ND} dní · forward k ${D.fwd.asof}.
  Kontrola shody: V01_base Sharpe ${f(b.stats.sharpe,3)} / ${b.n_trades} obchodů vs výzkum 17 ${f(D.final.sharpe,3)} / ${D.final.n_trades} → <b class="${ok?'good':'bad'}">${ok?'✓ sedí':'✗ NESEDÍ'}</b>`;
- const sh=NAMES.map(n=>V[n].stats.sharpe),srt=[...sh].sort((a,b)=>a-b);
- $('kpi-global').innerHTML=[['Sharpe V01_base',f(b.stats.sharpe),'primární pravidlo'],['Sharpe > 0',NAMES.filter(n=>V[n].stats.sharpe>0).length+' / 30','variant'],
- ['Medián Sharpe',f((srt[14]+srt[15])/2),'všech 30 variant'],['Lepší než V01',NAMES.filter(n=>V[n].stats.sharpe>b.stats.sharpe).length+' / 29',''],
- ['Bootstrap 5 % > 0',NAMES.filter(n=>V[n].boot_sharpe[0]>0).length+' / 30','dolní mez 90% CI nad nulou'],
- ['PBO',pc(H.pbo,0),'pravděpodobnost přeučení výběru'],['SPA p',f(H.spa_p,3),'má aspoň jedna varianta kladný výnos?'],
+ const sh=ORIG.map(n=>V[n].stats.sharpe),srt=[...sh].sort((a,b)=>a-b);
+ $('kpi-global').innerHTML=[['Sharpe V01_base',f(b.stats.sharpe),'primární pravidlo'],['Sharpe > 0',ORIG.filter(n=>V[n].stats.sharpe>0).length+' / 30','z původních 30 variant'],
+ ['Medián Sharpe',f((srt[14]+srt[15])/2),'všech 30 variant'],['Lepší než V01',ORIG.filter(n=>V[n].stats.sharpe>b.stats.sharpe).length+' / 29',''],
+ ['H2 (V01 + filtr MA200)',f(V.H2_btc200.stats.sharpe),'Sharpe, V01 má '+f(b.stats.sharpe)],
+ ['Bootstrap 5 % > 0',ORIG.filter(n=>V[n].boot_sharpe[0]>0).length+' / 30','dolní mez 90% CI nad nulou'],
+ ['PBO',pc(H.pbo,0),'30 variant, bez H2'],['SPA p',f(H.spa_p,3),'30 variant, bez H2'],
  ['BTC buy & hold',f(H.bench_stats['BTC buy & hold'].sharpe),'Sharpe, pro srovnání']]
  .map(c=>`<div class="tile"><small>${c[0]}</small><b>${c[1]}</b><i>${c[2]}</i></div>`).join('');
  $('c-summary').innerHTML=C.summary||''}
@@ -304,7 +315,7 @@ function renderTable(){const groups=['Vše',...new Set(NAMES.map(n=>V[n].group))
  const shmax=Math.max(...NAMES.map(n=>Math.abs(V[n].stats.sharpe)));
  const cell=(k,n)=>{const v=V[n];switch(k){
   case 'sel':return `<td class="l"><input type="checkbox" data-s="${n}" ${S.sel.includes(n)?'checked':''}>${S.sel.includes(n)?`<span class="dot" style="background:${col(n)};margin-left:4px"></span>`:''}</td>`;
-  case 'name':return `<td class="l">${n}</td>`;case 'grp':return `<td class="l ink2">${esc(v.group)}</td>`;case 'desc':return `<td class="l ink2">${esc(v.spec.desc)}</td>`;
+  case 'name':return `<td class="l">${lab(n)}</td>`;case 'grp':return `<td class="l ink2">${esc(v.group)}</td>`;case 'desc':return `<td class="l ink2">${esc(v.spec.desc)}</td>`;
   case 'sh':return `<td class="heat" style="${heatBg(v.stats.sharpe,shmax)}">${f(v.stats.sharpe)}</td>`;
   case 'ci':return `<td class="ink2">${f(v.boot_sharpe[0])} … ${f(v.boot_sharpe[2])}</td>`;
   case 'cagr':return `<td class="${cls(v.stats.cagr)}">${pc(v.stats.cagr)}</td>`;case 'dd':return `<td>${pc(v.stats.max_dd,0)}</td>`;
@@ -359,12 +370,12 @@ function renderEquity(){
  $('benchb').innerHTML=BENCH.map((b,i)=>`<button class="${S.bench.has(b)?'on':''}" data-b="${esc(b)}">${esc(b)}</button>`).join('');
  $('benchb').querySelectorAll('button').forEach(x=>x.onclick=()=>{const b=x.dataset.b;S.bench.has(b)?S.bench.delete(b):S.bench.add(b);renderEquity()});
  $('logb').className=S.log?'on':'';
- const ser=S.sel.map(n=>({name:n,color:col(n),vals:rebased(V[n].daily),w:n===S.focus?2.6:1.8}));
+ const ser=S.sel.map(n=>({name:lab(n),color:col(n),vals:rebased(V[n].daily),w:n===S.focus?2.6:1.8}));
  const bser=[...S.bench].map(b=>({name:b,color:`var(${BCOL[BENCH.indexOf(b)]})`,vals:rebased(H.bench[b]),dash:'5 4',w:1.4}));
  $('leg-eq').innerHTML=(S.full?'<span class="warn">Max 8 křivek najednou (víc barev nejde rozlišit); odškrtněte nějakou v tabulce.</span> ':'')+ser.concat(bser).map(s=>`<span><span class="dot" style="background:${s.color}"></span>${esc(s.name)}${s.name===S.focus?' (hlavní)':''}</span>`).join('');
  lineChart($('eq'),{series:ser.concat(bser),i0:S.r0,i1:S.r1,log:S.log,fmt:v=>f(v)+'×',zero:1,h:340});
  lineChart($('dd'),{series:ser.concat(bser.length?bser:[]),i0:S.r0,i1:S.r1,fmt:v=>pc(v,0),zero:0,h:180});
- lineChart($('rs'),{series:S.sel.map(n=>({name:n,color:col(n),vals:rollSharpe(V[n].daily,S.roll),w:n===S.focus?2.4:1.6})),i0:S.r0,i1:S.r1,fmt:v=>f(v,1),zero:0,h:220});
+ lineChart($('rs'),{series:S.sel.map(n=>({name:lab(n),color:col(n),vals:rollSharpe(V[n].daily,S.roll),w:n===S.focus?2.4:1.6})),i0:S.r0,i1:S.r1,fmt:v=>f(v,1),zero:0,h:220});
  const rowsN=S.sel.concat([...S.bench]);
  $('rangetbl').innerHTML='<thead><tr><th class="l">Řada</th><th>Sharpe</th><th>CAGR</th><th>Celkem</th><th>Max DD</th><th>Dní s pozicí</th><th>Obchodů</th><th>Ø obchod</th><th>Hit</th><th>Nejlepší den</th><th>Nejhorší den</th></tr></thead><tbody>'+
  rowsN.map(n=>{const a=(V[n]?V[n].daily:H.bench[n]).slice(S.r0,S.r1+1),tr=V[n]?inR(trades(n)).map(t=>t.r):[];let e=1;for(const x of a)e*=1+x;
@@ -386,7 +397,7 @@ function renderMonths(){const a=V[S.focus].daily,mo={};for(let i=0;i<ND;i++){con
  $('years').innerHTML=t+'</tbody></table><div class="muted small">2020 = jen květen–prosinec, 2026 = leden–září. Barevná škála končí na ±3.</div>';
  $('years').querySelectorAll('tr[data-n]').forEach(tr=>tr.onclick=()=>setFocus(tr.dataset.n));$('c-months').innerHTML=note('months')}
 function renderCost(){const bps=H.costs.map(c=>c*1e4),ix=bps.map((_,i)=>i);
- const mk=(key,fld)=>S.sel.map(n=>({name:n,color:col(n),vals:V[n][key].map(r=>r[fld]),w:n===S.focus?2.4:1.6}));
+ const mk=(key,fld)=>S.sel.map(n=>({name:lab(n),color:col(n),vals:V[n][key].map(r=>r[fld]),w:n===S.focus?2.4:1.6}));
  lineChart($('costc'),{series:mk('cost_sweep','sharpe'),i0:0,i1:bps.length-1,xs:bps.map(b=>String(b)),xfmt:x=>x+' bps/strana',fmt:v=>f(v,2),zero:0,h:240});
  lineChart($('delc'),{series:mk('delay_sweep','sharpe'),i0:0,i1:H.delays.length-1,xs:H.delays.map(d=>'+'+d),xfmt:x=>x+' svíček ('+(+x*15)+' min)',fmt:v=>f(v,2),zero:0,h:240});
  lineChart($('costm'),{series:mk('cost_sweep','mean_trade'),i0:0,i1:bps.length-1,xs:bps.map(b=>String(b)),xfmt:x=>x+' bps/strana',fmt:v=>sp(v,2),zero:0,h:200});
@@ -453,8 +464,8 @@ function renderCorr(){let s='<table style="width:auto"><thead><tr><th></th>'+NAM
 function renderOverfit(){const b=V.V01_base;
  $('kpi-of').innerHTML=[['PBO (CSCV, 16 bloků)',pc(H.pbo,0),'≥ 50 % = výběr nejlepší varianty nemá hodnotu'],['SPA p-hodnota',f(H.spa_p,3),'H0: žádná varianta nemá kladný výnos'],
  ['DSR V01, N=77',f(b.dsr_N77,4),'po započtení všech pokusů'],['PSR V01, N=1',f(b.psr,3),'kdyby to byl jediný pokus'],
- ['Variant s DSR77 > 0,95',NAMES.filter(n=>V[n].dsr_N77>0.95).length+' / 30','laťka: max 77 náhodných ≈ Sharpe '+f(H.dsr_alt.emax77_proxy)],
- ['… s rozptylem z variant',NAMES.filter(n=>V[n].dsr_N77_var30>0.95).length+' / 30','laťka ≈ Sharpe '+f(H.dsr_alt.emax77_var30)+'; nejvýš '+f(Math.max(...NAMES.map(n=>V[n].dsr_N77_var30)),2)],['Variant s PSR > 0,95',NAMES.filter(n=>V[n].psr>0.95).length+' / 30','bez korekce']]
+ ['Variant s DSR77 > 0,95',ORIG.filter(n=>V[n].dsr_N77>0.95).length+' / 30','laťka: max 77 náhodných ≈ Sharpe '+f(H.dsr_alt.emax77_proxy)],
+ ['… s rozptylem z variant',ORIG.filter(n=>V[n].dsr_N77_var30>0.95).length+' / 30','laťka ≈ Sharpe '+f(H.dsr_alt.emax77_var30)+'; nejvýš '+f(Math.max(...NAMES.map(n=>V[n].dsr_N77_var30)),2)],['Variant s PSR > 0,95',NAMES.filter(n=>V[n].psr>0.95).length+' / 30','bez korekce']]
  .map(c=>`<div class="tile"><small>${c[0]}</small><b>${c[1]}</b><i>${c[2]}</i></div>`).join('');
  const L=H.pbo_logits,edges=[];for(let x=-4;x<=4.001;x+=0.5)edges.push(x);const c=new Array(edges.length-1).fill(0);for(const v of L){let i=Math.floor((Math.max(-3.999,Math.min(3.999,v))+4)/0.5);c[i]++}
  barChart($('pbo'),{cats:edges.slice(0,-1).map((e,i)=>i%2===0?f(e,0):''),groups:[{name:'podíl rozdělení',color:'var(--c1)',vals:c.map(x=>x/L.length),extra:edges.slice(0,-1).map((e,i)=>`logit ${f(e,1)} … ${f(e+.5,1)}${e<0?' (pod mediánem)':''}`)}],fmt:x=>pc(x,0),h:200});
@@ -485,10 +496,11 @@ const GLOSS=[['Sharpe','Průměrný denní výnos / jeho směrodatná odchylka �
  ['PBO','Probability of Backtest Overfitting (CSCV): data se rozdělí na 16 bloků, ze všech 12 870 polovin se vybere nejlepší varianta a zjistí se, kde skončí v druhé polovině. PBO = jak často skončí pod mediánem. 50 % = výběr podle backtestu je stejně dobrý jako hod mincí.'],
  ['SPA','Hansenův test Superior Predictive Ability: je mezi všemi variantami aspoň jedna se skutečně kladným průměrným výnosem, když se zohlední, že jsme jich zkoušeli 30? Malé p = ano.'],
  ['Profit factor','Součet ziskových obchodů / součet ztrátových. Nad 1 = zisková; u strategie s 10–20 bps nákladů je 1,1–1,3 typické a křehké.'],
+ ['H1, H2 (research 18)','H1 = V05_lag0 (altcoin při skoku BTC klesl). H2 = V01_base, ale vstup jen když je BTC spot nad 200denním průměrem (průměr uzavíracích cen posledních 19 200 svíček 15m včetně signální). Obě jsou pre-registrované jako forward test od 2026-10-20 (docs/research18/PREREGISTRATION.md); tato stránka je jejich historický, post hoc pohled.'],
  ['Post hoc','Výsledek vznikl až po tom, co data už byla použita pro jiné rozhodnutí. Nemůže potvrdit hypotézu, jen ukázat, co stojí za nový forward test.']];
 function renderGloss(){$('gloss').innerHTML='<table><tbody>'+GLOSS.map(g=>`<tr><td class="l" style="vertical-align:top;width:170px"><b>${g[0]}</b></td><td class="l" style="white-space:normal">${g[1]}</td></tr>`).join('')+'</tbody></table>'}
 // ------------------------------------------------------------ controls
-function initControls(){const opts=NAMES.map(n=>`<option value="${n}">${n} – ${esc(V[n].spec.desc)}</option>`).join('');
+function initControls(){const opts=NAMES.map(n=>`<option value="${n}">${lab(n)} – ${esc(V[n].spec.desc)}</option>`).join('');
  $('focus').innerHTML=opts;$('focus').value=S.focus;$('cmp').innerHTML='<option value="">— nic —</option>'+opts;
  $('focus').onchange=e=>setFocus(e.target.value);$('cmp').onchange=e=>{S.cmp=e.target.value;if(S.cmp)addSel(S.cmp);renderAll()};
  const P=[['Vše',DATES[0],DATES[ND-1]],['2020–22','2020-05-01','2022-12-31'],['2023–26','2023-01-01',DATES[ND-1]]].concat([...new Set(DATES.map(d=>d.slice(0,4)))].map(y=>[y,y+'-01-01',y+'-12-31']));
@@ -504,6 +516,24 @@ function setRange(a,b,label){S.preset=label;let i0=DATES.findIndex(d=>d>=a),i1=D
 function renderRanged(){$('d0').value=DATES[S.r0];$('d1').value=DATES[S.r1];
  $('presets').querySelectorAll('button').forEach(b=>b.className=b.textContent===S.preset?'on':'');
  renderEquity();renderTrades();renderCond();renderSym()}
-function renderAll(){renderTable();renderMap();renderForest();renderMonths();renderCost();renderFwd();renderRanged()}
+
+function renderH2(){const a=V.V01_base,h=V.H2_btc200;
+ $('h2btn').onclick=()=>{S.sel=[];S.slot={};addSel('V01_base');addSel('H2_btc200');S.cmp='V01_base';$('cmp').value='V01_base';setFocus('H2_btc200')};
+ const rows=[['Sharpe',v=>f(v.stats.sharpe),v=>v.stats.sharpe],['90% CI Sharpe (bootstrap)',v=>f(v.boot_sharpe[0])+' … '+f(v.boot_sharpe[2])],
+ ['CAGR',v=>pc(v.stats.cagr)],['Max drawdown',v=>pc(v.stats.max_dd)],['Obchodů',v=>v.n_trades],['Událostí',v=>v.n_events],
+ ['Ø obchod',v=>sp(v.trade.mean,3)],['90% CI Ø obchodu (události)',v=>sp(v.event_ci90[1],2)+' … '+sp(v.event_ci90[2],2)],['Medián obchodu',v=>sp(v.trade.median,3)],
+ ['Hit',v=>pc(v.trade.hit,0)],['Profit factor',v=>f(v.trade.profit_factor)],['Dní s pozicí',v=>pc(v.exposure,0)],
+ ['Sharpe 2020–22',v=>f(v.subperiods['2020-05..2022-12'])],['Sharpe 2023–26',v=>f(v.subperiods['2023-01..2026-09'])],
+ ['Sharpe při 15 bps',v=>f(v.cost_sweep[5].sharpe)],['Sharpe při 20 bps',v=>f(v.cost_sweep[6].sharpe)],['Sharpe při +1 svíčce',v=>f(v.delay_sweep[1].sharpe)],
+ ['Sharpe při +2 svíčkách',v=>f(v.delay_sweep[2].sharpe)],['PSR (N=1)',v=>f(v.psr,3)],['DSR N=77',v=>f(v.dsr_N77,3)]];
+ $('h2cmp').innerHTML='<thead><tr><th class="l">Metrika</th><th>V01_base</th><th>H2 = V01 + MA200</th></tr></thead><tbody>'+rows.map(r=>`<tr><td class="l">${r[0]}</td><td>${r[1](a)}</td><td><b>${r[1](h)}</b></td></tr>`).join('')+'</tbody>';
+ const ord=[...NAMES].sort((x,y)=>(V[y].gate_split.above.mean??-9)-(V[x].gate_split.above.mean??-9));
+ $('gsplit').innerHTML='<thead><tr><th class="l">Varianta</th><th>nad: n</th><th>nad: Ø</th><th>pod/rovno: n</th><th>pod/rovno: Ø</th><th>podíl pod</th></tr></thead><tbody>'+
+  ord.map(n=>{const g=V[n].gate_split,t=g.above.n+g.below.n;return `<tr class="${n===S.focus?'focus':''}"><td class="l">${lab(n)}</td><td>${g.above.n}</td><td class="${cls(g.above.mean)}">${sp(g.above.mean,2)}</td><td>${g.below.n}</td><td class="${cls(g.below.mean)}">${sp(g.below.mean,2)}</td><td>${pc(g.below.n/Math.max(1,t),0)}</td></tr>`}).join('')+'</tbody>';
+ const yr=H.gate.by_year;hbar($('gyears'),{rows:Object.entries(yr).map(([y,v])=>({label:y,v,tip:`${y}: BTC nad MA200 ${pc(v,0)} svíček`})),fmt:v=>pc(v,0)});
+ const ys=Object.keys(a.by_year);
+ $('h2years').innerHTML='<table><thead><tr><th class="l">Rok</th><th>V01_base</th><th>H2</th><th>rozdíl</th></tr></thead><tbody>'+ys.map(y=>{const x=a.by_year[y].sharpe,z=h.by_year[y].sharpe;return `<tr><td class="l">${y}</td><td class="${cls(x)}">${f(x)}</td><td class="${cls(z)}">${f(z)}</td><td>${f(z-x)}</td></tr>`}).join('')+'</tbody></table>';
+ $('c-h2').innerHTML=note('h2')+`<div class="muted small">Celé období: BTC byl nad MA200 ${pc(H.gate.share_above,0)} svíček. „Nad“ = BTC spot close &gt; průměr posledních 19 200 closů v okamžiku signálu. Vypočteno bez pohledu do budoucnosti.</div>`}
+function renderAll(){renderH2();renderTable();renderMap();renderForest();renderMonths();renderCost();renderFwd();renderRanged()}
 initControls();renderHeader();renderOverfit();renderCorr();renderGloss();renderAll();
 </script></body></html>
