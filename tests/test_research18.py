@@ -158,3 +158,46 @@ def test_event_bootstrap_and_membership_horizon():
     assert ms[0] == date(2026, 10, 1) and ms[-1] == date(2028, 10, 1) and len(ms) == 25
     assert F.forward_months()[-1] == date(2027, 3, 1)               # research 17 unchanged
     assert S18.END[1] == date(2027, 10, 19) and S18.END[2] == date(2028, 10, 19) and S18.T0 == date(2026, 10, 20)
+
+
+# ---------------------------------------------------------------- dashboard
+
+def _status():
+    btc, alt = _market()
+    members = {"2026-09": ["ALTUSDT"], "2026-10": ["ALTUSDT"], "2026-11": ["ALTUSDT"]}
+    return E.evaluate({"BTCUSDT@spot": btc, "ALTUSDT": alt}, members, date(2026, 11, 25)) | {
+        "commit": "abc", "rule_hash": "r" * 64, "data_hash": "d" * 64}
+
+
+def test_dashboard_renders_status_escapes_html_and_has_no_scripts():
+    from datetime import datetime, timezone
+
+    from qlab.research18 import dashboard as D
+    st = _status()
+    st["trades"]["H1"][-1] = {**st["trades"]["H1"][-1], "sym": "<script>alert(1)</script>"}
+    page = D.render(st, {"error": "boom <b>", "last_run": "2026-11-26T06:30:00+00:00"}, datetime(2026, 11, 26, tzinfo=timezone.utc))
+    assert "<script" not in page and "&lt;script&gt;alert" in page and "boom &lt;b&gt;" in page
+    assert "H1 · LEAD_LAG0" in page and "H2 · LEAD_K3_BTC200" in page and "<svg" in page and "href=\"index.html\"" in page
+    assert "Stav kritérií" in page and "práh 0.0125" in page and "práh 0.0250" in page      # Holm thresholds, both alive
+    assert "NaN" not in page and "None" not in page
+    assert str(st["metrics"]["H1"]["n_events"]) in page and "2026-11-25" in page
+
+
+def test_dashboard_waiting_before_the_first_status_and_error_state():
+    from datetime import datetime, timezone
+
+    from qlab.research18 import dashboard as D
+    now = datetime(2026, 10, 19, tzinfo=timezone.utc)
+    waiting = D.render(None, {"error": None}, now)
+    assert "ČEKÁ NA ZAČÁTEK" in waiting and "2026-10-20" in waiting
+    failed = D.render(None, {"error": "rule files changed since the freeze"}, now)
+    assert "CHYBA" in failed and "rule files changed" in failed
+
+
+def test_dashboard_links_between_the_two_pages():
+    from datetime import datetime, timezone
+
+    from qlab.research17 import dashboard
+    page = dashboard.render(None, {"download": {}, "status": {}, "alerts": []}, datetime(2026, 10, 20, tzinfo=timezone.utc),
+                            date(2026, 10, 1), date(2027, 3, 31), 30)
+    assert 'href="research18.html"' in page and 'href="backtest.html"' in page

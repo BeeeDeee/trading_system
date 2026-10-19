@@ -90,7 +90,8 @@ def render(forward: dict | None, state: dict, now: datetime, start: date, end: d
     pill = ('<span class="pill bad">PROBLÉM</span>' if probs else '<span class="pill ok">OK</span>')
     parts = [f'<h1>LEAD forward test {pill}</h1>',
              f'<div class="sub">Výzkum 17: BTC skok ≥ 3σ, altcoin zaostává → long 4 h · paper, 10 bps/strana · '
-             f'{start} → {end} · <a href="backtest.html">Historický backtest 30 variant (post hoc)</a></div>']
+             f'{start} → {end} · <a href="backtest.html">Historický backtest 30 variant (post hoc)</a>'
+             ' · <a href="research18.html">Research 18: H1 a H2 (forward od 2026-10-20)</a></div>']
     if probs:
         parts.append('<div class="box bad"><b>Upozornění</b><ul>' + "".join(f"<li>{escape(p)}</li>" for p in probs)
                      + "</ul></div>")

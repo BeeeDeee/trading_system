@@ -16,14 +16,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from qlab.research17 import dashboard, forward as F, ops
+from qlab.research18 import dashboard as dash18, setup as T18
 
 STATE = Path("runs/r17_forward_state.json")
 RESULTS = Path("docs/research17/results")
 UV = os.environ.get("UV", "uv")
 
 
-def run(cmd: str) -> subprocess.CompletedProcess:
-    return subprocess.run([UV, "run", "python", "scripts/r17_forward.py", cmd], capture_output=True, text=True)
+def run(cmd: str, script: str = "scripts/r17_forward.py") -> subprocess.CompletedProcess:
+    return subprocess.run([UV, "run", "python", script, cmd], capture_output=True, text=True)
 
 
 def dash_dir() -> Path:
@@ -47,6 +48,12 @@ d = run("download")
 print(d.stdout[-3000:], d.stderr[-1500:], sep="\n")
 s = run("status")
 print(s.stdout[-1500:], s.stderr[-1500:], sep="\n")
+r18 = run("status", "scripts/r18_forward.py")             # research 18 (docs/research18): computed after the r17 status
+print(r18.stdout[-800:], r18.stderr[-800:], sep="\n")
+r18_waiting = "nothing to evaluate yet" in r18.stdout + r18.stderr
+r18_error = None if r18.returncode == 0 or r18_waiting else (r18.stderr or r18.stdout)[-300:]
+files18 = sorted(T18.RESULTS.glob("status_2*.json"))
+status18 = json.loads(files18[-1].read_text()) if files18 else None
 files = sorted(RESULTS.glob("forward_2*.json"))
 forward = json.loads(files[-1].read_text()) if files and s.returncode == 0 else None
 state = {"last_run": now.isoformat(timespec="seconds"),
@@ -55,6 +62,10 @@ state = {"last_run": now.isoformat(timespec="seconds"),
                     "asof": forward["asof"] if forward else None},
          "last_ok": prev.get("last_ok")}
 state["alerts"] = ops.problems(state, forward, now.date())
+state["r18"] = {"exit": r18.returncode, "waiting": r18_waiting, "error": r18_error,
+                "asof": status18["asof"] if status18 else None}
+if r18_error:
+    state["alerts"].append(f"research 18: status selhal (kód {r18.returncode}): {r18_error[:200]}")
 if not state["alerts"]:
     state["last_ok"] = state["last_run"]
 STATE.write_text(json.dumps(state, indent=1))
@@ -65,6 +76,10 @@ tmp = out / ".index.html.tmp"
 tmp.write_text(page)
 tmp.replace(out / "index.html")
 print(f"dashboard: {out / 'index.html'}")
+tmp = out / ".research18.html.tmp"
+tmp.write_text(dash18.render(status18, {"error": r18_error, "last_run": state["last_run"]}, now))
+tmp.replace(out / "research18.html")
+print(f"dashboard: {out / 'research18.html'}")
 # machine-readable status for the portal's warning banner (shown above every tab)
 st = out / ".status.json.tmp"
 st.write_text(json.dumps({"title": "LEAD forward", "last_run": state["last_run"], "stale_days": ops.STALE_RUN_DAYS,
