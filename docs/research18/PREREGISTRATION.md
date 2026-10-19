@@ -118,6 +118,10 @@ nebyl možný, ne k tomu, aby rychle potvrdila edge. Dá se tím také odhadnout
 - Náklady 7,5 / 15 / 20 bps, plnění o 1 a 2 svíčky později, bez fundingu, po měsících, po altcoinech, počet událostí,
   kolik dní bylo BTC nad MA200, kolik signálů filtr zahodil.
 - Skutečný skluz po skoku BTC se **neměří tady**; jde o samostatný dokument (`FORWARD.md` §7, §8).
+- Exit varianty TP/SL/trailing se řídí samostatnou zmrazenou mřížkou `EXIT_VARIANTS.md`; jsou pouze popisné a nemění
+  primární H2, její výstup po 4 h ani rozhodovací kritéria.
+- Přerozdělení nevyužité expozice se řídí `ALLOCATION_VARIANTS.md`; i to je pouze popisné a nemění primární H2 ani
+  její rozhodovací kritéria.
 
 ## 10. Co znamená výsledek
 
@@ -152,3 +156,8 @@ nebyl možný, ne k tomu, aby rychle potvrdila edge. Dá se tím také odhadnout
 | 2026-10-19 | Verze 0.1, návrh. |
 | 2026-10-19 | Verze 1.0 schválena vlastníkem beze změn. Před commitem se na datech po 2026-10-19 nic nepočítalo ani nezkoumalo. |
 | 2026-10-19 | Upřesnění implementace (rozhodnuto při psaní kódu, před jakýmkoli výpočtem na datech od `T0`; pravidla §4–7 se nemění): (a) Zamítnutá hypotéza opouští Holmovu rodinu už v **témže** rozhodnutí; zbylá se pak testuje s prahem α = 0,025 (§7, poslední věta čtu takto). (b) Hypotéza, která uspěla v 1. rozhodnutí, je uzavřená a ve 2. se nepočítá; ve 2. rozhodnutí je rodinou jen to, co bylo „neprůkazné“. (c) Neprůkazná hypotéza ve 2. rozhodnutí dostane stav `not_confirmed`. (d) Podmínka MA200 se u zpožděného plnění (jen popisné scénáře §9) hodnotí na svíčce plnění. (e) Událost = signální svíčka *k* (u zpoždění se od vstupu odečte zpoždění). (f) Test sdílí stahovač a členství s výzkumem 17; kvůli 24 měsícím se členství počítá do 2028-10 (`forward.MEMBERS_END`), což nemění nic z výzkumu 17. (g) Zámek pokrývá `RULE_FILES` výzkumu 17, `research17/variants.py` a `research18/{setup,rules,evaluate}.py`. (h) Záložka v dashboardu zatím není; výsledky jsou v `results/status_<datum>.json`. |
+| 2026-10-19 | Přidána oddělená mřížka 30 TP/SL/trailing výstupů (`EXIT_VARIANTS.md`, `research18/exits.py`) na žádost vlastníka. Jen popisně; pravidlo H2, forward zámek a jeho rozhodnutí se nemění. Parametry byly stanoveny před vyhodnocením této mřížky. |
+| 2026-10-19 | Na žádost vlastníka přidán samostatný sizing běh nad stejnými 30 výstupy (`ALLOCATION_VARIANTS.md`): 80 % cílová hrubá expozice, rovnoměrně mezi otevřenými obchody, strop 40 % na coin, náklady i na převážení. Jen popisně; H2 forward se nemění. |
+| 2026-10-19 | Na žádost vlastníka přidáno post hoc srovnání portfoliových mixů BTC spot B&H + základní H2 (`BTC_H2_MIXES.md`): osm předem zafixovaných vah 90/10 až 20/80. Použije stejnou historii 2020-05–2026-09; výběrově zkreslené a bez vlivu na primární H2 forward rozhodnutí. |
+| 2026-10-19 | Na žádost vlastníka přidány rizikové overlaye pro mixy 50/50 a 25/75 (`BTC_H2_RISK_OVERLAYS.md`): RV okna 7/14/30/60 dní a 30denní peak drawdown prahy 10/15/20 %, s H2 beze změny. Pouze post hoc; předem zafixováno před novým výpočtem. |
+| 2026-10-19 | Na žádost vlastníka předem zafixovány tři samostatné paper řady (`BTC_H2_PAPER.md`): 25/75, 25/75 + RV14 a 25/75 + DD10. Začínají 2026-10-20, jsou popisné a nemění rozhodnutí H1/H2. |

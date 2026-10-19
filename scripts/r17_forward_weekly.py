@@ -54,6 +54,12 @@ r18_waiting = "nothing to evaluate yet" in r18.stdout + r18.stderr
 r18_error = None if r18.returncode == 0 or r18_waiting else (r18.stderr or r18.stdout)[-300:]
 files18 = sorted(T18.RESULTS.glob("status_2*.json"))
 status18 = json.loads(files18[-1].read_text()) if files18 else None
+mix = run("status", "scripts/r18_mix_forward.py") if r18.returncode == 0 else None
+if mix:
+    print(mix.stdout[-1000:], mix.stderr[-800:], sep="\n")
+mix_error = None if not mix or mix.returncode == 0 else (mix.stderr or mix.stdout)[-300:]
+mix_files = sorted(T18.RESULTS.glob("mix_status_2*.json"))
+mix_status = json.loads(mix_files[-1].read_text()) if mix_files else None
 files = sorted(RESULTS.glob("forward_2*.json"))
 forward = json.loads(files[-1].read_text()) if files and s.returncode == 0 else None
 state = {"last_run": now.isoformat(timespec="seconds"),
@@ -64,8 +70,12 @@ state = {"last_run": now.isoformat(timespec="seconds"),
 state["alerts"] = ops.problems(state, forward, now.date())
 state["r18"] = {"exit": r18.returncode, "waiting": r18_waiting, "error": r18_error,
                 "asof": status18["asof"] if status18 else None}
+state["r18_mix"] = {"exit": mix.returncode if mix else None, "error": mix_error,
+                    "asof": mix_status["asof"] if mix_status else None}
 if r18_error:
     state["alerts"].append(f"research 18: status selhal (kód {r18.returncode}): {r18_error[:200]}")
+if mix_error:
+    state["alerts"].append(f"research 18 BTC/H2 mix: status selhal (kód {mix.returncode}): {mix_error[:200]}")
 if not state["alerts"]:
     state["last_ok"] = state["last_run"]
 STATE.write_text(json.dumps(state, indent=1))
@@ -77,7 +87,8 @@ tmp.write_text(page)
 tmp.replace(out / "index.html")
 print(f"dashboard: {out / 'index.html'}")
 tmp = out / ".research18.html.tmp"
-tmp.write_text(dash18.render(status18, {"error": r18_error, "last_run": state["last_run"]}, now))
+tmp.write_text(dash18.render(status18, {"error": r18_error, "last_run": state["last_run"]}, now,
+                             mix_status, {"error": mix_error, "last_run": state["last_run"]}))
 tmp.replace(out / "research18.html")
 print(f"dashboard: {out / 'research18.html'}")
 # machine-readable status for the portal's warning banner (shown above every tab)

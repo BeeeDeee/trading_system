@@ -9,17 +9,20 @@ from html import escape
 
 from qlab.research17.dashboard import CSS, _num, _pct
 from qlab.research18.setup import ALPHA, END, MIN_EVENTS, T0
+from qlab.research18.paper_mixes import VARIANTS, START as MIX_START
 
 EXTRA = """
 .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
 .hy h3{margin:0 0 6px;font-size:15px}.hy .grid{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
 li.ok::marker{color:var(--ok)}li.bad::marker{color:var(--bad)}li.warn::marker{color:var(--warn)}
 .leg span{margin-right:14px}.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.paper{border-left:3px solid var(--accent);padding-left:12px}.smallnote{font-size:12px;color:var(--muted)}
 """
 NAMES = {"H1": "H1 · LEAD_LAG0", "H2": "H2 · LEAD_K3_BTC200"}
 DESC = {"H1": "BTC skok ≥ 3σ a altcoin za hodinu klesl → long 4 h",
         "H2": "BTC skok ≥ 3σ a altcoin zaostává (< 50 %) → long 4 h, jen když BTC > MA200"}
 SERIES = {"H1": "var(--accent)", "H2": "var(--warn)"}
+PAPER_SERIES = {"mix25_75": "var(--accent)", "mix25_75_rv14": "var(--warn)", "mix25_75_dd10": "var(--ok)"}
 
 
 def _p(x, d=3):
@@ -47,11 +50,13 @@ def curves_svg(dates: list[str], rets: dict[str, list[float]]) -> str:
          f'<text x="{pad}" y="14" fill="var(--muted)" font-size="11">{lo * 100:+.2f} % … {hi * 100:+.2f} %</text>'
          f'<text x="{pad}" y="{h - 4}" fill="var(--muted)" font-size="11">{escape(dates[0])}</text>'
          f'<text x="{w - pad}" y="{h - 4}" text-anchor="end" fill="var(--muted)" font-size="11">{escape(dates[-1])}</text>')
+    colors = SERIES | PAPER_SERIES
     for k, v in eq.items():
         pts = " ".join(f"{x(i):.1f},{y(c):.1f}" for i, c in enumerate(v))
-        s += (f'<polyline fill="none" stroke="{SERIES[k]}" stroke-width="2" stroke-linejoin="round" points="{pts}"/>'
+        color = colors.get(k, "var(--muted)")
+        s += (f'<polyline fill="none" stroke="{color}" stroke-width="2" stroke-linejoin="round" points="{pts}"/>'
               f'<text x="{w - pad + 4}" y="{y(v[-1]) + 4:.1f}" fill="var(--ink)" font-size="11">{k} {v[-1] * 100:+.1f} %</text>')
-        s += "".join(f'<circle cx="{x(i):.1f}" cy="{y(v[i]):.1f}" r="5" fill="{SERIES[k]}" fill-opacity="0"><title>'
+        s += "".join(f'<circle cx="{x(i):.1f}" cy="{y(v[i]):.1f}" r="5" fill="{color}" fill-opacity="0"><title>'
                      f'{k} {escape(dates[i])} {v[i] * 100:+.2f} %</title></circle>' for i in range(0, len(dates), 5))
     return s + "</svg>"
 
@@ -82,7 +87,8 @@ def hypothesis_card(h: str, m: dict, thr: float, other_alive: bool) -> str:
             f'<ul style="margin-top:8px">{items}</ul></div>')
 
 
-def render(status: dict | None, state: dict, now: datetime) -> str:
+def render(status: dict | None, state: dict, now: datetime, mix_status: dict | None = None,
+           mix_state: dict | None = None) -> str:
     """`status` = latest results/status_<datum>.json (None before the first one), `state` = {'waiting': bool,
     'error': str | None, 'last_run': iso}."""
     end1 = END[1]
@@ -142,6 +148,32 @@ def render(status: dict | None, state: dict, now: datetime) -> str:
                      f'{escape(str(status.get("rule_hash", ""))[:12])}, data {escape(str(status.get("data_hash", ""))[:12])}</code></div>')
     parts.append(f'<div class="sub">Poslední běh: {escape(str(state.get("last_run", "–")))} · protokol: '
                  'docs/research18/PREREGISTRATION.md · zdrojem je results/status_&lt;datum&gt;.json (commitovat ručně).</div>')
+    parts.append("<h2>Paper portfolio · mix BTC/H2</h2>")
+    parts.append('<div class="box paper">Popisné paper sledování od '
+                 f'<b>{MIX_START}</b>; bez příkazů a bez vlivu na rozhodnutí H1/H2. H2 má váhu 75 %, BTC 25 % před případnou brzdou; '
+                 'signály platí od dalšího UTC dne a změna vah stojí 10 bps za dolar obratu.</div>')
+    mix_state = mix_state or {}
+    if mix_state.get("error"):
+        parts.append(f'<div class="box bad">Výpočet mixů selhal: {escape(str(mix_state["error"])[:300])}</div>')
+    if not mix_status:
+        parts.append(f'<div class="muted box">{"Paper sledování začne po " + str(MIX_START) + "." if now.date() < MIX_START else "Zatím nejsou uložené výsledky mixů."}</div>')
+    else:
+        rr = mix_status["results"]
+        rows = "".join(
+            f'<tr><td>{escape(VARIANTS[k]["label"])}</td><td>{_pct(v["total_return"])}</td>'
+            f'<td>{_pct(v["cagr"])}</td><td>{_pct(v["max_dd"])}</td><td>{_num(v["sharpe"])}</td>'
+            f'<td>{_pct(v["avg_btc_multiplier"])}</td></tr>'
+            for k, v in rr.items())
+        parts.append(f'<div class="sub">Data do {escape(mix_status["asof"])} · {mix_status["n_days"]} dní paper běhu</div>')
+        parts.append('<table><tr><th>Varianta</th><th>Celkem</th><th>CAGR*</th><th>Max. DD</th><th>Sharpe*</th>'
+                     f'<th>Průměrná BTC váha / cíl</th></tr>{rows}</table>')
+        parts.append(curves_svg(mix_status["daily"]["dates"],
+                                {k: mix_status["daily"][k] for k in VARIANTS}))
+        parts.append('<div class="leg sub">' + "".join(
+            f'<span><i class="dot" style="background:{PAPER_SERIES[k]}"></i>{escape(VARIANTS[k]["label"])} · '
+            f'{escape(VARIANTS[k]["description"])}</span>' for k in VARIANTS) +
+            '</div><div class="smallnote">* Anualizované hodnoty jsou při krátkém paper vzorku velmi nestabilní. '
+            'Předchozí data slouží jen k výpočtu indikátorů; výnos paper řady začíná v den zahájení.</div>')
     return ('<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
             f'<title>Research 18 – H1 a H2</title><style>{CSS}{EXTRA}</style></head><body><main>' + "".join(parts)
             + "</main></body></html>")
