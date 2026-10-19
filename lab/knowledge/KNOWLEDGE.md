@@ -96,6 +96,18 @@ Four designs on the scheduled US macro calendar have ended at the event-study ga
 
 *confidence low · 2026-10-17 · librarian · supersedes K-0065 · evidence: H-0052; H-0047; H-0045; H-0042; K-0063; K-0065; K-0034; K-0025; K-0060*
 
+### K-0072 Cross-market information-diffusion claims in liquid assets come out flat or wrong-signed from daily to monthly horizons
+
+Claims that news in one liquid market is priced late in another have not shown a delayed positive response at daily to monthly horizons. Statistical peer catch-up in US stocks (H-0013) was slightly negative, macro-release continuation across asset-class ETFs (H-0047) was wrong-signed in every third, and the oil-specific shock underreaction against Treasuries (H-0056) was wrong-signed in every third and grew with the horizon, ending in the lower tail of the placebo cloud. The owner's daily lead-lag scan (mrel) agrees. The one survivor to G2 is intraday crypto (H-0040), which then failed on stability. These are not power failures: both sides were marked and the placebo means sat near zero. They differ from the slow right-signed near misses (H-0054, H-0055), where the issue is a wide placebo bar (K-0071). Do not treat a wrong-signed result as an invitation to trade the mirror: the sign is dev-selected, the episodes are few and clustered, and the ETF peers carry stock-bond drift. A new card in this area should say why information would travel slowly through this particular channel, and what separates it from risk-on or reflation co-movement.
+
+*confidence low · 2026-10-18 · librarian · evidence: H-0056; H-0047; H-0013; H-0040; H-0054; H-0055; K-0071; prior_studies mrel*
+
+### K-0073 Multi-year reversal: absent in country equity ETFs, present for currency value in a short sample
+
+Two cards tested the same long-horizon reversal idea in different assets. Country equity ETFs sorted on multi-year past returns (H-0060) showed no reversal over the next quarter, and the sign was wrong in the early and middle thirds. Six G10 currency trusts sorted on distance from a five-year average spot (H-0062) showed cheap currencies beating rich ones, building with the horizon, positive in the populated thirds and clearly above the placebo cloud. The currency result has caveats that keep it from being a finding: the effective sample is only about nine years after the warm-up, value and carry are mixed (rich currencies in the period were low-yield), the score is nominal and the book could not reach the absolute Sharpe floor. If the split is real it fits an anchor-based story (purchasing power) working where a return-chasing story does not. The equity sort is also confounded with currency, since USD country ETFs carry both. A third long-horizon reversal card should say which anchor it uses and how it separates carry.
+
+*confidence low · 2026-10-19 · librarian · evidence: H-0060; H-0062; K-0071*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -208,11 +220,17 @@ Several cards cleared the event-study gate and then failed the strategy gate (H-
 
 *confidence low · 2026-10-16 · librarian · supersedes K-0048 · evidence: H-0046; H-0033; H-0031; H-0028; H-0025; H-0019; H-0016; K-0048; K-0053*
 
-### K-0071 Slow-horizon event studies: the placebo bar sits several times above cost, so only a large effect can pass G1
+### K-0074 The G1 abnormal return is raw against unmarked peers, so a bucket with a different beta tests partly market direction
 
-H-0054 (about three-month residual momentum) and H-0055 (about two-month variance-risk tilt) are, as far as the lessons show, the first cards with a primary horizon beyond a month that reached a mechanism verdict. Both had gross several times round-trip cost, the right sign in every third and a placebo mean near or below zero, and both ended under the percentile bar (mid-eighties percentile) with a bar roughly seven times cost. At the five-session horizon of earlier cards the bar sat near cost (K-0034). The cloud widens with the horizon while cost does not, and monthly or weekly signals give overlapping windows with few independent episodes. The brief's one-to-six-month horizon therefore meets the least powerful form of the G1 mechanism test: an effect must be several times cost to pass, and near misses are 'cannot tell' (K-0026). A Scout should state the expected placebo bar next to expected gross and cost; widening the event set helps only if it adds independent dates. Whether G1 should use a horizon-aware bar for slow claims is a judge-design question for the owner.
+The G1 event study compares marked instruments with unmarked peers in raw returns. A card whose distinctive claim is beta neutrality (H-0054, sizing enters only in the strategy), or whose marked set differs in beta from its peers (young coins in H-0058, R&D-intensive growth stocks in H-0059), is therefore tested on a bucket that also carries market-direction exposure. In H-0058 the sign followed the market cycle across the thirds (young coins led in the boom, lagged in the bear), as a beta difference would produce; in H-0059 the same-stock placebo removes the level of the style but not a time-varying beta. Inferred from the metrics, not tested with a beta-matched control. A Scout should state the expected beta gap between marked and peers and choose peers or events that neutralize it. Whether G1 should offer a beta-adjusted abnormal return is a judge-design question for the owner.
 
-*confidence low · 2026-10-18 · librarian · evidence: H-0054; H-0055; K-0026; K-0034; H-0052*
+*confidence low · 2026-10-19 · librarian · evidence: H-0058; H-0059; H-0054; K-0025; K-0060*
+
+### K-0076 Slow-horizon event studies: one clear pass, most failures wrong-signed or equal to the placebo mean
+
+Since K-0071, five more cards with a primary horizon of a quarter reached a mechanism verdict: H-0057 (about zero, decaying), H-0058 (wrong-signed), H-0059 (positive but equal to the same-stock placebo mean), H-0060 (wrong-signed) and H-0061 (wrong-signed, one crisis). H-0062 (currency value) passed with a placebo percentile near the top: gross about eight times cost against a bar about seven times cost, growing with the horizon. With the near misses H-0054 and H-0055 that makes eight slow verdicts: one pass, two near misses, five that more power would not cure. K-0071 stands for modest effects, but an effect of that size can pass, and most slow failures were signs or placebo-equal averages. Read a slow failure by its sign and placebo mean first, the bar second. The 60-session cap still shows only the first quarter of year-long claims.
+
+*confidence low · 2026-10-19 · librarian · supersedes K-0071 · evidence: H-0057; H-0058; H-0059; H-0060; H-0061; H-0062; H-0054; H-0055; K-0026*
 
 ## The judge (framework behaviour)
 
@@ -288,6 +306,12 @@ H-0049 (193 events against a minimum of 200) and H-0050 (172 marked events on 43
 
 *confidence medium · 2026-10-17 · librarian · supersedes K-0067 · evidence: H-0049; H-0050; K-0062; K-0054; K-0032*
 
+### K-0075 Signal history before the dev start or the ETFs' first date seems not to warm up the first signals
+
+H-0061 requested Moody's yields from 1986 for decisions from 2003 but reached G1 with 484 marked events against a forecast of 550 to 650, and its first dev third held far fewer events than the others, about its three-year minimum-observation rule. H-0062 requested FRED fixings from 1999 for ETFs listed in 2007; its strategy started in September 2011 (ETF start plus the 90 percent coverage rule on a five-year window), with 220 events against about 330 forecast and 4 in its first third. Both fit one cause: signal-only series reach the strategy only from the card's start, so warm-up eats the first dev years. Inferred from counts and dates; loader not read. Effects: shorter samples, an almost empty first block, a publication split with little earlier data. Until the owner confirms, Scouts should compute the first signal date from the card's own period.
+
+*confidence low · 2026-10-19 · librarian · evidence: H-0061; H-0062; K-0062*
+
 ## How the lab works
 
 ### K-0010 Fail loudly on missing inputs
@@ -352,3 +376,4 @@ H-0040 is the first card that is an earlier owner rule re-run through the lab (r
 - K-0052 Short-horizon effects that clear the pooled placebo test are usually weakest or reversed in the latest third of dev
 - K-0065 Macro-calendar cards on asset-class ETFs fail in three designs; reaction drift is single-stock only
 - K-0067 The G1 reason code can name the event count while the mechanism was measured and failed; the count was visible at G0
+- K-0071 Slow-horizon event studies: the placebo bar sits several times above cost, so only a large effect can pass G1

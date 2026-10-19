@@ -667,3 +667,46 @@ datasets:
     - 232741.open_interest
     location: LAB_HOME/data/cftc_cot_legacy_1d
     cost_model: null
+
+  - id: fred_moody_yields_1d
+    loader: generic
+    asset_class: macro
+    instruments: Moody's Seasoned Aaa (DAAA) and Baa (DBAA) corporate bond yield averages,
+      daily, percent, not seasonally adjusted; keys DAAA and DBAA; signal only, not
+      tradable
+    frequency: 1d
+    range:
+    - '1986-01-02'
+    - '2026-10-15'
+    clock: next_morning
+    source: FRED (St. Louis Fed) fredgraph.csv download for series DAAA and DBAA, originally
+      Moody's Daily Corporate Bond Yield Averages; free, public, no key. Moody's data
+      on FRED are used under FRED terms for research use.
+    quality: 'lab ingest 2026-10-18: 20466 rows, 2 series, see LAB_HOME/data/fred_moody_yields_1d/report.json'
+    holdout_from: '2021-01-01'
+    known_biases:
+    - Moody's yield averages are market-based averages of corporate bond yields and
+      are not revised in the ordinary sense, but FRED serves only the latest vintage
+      and no publication timestamps; values are assumed available the next morning (clock
+      next_morning), which is conservative.
+    - 'Averages over a changing set of Moody''s-rated long-term (20+ year) bonds: composition
+      and methodology changes (maturity and index-constituent changes) are not visible
+      in the series, so level shifts can reflect them. Baa-Aaa spread reflects rating-bucket
+      composition drift.'
+    - Missing days (FRED '.', mostly bond-market holidays) are dropped, not filled;
+      the series follows the bond-market calendar (SIFMA), not XNYS, so a few XNYS sessions
+      have no value and a few non-XNYS days do have one (e.g. Good Friday).
+    - Yields are averages, not tradable instruments; the Baa-Aaa spread mixes credit
+      risk and bond liquidity/duration effects.
+    - 'Coverage checked by the framework: both series 10233 daily values from 1986-01-02
+      to 2026-10-15, same count, no gap above 5 days; the framework flagged 3 (DAAA)
+      and 1 (DBAA) large day-to-day jumps, kept as published.'
+    forward_source: same FRED endpoint (https://fred.stlouisfed.org/graph/fredgraph.csv?id=DAAA,
+      id=DBAA), refetched daily; FRED API series/observations with a free key is an
+      alternative
+    calendar: XNYS
+    fields:
+    - DAAA
+    - DBAA
+    location: LAB_HOME/data/fred_moody_yields_1d
+    cost_model: null

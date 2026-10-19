@@ -22,5 +22,29 @@
   "reason": "H-0037 is registered as liquidity_provision like H-0006, H-0030 and H-0035: it fades a recent relative price deviation over a few sessions and is paid by whoever pushed the price away. The wrapper/AP-arbitrage story could not be tested, because the catalog holds no NAV or intraday premium, only daily closes of two wrappers, so what was actually run is a daily deviation fade. It died the same way against cost, with the same early-era pattern (K-0052). The Librarian's lesson says not to call another daily fade of a recent deviation a new mechanism without wrapper evidence, and there is none. Counting the trial together is the stricter direction. If wrapper-level data (price against NAV) ever exists, a new card can argue the AP mechanism, but its trials would still count here.",
   "message_id": 298,
   "ts": "2026-10-15T04:36:30.046915+00:00"
+ },
+ {
+  "from_family": "oil-shock-equity-underreaction",
+  "into_family": "peer-lead-lag-diffusion",
+  "actor": "chair",
+  "reason": "Same mechanism: slow diffusion of information from one market into the price of another, because equity investors under-react to a signal that sits in a different market (inattention / limited attention to linked assets). H-0013 claims it for return-correlated peer stocks, H-0056 for oil moves into SPY. A monthly horizon and one a-priori predictor change the signal rule, not the counterparty or the reason for the effect, and both reject on the same mechanism test (abnormal return not positive). Merging only makes the multiple-testing penalty stricter. btc-lead-altcoin-lag is deliberately not merged: its counterparty is intraday liquidity/arbitrage latency in crypto perps, a different reason.",
+  "message_id": 419,
+  "ts": "2026-10-18T05:06:32.322314+00:00"
+ },
+ {
+  "from_family": "default-spread-risk-premium-timing",
+  "into_family": "variance-risk-premium-timing",
+  "actor": "chair",
+  "reason": "H-0061 and H-0055 test the same mechanism class on the same book: a slow market-implied state variable (Baa-Aaa spread against VIX-minus-realized variance) tilting a 60/40 SPY/IEF book to harvest a time-varying equity risk premium, same pair, same placebo design. Both are 'is the equity-over-bond premium predictable from a priced-risk gauge' claims, so their trials must count together. The card of H-0061 itself asked for the merge.",
+  "message_id": 460,
+  "ts": "2026-10-19T03:06:55.630693+00:00"
+ },
+ {
+  "from_family": "speculator-flow-liquidity-provision",
+  "into_family": "hedging-pressure-premium",
+  "actor": "chair",
+  "reason": "H-0051 and H-0057 read the same CFTC non-commercial positioning (cftc_cot_legacy_1d) for almost the same commodity and currency ETFs, with the same counterparties (speculators against commercial hedgers) and opposite signs: H-0051 fades speculator flow weekly, H-0057 follows the speculator net-long level monthly. They are two readings of one positioning panel, and testing both signs on it is exactly the multiple-testing exposure a shared trial count must price. Horizon and sign differ, but the counterparty and data do not; merging only makes the penalty stricter.",
+  "message_id": 461,
+  "ts": "2026-10-19T03:06:55.637458+00:00"
  }
 ]
