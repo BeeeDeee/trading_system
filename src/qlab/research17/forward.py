@@ -22,7 +22,7 @@ from qlab.research8 import download as dl
 from qlab.research15 import universe as uni
 from qlab.research15.evaluate import by_year, stats
 from qlab.research16 import engine as G
-from qlab.research17 import engine as R, setup as T
+from qlab.research17 import engine as R, setup as T, variants as V
 from qlab.research15.setup import epoch_15m
 
 FORWARD_START = date(2026, 10, 1)
@@ -345,6 +345,7 @@ def evaluate(panels: dict, members: dict, asof: date, n_rnd: int = N_RND, n_boot
             "eth_reference_weight1": stats(eth_ref.daily, eth_ref.rets if len(eth_ref.rets) else None),
             "per_symbol": per_sym,
         }
+        out["variants"] = V.run_all(pan, followers, ok_members, s0f)       # descriptive only (FORWARD.md §10)
         out["daily"] = {"dates": [str(d) for d in dates], "ret": [float(x) for x in daily]}
         out["trades"] = sorted(({"sym": s, "entry": str(np.datetime64(int(t) * 900, "s")), "ret": float(x)}
                                 for s, r in base.items() for t, x in zip(r.entries, r.rets)),

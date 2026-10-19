@@ -10,7 +10,7 @@ from datetime import date, datetime, timedelta
 
 MAX_DATA_LAG_DAYS = 3          # the newest daily ZIP should be at most this many days old (weekly run + publication lag)
 MEMBERSHIP_GRACE_DAY = 6       # monthly 1d ZIPs of the previous month are normally published by then
-STALE_RUN_DAYS = 9             # the dashboard flags a weekly run that did not happen for this long
+STALE_RUN_DAYS = 3             # the dashboard flags a daily run that did not happen for this long
 
 
 def parse_download(output: str, exit_code: int) -> list[str]:

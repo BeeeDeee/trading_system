@@ -1,6 +1,6 @@
 # Výzkum 17 – forward paper test LEAD na altcoinech: protokol
 
-Verze 1.0 · 2026-10-14 · Stav: **schváleno, běží**.
+Verze 1.1 · 2026-10-16 · Stav: **schváleno, běží**.
 Provádí §10 pre-registrace výzkumu 17 (`PREREGISTRATION.md`). Pravidlo, náklady a univerzum se **nemění**. Tento
 dokument jen určuje, jak se data po 2026-09-30 sbírají, jak se z nich počítá a kdy se rozhoduje. Po commitu
 verze 1.0 platí: změny = řádek v §9 s důvodem, **před** dalším vyhodnocením.
@@ -66,7 +66,7 @@ Jinak **zamítnuto**. Další pravidla (stanovena předem, aby nešlo zastavit p
   dokládá, že výsledek vznikl před pozdějšími daty.
 - `… final` je povoleno až při `asof ≥ 2027-03-31` (resp. konci prodloužení) a ≥ 30 událostech, jednou, zapíše
   `results/forward_final.json` s rozhodnutím podle §4.
-- Průběžný režim: 1× týdně (cron, `scripts/r17_forward_weekly.sh`) `download` + `status`, kontrola zdraví
+- Průběžný režim: 1× denně v 6:30 (cron, `scripts/r17_forward_weekly.sh`) `download` + `status`, kontrola zdraví
   (`qlab.research17.ops`), obnova dashboardu (`qlab.research17.dashboard`, záložka „LEAD forward“ v portalu) a upozornění
   přes ntfy při chybě stahování, selhání statusu, zaostávajících datech, zastaralých symbolech nebo chybějícím členství.
   Nové `forward_<datum>.json` se commituje ručně. Při chybě stahování se nic neinterpoluje.
@@ -90,3 +90,22 @@ skluz a rozhodnout o velikosti pozic (nový dokument).
 | 2026-10-14 | Verze 0.1, návrh. |
 | 2026-10-14 | Verze 1.0 schválena vlastníkem beze změn (primární portfolio = 10 altcoinů, prodloužení po 3 měsících při < 30 událostech). Před zmrazením a prvním stažením se nestahovala ani nezkoumala žádná data po 2026-09-30. |
 | 2026-10-14 | Provozní doplněk (nemění pravidlo ani rozhodnutí): týdenní běh, upozornění a dashboard; `forward_<datum>.json` obsahuje navíc denní výnosy a seznam obchodů. |
+| 2026-10-16 | Verze 1.1: §10, 30 popisných variant (nemění pravidlo, zámek ani rozhodnutí §4). Seznam byl určen před zobrazením jakéhokoli výsledku variant; první běh jen ověřil shodu `V01_base` s primárním portfoliem (2 události k 2026-10-14). |
+| 2026-10-16 | Provozní změna (nemění pravidlo ani rozhodnutí): běh `r17_forward_weekly.sh` denně v 6:30 místo týdně; upozornění na neběžící cron po 3 dnech místo 9. |
+
+## 10. Varianty parametrů (popisně)
+
+K primárnímu pravidlu běží vedle sebe **30 pevně daných variant** (`qlab.research17.variants`, seznam `SPECS`):
+přísnější a volnější signál (K, podmínka zaostávání, top 5), doba držení (2–24 h), výstupy (stop / cíl), okno skoku
+BTC (30 min, 2 h), plnění a náklady (zpoždění, 5 bps), velikost pozice. `V01_base` je kontrolní replika primárního
+pravidla a musí s ním sedět na obchod (kontroluje test).
+
+- **Nerozhodují.** Rozhodnutí §4 se řídí výhradně primárním portfoliem. Varianty nic nezastavují, neprodlužují ani
+  nemění; nevybírá se podle nich žádná „nejlepší“ varianta a neladí se. Jedna dobrá varianta z 30 je očekávaná náhoda.
+- **Seznam je zmrazen** v den zavedení. Přidání nebo změna varianty = nový řádek v §9 a od toho dne jde o novou
+  variantu s vlastním začátkem; stávající se nemažou, i když vychází špatně.
+- Případné povýšení varianty na skutečné pravidlo je nový pre-registrovaný test (nová nezávislá data), ne důsledek
+  tohoto forwardu. Jako vodítko se hlásí, kolik variant splňuje kritérium §4 a kde v rozdělení leží primární pravidlo.
+- Varianty počítají na týchž panelech, členech a denní mřížce a nepatří do `RULE_FILES` (zámek pravidla zůstává).
+  Výsledky jsou v `forward_<datum>.json` (klíč `variants`) a v dashboardu.
+- Nehodnotily se na historii 2020–2026 (vault výzkumu 17 je spotřebovaný); k historii nemají žádné číslo.

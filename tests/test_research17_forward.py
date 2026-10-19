@@ -337,3 +337,48 @@ def test_dashboard_renders_the_committed_status_file():
     page = dashboard.render(f, {"alerts": [], "download": {}, "status": {}}, datetime.now(timezone.utc),
                             date(2026, 10, 1), date(2027, 3, 31), 30)
     assert f["asof"] in page and str(f["n_events"]) in page
+
+
+# ---------------------------------------------------------------- descriptive variants (FORWARD.md §10)
+
+def _synthetic_market(n=96 * 60, seed=3):
+    from qlab.research17 import variants as V
+    rng = np.random.default_rng(seed)
+    t = epoch_15m(date(2026, 9, 1)) + np.arange(n)
+
+    def panel(vol):
+        c = 100 * np.exp(np.cumsum(rng.normal(0, vol, n)))
+        return {"t": t, "o": c, "h": c * 1.001, "l": c * 0.999, "c": c, "real": np.ones(n, bool),
+                "funding": np.full(n, np.nan)}
+
+    btc, alt = panel(0.001), panel(0.002)
+    for k in range(96 * 31 + 20, n - 40, 150):                       # BTC jumps while the altcoin lags
+        btc["c"][k:] *= 1.02
+        alt["c"][k:] *= 1.002
+        alt["c"][k + 1:k + 17] *= 1.0005 ** np.arange(1, 17)
+    for p in (btc, alt):
+        p["o"], p["h"], p["l"] = p["c"], p["c"] * 1.001, p["c"] * 0.999
+    return V, btc, alt
+
+
+def test_variant_base_replicates_the_primary_rule_and_specs_are_unique():
+    from qlab.research16 import engine as G
+    from qlab.research17 import engine as R
+    V, btc, alt = _synthetic_market()
+    assert len(V.SPECS) == 30 and V.SPECS[0].name == "V01_base"
+    assert np.allclose(V.move(btc["c"], btc["real"], 4), R.F.move_1h(type("A", (), btc)()), equal_nan=True)
+    a = G.Asset.build(alt)
+    cand = V.candidates(a, V.leader_moves(btc), V.SPECS[0], {})
+    ref = R.signals(a, R.leader(btc), 3.0, "LONG")
+    assert len(ref) > 0 and (cand.k == ref.k).all() and (cand.deadline == ref.deadline).all()
+    members = {f"{d.year}-{d.month:02d}": ["ALTUSDT"] for d in (date(2026, 9, 1), date(2026, 10, 1))}
+    with F.forward_window(date(2026, 10, 28)):
+        leaders = {"spot": R.leader(btc)}
+        s0 = int(epoch_15m(date(2026, 10, 1)))
+        want = R.run_follower(a, leaders, [R.Scenario("base")], s0 - int(a.t[0]), R.member_mask(a, "ALTUSDT", members))["base"]
+        got = V.run_all({"BTCUSDT@spot": btc, "ALTUSDT": alt}, ["ALTUSDT"], members, s0, V.SPECS)
+    assert got["V01_base"]["n_trades"] == len(want.rets) > 0
+    assert got["V01_base"]["mean_trade"] == pytest.approx(float(want.rets.mean()))
+    assert set(got) == {s.name for s in V.SPECS}
+    assert got["V12_nolag"]["n_trades"] >= got["V01_base"]["n_trades"]       # a looser filter never has fewer signals
+    assert got["V03_K4"]["n_trades"] <= got["V01_base"]["n_trades"]

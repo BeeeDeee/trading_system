@@ -7,7 +7,7 @@ docs/research17/FORWARD.md §4. All dynamic strings are HTML-escaped.
 from datetime import date, datetime
 from html import escape
 
-from qlab.research17 import ops
+from qlab.research17 import ops, variants
 
 CSS = """
 :root{--bg:#f4f5f4;--card:#fbfcfb;--ink:#18211d;--muted:#5a6760;--rule:#d5dbd7;--ok:#2d7a4b;--warn:#b86e00;--bad:#b3392f;--accent:#2f6ba8}
@@ -59,6 +59,30 @@ def equity_svg(dates: list[str], ret: list[float], trades: list[dict]) -> str:
             f'<text x="{pad}" y="14" fill="var(--muted)" font-size="11">{lo * 100:+.2f} % … {hi * 100:+.2f} %</text>'
             f'<text x="{w - pad}" y="{h - 4}" text-anchor="end" fill="var(--muted)" font-size="11">{escape(dates[-1])}</text>'
             f'<text x="{pad}" y="{h - 4}" fill="var(--muted)" font-size="11">{escape(dates[0])}</text></svg>')
+
+
+def variants_table(vs: dict | None) -> str:
+    """30 parameter variants next to the primary rule; descriptive only (FORWARD.md §10), no ranking, no selection."""
+    if not vs:
+        return ""
+    rows = []
+    for key, title in variants.GROUPS.items():
+        items = [(n, v) for n, v in vs.items() if v["spec"]["group"] == key]
+        if not items:
+            continue
+        rows.append(f"<tr><th colspan='6' style='text-align:left'>{escape(title)}</th></tr>")
+        for n, v in items:
+            cls = "" if not v["n_trades"] else (" class='ok'" if v["meets"] else " class='bad'")
+            rows.append(f"<tr><td title='{escape(v['spec']['desc'])}'>{escape(n)}<br><small class='muted'>"
+                        f"{escape(v['spec']['desc'])}</small></td><td>{v['n_events']}</td><td>{v['n_trades']}</td>"
+                        f"<td{cls}>{_num(v['sharpe']) if v['n_trades'] else '–'}</td><td>{_pct(v['mean_trade'])}</td>"
+                        f"<td>{_pct(v['total_return'])}<br><small class='muted'>DD {v['max_dd'] * 100:.1f} %</small></td></tr>")
+    n_ok = sum(v["meets"] for v in vs.values())
+    return ("<h2>Varianty parametrů (popisně)</h2><div class='sub'>30 variant téhož pravidla na týchž datech a členech. "
+            "Nic nerozhoduje, nic se z nich nevybírá a netuní (FORWARD.md §10); jedna dobrá varianta ze 30 je očekávaná "
+            f"náhoda. Kritérium (Sharpe &gt; 0 a průměr &gt; 0) zatím splňuje {n_ok} z {len(vs)}.</div>"
+            "<table><tr><th>Varianta</th><th>Události</th><th>Obchodů</th><th>Sharpe</th><th>Průměr obchodu</th>"
+            "<th>Výnos / propad</th></tr>" + "".join(rows) + "</table>")
 
 
 def render(forward: dict | None, state: dict, now: datetime, start: date, end: date, min_events: int) -> str:
@@ -122,6 +146,7 @@ def render(forward: dict | None, state: dict, now: datetime, start: date, end: d
         parts.append("<h2>Citlivost (popisně)</h2><table><tr><th>Varianta</th><th>Sharpe</th><th>Obchodů</th>"
                      f"<th>Průměr</th></tr>{sc}</table><div class='sub'>cost75 = 7,5 bps, x2 = 20 bps, delay1 = plnění o "
                      "svíčku později, nolag = bez podmínky zaostávání.</div>")
+        parts.append(variants_table(f.get("variants")))
         eth = f["eth_reference_weight1"]
         ps = "".join(f"<tr><td>{escape(s)}</td><td>{v['n']}</td><td>{_pct(v['mean'])}</td><td>{_pct(v['contribution'])}</td></tr>"
                      for s, v in sorted(f["per_symbol"].items(), key=lambda kv: -kv[1]["contribution"]))
