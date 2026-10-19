@@ -92,6 +92,7 @@ skluz a rozhodnout o velikosti pozic (nový dokument).
 | 2026-10-14 | Provozní doplněk (nemění pravidlo ani rozhodnutí): týdenní běh, upozornění a dashboard; `forward_<datum>.json` obsahuje navíc denní výnosy a seznam obchodů. |
 | 2026-10-16 | Verze 1.1: §10, 30 popisných variant (nemění pravidlo, zámek ani rozhodnutí §4). Seznam byl určen před zobrazením jakéhokoli výsledku variant; první běh jen ověřil shodu `V01_base` s primárním portfoliem (2 události k 2026-10-14). |
 | 2026-10-16 | Provozní změna (nemění pravidlo ani rozhodnutí): běh `r17_forward_weekly.sh` denně v 6:30 místo týdně; upozornění na neběžící cron po 3 dnech místo 9. |
+| 2026-10-19 | Na žádost vlastníka post hoc backtest 30 variant na historii 2020-05..2026-09 (`scripts/r17_variants_backtest.py`, panely načtené mimo spotřebovaný vault, nic do registru). Jen popisně: nemění pravidlo, zámek, seznam variant ani rozhodnutí §4 a nic se podle něj nevybírá. Výsledek je stránka `/lead/backtest.html` (`scripts/r17_variants_report.py`). Věta §10 „k historii nemají žádné číslo“ tím přestává platit. |
 
 ## 10. Varianty parametrů (popisně)
 
@@ -109,3 +110,4 @@ pravidla a musí s ním sedět na obchod (kontroluje test).
 - Varianty počítají na týchž panelech, členech a denní mřížce a nepatří do `RULE_FILES` (zámek pravidla zůstává).
   Výsledky jsou v `forward_<datum>.json` (klíč `variants`) a v dashboardu.
 - Nehodnotily se na historii 2020–2026 (vault výzkumu 17 je spotřebovaný); k historii nemají žádné číslo.
+  *(Od 2026-10-19 existuje post hoc popisný backtest, viz §9.)*
