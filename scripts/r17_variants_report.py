@@ -23,7 +23,8 @@ cpath = Path("docs/research17/variants_backtest_comments.json")
 comments = json.loads(cpath.read_text()) if cpath.exists() else {}
 # second DSR: variance of the daily Sharpe across these 30 variants instead of the research 16 grid proxy
 daily = {n: np.array(v["daily"]) for n, v in hist["variants"].items()}
-var30 = float(np.var([sharpe(x) for x in daily.values()], ddof=1))
+# the variance stays that of the 30 variants + H2; the research 18 paper portfolios are not extra trials
+var30 = float(np.var([sharpe(x) for n, x in daily.items() if not hist["variants"][n].get("portfolio")], ddof=1))
 for n, v in hist["variants"].items():
     v["dsr_N77_var30"] = deflated_sharpe(daily[n], hist["N_CUM_before"] + 30, var30)
 hist["dsr_alt"] = {"var30": var30, "emax77_var30": expected_max_sharpe(77, var30) * 365 ** 0.5,

@@ -7,6 +7,10 @@ panels directly (`research15.setup._load`), NOT through the research 17 vault: t
 final run, so this is a post-hoc, contaminated look. Descriptive only, nothing is selected from it and nothing is
 written to the trial registry.
 
+Also the three research 18 paper portfolios (docs/research18/BTC_H2_PAPER.md): BTC spot + H2 mixed by the frozen
+rules of `research18/paper_mixes.py` on this engine's daily grid (BTC buy and hold, H2 and its cost/delay sweeps). They
+hold no trades of their own, so the trade columns are empty; every other column is computed as for the 30 variants.
+
 Per variant: daily grid, every trade (signal strength, lag, BTC regime, exit reason, hold), cost and delay
 sweeps; across variants: correlation, PBO (CSCV), SPA p-value and stationary-bootstrap Sharpe intervals.
 """
@@ -25,7 +29,7 @@ from qlab.research16 import engine as G
 from qlab.research17 import engine as R, variants as V
 from qlab.research17.evaluate import N_CUM, SR_VAR
 from qlab.research17.setup import START, SUBPERIODS, day0, n_days
-from qlab.research18 import rules as H18
+from qlab.research18 import paper_mixes as PM, rules as H18
 from qlab.validation.stats import (deflated_sharpe, pbo_cscv, probabilistic_sharpe, spa_pvalue,
                                    stationary_bootstrap_indices)
 
@@ -118,18 +122,28 @@ for i, sym in enumerate(syms):
 bench_ew = np.where(hold_cnt > 0, hold_sum / np.maximum(hold_cnt, 1), 0.0)
 mat = np.column_stack([res[sp.name]["daily"] for sp in ALL])
 
+# research 18 paper portfolios: BTC close rebuilt from the daily BTC returns (the rules are scale-invariant)
+day_ids = dates.astype("datetime64[D]").astype(np.int64)
+mults = PM.signal_multipliers(day_ids, np.cumprod(1 + bench_btc), day_ids)
+h2r = res[H18.H2.name]
+PORT = {key: {"daily": PM.simulate(bench_btc, h2r["daily"], mults[key])[0],
+              "cost": [PM.simulate(bench_btc, h2r["cost"][j], mults[key])[0] for j in range(len(COSTS))],
+              "delay": [PM.simulate(bench_btc, h2r["delay"][j], mults[key])[0] for j in range(len(DELAYS))],
+              "mult": mults[key]} for key in PM.VARIANTS}
+mat_all = np.column_stack([mat, *[PORT[k]["daily"] for k in PM.VARIANTS]])
+
 # stationary bootstrap of the daily grid, same resamples for every variant (mean block 10 days)
 rng = np.random.default_rng(0)
-boot = np.empty((N_BOOT, mat.shape[1]))
+boot = np.empty((N_BOOT, mat_all.shape[1]))
 for bi in range(N_BOOT):
-    x = mat[stationary_bootstrap_indices(nd, 10.0, rng)]
+    x = mat_all[stationary_bootstrap_indices(nd, 10.0, rng)]
     sd = x.std(0, ddof=1)
     boot[bi] = np.where(sd > 0, x.mean(0) / np.where(sd > 0, sd, 1), 0) * np.sqrt(365)
 print("bootstrap done", flush=True)
 pbo, logits = pbo_cscv(mat[:, :30], 16)          # PBO and SPA stay on the 30 variants of FORWARD.md §10
 spa = spa_pvalue(mat[:, :30], n_boot=2000, mean_block=10.0)
 print(f"PBO {pbo:.3f} SPA {spa:.3f}", flush=True)
-corr = np.corrcoef(mat.T)
+corr = np.corrcoef(mat_all.T)
 
 
 def cat(xs):
@@ -201,6 +215,24 @@ for vi, sp in enumerate(ALL):
                     None if not np.isfinite(t[7]) else round(float(t[7]), 4), size[int(t[0]) - sp.delay], int(t[9])]
                    for t in tr]}
     print(sp.name, round(st["sharpe"], 3), st.get("n_trades"), flush=True)
+for pi, (key, spec) in enumerate(PM.VARIANTS.items()):
+    o, daily, vi = PORT[key], PORT[key]["daily"], len(ALL) + pi
+    out["variants"]["Paper_" + key] = {
+        "spec": {"desc": f"Paper 25 % BTC / 75 % H2: {spec['description']}", "kind": spec["kind"]}, "portfolio": True,
+        "group": "Research 18 · paper", "alias": "paper", "stats": stats(daily), "n_events": None, "n_trades": None,
+        "trade": {}, "event_ci90": [None, None, None], "by_year": by_year(dates, daily),
+        "subperiods": {k: stats(window(dates, daily, *w))["sharpe"] for k, w in SUBPERIODS.items()},
+        "psr": probabilistic_sharpe(daily), "dsr_N1": deflated_sharpe(daily, 1, SR_VAR),
+        "dsr_N77": deflated_sharpe(daily, N_CUM + 30, SR_VAR),
+        "boot_sharpe": [float(np.quantile(boot[:, vi], q)) for q in (0.05, 0.5, 0.95)],
+        "boot_p_le0": float((boot[:, vi] <= 0).mean()), "exposure": float((daily != 0).mean()),
+        "btc_multiplier": {"mean": float(o["mult"].mean()), "share_reduced": float((o["mult"] < 0.999999).mean())},
+        "gate_split": {"above": {"n": 0, "mean": None, "hit": None}, "below": {"n": 0, "mean": None, "hit": None}},
+        "daily": r4(daily),
+        # the H2 leg's cost / delay is swept; the 10 bps cost of rebalancing the BTC/H2 weights stays fixed
+        "cost_sweep": [{"cost": c, **stats(o["cost"][j])} for j, c in enumerate(COSTS)],
+        "delay_sweep": [{"delay": d, **stats(o["delay"][j])} for j, d in enumerate(DELAYS)], "trades": []}
+    print("Paper_" + key, round(out["variants"]["Paper_" + key]["stats"]["sharpe"], 3), flush=True)
 tt = btc.t0 + np.arange(len(btc.c))
 inside = tt >= s0
 yrs = (tt[inside] * 900).astype("datetime64[s]").astype("datetime64[Y]").astype(int) + 1970

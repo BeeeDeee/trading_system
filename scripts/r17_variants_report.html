@@ -163,11 +163,11 @@ takže u V26/V27 nahrazuje jejich vlastní. Křivky = vybrané varianty.</p>
 </main><div id="tip"></div>
 <script>
 const D=__DATA__, C=__COMMENTS__;
-const H=D.hist, V=H.variants, NAMES=Object.keys(V), ORIG=NAMES.filter(n=>n!=='H2_btc200'), DATES=H.dates, ND=DATES.length, SYMS=H.symbols, FWD=D.fwd.variants;
+const H=D.hist, V=H.variants, NAMES=Object.keys(V), ORIG=NAMES.filter(n=>n!=='H2_btc200'&&!V[n].portfolio), DATES=H.dates, ND=DATES.length, SYMS=H.symbols, FWD=D.fwd.variants;
 const DAY0=Math.round(Date.parse(DATES[0]+'T00:00:00Z')/864e5), SQ=Math.sqrt(365);
 const REASON=['stop','cíl','čas','konec dat'], WD=['po','út','st','čt','pá','so','ne'];
 const SLOTS=['--c1','--c2','--c3','--c4','--c5','--c6','--c7','--c8'];
-const BENCH=Object.keys(H.bench), BCOL=['--ink2','--muted'];
+const BENCH=Object.keys(H.bench), BCOL=['var(--ink2)','var(--muted)',...[0,30,55,100,150,190,230,270,310].map(h=>`hsl(${h} 55% 50%)`)];
 // ------------------------------------------------------------ helpers
 const $=id=>document.getElementById(id);
 const lab=n=>n+(V[n]&&V[n].alias?' · '+V[n].alias:'');
@@ -319,7 +319,7 @@ function renderTable(){const groups=['Vše',...new Set(NAMES.map(n=>V[n].group))
   case 'sh':return `<td class="heat" style="${heatBg(v.stats.sharpe,shmax)}">${f(v.stats.sharpe)}</td>`;
   case 'ci':return `<td class="ink2">${f(v.boot_sharpe[0])} … ${f(v.boot_sharpe[2])}</td>`;
   case 'cagr':return `<td class="${cls(v.stats.cagr)}">${pc(v.stats.cagr)}</td>`;case 'dd':return `<td>${pc(v.stats.max_dd,0)}</td>`;
-  case 'mar':return `<td>${f(v.stats.cagr/v.stats.max_dd)}</td>`;case 'tr':return `<td>${v.n_trades}</td>`;case 'ev':return `<td>${v.n_events}</td>`;
+  case 'mar':return `<td>${f(v.stats.cagr/v.stats.max_dd)}</td>`;case 'tr':return `<td>${v.n_trades??'–'}</td>`;case 'ev':return `<td>${v.n_events??'–'}</td>`;
   case 'mt':return `<td class="${cls(v.trade.mean)}">${sp(v.trade.mean,3)}</td>`;case 'evci':return `<td class="${cls(v.event_ci90[1])}">${sp(v.event_ci90[1],3)}</td>`;
   case 'hit':return `<td>${pc(v.trade.hit,0)}</td>`;case 'pf':return `<td>${f(v.trade.profit_factor)}</td>`;
   case 's1':case 's2':case 'c20':case 'd1':{const x=COLS.find(c=>c[0]===k)[2](n);return `<td class="${cls(x)}">${f(x)}</td>`}
@@ -371,7 +371,7 @@ function renderEquity(){
  $('benchb').querySelectorAll('button').forEach(x=>x.onclick=()=>{const b=x.dataset.b;S.bench.has(b)?S.bench.delete(b):S.bench.add(b);renderEquity()});
  $('logb').className=S.log?'on':'';
  const ser=S.sel.map(n=>({name:lab(n),color:col(n),vals:rebased(V[n].daily),w:n===S.focus?2.6:1.8}));
- const bser=[...S.bench].map(b=>({name:b,color:`var(${BCOL[BENCH.indexOf(b)]})`,vals:rebased(H.bench[b]),dash:'5 4',w:1.4}));
+ const bser=[...S.bench].map(b=>({name:b,color:BCOL[BENCH.indexOf(b)],vals:rebased(H.bench[b]),dash:'5 4',w:1.4}));
  $('leg-eq').innerHTML=(S.full?'<span class="warn">Max 8 křivek najednou (víc barev nejde rozlišit); odškrtněte nějakou v tabulce.</span> ':'')+ser.concat(bser).map(s=>`<span><span class="dot" style="background:${s.color}"></span>${esc(s.name)}${s.name===S.focus?' (hlavní)':''}</span>`).join('');
  lineChart($('eq'),{series:ser.concat(bser),i0:S.r0,i1:S.r1,log:S.log,fmt:v=>f(v)+'×',zero:1,h:340});
  lineChart($('dd'),{series:ser.concat(bser.length?bser:[]),i0:S.r0,i1:S.r1,fmt:v=>pc(v,0),zero:0,h:180});
@@ -379,7 +379,7 @@ function renderEquity(){
  const rowsN=S.sel.concat([...S.bench]);
  $('rangetbl').innerHTML='<thead><tr><th class="l">Řada</th><th>Sharpe</th><th>CAGR</th><th>Celkem</th><th>Max DD</th><th>Dní s pozicí</th><th>Obchodů</th><th>Ø obchod</th><th>Hit</th><th>Nejlepší den</th><th>Nejhorší den</th></tr></thead><tbody>'+
  rowsN.map(n=>{const a=(V[n]?V[n].daily:H.bench[n]).slice(S.r0,S.r1+1),tr=V[n]?inR(trades(n)).map(t=>t.r):[];let e=1;for(const x of a)e*=1+x;
-  return `<tr><td class="l"><span class="dot" style="background:${V[n]?col(n):`var(${BCOL[BENCH.indexOf(n)]})`}"></span>${esc(n)}</td><td class="${cls(sharpe(a))}">${f(sharpe(a))}</td><td>${pc(cagr(a))}</td><td class="${cls(e-1)}">${sp(e-1,1)}</td><td>${pc(maxdd(a),1)}</td>
+  return `<tr><td class="l"><span class="dot" style="background:${V[n]?col(n):BCOL[BENCH.indexOf(n)]}"></span>${esc(n)}</td><td class="${cls(sharpe(a))}">${f(sharpe(a))}</td><td>${pc(cagr(a))}</td><td class="${cls(e-1)}">${sp(e-1,1)}</td><td>${pc(maxdd(a),1)}</td>
   <td>${pc(a.filter(x=>x!==0).length/a.length,0)}</td><td>${V[n]?tr.length:'–'}</td><td class="${cls(mean(tr))}">${V[n]?sp(mean(tr),3):'–'}</td><td>${V[n]?pc(tr.filter(x=>x>0).length/tr.length,0):'–'}</td>
   <td>${sp(Math.max(...a),2)}</td><td>${sp(Math.min(...a),2)}</td></tr>`}).join('')+'</tbody>';
  $('c-equity').innerHTML=note('equity')}
@@ -465,7 +465,7 @@ function renderOverfit(){const b=V.V01_base;
  $('kpi-of').innerHTML=[['PBO (CSCV, 16 bloků)',pc(H.pbo,0),'≥ 50 % = výběr nejlepší varianty nemá hodnotu'],['SPA p-hodnota',f(H.spa_p,3),'H0: žádná varianta nemá kladný výnos'],
  ['DSR V01, N=77',f(b.dsr_N77,4),'po započtení všech pokusů'],['PSR V01, N=1',f(b.psr,3),'kdyby to byl jediný pokus'],
  ['Variant s DSR77 > 0,95',ORIG.filter(n=>V[n].dsr_N77>0.95).length+' / 30','laťka: max 77 náhodných ≈ Sharpe '+f(H.dsr_alt.emax77_proxy)],
- ['… s rozptylem z variant',ORIG.filter(n=>V[n].dsr_N77_var30>0.95).length+' / 30','laťka ≈ Sharpe '+f(H.dsr_alt.emax77_var30)+'; nejvýš '+f(Math.max(...NAMES.map(n=>V[n].dsr_N77_var30)),2)],['Variant s PSR > 0,95',NAMES.filter(n=>V[n].psr>0.95).length+' / 30','bez korekce']]
+ ['… s rozptylem z variant',ORIG.filter(n=>V[n].dsr_N77_var30>0.95).length+' / 30','laťka ≈ Sharpe '+f(H.dsr_alt.emax77_var30)+'; nejvýš '+f(Math.max(...ORIG.map(n=>V[n].dsr_N77_var30)),2)],['Variant s PSR > 0,95',ORIG.filter(n=>V[n].psr>0.95).length+' / 30','bez korekce']]
  .map(c=>`<div class="tile"><small>${c[0]}</small><b>${c[1]}</b><i>${c[2]}</i></div>`).join('');
  const L=H.pbo_logits,edges=[];for(let x=-4;x<=4.001;x+=0.5)edges.push(x);const c=new Array(edges.length-1).fill(0);for(const v of L){let i=Math.floor((Math.max(-3.999,Math.min(3.999,v))+4)/0.5);c[i]++}
  barChart($('pbo'),{cats:edges.slice(0,-1).map((e,i)=>i%2===0?f(e,0):''),groups:[{name:'podíl rozdělení',color:'var(--c1)',vals:c.map(x=>x/L.length),extra:edges.slice(0,-1).map((e,i)=>`logit ${f(e,1)} … ${f(e+.5,1)}${e<0?' (pod mediánem)':''}`)}],fmt:x=>pc(x,0),h:200});
@@ -497,6 +497,7 @@ const GLOSS=[['Sharpe','Průměrný denní výnos / jeho směrodatná odchylka �
  ['SPA','Hansenův test Superior Predictive Ability: je mezi všemi variantami aspoň jedna se skutečně kladným průměrným výnosem, když se zohlední, že jsme jich zkoušeli 30? Malé p = ano.'],
  ['Profit factor','Součet ziskových obchodů / součet ztrátových. Nad 1 = zisková; u strategie s 10–20 bps nákladů je 1,1–1,3 typické a křehké.'],
  ['H1, H2 (research 18)','H1 = V05_lag0 (altcoin při skoku BTC klesl). H2 = V01_base, ale vstup jen když je BTC spot nad 200denním průměrem (průměr uzavíracích cen posledních 19 200 svíček 15m včetně signální). Obě jsou pre-registrované jako forward test od 2026-10-20 (docs/research18/PREREGISTRATION.md); tato stránka je jejich historický, post hoc pohled.'],
+ ['Paper portfolia (research 18)','Tři portfolia z docs/research18/BTC_H2_PAPER.md, která se od 2026-10-20 paper tradují: 25 % BTC / 75 % H2 (stálé váhy), „RV14“ (BTC váha se škáluje min(1; 60 % / RV14)) a „DD10“ (BTC váha klesne na čtvrtinu při −10 % od 30denního maxima do close nad SMA20). Počítají se z denních řad BTC buy &amp; hold a H2 stejného enginu, pravidla bere zmrazený paper_mixes.py, rebalancování stojí 10 bps za dolar obratu. Nemají vlastní obchody, takže sloupce o obchodech jsou prázdné. U citlivosti na náklady a zpoždění se mění jen H2 část. Nejsou součástí 30 variant ani PBO/SPA a nejsou další testovanou hypotézou.'],
  ['Post hoc','Výsledek vznikl až po tom, co data už byla použita pro jiné rozhodnutí. Nemůže potvrdit hypotézu, jen ukázat, co stojí za nový forward test.']];
 function renderGloss(){$('gloss').innerHTML='<table><tbody>'+GLOSS.map(g=>`<tr><td class="l" style="vertical-align:top;width:170px"><b>${g[0]}</b></td><td class="l" style="white-space:normal">${g[1]}</td></tr>`).join('')+'</tbody></table>'}
 // ------------------------------------------------------------ controls
