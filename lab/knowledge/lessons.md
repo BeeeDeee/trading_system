@@ -532,3 +532,48 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not tune lookback_years or n_per_leg, add currencies, or lever or vol-target the book to clear the Sharpe floor: dev-selected rescues are new trials. Do not file a value score on the same six trusts under another name.
 - open questions: Separate value from carry (value within carry-matched currencies, or inflation-adjusted anchors); more currencies or futures would add breadth but need data. Check what history the signal really received (question to the owner). ETFs have no forward data, so G4 is the ceiling.
 - related: H-0060, H-0044, H-0051
+
+## H-0063 – Stop-cascade breakout from compressed ranges on Binance perps - follow the first taker-dominated, high-volume 15m close outside an unusually narrow 24h range, both sides, hold 6 hours
+
+- family: `stop-cascade-breakout` · mechanism: flow_structural · instruments: Binance perps top fifteen, 15-minute bars, long/short breakouts from compressed ranges, six-hour hold
+- outcome: passed G1 narrowly; rejected at G2: neighbors unstable, one-candle delay erased it, doubled costs made it negative
+- lesson: Gross per trade was only just above the card's own bar and modeled costs took most of it, so G1 was a thin pass. G2 shows the continuation is front-loaded: one candle later flipped the sign, which is the card's own condition for 'the card is wrong' (the H-0035 shape, now on the continuation side). The short-range neighbors lost money. All three dev thirds were positive, but the latest was clearly the weakest. A small fast edge that a taker reaches too late.
+- avoid: Do not refile the better-looking wider-range or longer-hold neighbors, or tighter flow thresholds: dev-selected, a new trial on the same events. Do not relabel it as volatility squeeze, range expansion, Donchian or liquidation-follow breakout on the same 15-minute perps. Do not rely on a modeled next-open fill for a move defined by taker aggression.
+- open questions: Does the continuation exist at a slower horizon (many hours to days) where a late fill matters less, or only for fast or maker fills that this engine cannot simulate? Untested: an episode split of the weak latest block, and whether market-wide state (all coins breaking at once) separates real runs from single-coin noise.
+- related: H-0035, H-0040, H-0039, H-0006
+
+## H-0064 – Pre-announcement liquidity-provision reversal - LIQ-500, long 3-session losers / short winners just before their predicted 8-K earnings release, hold 5 sessions
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: US liquid stocks (LIQ-500), unhedged long/short: three-session losers long, winners short, just before predicted 8-K release, five-session hold
+- outcome: mechanism test passed clearly; rejected at G1 on the strategy: Sharpe beat T-bills reliably but stayed under the absolute floor, deep drawdown; latest third wrong-signed
+- lesson: First conditioner on a return sort in LIQ-500 that lifted event gross clearly above cost (contrast H-0030, K-0044). But it decayed: strongest in the earliest third (financial-crisis rebounds), weaker in the middle, wrong-signed in the latest, a declared kill condition. It kept building from one to ten sessions, not a quick concession. The unhedged book earned far less than the event study implies, with a deep drawdown for a neutral book; the gap is undecomposed (no gross/net or sleeve split).
+- avoid: Do not retune formation_days, the lead, leg_quantile or hold, nor add a hedge basket or long-only leg to reach the Sharpe floor: same events, new trials. Do not read the pooled pass as live while the latest third is negative (K-0060).
+- open questions: Is the decay an episode (crisis rebounds in the first third) or publication? An episode split of the same events would tell. A control with the same sort at dates away from the predicted release would show whether the window enlarges reversal. The hit rate of the predicted date is unreported.
+- related: H-0030, H-0007, H-0023, H-0026, H-0028, H-0029
+
+## H-0065 – Quarter-end window-dressing cycle - LIQ-500 dollar-neutral, follow residual QTD winners minus losers in the last 10 sessions of a quarter, fade them in the first 5 of the next
+
+- family: `quarter-end-window-dressing` · mechanism: calendar · instruments: US liquid stocks (LIQ-500), dollar-neutral: follow residual quarter-to-date winners before quarter end, fade them after
+- outcome: rejected at G1 on the mechanism test: average about zero, placebo percentile far under the bar, gross a small fraction of cost; strategy not run
+- lesson: No quarter-end window-dressing cycle visible in LIQ-500. Not a power problem: many events, placebo bar below round-trip cost, gross a small part of cost. Signs flipped between thirds (wrong, right, wrong) and longer horizons were no better. Caveat: the follow and fade entries sort on nearly the same residual with opposite sides, so generic momentum or reversal cancels, but so would two real effects of opposite sign; the by-phase report asked for never reached the gate. Only about two event dates per quarter: few independent episodes.
+- avoid: Do not retune pre_days, post_days or leg_quantile, or keep only the fourth quarter after seeing the thirds: new trials on the same few dates. Do not refile as quarter-end momentum or turn-of-quarter reversal on the same sort.
+- open questions: A phase-by-phase event study (pressure and release separately, placebo mean checked) would show whether one phase hides in the pool. Fourth-quarter tax-loss selling alone is narrower and has very few dates. Holdings evidence (13F) is not loadable for enough quarters.
+- related: H-0016, H-0020, H-0054, H-0030, H-0029
+
+## H-0066 – Earnings-news transfer to not-yet-reporting peers - LIQ-500 long/short, follow a large 8-K release reaction in the announcer's correlated peers, hold 5 days
+
+- family: `peer-lead-lag-diffusion` · mechanism: cross_asset_information · instruments: US liquid stocks (LIQ-500), long/short: follow a large 8-K release reaction in correlated peers that have not reported, five-day hold
+- outcome: rejected at G1 on the mechanism test: small positive average, placebo percentile well under the bar, gross a fraction of cost; strategy not run
+- lesson: A dated, verified news event did not rescue peer diffusion. Peers moved slightly with the announcer at short horizons, but the average sat inside the placebo cloud, the bar was below round-trip cost (a tradable effect would have shown) and longer horizons turned negative: noise or overreaction, not slow transfer. Thirds ran from wrong to right, the reverse of decay; early 8-K coverage gaps may let already-reported peers in (K-0035), untested. The peer map is only a return correlation. With H-0013, undated and dated versions are both flat.
+- avoid: Do not retune z_threshold, peers_k or hold_days, nor trade the mirror (overreaction) because longer horizons are negative: dev-selected sign (K-0072). No further correlation-peer cards on LIQ-500.
+- open questions: Explicit economic links (suppliers, customers, industry codes) are the untested channel but not loadable. Less-covered names are untested. 8-K coverage by year would show whether early dilution hid anything.
+- related: H-0013, H-0028, H-0047, H-0056, H-0067
+
+## H-0067 – Earnings-release volume visibility premium - LIQ-500 dollar-neutral, long announcers with abnormally high release-session volume, short abnormally low, matched on reaction sign and size, hold 5 days
+
+- family: `high-volume-visibility-premium` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), dollar-neutral: among announcers, long high and short low release-session volume, matched on reaction
+- outcome: rejected at G1 on the mechanism test: slightly negative average, placebo percentile far under the bar, no third positive; strategy not run
+- lesson: Answers the question H-0014 left open: abnormal volume tied to a real release session, inside matched reaction bins, gives no visibility premium in LIQ-500. The average was wrong-signed in every third, worst in the latest, and below the same-stock placebo mean. The placebo bar was below round-trip cost, so not a power problem. Very short horizons were about zero. Large caps are always visible; release volume probably measures news size and disagreement that matching only partly removes. The negative sign is dev-selected.
+- avoid: Do not trade the mirror (low release volume over high) or retune leg_quantile, hold_days or the bins. No more volume-based attention stories on LIQ-500: with H-0009 and H-0014 this is the third dead one.
+- open questions: A volume effect, if any, lives in less-covered names or at slower horizons, neither tested. Volume as a conditioner of reaction drift is the same data as the PEAD family and would count there.
+- related: H-0014, H-0009, H-0028, H-0031, H-0024

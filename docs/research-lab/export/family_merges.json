@@ -46,5 +46,13 @@
   "reason": "H-0051 and H-0057 read the same CFTC non-commercial positioning (cftc_cot_legacy_1d) for almost the same commodity and currency ETFs, with the same counterparties (speculators against commercial hedgers) and opposite signs: H-0051 fades speculator flow weekly, H-0057 follows the speculator net-long level monthly. They are two readings of one positioning panel, and testing both signs on it is exactly the multiple-testing exposure a shared trial count must price. Horizon and sign differ, but the counterparty and data do not; merging only makes the penalty stricter.",
   "message_id": 461,
   "ts": "2026-10-19T03:06:55.637458+00:00"
+ },
+ {
+  "from_family": "stop-cascade-breakout",
+  "into_family": "short-term-reversal",
+  "actor": "chair",
+  "reason": "H-0063 and H-0035 trade the same event class: taker-dominated, high-volume fast moves in liquid Binance USD-M perps on 15-minute candles, where forced or stop-driven flow is the counterparty. They take opposite signs (H-0035 fades extended moves, H-0063 follows breaks from compressed ranges, excluding H-0035's region by construction), so they split one event space and one trial pool; K-0077 reads both as the same small edge consumed within about a candle. Merging only makes the penalty stricter. H-0040 (BTC-led altcoin catch-up) is deliberately not merged: its mechanism is cross-asset information diffusion, and sharing data and dev window is not a shared mechanism.",
+  "message_id": 473,
+  "ts": "2026-10-19T05:36:57.417710+00:00"
  }
 ]

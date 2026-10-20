@@ -910,5 +910,77 @@
   "actor": "librarian",
   "message_id": 457,
   "ts": "2026-10-19T02:40:37.474895+00:00"
+ },
+ {
+  "id": "K-0077",
+  "kind": "market",
+  "title": "Fifteen-minute crypto perp taker moves: a small edge in both directions, consumed within about a candle",
+  "statement": "Two cards on taker-dominated, high-volume fast moves in liquid Binance perps took opposite sides and found a small positive average trade after modeled costs on dev: a rebound after extended moves (H-0035) and a continuation after breaks out of a compressed range (H-0063). Neither survived a one-candle later fill or doubled costs, and in both the latest third of dev was the weakest. Both selected the moment the aggressive flow is already visible in the candle, so what is left after the signal candle closes is small. Together with K-0049 and the hourly study mrel-1h, the pattern is that the payoff on this time scale goes to fast fills and makers, and a taker entering at the next open pays for the front of the move. The BTC-led catch-up over hours (H-0040) survived delay and doubled costs and failed on stability instead, so slower follower effects are not ruled out. Cards on this time scale should state the expected gross per trade after a one-candle delay, not only at the next open.",
+  "evidence": "[\"H-0035\",\"H-0063\",\"H-0040\",\"K-0049\",\"K-0060\",\"prior_studies mrel-1h\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 469,
+  "ts": "2026-10-19T05:07:42.785533+00:00"
+ },
+ {
+  "id": "K-0078",
+  "kind": "method",
+  "title": "G2 random-timing null is far below zero in four cards; in H-0063 it matches cost drag",
+  "statement": "In H-0007 (weekly US stocks), H-0035, H-0040 and now H-0063 (fifteen-minute crypto perps) the random-entry or random-timing check passed with a median Sharpe far below zero. In H-0035 the null was several times worse than the strategy's cost drag; in H-0040 about one and three quarters times. H-0063 allows a sharper reading: doubling costs lowered its Sharpe by about one and a half, which is its cost drag at the model, and the null median (about minus one and eight tenths, 95th percentile still below zero) sits close to that. So the null is roughly 'same trades, zero gross, normal costs', and a percentile of one means only that gross is positive, not that the timing pays for itself: the same book failed doubled costs, delay and neighbors. The null's turnover, exposure and cost per trade are still not reported next to the strategy's, so for H-0007 and H-0035 the gap to cost drag is unexplained. Read a pass as 'gross above zero', never as evidence of tradable timing; an all-negative null makes the percentile uninformative. The question to the owner from H-0035 stays open.",
+  "evidence": "[\"H-0007\",\"H-0035\",\"H-0040\",\"H-0063\",\"K-0017\"]",
+  "confidence": "low",
+  "supersedes": "K-0061",
+  "actor": "librarian",
+  "message_id": 471,
+  "ts": "2026-10-19T05:07:42.842828+00:00"
+ },
+ {
+  "id": "K-0079",
+  "kind": "market",
+  "title": "Return-sort effects in liquid US stocks stay below cost, except a pre-release reversal that faded",
+  "statement": "Past-return sorts in liquid US stocks have been tried with reversal and continuation signs and many conditioners (news, turnover, intraday split, peers, earnings sessions removed, quarter-end window). Almost all gave effects far below round-trip cost or nothing (H-0007, H-0029, H-0030, H-0065). The exception is the reversal of the last few sessions just before a predicted earnings release (H-0064): the first conditioner whose event gross sat clearly above cost with a placebo mean near zero. It was strongest in the earliest third, wrong-signed in the latest, and the unhedged book earned far less than the event study implies. So K-0044 holds for slow and calendar conditioners, not for an event-window conditioner tied to inventory risk. A new conditioner should be argued from that risk, state the latest-third sign as a kill condition, and include a control sort at dates away from the event.",
+  "evidence": "[\"H-0064\",\"H-0065\",\"H-0007\",\"H-0029\",\"H-0030\",\"K-0012\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": "K-0044",
+  "actor": "librarian",
+  "message_id": 497,
+  "ts": "2026-10-20T02:38:55.849494+00:00"
+ },
+ {
+  "id": "K-0080",
+  "kind": "market",
+  "title": "Information-diffusion claims in liquid assets come out flat or wrong-signed, also with a dated news event",
+  "statement": "Claims that news in one liquid market is priced late in another have not shown a delayed positive response from daily to monthly horizons. Statistical peer catch-up in US stocks (H-0013) was slightly negative, macro-release continuation across ETFs (H-0047) and the oil shock against Treasuries (H-0056) were wrong-signed in every third. New: H-0066 replaced the undated peer move by a verified event (a large real earnings-release reaction) and looked only at peers that had not reported; the average was still inside the placebo cloud with a bar below cost, and longer horizons turned negative. So undated noise in the trigger was not the only reason for H-0013's failure. These are not power failures. Do not trade the mirror: the sign is dev-selected and episodes are few. A new card should say why information would travel slowly through this particular channel; explicit economic links are untested and not loadable.",
+  "evidence": "[\"H-0066\",\"H-0056\",\"H-0047\",\"H-0013\",\"H-0040\",\"K-0076\",\"prior_studies mrel\"]",
+  "confidence": "low",
+  "supersedes": "K-0072",
+  "actor": "librarian",
+  "message_id": 498,
+  "ts": "2026-10-20T02:38:55.855540+00:00"
+ },
+ {
+  "id": "K-0081",
+  "kind": "market",
+  "title": "On real earnings dates the events that cleared the placebo test sort on the stock's own price move",
+  "statement": "Across the cards on real 8-K earnings dates, the mechanism tests that cleared the placebo bar condition on the stock's own price move at or just before the release: reaction drift (H-0028, H-0031, H-0033) and the pre-release reversal (H-0064). Cards that sort on a second variable or another stock did not: fundamentals, net flow, volume, delay or earnings change (H-0024, H-0026, H-0027, H-0032, H-0067) and correlated peers (H-0066). Date-only premia (H-0023) also failed. Hindsight pattern from a modest number of cards, not a tested rule. Every pass was small next to cost once built into a book, and most weakened by the latest third (K-0060). A Scout should expect a price-move trigger to be the only kind with a prior of passing the event study, and should expect the book to be the harder gate.",
+  "evidence": "[\"H-0028\",\"H-0031\",\"H-0033\",\"H-0064\",\"H-0023\",\"H-0024\",\"H-0026\",\"H-0027\",\"H-0032\",\"H-0066\",\"H-0067\",\"K-0039\",\"K-0046\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 499,
+  "ts": "2026-10-20T02:38:55.860350+00:00"
+ },
+ {
+  "id": "K-0082",
+  "kind": "framework",
+  "title": "lab try cannot exercise cards that need the 8-K flag: its synthetic ea_reaction_day never equals one",
+  "statement": "The Builders of H-0064, H-0066 and H-0067 each report that the synthetic ea_reaction_day in lab try is uniform noise between 0 and 10, never exactly 1, so lab try shows zero events and its checks are vacuous for these cards; they tested events, book and point-in-time behaviour on hand-made data (one temporarily rounded the flag). On real data G0 did report events (counts within a handful of G1's) and no look-ahead failures in 25 cuts, so G0 is the first meaningful check, and an event-logic bug would surface only there. Suggested: make the synthetic flag a sparse 0/1 event series so lab try produces events.",
+  "evidence": "[\"H-0064\",\"H-0066\",\"H-0067\",\"K-0054\",\"K-0057\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 500,
+  "ts": "2026-10-20T02:38:55.865352+00:00"
  }
 ]

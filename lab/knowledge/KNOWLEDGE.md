@@ -36,12 +36,6 @@ The net-repurchaser-minus-stock-compensation-supplier spread in liquid US stocks
 
 *confidence medium · 2026-10-13 · librarian · evidence: H-0019; H-0027; K-0025; K-0030*
 
-### K-0044 Weekly return-sort effects in the most liquid US stocks are smaller than cost, in either sign
-
-Past-month-return effects in liquid US stocks have now been tested with a reversal sign (H-0007, K-0012), with a conditional continuation sign (H-0029, highest-turnover stocks) and with a reversal sign after removing earnings sessions and adjusting for correlated peers in the S&P 500 (H-0030). None gave a tradable five-session effect: H-0029 was inside the placebo cloud with a bar below cost and a negative latest third, H-0030 cleared the placebo bar but earned well under round-trip cost, and H-0007 was early-era and small-name. Conditioning the sort (news, turnover, intraday split, peers) changes the sign or the significance, not the order of magnitude relative to cost. A further conditioner on the same one-month sort in the large-cap universe has a low prior; a cost-light implementation or a less-covered universe would be a different claim.
-
-*confidence medium · 2026-10-13 · librarian · evidence: H-0007; H-0029; H-0030; K-0012; K-0024*
-
 ### K-0046 The release-session reaction drift reproduces on the same events in three book designs, and the long side alone shows it
 
 Three cards built on the same real-release-date reaction events (a long/short book, a fixed-slot long/short book, and a long-only tilt on positive reactions) each cleared the placebo bar with gross above cost and a positive sign in every third of the sample. They share events, so this is one piece of evidence seen three times, not three confirmations. What is new: the positive side alone carries drift, so the effect is not only a short-side artifact, and within the positive-only set it weakens from the earliest to the latest third while staying positive. The effect is real in an equal-weight event study but small next to cost: the market-neutral books lost to T-bills, and the long-only tilt on an always-invested core came nearest to a pass, beating the market on the point estimate with a reliable bound but not by the required margin.
@@ -96,17 +90,35 @@ Four designs on the scheduled US macro calendar have ended at the event-study ga
 
 *confidence low · 2026-10-17 · librarian · supersedes K-0065 · evidence: H-0052; H-0047; H-0045; H-0042; K-0063; K-0065; K-0034; K-0025; K-0060*
 
-### K-0072 Cross-market information-diffusion claims in liquid assets come out flat or wrong-signed from daily to monthly horizons
-
-Claims that news in one liquid market is priced late in another have not shown a delayed positive response at daily to monthly horizons. Statistical peer catch-up in US stocks (H-0013) was slightly negative, macro-release continuation across asset-class ETFs (H-0047) was wrong-signed in every third, and the oil-specific shock underreaction against Treasuries (H-0056) was wrong-signed in every third and grew with the horizon, ending in the lower tail of the placebo cloud. The owner's daily lead-lag scan (mrel) agrees. The one survivor to G2 is intraday crypto (H-0040), which then failed on stability. These are not power failures: both sides were marked and the placebo means sat near zero. They differ from the slow right-signed near misses (H-0054, H-0055), where the issue is a wide placebo bar (K-0071). Do not treat a wrong-signed result as an invitation to trade the mirror: the sign is dev-selected, the episodes are few and clustered, and the ETF peers carry stock-bond drift. A new card in this area should say why information would travel slowly through this particular channel, and what separates it from risk-on or reflation co-movement.
-
-*confidence low · 2026-10-18 · librarian · evidence: H-0056; H-0047; H-0013; H-0040; H-0054; H-0055; K-0071; prior_studies mrel*
-
 ### K-0073 Multi-year reversal: absent in country equity ETFs, present for currency value in a short sample
 
 Two cards tested the same long-horizon reversal idea in different assets. Country equity ETFs sorted on multi-year past returns (H-0060) showed no reversal over the next quarter, and the sign was wrong in the early and middle thirds. Six G10 currency trusts sorted on distance from a five-year average spot (H-0062) showed cheap currencies beating rich ones, building with the horizon, positive in the populated thirds and clearly above the placebo cloud. The currency result has caveats that keep it from being a finding: the effective sample is only about nine years after the warm-up, value and carry are mixed (rich currencies in the period were low-yield), the score is nominal and the book could not reach the absolute Sharpe floor. If the split is real it fits an anchor-based story (purchasing power) working where a return-chasing story does not. The equity sort is also confounded with currency, since USD country ETFs carry both. A third long-horizon reversal card should say which anchor it uses and how it separates carry.
 
 *confidence low · 2026-10-19 · librarian · evidence: H-0060; H-0062; K-0071*
+
+### K-0077 Fifteen-minute crypto perp taker moves: a small edge in both directions, consumed within about a candle
+
+Two cards on taker-dominated, high-volume fast moves in liquid Binance perps took opposite sides and found a small positive average trade after modeled costs on dev: a rebound after extended moves (H-0035) and a continuation after breaks out of a compressed range (H-0063). Neither survived a one-candle later fill or doubled costs, and in both the latest third of dev was the weakest. Both selected the moment the aggressive flow is already visible in the candle, so what is left after the signal candle closes is small. Together with K-0049 and the hourly study mrel-1h, the pattern is that the payoff on this time scale goes to fast fills and makers, and a taker entering at the next open pays for the front of the move. The BTC-led catch-up over hours (H-0040) survived delay and doubled costs and failed on stability instead, so slower follower effects are not ruled out. Cards on this time scale should state the expected gross per trade after a one-candle delay, not only at the next open.
+
+*confidence low · 2026-10-19 · librarian · evidence: H-0035; H-0063; H-0040; K-0049; K-0060; prior_studies mrel-1h*
+
+### K-0079 Return-sort effects in liquid US stocks stay below cost, except a pre-release reversal that faded
+
+Past-return sorts in liquid US stocks have been tried with reversal and continuation signs and many conditioners (news, turnover, intraday split, peers, earnings sessions removed, quarter-end window). Almost all gave effects far below round-trip cost or nothing (H-0007, H-0029, H-0030, H-0065). The exception is the reversal of the last few sessions just before a predicted earnings release (H-0064): the first conditioner whose event gross sat clearly above cost with a placebo mean near zero. It was strongest in the earliest third, wrong-signed in the latest, and the unhedged book earned far less than the event study implies. So K-0044 holds for slow and calendar conditioners, not for an event-window conditioner tied to inventory risk. A new conditioner should be argued from that risk, state the latest-third sign as a kill condition, and include a control sort at dates away from the event.
+
+*confidence low · 2026-10-20 · librarian · supersedes K-0044 · evidence: H-0064; H-0065; H-0007; H-0029; H-0030; K-0012; K-0060*
+
+### K-0080 Information-diffusion claims in liquid assets come out flat or wrong-signed, also with a dated news event
+
+Claims that news in one liquid market is priced late in another have not shown a delayed positive response from daily to monthly horizons. Statistical peer catch-up in US stocks (H-0013) was slightly negative, macro-release continuation across ETFs (H-0047) and the oil shock against Treasuries (H-0056) were wrong-signed in every third. New: H-0066 replaced the undated peer move by a verified event (a large real earnings-release reaction) and looked only at peers that had not reported; the average was still inside the placebo cloud with a bar below cost, and longer horizons turned negative. So undated noise in the trigger was not the only reason for H-0013's failure. These are not power failures. Do not trade the mirror: the sign is dev-selected and episodes are few. A new card should say why information would travel slowly through this particular channel; explicit economic links are untested and not loadable.
+
+*confidence low · 2026-10-20 · librarian · supersedes K-0072 · evidence: H-0066; H-0056; H-0047; H-0013; H-0040; K-0076; prior_studies mrel*
+
+### K-0081 On real earnings dates the events that cleared the placebo test sort on the stock's own price move
+
+Across the cards on real 8-K earnings dates, the mechanism tests that cleared the placebo bar condition on the stock's own price move at or just before the release: reaction drift (H-0028, H-0031, H-0033) and the pre-release reversal (H-0064). Cards that sort on a second variable or another stock did not: fundamentals, net flow, volume, delay or earnings change (H-0024, H-0026, H-0027, H-0032, H-0067) and correlated peers (H-0066). Date-only premia (H-0023) also failed. Hindsight pattern from a modest number of cards, not a tested rule. Every pass was small next to cost once built into a book, and most weakened by the latest third (K-0060). A Scout should expect a price-move trigger to be the only kind with a prior of passing the event study, and should expect the book to be the harder gate.
+
+*confidence low · 2026-10-20 · librarian · evidence: H-0028; H-0031; H-0033; H-0064; H-0023; H-0024; H-0026; H-0027; H-0032; H-0066; H-0067; K-0039; K-0046*
 
 ## Data
 
@@ -232,6 +244,12 @@ Since K-0071, five more cards with a primary horizon of a quarter reached a mech
 
 *confidence low · 2026-10-19 · librarian · supersedes K-0071 · evidence: H-0057; H-0058; H-0059; H-0060; H-0061; H-0062; H-0054; H-0055; K-0026*
 
+### K-0078 G2 random-timing null is far below zero in four cards; in H-0063 it matches cost drag
+
+In H-0007 (weekly US stocks), H-0035, H-0040 and now H-0063 (fifteen-minute crypto perps) the random-entry or random-timing check passed with a median Sharpe far below zero. In H-0035 the null was several times worse than the strategy's cost drag; in H-0040 about one and three quarters times. H-0063 allows a sharper reading: doubling costs lowered its Sharpe by about one and a half, which is its cost drag at the model, and the null median (about minus one and eight tenths, 95th percentile still below zero) sits close to that. So the null is roughly 'same trades, zero gross, normal costs', and a percentile of one means only that gross is positive, not that the timing pays for itself: the same book failed doubled costs, delay and neighbors. The null's turnover, exposure and cost per trade are still not reported next to the strategy's, so for H-0007 and H-0035 the gap to cost drag is unexplained. Read a pass as 'gross above zero', never as evidence of tradable timing; an all-negative null makes the percentile uninformative. The question to the owner from H-0035 stays open.
+
+*confidence low · 2026-10-19 · librarian · supersedes K-0061 · evidence: H-0007; H-0035; H-0040; H-0063; K-0017*
+
 ## The judge (framework behaviour)
 
 ### K-0008 Gate runner fixes found by real hypotheses
@@ -288,12 +306,6 @@ Intraday crypto_top_n cards may name a leader or exclusion (e.g. BTCUSDT, ETHUSD
 
 *confidence high · 2026-10-15 · human · evidence: H-0040 message 288*
 
-### K-0061 G2 random-timing null is far below zero in three cards, so passing it may only measure costs
-
-In H-0007 (weekly US stocks), H-0035 and H-0040 (fifteen-minute crypto perps) the random-entry or random-timing check passed with a median Sharpe far below zero. In H-0035 the null was several times worse than the strategy's own cost drag would imply. In H-0040 it is less extreme: the strategy's modeled cost was a bit under two fifths of gross, which puts its cost drag in Sharpe terms at well under one, and the null's median was roughly one and three quarters times that. Either the null trades more or costs more than the real book (the strategy skips signals while a position is held and is invested a few percent of the time), or something other than timing dominates. The null's turnover, exposure and cost per trade are still not reported next to the strategy's, so a pass on this check should not be read as evidence of timing skill, and the percentile reached by an all-negative null is uninformative. The question to the owner from H-0035 is still open.
-
-*confidence low · 2026-10-15 · librarian · supersedes K-0050 · evidence: H-0007; H-0035; H-0040; K-0017*
-
 ### K-0062 Zero events can pass G0 and then read as a mechanism failure
 
 Three cards ended on the event count with no mechanism result: H-0021 (empty by universe), H-0038 (events at G0, none at G1) and H-0043 (zero at G0 and at G1). H-0043 is new: G0 passed with zero events, and the signal was a two-sigma residual gap that fires regularly in any healthy series, so the cause is almost surely the inputs (ICE BofA spread coverage in the lab's FRED copy, the valid-day rule, or NaN propagation), not the market. The registry shows g1_mechanism_events, which a Scout can read as a failed mechanism. Suggested handling: G0 should flag a card whose events_in_dev is zero; the Builder should report events by year before submitting; the Archivist should confirm first-valid dates of long-history series. The card's fail-loudly coverage check cannot be point-in-time at G0.
@@ -311,6 +323,12 @@ H-0049 (193 events against a minimum of 200) and H-0050 (172 marked events on 43
 H-0061 requested Moody's yields from 1986 for decisions from 2003 but reached G1 with 484 marked events against a forecast of 550 to 650, and its first dev third held far fewer events than the others, about its three-year minimum-observation rule. H-0062 requested FRED fixings from 1999 for ETFs listed in 2007; its strategy started in September 2011 (ETF start plus the 90 percent coverage rule on a five-year window), with 220 events against about 330 forecast and 4 in its first third. Both fit one cause: signal-only series reach the strategy only from the card's start, so warm-up eats the first dev years. Inferred from counts and dates; loader not read. Effects: shorter samples, an almost empty first block, a publication split with little earlier data. Until the owner confirms, Scouts should compute the first signal date from the card's own period.
 
 *confidence low · 2026-10-19 · librarian · evidence: H-0061; H-0062; K-0062*
+
+### K-0082 lab try cannot exercise cards that need the 8-K flag: its synthetic ea_reaction_day never equals one
+
+The Builders of H-0064, H-0066 and H-0067 each report that the synthetic ea_reaction_day in lab try is uniform noise between 0 and 10, never exactly 1, so lab try shows zero events and its checks are vacuous for these cards; they tested events, book and point-in-time behaviour on hand-made data (one temporarily rounded the flag). On real data G0 did report events (counts within a handful of G1's) and no look-ahead failures in 25 cuts, so G0 is the first meaningful check, and an event-logic bug would surface only there. Suggested: make the synthetic flag a sparse 0/1 event series so lab try produces events.
+
+*confidence medium · 2026-10-20 · librarian · evidence: H-0064; H-0066; H-0067; K-0054; K-0057*
 
 ## How the lab works
 
@@ -369,11 +387,14 @@ H-0040 is the first card that is an earlier owner rule re-run through the lab (r
 - K-0040 G0 look-ahead checks are vacuous for event cards; diagnostics cannot be reported (eight cards)
 - K-0042 A passing mechanism test can still end in a book below cash, even without fade
 - K-0043 The market's own release-session reaction predicts same-direction returns in liquid stocks
+- K-0044 Weekly return-sort effects in the most liquid US stocks are smaller than cost, in either sign
 - K-0045 G0 look-ahead checks stay vacuous for cards with minimum-size rules (now eleven cards)
 - K-0047 G0 now reports real event counts and look-ahead cuts for event cards; Skeptic messages still absent
 - K-0048 Fixed event slots did not close the gap between a passing event study and a failing market-neutral book
 - K-0050 G2 random-timing null is deeply negative in two cards, so passing it may only measure costs
 - K-0052 Short-horizon effects that clear the pooled placebo test are usually weakest or reversed in the latest third of dev
+- K-0061 G2 random-timing null is far below zero in three cards, so passing it may only measure costs
 - K-0065 Macro-calendar cards on asset-class ETFs fail in three designs; reaction drift is single-stock only
 - K-0067 The G1 reason code can name the event count while the mechanism was measured and failed; the count was visible at G0
 - K-0071 Slow-horizon event studies: the placebo bar sits several times above cost, so only a large effect can pass G1
+- K-0072 Cross-market information-diffusion claims in liquid assets come out flat or wrong-signed from daily to monthly horizons
