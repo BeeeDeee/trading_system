@@ -1,51 +1,47 @@
 {
- "last_label": "2026-10-19T04",
+ "last_label": "2026-10-20T04",
  "meta": {
   "funding_kontra": {
    "ENA": {
-    "entry_t": 1792368000000,
-    "ref_open": 0.1864
+    "entry_t": 1792454400000,
+    "ref_open": 0.1893
    },
-   "ONDO": {
-    "entry_t": 1792368000000,
-    "ref_open": 0.4322
+   "HBAR": {
+    "entry_t": 1792396800000,
+    "ref_open": 0.08453
    },
-   "SUI": {
-    "entry_t": 1792368000000,
-    "ref_open": 0.9861
+   "NEAR": {
+    "entry_t": 1792396800000,
+    "ref_open": 5.052
    },
-   "WLD": {
-    "entry_t": 1792252800000,
-    "ref_open": 0.4991
-   },
-   "XRP": {
-    "entry_t": 1792252800000,
-    "ref_open": 1.3028
-   }
-  },
-  "h_breakout": {
    "PUMP": {
-    "entry_t": 1792378800000,
-    "ref_open": 0.004276
+    "entry_t": 1792425600000,
+    "ref_open": 0.004482
    },
-   "ZEC": {
-    "entry_t": 1792375200000,
-    "ref_open": 1143.76
+   "TRX": {
+    "entry_t": 1792454400000,
+    "ref_open": 0.3316
    }
   },
-  "h_kniha": {},
+  "h_breakout": {},
+  "h_kniha": {
+   "BTC": {
+    "entry_t": 1792468800000,
+    "ref_open": 81792.65
+   }
+  },
   "h_momentum": {
    "ENA": {
-    "entry_t": 1792378800000,
-    "ref_open": 0.1921
+    "entry_t": 1792461600000,
+    "ref_open": 0.1885
    },
-   "PUMP": {
-    "entry_t": 1792375200000,
-    "ref_open": 0.004189
+   "HBAR": {
+    "entry_t": 1792465200000,
+    "ref_open": 0.08297
    },
-   "ZEC": {
-    "entry_t": 1792375200000,
-    "ref_open": 1143.76
+   "SUI": {
+    "entry_t": 1792468800000,
+    "ref_open": 0.9982
    }
   },
   "h_reverze": {},
@@ -56,426 +52,393 @@
   "funding_kontra": {
    "base": {
     "blocked": {},
-    "cash": 0.0,
-    "fees": 455.88423246,
+    "cash": 1.13838356,
+    "fees": 481.69336281,
     "last_rebalance": null,
-    "n_trades": 272,
+    "n_trades": 290,
     "positions": {
      "ENA": {
-      "avg_px": 0.18877075,
+      "avg_px": 0.189673,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792454539650,
+      "high": 0.18915,
+      "qty": 7504.4799846531,
+      "ref_px": 0.18915,
+      "stop_checked_ms": 1792454539650
+     },
+     "HBAR": {
+      "avg_px": 0.08463105,
       "entry_date": "2026-10-19",
-      "entry_ms": 1792368134873,
-      "high": 0.18825,
-      "qty": 7632.2317034004,
-      "ref_px": 0.18825,
-      "stop_checked_ms": 1792368134873
+      "entry_ms": 1792397078953,
+      "high": 0.084415,
+      "qty": 17183.2399914744,
+      "ref_px": 0.084415,
+      "stop_checked_ms": 1792397078953
      },
-     "ONDO": {
-      "avg_px": 0.4372755,
+     "NEAR": {
+      "avg_px": 5.070065,
       "entry_date": "2026-10-19",
-      "entry_ms": 1792368134873,
-      "high": 0.43505,
-      "qty": 3294.8155175048,
-      "ref_px": 0.43505,
-      "stop_checked_ms": 1792368134873
+      "entry_ms": 1792397078953,
+      "high": 5.0645,
+      "qty": 286.827810468,
+      "ref_px": 5.0645,
+      "stop_checked_ms": 1792397078953
      },
-     "SUI": {
-      "avg_px": 0.9998935,
+     "PUMP": {
+      "avg_px": 0.0044781675,
       "entry_date": "2026-10-19",
-      "entry_ms": 1792368134873,
-      "high": 0.99735,
-      "qty": 1398.1898001308,
-      "ref_px": 0.99735,
-      "stop_checked_ms": 1792368134873
+      "entry_ms": 1792425735159,
+      "high": 0.0044665,
+      "qty": 316979.2374752204,
+      "ref_px": 0.0044665,
+      "stop_checked_ms": 1792425735159
      },
-     "WLD": {
-      "avg_px": 0.497641,
-      "entry_date": "2026-10-17",
-      "entry_ms": 1792252997814,
-      "high": 0.49635,
-      "qty": 2949.8597437229,
-      "ref_px": 0.49635,
-      "stop_checked_ms": 1792252997814
-     },
-     "XRP": {
-      "avg_px": 1.2978365,
-      "entry_date": "2026-10-17",
-      "entry_ms": 1792252997814,
-      "high": 1.29455,
-      "qty": 1117.1226713782,
-      "ref_px": 1.29455,
-      "stop_checked_ms": 1792252997814
+     "TRX": {
+      "avg_px": 0.3330305,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792454539650,
+      "high": 0.33215,
+      "qty": 4274.0746932461,
+      "ref_px": 0.33215,
+      "stop_checked_ms": 1792454539650
      }
     },
-    "slippage": 1021.71587629,
+    "slippage": 1088.10399235,
     "started": "2026-09-30T22",
-    "turnover": 455884.23246238
+    "turnover": 481693.36280977
    },
    "gross": {
     "blocked": {},
-    "cash": 0.0,
+    "cash": 47.34065059,
     "fees": 0.0,
     "last_rebalance": null,
-    "n_trades": 271,
+    "n_trades": 289,
     "positions": {
      "ENA": {
-      "avg_px": 0.18825,
+      "avg_px": 0.18915,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792454539650,
+      "high": 0.18915,
+      "qty": 9041.6617685633,
+      "ref_px": 0.18915,
+      "stop_checked_ms": 1792454539650
+     },
+     "HBAR": {
+      "avg_px": 0.084415,
       "entry_date": "2026-10-19",
-      "entry_ms": 1792368134873,
-      "high": 0.18825,
-      "qty": 9059.8751778023,
-      "ref_px": 0.18825,
-      "stop_checked_ms": 1792368134873
+      "entry_ms": 1792397078953,
+      "high": 0.084415,
+      "qty": 20494.0360493771,
+      "ref_px": 0.084415,
+      "stop_checked_ms": 1792397078953
      },
-     "ONDO": {
-      "avg_px": 0.43505,
+     "NEAR": {
+      "avg_px": 5.0645,
       "entry_date": "2026-10-19",
-      "entry_ms": 1792368134873,
-      "high": 0.43505,
-      "qty": 3920.2884776952,
-      "ref_px": 0.43505,
-      "stop_checked_ms": 1792368134873
+      "entry_ms": 1792397078953,
+      "high": 5.0645,
+      "qty": 341.5942448629,
+      "ref_px": 5.0645,
+      "stop_checked_ms": 1792397078953
      },
-     "SUI": {
-      "avg_px": 0.99735,
+     "PUMP": {
+      "avg_px": 0.0044665,
       "entry_date": "2026-10-19",
-      "entry_ms": 1792368134873,
-      "high": 0.99735,
-      "qty": 1699.6179466887,
-      "ref_px": 0.99735,
-      "stop_checked_ms": 1792368134873
+      "entry_ms": 1792425735159,
+      "high": 0.0044665,
+      "qty": 380202.8096400248,
+      "ref_px": 0.0044665,
+      "stop_checked_ms": 1792425735159
      },
-     "WLD": {
-      "avg_px": 0.49635,
-      "entry_date": "2026-10-17",
-      "entry_ms": 1792252997814,
-      "high": 0.49635,
-      "qty": 3454.8265121326,
-      "ref_px": 0.49635,
-      "stop_checked_ms": 1792252997814
-     },
-     "XRP": {
-      "avg_px": 1.29455,
-      "entry_date": "2026-10-17",
-      "entry_ms": 1792252997814,
-      "high": 1.29455,
-      "qty": 1324.6326053818,
-      "ref_px": 1.29455,
-      "stop_checked_ms": 1792252997814
+     "TRX": {
+      "avg_px": 0.33215,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792454539650,
+      "high": 0.33215,
+      "qty": 5148.9698134089,
+      "ref_px": 0.33215,
+      "stop_checked_ms": 1792454539650
      }
     },
     "slippage": 0.0,
     "started": "2026-09-30T22",
-    "turnover": 493843.93245468
+    "turnover": 524761.28191979
    },
    "stress": {
     "blocked": {},
     "cash": 0.0,
-    "fees": 1598.93265341,
+    "fees": 1676.19766912,
     "last_rebalance": null,
-    "n_trades": 273,
+    "n_trades": 291,
     "positions": {
      "ENA": {
-      "avg_px": 0.1892415,
+      "avg_px": 0.190146,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792454539650,
+      "high": 0.18915,
+      "qty": 5589.9234286699,
+      "ref_px": 0.18915,
+      "stop_checked_ms": 1792454539650
+     },
+     "HBAR": {
+      "avg_px": 0.0848421,
       "entry_date": "2026-10-19",
-      "entry_ms": 1792368134873,
-      "high": 0.18825,
-      "qty": 5813.5309276943,
-      "ref_px": 0.18825,
-      "stop_checked_ms": 1792368134873
+      "entry_ms": 1792397078953,
+      "high": 0.084415,
+      "qty": 12995.2071596169,
+      "ref_px": 0.084415,
+      "stop_checked_ms": 1792397078953
      },
-     "ONDO": {
-      "avg_px": 0.439451,
+     "NEAR": {
+      "avg_px": 5.07513,
       "entry_date": "2026-10-19",
-      "entry_ms": 1792368134873,
-      "high": 0.43505,
-      "qty": 2503.490293692,
-      "ref_px": 0.43505,
-      "stop_checked_ms": 1792368134873
+      "entry_ms": 1792397078953,
+      "high": 5.0645,
+      "qty": 217.243827322,
+      "ref_px": 5.0645,
+      "stop_checked_ms": 1792397078953
      },
-     "SUI": {
-      "avg_px": 1.002387,
+     "PUMP": {
+      "avg_px": 0.004489335,
       "entry_date": "2026-10-19",
-      "entry_ms": 1792368134873,
-      "high": 0.99735,
-      "qty": 1051.3058861267,
-      "ref_px": 0.99735,
-      "stop_checked_ms": 1792368134873
+      "entry_ms": 1792425735159,
+      "high": 0.0044665,
+      "qty": 228899.5172897972,
+      "ref_px": 0.0044665,
+      "stop_checked_ms": 1792425735159
      },
-     "WLD": {
-      "avg_px": 0.498882,
-      "entry_date": "2026-10-17",
-      "entry_ms": 1792252997814,
-      "high": 0.49635,
-      "qty": 2291.2825097059,
-      "ref_px": 0.49635,
-      "stop_checked_ms": 1792252997814
-     },
-     "XRP": {
-      "avg_px": 1.301073,
-      "entry_date": "2026-10-17",
-      "entry_ms": 1792252997814,
-      "high": 1.29455,
-      "qty": 826.7899434479,
-      "ref_px": 1.29455,
-      "stop_checked_ms": 1792252997814
+     "TRX": {
+      "avg_px": 0.333861,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792454539650,
+      "high": 0.33215,
+      "qty": 3150.969918046,
+      "ref_px": 0.33215,
+      "stop_checked_ms": 1792454539650
      }
     },
-    "slippage": 1752.4452772,
+    "slippage": 1849.95610486,
     "started": "2026-09-30T22",
-    "turnover": 399733.16336594
+    "turnover": 419049.41729951
    }
   },
   "h_breakout": {
    "base": {
     "blocked": {},
-    "cash": 5642.19334237,
-    "fees": 92.64333559,
+    "cash": 9316.8922684,
+    "fees": 96.32171289,
     "last_rebalance": null,
-    "n_trades": 48,
-    "positions": {
-     "PUMP": {
-      "avg_px": 0.004465135,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792378927274,
-      "high": 0.0044535,
-      "qty": 421511.9783278614,
-      "ref_px": 0.0044535,
-      "stop": 0.004319895,
-      "stop_checked_ms": 1792378927274
-     },
-     "ZEC": {
-      "avg_px": 1175.174,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792375330938,
-      "high": 1179.28,
-      "qty": 1.6014788776,
-      "ref_px": 1173.995,
-      "stop": 1143.9016,
-      "stop_checked_ms": 1792378800001
-     }
-    },
-    "slippage": 279.70807318,
+    "n_trades": 50,
+    "positions": {},
+    "slippage": 297.28793622,
     "started": "2026-09-30T22",
-    "turnover": 92643.33557743
+    "turnover": 96321.71288076
    },
    "gross": {
     "blocked": {},
-    "cash": 5860.78734818,
+    "cash": 9705.63354262,
     "fees": 0.0,
     "last_rebalance": null,
-    "n_trades": 48,
-    "positions": {
-     "PUMP": {
-      "avg_px": 0.0044535,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792378927274,
-      "high": 0.0044535,
-      "qty": 438928.3608876928,
-      "ref_px": 0.0044535,
-      "stop": 0.004319895,
-      "stop_checked_ms": 1792378927274
-     },
-     "ZEC": {
-      "avg_px": 1173.995,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792375330938,
-      "high": 1179.28,
-      "qty": 1.6643075148,
-      "ref_px": 1173.995,
-      "stop": 1143.9016,
-      "stop_checked_ms": 1792378800001
-     }
-    },
+    "n_trades": 50,
+    "positions": {},
     "slippage": 0.0,
     "started": "2026-09-30T22",
-    "turnover": 94466.73338316
+    "turnover": 98311.5795776
    },
    "stress": {
     "blocked": {},
-    "cash": 5327.90075143,
-    "fees": 360.18068993,
+    "cash": 8769.51374756,
+    "fees": 374.00242887,
     "last_rebalance": null,
-    "n_trades": 48,
-    "positions": {
-     "PUMP": {
-      "avg_px": 0.00447627,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792378927274,
-      "high": 0.0044535,
-      "qty": 397413.3341256976,
-      "ref_px": 0.0044535,
-      "stop": 0.004319895,
-      "stop_checked_ms": 1792378927274
-     },
-     "ZEC": {
-      "avg_px": 1176.348,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792375330938,
-      "high": 1179.28,
-      "qty": 1.5133844154,
-      "ref_px": 1173.995,
-      "stop": 1143.9016,
-      "stop_checked_ms": 1792378800001
-     }
-    },
-    "slippage": 541.39133513,
+    "n_trades": 50,
+    "positions": {},
+    "slippage": 574.57262281,
     "started": "2026-09-30T22",
-    "turnover": 90045.17249046
+    "turnover": 93500.60722554
    }
   },
   "h_kniha": {
    "base": {
     "blocked": {},
-    "cash": 8292.6048723,
-    "fees": 516.00610029,
+    "cash": 6585.67566276,
+    "fees": 527.5368563,
     "last_rebalance": null,
-    "n_trades": 280,
-    "positions": {},
-    "slippage": 1071.2135245,
+    "n_trades": 287,
+    "positions": {
+     "BTC": {
+      "avg_px": 82205.092005,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792468935745,
+      "high": 82164.005,
+      "qty": 0.0200331948,
+      "ref_px": 82164.005,
+      "stop_checked_ms": 1792468935745
+     }
+    },
+    "slippage": 1099.14294762,
     "started": "2026-09-30T22",
-    "turnover": 516006.10021152
+    "turnover": 527536.85623048
    },
    "gross": {
     "blocked": {},
-    "cash": 9868.941708,
+    "cash": 7874.61052417,
     "fees": 0.0,
     "last_rebalance": null,
-    "n_trades": 280,
-    "positions": {},
+    "n_trades": 287,
+    "positions": {
+     "BTC": {
+      "avg_px": 82164.005,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792468935745,
+      "high": 82164.005,
+      "qty": 0.0239600374,
+      "ref_px": 82164.005,
+      "stop_checked_ms": 1792468935745
+     }
+    },
     "slippage": 0.0,
     "started": "2026-09-30T22",
-    "turnover": 557214.70449758
+    "turnover": 570991.76408107
    },
    "stress": {
     "blocked": {},
-    "cash": 6255.60727747,
-    "fees": 1822.53849236,
+    "cash": 4930.90611877,
+    "fees": 1857.16307484,
     "last_rebalance": null,
-    "n_trades": 280,
-    "positions": {},
-    "slippage": 1821.81726006,
+    "n_trades": 287,
+    "positions": {
+     "BTC": {
+      "avg_px": 82246.17401,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792468935745,
+      "high": 82164.005,
+      "qty": 0.0150032571,
+      "ref_px": 82164.005,
+      "stop_checked_ms": 1792468935745
+     }
+    },
+    "slippage": 1863.07505222,
     "started": "2026-09-30T22",
-    "turnover": 455634.62311321
+    "turnover": 464290.76873355
    }
   },
   "h_momentum": {
    "base": {
     "blocked": {},
     "cash": 0.0,
-    "fees": 1120.27616389,
+    "fees": 1165.87802877,
     "last_rebalance": null,
-    "n_trades": 531,
+    "n_trades": 565,
     "positions": {
      "ENA": {
-      "avg_px": 0.19197875,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792378927274,
-      "high": 0.19145,
-      "qty": 7107.4887068096,
-      "ref_px": 0.19145,
-      "stop_checked_ms": 1792378927274
+      "avg_px": 0.18877075,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792461731572,
+      "high": 0.18825,
+      "qty": 6943.7156916324,
+      "ref_px": 0.18825,
+      "stop_checked_ms": 1792461731572
      },
-     "PUMP": {
-      "avg_px": 0.004300725,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792375330938,
-      "high": 0.0042895,
-      "qty": 320970.2535817858,
-      "ref_px": 0.0042895,
-      "stop_checked_ms": 1792375330938
+     "HBAR": {
+      "avg_px": 0.0834552,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792465335111,
+      "high": 0.083035,
+      "qty": 15733.7742891988,
+      "ref_px": 0.083035,
+      "stop_checked_ms": 1792465335111
      },
-     "ZEC": {
-      "avg_px": 1175.174,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792375330938,
-      "high": 1173.995,
-      "qty": 1.174638644,
-      "ref_px": 1173.995,
-      "stop_checked_ms": 1792375330938
+     "SUI": {
+      "avg_px": 1.0059085,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792468935745,
+      "high": 1.00335,
+      "qty": 1306.0713057916,
+      "ref_px": 1.00335,
+      "stop_checked_ms": 1792468935745
      }
     },
-    "slippage": 2711.75244722,
+    "slippage": 2829.61196259,
     "started": "2026-09-30T22",
-    "turnover": 1120276.16393371
+    "turnover": 1165878.02880675
    },
    "gross": {
     "blocked": {},
-    "cash": 0.0,
+    "cash": 4.46157154,
     "fees": 0.0,
     "last_rebalance": null,
-    "n_trades": 531,
+    "n_trades": 565,
     "positions": {
      "ENA": {
-      "avg_px": 0.19145,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792378927274,
-      "high": 0.19145,
-      "qty": 13116.2431618177,
-      "ref_px": 0.19145,
-      "stop_checked_ms": 1792378927274
+      "avg_px": 0.18825,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792461731572,
+      "high": 0.18825,
+      "qty": 13163.4534151546,
+      "ref_px": 0.18825,
+      "stop_checked_ms": 1792461731572
      },
-     "PUMP": {
-      "avg_px": 0.0042895,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792375330938,
-      "high": 0.0042895,
-      "qty": 584979.600697148,
-      "ref_px": 0.0042895,
-      "stop_checked_ms": 1792375330938
+     "HBAR": {
+      "avg_px": 0.083035,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792465335111,
+      "high": 0.083035,
+      "qty": 29873.6609400855,
+      "ref_px": 0.083035,
+      "stop_checked_ms": 1792465335111
      },
-     "ZEC": {
-      "avg_px": 1173.995,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792375330938,
-      "high": 1173.995,
-      "qty": 2.1373770733,
-      "ref_px": 1173.995,
-      "stop_checked_ms": 1792375330938
+     "SUI": {
+      "avg_px": 1.00335,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792468935745,
+      "high": 1.00335,
+      "qty": 2503.0376050408,
+      "ref_px": 1.00335,
+      "stop_checked_ms": 1792468935745
      }
     },
     "slippage": 0.0,
     "started": "2026-09-30T22",
-    "turnover": 1477789.25384076
+    "turnover": 1562890.34656574
    },
    "stress": {
     "blocked": {},
     "cash": 0.0,
-    "fees": 3080.98432532,
+    "fees": 3149.94406307,
     "last_rebalance": null,
-    "n_trades": 531,
+    "n_trades": 565,
     "positions": {
      "ENA": {
-      "avg_px": 0.1924575,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792378927274,
-      "high": 0.19145,
-      "qty": 2754.2523085114,
-      "ref_px": 0.19145,
-      "stop_checked_ms": 1792378927274
+      "avg_px": 0.1892415,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792461731572,
+      "high": 0.18825,
+      "qty": 2568.0340104844,
+      "ref_px": 0.18825,
+      "stop_checked_ms": 1792461731572
      },
-     "PUMP": {
-      "avg_px": 0.00431145,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792375330938,
-      "high": 0.0042895,
-      "qty": 126116.3338659235,
-      "ref_px": 0.0042895,
-      "stop_checked_ms": 1792375330938
+     "HBAR": {
+      "avg_px": 0.0838704,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792465335111,
+      "high": 0.083035,
+      "qty": 5783.6875880414,
+      "ref_px": 0.083035,
+      "stop_checked_ms": 1792465335111
      },
-     "ZEC": {
-      "avg_px": 1176.348,
-      "entry_date": "2026-10-19",
-      "entry_ms": 1792375330938,
-      "high": 1173.995,
-      "qty": 0.4575327142,
-      "ref_px": 1173.995,
-      "stop_checked_ms": 1792375330938
+     "SUI": {
+      "avg_px": 1.008417,
+      "entry_date": "2026-10-20",
+      "entry_ms": 1792468935745,
+      "high": 1.00335,
+      "qty": 473.1979971196,
+      "ref_px": 1.00335,
+      "stop_checked_ms": 1792468935745
      }
     },
-    "slippage": 3665.49685843,
+    "slippage": 3752.93497226,
     "started": "2026-09-30T22",
-    "turnover": 770246.08134346
+    "turnover": 787486.01577633
    }
   },
   "h_reverze": {
@@ -551,36 +514,36 @@
   "seance_usa": {
    "base": {
     "blocked": {},
-    "cash": 8650.25535632,
-    "fees": 334.83889968,
+    "cash": 8550.36946222,
+    "fees": 352.03944182,
     "last_rebalance": null,
-    "n_trades": 180,
+    "n_trades": 190,
     "positions": {},
-    "slippage": 399.90608613,
+    "slippage": 422.58303238,
     "started": "2026-09-30T22",
-    "turnover": 334838.89967396
+    "turnover": 352039.4418071
    },
    "gross": {
     "blocked": {},
-    "cash": 9362.11321668,
+    "cash": 9297.03762876,
     "fees": 0.0,
     "last_rebalance": null,
-    "n_trades": 180,
+    "n_trades": 190,
     "positions": {},
     "slippage": 0.0,
     "started": "2026-09-30T22",
-    "turnover": 347844.86257444
+    "turnover": 366504.01341988
    },
    "stress": {
     "blocked": {},
-    "cash": 7443.30531402,
-    "fees": 1246.60079127,
+    "cash": 7294.41392426,
+    "fees": 1305.55022916,
     "last_rebalance": null,
-    "n_trades": 180,
+    "n_trades": 190,
     "positions": {},
-    "slippage": 735.8854059,
+    "slippage": 774.4176742,
     "started": "2026-09-30T22",
-    "turnover": 311650.19779441
+    "turnover": 326387.55726484
    }
   }
  },
