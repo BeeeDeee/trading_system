@@ -139,7 +139,10 @@ notes: 'Brief: US single stocks, cross-sectional, 1-5 day hold, mechanism test d
   run-up, which a time-shifted placebo also captures), or the book falling short of the absolute 0.5 Sharpe bar
   with part-time exposure. No borrow fee is modelled for the shorts; LIQ-500 names are normally easy to borrow.
   Data caveat K-0035: 8-K coverage misses some firms, likely delisted ones.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_sharpe_excess
 history:
 - ts: '2026-10-20T03:12:38.022476+00:00'
   version: 1
@@ -162,3 +165,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-20T03:57:25.867431+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 134, qlab)
+- ts: '2026-10-20T03:58:56.976519+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 135, qlab)

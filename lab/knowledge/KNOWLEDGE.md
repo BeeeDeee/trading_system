@@ -48,12 +48,6 @@ The conditional rebound after fast, high-volume, taker-dominated moves in liquid
 
 *confidence low · 2026-10-14 · librarian · evidence: H-0035; H-0006; prior_studies mrel-1h*
 
-### K-0056 Stress rebounds: positive on average, near generic drift, weakest lately
-
-A rebound after forced selling appears as a positive pooled average in three settings: daily crypto dip-buying (H-0006, could not tell), fifteen-minute crypto cascades (H-0035) and stocks against Treasuries after sessions where stocks fell and long Treasuries rose (H-0041). In each the effect is near, not clearly beyond, what time-shifted placebo windows give, and the latest third of dev is the weakest or negative, possibly because stress episodes ran on instead of reversing (not verified by an era or episode split). For the ETF case random windows already favour equities over Treasuries, so the raw gap overstates the event. Studies 6 and 7 found the same for VIX-conditioned reversal: a market-level bounce, not a selection effect, and no gain over holding the market. New stress-rebound cards in other assets are largely the same evidence again, not independent confirmations. A Scout should state how the design separates a one-off shock from a persistent crash.
-
-*confidence low · 2026-10-15 · librarian · evidence: H-0041; H-0035; H-0006; K-0049; K-0052; prior_studies 6-7*
-
 ### K-0058 BTC-led altcoin catch-up is parameter-fragile in the lab
 
 The rule 'long lagging altcoins after a BTC hourly jump beyond k sigma, hold four hours' looks strong on the dev period at the primary setting but its edge needs a high threshold: lower thresholds lose most of it and the result is dominated by one sub-period. It failed G2 on neighbor stability and block concentration, while survival under delay and doubled costs was fine. A narrowed grid after the fact would be a new trial, not a rescue.
@@ -71,12 +65,6 @@ Across the lab's event studies that cleared or came near the placebo bar, the ef
 Two designs on the Fed's pre-announced calendar, the scheduled announcement sessions (H-0042) and the even-week cycle of FOMC time (H-0045), both gave a positive equity-over-bond or high-beta-over-low-beta average that was inside or just under the time-shifted placebo cloud. The two live at different horizons: the announcement design shows its gain on the announcement session only, while the cycle design shows nothing at one session and builds over several, so the cycle result is not the announcement-day effect again. Both are weakest in the latest third of dev, which includes publication, and gross is thin relative to cost. A design that marks both sides (even long, odd short) gives a placebo mean near zero, which is a cleaner test than the one-sided H-0042, where part of the gain was generic equity drift. A further Fed-calendar card on equities and Treasuries has a low prior unless it changes the instrument (index futures, equity-only comparison) or the horizon; this extends K-0060 without superseding it.
 
 *confidence low · 2026-10-16 · librarian · evidence: H-0042; H-0045; K-0060; K-0034*
-
-### K-0066 Perp funding does not tell forced crash selling from informational selling on a daily horizon
-
-Two daily designs have used the perpetual-futures funding market as a state variable in liquid Binance perps over the 2020-2022 dev window. A cross-section on the funding level (H-0039) gave a small multi-day price effect that barely cleared the placebo bar and sat in one episode. A crash-day split on the change in funding (H-0049: flushed versus unflushed coins among same-day relative losers, both sides marked, same-date unmarked peers as the base, so the generic market bounce is netted out and the placebo mean sits near zero) gave nothing at the first day and the wrong sign at the multi-day horizons, worst in the latest third, the bear market. So once the generic stress bounce of K-0056 is removed, a funding-based flush label did not add a rebound and may have marked persistent selling. Funding looks like a weak and regime-dependent separator, not a reliable detector of forced liquidations. Whether it works at intraday frequency or for makers is untested, and the dev window holds one boom-and-bust cycle.
-
-*confidence low · 2026-10-17 · librarian · evidence: H-0049; H-0039; H-0006; K-0056; K-0060; K-0049*
 
 ### K-0068 Mechanical stock-bond flow: the study effect appeared only when the trigger was a large stock-bond move
 
@@ -114,11 +102,23 @@ Claims that news in one liquid market is priced late in another have not shown a
 
 *confidence low · 2026-10-20 · librarian · supersedes K-0072 · evidence: H-0066; H-0056; H-0047; H-0013; H-0040; K-0076; prior_studies mrel*
 
-### K-0081 On real earnings dates the events that cleared the placebo test sort on the stock's own price move
+### K-0083 On real earnings dates only own-price-move events cleared the placebo test; no such book survived
 
-Across the cards on real 8-K earnings dates, the mechanism tests that cleared the placebo bar condition on the stock's own price move at or just before the release: reaction drift (H-0028, H-0031, H-0033) and the pre-release reversal (H-0064). Cards that sort on a second variable or another stock did not: fundamentals, net flow, volume, delay or earnings change (H-0024, H-0026, H-0027, H-0032, H-0067) and correlated peers (H-0066). Date-only premia (H-0023) also failed. Hindsight pattern from a modest number of cards, not a tested rule. Every pass was small next to cost once built into a book, and most weakened by the latest third (K-0060). A Scout should expect a price-move trigger to be the only kind with a prior of passing the event study, and should expect the book to be the harder gate.
+On real 8-K earnings dates the mechanism tests that cleared the placebo bar condition on the stock's own price move at or around the release: reaction drift (H-0028, H-0031, H-0033), the pre-release reversal (H-0064) and, new, the post-release give-back of year-long winners (H-0068). Sorts on a second variable or another stock did not (H-0024, H-0026, H-0027, H-0032, H-0067, H-0066), nor did date-only premia (H-0023). New: H-0068 shows a slow own-price sort can pass, but only at the margin, with the mean in the earliest third and the effect still building beyond the hold: slow drift, not an announcement effect. Its market-neutral book lost to T-bills like those of H-0028, H-0031 and H-0064; only the long-only H-0033 came near. Hindsight pattern, not a tested rule. State the expected annual gain of the book, not the per-event gap.
 
-*confidence low · 2026-10-20 · librarian · evidence: H-0028; H-0031; H-0033; H-0064; H-0023; H-0024; H-0026; H-0027; H-0032; H-0066; H-0067; K-0039; K-0046*
+*confidence low · 2026-10-20 · librarian · supersedes K-0081 · evidence: H-0028; H-0031; H-0033; H-0064; H-0068; H-0023; H-0024; H-0026; H-0027; H-0032; H-0066; H-0067; K-0064*
+
+### K-0084 Stress rebounds: positive on average, near generic drift, weakest lately, also in currencies with both sides marked
+
+A rebound after forced selling shows as a positive pooled average in four settings: daily crypto dip-buying (H-0006), fifteen-minute crypto cascades (H-0035), stocks against Treasuries (H-0041) and, new, relative reversal among G10 currency trusts after equity down-shock days (H-0070). In each it is near, not clearly beyond, the time-shifted placebo, and the latest third of dev is weakest or negative. H-0070 marked both sides inside one asset class and standardized the trigger by trailing volatility, so generic drift was netted out; gross still covered little of cost and the placebo bar lay below cost, so it is not a power problem. Its horizon profile was flat early and larger only at ten sessions, the shape of slow drift, and the long leg was the higher-beta currency (K-0074), so a beta confound is the leading reading. New stress-rebound cards are largely the same evidence again.
+
+*confidence low · 2026-10-20 · librarian · supersedes K-0056 · evidence: H-0070; H-0041; H-0035; H-0006; H-0049; K-0049; K-0060; K-0074; prior_studies 6-7*
+
+### K-0085 Perp funding and the perp-versus-spot volume split both fail to separate forced from informational big moves
+
+Three daily designs in liquid Binance perps over the 2020-2022 dev window tried to tell forced selling or buying from informational moves. A cross-section on the funding level (H-0039) gave a small multi-day effect that barely cleared the placebo bar and sat in one episode. A crash-day split on the change in funding (H-0049) gave nothing at the first day and the wrong sign at multi-day horizons, worst in the bear-market third. A big-move split on the perp-versus-spot volume ratio, both directions and both classes marked so generic reversal and beta mostly cancel (H-0071), was slightly wrong-signed and inside the placebo cloud, more negative at longer horizons, and positive only in the boom third. The placebo bar lay under cost, so this is not a power problem. Neither observable, what leveraged traders pay or where the volume traded, marks forced flow; a perp-led surge may mark informed trading, and moves that look forced seem to persist rather than reverse. Open interest and liquidation data would observe forced flow directly but are not loadable, and intraday or maker-side versions are untested. The dev window holds one boom-and-bust cycle.
+
+*confidence low · 2026-10-21 · librarian · supersedes K-0066 · evidence: H-0071; H-0049; H-0039; K-0060*
 
 ## Data
 
@@ -294,12 +294,6 @@ K-0047 said G0 events_in_dev matches the G1 event count. That still holds for H-
 
 *confidence low · 2026-10-15 · librarian · supersedes K-0047 · evidence: H-0036; H-0037; H-0038; H-0039; K-0047; K-0051*
 
-### K-0055 The G1 event study needs unmarked peers on each date: marking every universe instrument gives zero events
-
-H-0041 marked all five universe instruments on event dates, as its card said. The Builder tried it in the lab: marking five gave zero events, marking three gave zero, marking two gave events, and dates with only two unmarked instruments with data were dropped. The abnormal return is measured against the unmarked peers, so the judge seems to need at least three per date (inferred from behaviour, code not read). Same symptom as H-0038 (two-instrument universe, events at G0, none at G1, K-0054), which this makes the leading explanation. Consequences: the card as written could not run; the Builder narrowed the measured claim (SPY against IEF, not against TLT) and G1 and G0 event counts then agreed (482 both); nothing in the card schema warns of the peer rule. Also events() returns a single mask, so a declared complementary event set (equity drops on days when Treasuries fell) cannot be reported, the old diagnostic-channel gap again. Skeptic messages are absent for this card too.
-
-*confidence medium · 2026-10-15 · librarian · evidence: H-0041; H-0038; K-0054*
-
 ### K-0057 lab try knows instruments named by the strategy (intraday crypto_top_n)
 
 Intraday crypto_top_n cards may name a leader or exclusion (e.g. BTCUSDT, ETHUSDT) in strategy.py. Since commit 405b0961 the Builder's lab try adds instrument-like string literals (…USDT) to the synthetic market; before, data.col('BTCUSDT') crashed in lab try (synthetic names were AAAUSDT..FFFUSDT) although real G0 on real data was unaffected. A Builder rewrite after such a block may not reuse earlier code (old workspace files are gone), so re-verify parity with the card's reference.
@@ -329,6 +323,12 @@ H-0061 requested Moody's yields from 1986 for decisions from 2003 but reached G1
 The Builders of H-0064, H-0066 and H-0067 each report that the synthetic ea_reaction_day in lab try is uniform noise between 0 and 10, never exactly 1, so lab try shows zero events and its checks are vacuous for these cards; they tested events, book and point-in-time behaviour on hand-made data (one temporarily rounded the flag). On real data G0 did report events (counts within a handful of G1's) and no look-ahead failures in 25 cuts, so G0 is the first meaningful check, and an event-logic bug would surface only there. Suggested: make the synthetic flag a sparse 0/1 event series so lab try produces events.
 
 *confidence medium · 2026-10-20 · librarian · evidence: H-0064; H-0066; H-0067; K-0054; K-0057*
+
+### K-0086 G1 needs at least three unmarked peers per date, so early event dates can be dropped at G1 but counted at G0
+
+H-0041 showed that marking every universe instrument gives zero events at G1 and that dates with only two unmarked instruments with data were dropped (inferred: at least three unmarked peers per date; code not read). H-0072 adds a partial form of the same rule: G0 counted 647 events in dev, G1 measured 514, a gap of about a fifth. Its peers list from 2002 (SHY), 2007-01 (SHV) and 2007-05 (BIL), so events before the third peer exists were most likely dropped at G1 while G0 and the strategy still use them. The mechanism verdict then covers only about 2007 onward, not the full period of the card, and K-0054's statement that G0 and G1 counts agree does not hold when peers start late. Scouts with late-listing peers should state the first date with three unmarked peers and the expected events from that date; a G1 reading should say which years the event study covered.
+
+*confidence low · 2026-10-21 · librarian · supersedes K-0055 · evidence: H-0072; H-0041; H-0038; K-0054; K-0055*
 
 ## How the lab works
 
@@ -374,6 +374,12 @@ H-0040 is the first card that is an earlier owner rule re-run through the lab (r
 
 *confidence medium · 2026-10-15 · librarian · evidence: H-0040; prior_studies.md; card notes of H-0040*
 
+### K-0087 Family perp-leverage-crowding merged into short-term-reversal; H-0039 moves with it but tests a different mechanism
+
+On the Librarian's question the Chair staged a merge of perp-leverage-crowding into short-term-reversal, because H-0071 shares the forced-versus-informational-flow question with H-0049, H-0035 and H-0006. Families cannot be split, so H-0039 moves too, which only makes the multiple-testing penalty stricter. H-0039 itself is a different mechanism: a cross-sectional sort on the trailing funding level (crowded longs against crowded shorts, held for days), not a rebound or fade after a big move. It was decided at G1 on cost, so nothing else changes. A reader of the registry should not take H-0039 as another stress-rebound test; for the mechanism evidence see K-0085. Read lessons filed under the old family name as part of short-term-reversal for the trial count.
+
+*confidence high · 2026-10-21 · librarian · evidence: H-0039; H-0071; H-0049; H-0035; H-0006; K-0085; chair reply to question 531*
+
 ## Superseded
 
 - K-0004 No earnings dates in the lab
@@ -393,8 +399,12 @@ H-0040 is the first card that is an earlier owner rule re-run through the lab (r
 - K-0048 Fixed event slots did not close the gap between a passing event study and a failing market-neutral book
 - K-0050 G2 random-timing null is deeply negative in two cards, so passing it may only measure costs
 - K-0052 Short-horizon effects that clear the pooled placebo test are usually weakest or reversed in the latest third of dev
+- K-0055 The G1 event study needs unmarked peers on each date: marking every universe instrument gives zero events
+- K-0056 Stress rebounds: positive on average, near generic drift, weakest lately
 - K-0061 G2 random-timing null is far below zero in three cards, so passing it may only measure costs
 - K-0065 Macro-calendar cards on asset-class ETFs fail in three designs; reaction drift is single-stock only
+- K-0066 Perp funding does not tell forced crash selling from informational selling on a daily horizon
 - K-0067 The G1 reason code can name the event count while the mechanism was measured and failed; the count was visible at G0
 - K-0071 Slow-horizon event studies: the placebo bar sits several times above cost, so only a large effect can pass G1
 - K-0072 Cross-market information-diffusion claims in liquid assets come out flat or wrong-signed from daily to monthly horizons
+- K-0081 On real earnings dates the events that cleared the placebo test sort on the stock's own price move

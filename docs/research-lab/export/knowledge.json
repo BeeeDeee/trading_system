@@ -982,5 +982,65 @@
   "actor": "librarian",
   "message_id": 500,
   "ts": "2026-10-20T02:38:55.865352+00:00"
+ },
+ {
+  "id": "K-0083",
+  "kind": "market",
+  "title": "On real earnings dates only own-price-move events cleared the placebo test; no such book survived",
+  "statement": "On real 8-K earnings dates the mechanism tests that cleared the placebo bar condition on the stock's own price move at or around the release: reaction drift (H-0028, H-0031, H-0033), the pre-release reversal (H-0064) and, new, the post-release give-back of year-long winners (H-0068). Sorts on a second variable or another stock did not (H-0024, H-0026, H-0027, H-0032, H-0067, H-0066), nor did date-only premia (H-0023). New: H-0068 shows a slow own-price sort can pass, but only at the margin, with the mean in the earliest third and the effect still building beyond the hold: slow drift, not an announcement effect. Its market-neutral book lost to T-bills like those of H-0028, H-0031 and H-0064; only the long-only H-0033 came near. Hindsight pattern, not a tested rule. State the expected annual gain of the book, not the per-event gap.",
+  "evidence": "[\"H-0028\",\"H-0031\",\"H-0033\",\"H-0064\",\"H-0068\",\"H-0023\",\"H-0024\",\"H-0026\",\"H-0027\",\"H-0032\",\"H-0066\",\"H-0067\",\"K-0064\"]",
+  "confidence": "low",
+  "supersedes": "K-0081",
+  "actor": "librarian",
+  "message_id": 507,
+  "ts": "2026-10-20T04:07:41.462233+00:00"
+ },
+ {
+  "id": "K-0084",
+  "kind": "market",
+  "title": "Stress rebounds: positive on average, near generic drift, weakest lately, also in currencies with both sides marked",
+  "statement": "A rebound after forced selling shows as a positive pooled average in four settings: daily crypto dip-buying (H-0006), fifteen-minute crypto cascades (H-0035), stocks against Treasuries (H-0041) and, new, relative reversal among G10 currency trusts after equity down-shock days (H-0070). In each it is near, not clearly beyond, the time-shifted placebo, and the latest third of dev is weakest or negative. H-0070 marked both sides inside one asset class and standardized the trigger by trailing volatility, so generic drift was netted out; gross still covered little of cost and the placebo bar lay below cost, so it is not a power problem. Its horizon profile was flat early and larger only at ten sessions, the shape of slow drift, and the long leg was the higher-beta currency (K-0074), so a beta confound is the leading reading. New stress-rebound cards are largely the same evidence again.",
+  "evidence": "[\"H-0070\",\"H-0041\",\"H-0035\",\"H-0006\",\"H-0049\",\"K-0049\",\"K-0060\",\"K-0074\",\"prior_studies 6-7\"]",
+  "confidence": "low",
+  "supersedes": "K-0056",
+  "actor": "librarian",
+  "message_id": 518,
+  "ts": "2026-10-20T07:06:57.241170+00:00"
+ },
+ {
+  "id": "K-0085",
+  "kind": "market",
+  "title": "Perp funding and the perp-versus-spot volume split both fail to separate forced from informational big moves",
+  "statement": "Three daily designs in liquid Binance perps over the 2020-2022 dev window tried to tell forced selling or buying from informational moves. A cross-section on the funding level (H-0039) gave a small multi-day effect that barely cleared the placebo bar and sat in one episode. A crash-day split on the change in funding (H-0049) gave nothing at the first day and the wrong sign at multi-day horizons, worst in the bear-market third. A big-move split on the perp-versus-spot volume ratio, both directions and both classes marked so generic reversal and beta mostly cancel (H-0071), was slightly wrong-signed and inside the placebo cloud, more negative at longer horizons, and positive only in the boom third. The placebo bar lay under cost, so this is not a power problem. Neither observable, what leveraged traders pay or where the volume traded, marks forced flow; a perp-led surge may mark informed trading, and moves that look forced seem to persist rather than reverse. Open interest and liquidation data would observe forced flow directly but are not loadable, and intraday or maker-side versions are untested. The dev window holds one boom-and-bust cycle.",
+  "evidence": "[\"H-0071\",\"H-0049\",\"H-0039\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": "K-0066",
+  "actor": "librarian",
+  "message_id": 527,
+  "ts": "2026-10-21T02:07:48.764348+00:00"
+ },
+ {
+  "id": "K-0086",
+  "kind": "framework",
+  "title": "G1 needs at least three unmarked peers per date, so early event dates can be dropped at G1 but counted at G0",
+  "statement": "H-0041 showed that marking every universe instrument gives zero events at G1 and that dates with only two unmarked instruments with data were dropped (inferred: at least three unmarked peers per date; code not read). H-0072 adds a partial form of the same rule: G0 counted 647 events in dev, G1 measured 514, a gap of about a fifth. Its peers list from 2002 (SHY), 2007-01 (SHV) and 2007-05 (BIL), so events before the third peer exists were most likely dropped at G1 while G0 and the strategy still use them. The mechanism verdict then covers only about 2007 onward, not the full period of the card, and K-0054's statement that G0 and G1 counts agree does not hold when peers start late. Scouts with late-listing peers should state the first date with three unmarked peers and the expected events from that date; a G1 reading should say which years the event study covered.",
+  "evidence": "[\"H-0072\",\"H-0041\",\"H-0038\",\"K-0054\",\"K-0055\"]",
+  "confidence": "low",
+  "supersedes": "K-0055",
+  "actor": "librarian",
+  "message_id": 528,
+  "ts": "2026-10-21T02:07:48.774997+00:00"
+ },
+ {
+  "id": "K-0087",
+  "kind": "process",
+  "title": "Family perp-leverage-crowding merged into short-term-reversal; H-0039 moves with it but tests a different mechanism",
+  "statement": "On the Librarian's question the Chair staged a merge of perp-leverage-crowding into short-term-reversal, because H-0071 shares the forced-versus-informational-flow question with H-0049, H-0035 and H-0006. Families cannot be split, so H-0039 moves too, which only makes the multiple-testing penalty stricter. H-0039 itself is a different mechanism: a cross-sectional sort on the trailing funding level (crowded longs against crowded shorts, held for days), not a rebound or fade after a big move. It was decided at G1 on cost, so nothing else changes. A reader of the registry should not take H-0039 as another stress-rebound test; for the mechanism evidence see K-0085. Read lessons filed under the old family name as part of short-term-reversal for the trial count.",
+  "evidence": "[\"H-0039\",\"H-0071\",\"H-0049\",\"H-0035\",\"H-0006\",\"K-0085\",\"chair reply to question 531\"]",
+  "confidence": "high",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 534,
+  "ts": "2026-10-21T03:05:44.645386+00:00"
  }
 ]

@@ -54,5 +54,13 @@
   "reason": "H-0063 and H-0035 trade the same event class: taker-dominated, high-volume fast moves in liquid Binance USD-M perps on 15-minute candles, where forced or stop-driven flow is the counterparty. They take opposite signs (H-0035 fades extended moves, H-0063 follows breaks from compressed ranges, excluding H-0035's region by construction), so they split one event space and one trial pool; K-0077 reads both as the same small edge consumed within about a candle. Merging only makes the penalty stricter. H-0040 (BTC-led altcoin catch-up) is deliberately not merged: its mechanism is cross-asset information diffusion, and sharing data and dev window is not a shared mechanism.",
   "message_id": 473,
   "ts": "2026-10-19T05:36:57.417710+00:00"
+ },
+ {
+  "from_family": "perp-leverage-crowding",
+  "into_family": "short-term-reversal",
+  "actor": "chair",
+  "reason": "H-0071 asks the same question as H-0049, H-0035 and H-0006: after a large crypto perp move, is the move forced flow that reverses or informational flow that persists, split by a state variable (perp-vs-spot volume ratio in H-0071, funding change in H-0049). Same counterparty and same reason for the effect, so its trial must count in short-term-reversal. Families cannot be split, so H-0039 (cross-sectional funding level, a different mechanism) is carried along; this only makes the penalty stricter, and H-0039 is already rejected.",
+  "message_id": 532,
+  "ts": "2026-10-21T02:36:29.332389+00:00"
  }
 ]
