@@ -1,0 +1,289 @@
+{
+ "date": "2026-10-21",
+ "llm_ok": true,
+ "locked_at": "2026-10-21T04:02:43.618Z",
+ "locked_ms": 1792555363618,
+ "portfolios": {
+  "b_btc": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_btc_eth": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_cash": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_ew20": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_mcap10": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "bez_brany": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HYPE",
+     "NEAR",
+     "TRX",
+     "BNB",
+     "SUI",
+     "SOL",
+     "ZEC",
+     "TAO",
+     "PUMP",
+     "UNI"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.1,
+    "HYPE": 0.12,
+    "NEAR": 0.18,
+    "PUMP": 0.08,
+    "SOL": 0.06,
+    "SUI": 0.14,
+    "TAO": 0.1,
+    "TRX": 0.1,
+    "UNI": 0.04,
+    "ZEC": 0.08
+   }
+  },
+  "btc_filtr": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "claude_volne": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "BNB",
+     "BTC",
+     "HYPE",
+     "NEAR",
+     "SOL",
+     "TRX"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.15,
+    "BTC": 0.2,
+    "HYPE": 0.08,
+    "NEAR": 0.08,
+    "SOL": 0.1,
+    "TRX": 0.1
+   }
+  },
+  "inv_vol": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "jen_mr": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HBAR",
+     "XRP",
+     "ENA",
+     "HYPE",
+     "UNI",
+     "DOGE"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "DOGE": 0.1666666667,
+    "ENA": 0.1666666667,
+    "HBAR": 0.1666666667,
+    "HYPE": 0.1666666667,
+    "UNI": 0.1666666667,
+    "XRP": 0.1666666667
+   }
+  },
+  "jen_trend": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "NEAR"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "NEAR": 0.25
+   }
+  },
+  "jen_zpravy": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "SUI",
+     "HYPE",
+     "NEAR"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "HYPE": 0.25,
+    "NEAR": 0.25,
+    "SUI": 0.25
+   }
+  },
+  "kontrarian": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HBAR",
+     "ETH",
+     "XRP",
+     "ENA",
+     "UNI",
+     "DOGE",
+     "SOL",
+     "ZEC",
+     "PUMP",
+     "BTC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BTC": 0.1,
+    "DOGE": 0.1,
+    "ENA": 0.1,
+    "ETH": 0.1,
+    "HBAR": 0.1,
+    "PUMP": 0.1,
+    "SOL": 0.1,
+    "UNI": 0.1,
+    "XRP": 0.1,
+    "ZEC": 0.1
+   }
+  },
+  "mech_momentum": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "nahodny": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "BNB",
+     "ENA",
+     "HBAR",
+     "NEAR",
+     "SOL",
+     "SUI",
+     "TAO",
+     "TRX",
+     "XRP",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.1,
+    "ENA": 0.1,
+    "HBAR": 0.1,
+    "NEAR": 0.1,
+    "SOL": 0.1,
+    "SUI": 0.1,
+    "TAO": 0.1,
+    "TRX": 0.1,
+    "XRP": 0.1,
+    "ZEC": 0.1
+   }
+  },
+  "pravdepodobnost": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "rovne": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "skore_vol": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "stop": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "top3": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "tydenni": {
+   "exits": {},
+   "info": {
+    "hold": "rebalanc jen v pondělí"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "vol_target": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "zaklad": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  }
+ },
+ "scores_sha256": "968bd8e538e63c838351614ce99b11feb4b8e7a84e3bfa4cd97fe4bf49a0ea77"
+}
