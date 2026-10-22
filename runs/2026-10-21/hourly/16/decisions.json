@@ -1,0 +1,99 @@
+{
+ "label": "2026-10-21T16",
+ "locked_at": "2026-10-21T16:02:13.080Z",
+ "locked_ms": 1792598533080,
+ "portfolios": {
+  "funding_kontra": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ZEC",
+     "PUMP",
+     "UNI",
+     "HYPE",
+     "BNB"
+    ]
+   },
+   "keep": [],
+   "targets": {
+    "BNB": 0.2,
+    "HYPE": 0.2,
+    "PUMP": 0.2,
+    "UNI": 0.2,
+    "ZEC": 0.2
+   }
+  },
+  "h_breakout": {
+   "exits": {},
+   "info": {
+    "signals": [
+     "DOGE"
+    ]
+   },
+   "keep": [
+    "BTC",
+    "ENA"
+   ],
+   "targets": {
+    "DOGE": 0.2
+   }
+  },
+  "h_kniha": {
+   "exits": {
+    "UNI": "signal"
+   },
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "h_momentum": {
+   "exits": {},
+   "info": {
+    "candidates": [
+     "ENA",
+     "ZEC",
+     "NEAR"
+    ]
+   },
+   "keep": [
+    "NEAR",
+    "ZEC"
+   ],
+   "targets": {
+    "ENA": 0.3333333333
+   }
+  },
+  "h_reverze": {
+   "exits": {},
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "llm_nacasovani": {
+   "exits": {},
+   "info": {
+    "waiting": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "seance_usa": {
+   "exits": {},
+   "info": {
+    "in_session": true
+   },
+   "keep": [],
+   "targets": {
+    "BNB": 0.2,
+    "BTC": 0.2,
+    "ETH": 0.2,
+    "SOL": 0.2,
+    "XRP": 0.2
+   }
+  }
+ }
+}
