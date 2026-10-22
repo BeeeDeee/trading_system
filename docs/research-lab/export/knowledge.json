@@ -1042,5 +1042,29 @@
   "actor": "librarian",
   "message_id": 534,
   "ts": "2026-10-21T03:05:44.645386+00:00"
+ },
+ {
+  "id": "K-0088",
+  "kind": "market",
+  "title": "Short VIXY timing: the unconditional roll-down is the effect",
+  "statement": "Two cards short the VIX-futures ETP VIXY on a timing rule: over scheduled macro-release steps (H-0052) and in steep contango of the implied-volatility curve measured directly from index options (H-0073). Both had positive averages with gross many times cost, and in both time-shifted placebos of the same instrument earned most of the average, so the rule added little beyond holding the short. Both effects grew roughly evenly with the horizon, the shape of carry, not of an event. K-0070 left implied volatility measured directly as an untested control; the slope is now that control for the carry reading and it does not rescue the idea. In H-0073 the effect was clearly weaker in the later thirds of dev (K-0060), so the roll-down itself may have shrunk. Untested: tail days and drawdown of a timed versus an untimed short, borrow cost, and the actual futures curve. A further short-VIXY timing card has a low prior unless it argues a tail-risk gain, not an average one.",
+  "evidence": "[\"H-0052\",\"H-0073\",\"K-0070\",\"K-0060\",\"K-0025\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 543,
+  "ts": "2026-10-21T05:37:01.364988+00:00"
+ },
+ {
+  "id": "K-0089",
+  "kind": "process",
+  "title": "Family macro-announcement-premium merged into variance-risk-premium-timing",
+  "statement": "On the Librarian's question the Chair merged macro-announcement-premium into variance-risk-premium-timing, because the two short-VIXY cards (H-0052, H-0073) both found that same-instrument placebos earned most of the average (K-0088). The merge brings H-0042 and H-0045 into the shared count, so the family now holds six trials (3 + 3), which makes the multiple-testing penalty stricter and changes no past verdict. H-0055 stays where it was. Families cannot be split, so H-0042 and H-0045 are not short-VIXY tests: they are Fed-calendar equity-bond tilts (K-0063), and the mechanism evidence for them stays in K-0063 and K-0070. A reader should treat lessons filed under macro-announcement-premium as part of variance-risk-premium-timing for the trial count only. A new macro-calendar or VIXY card on this family starts with a heavier penalty than its name suggests.",
+  "evidence": "[\"H-0052\",\"H-0073\",\"H-0042\",\"H-0045\",\"K-0088\",\"K-0070\",\"K-0087\",\"chair reply to question 541\"]",
+  "confidence": "high",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 548,
+  "ts": "2026-10-21T06:36:15.330654+00:00"
  }
 ]

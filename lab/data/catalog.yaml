@@ -710,3 +710,41 @@ datasets:
     - DBAA
     location: LAB_HOME/data/fred_moody_yields_1d
     cost_model: null
+
+  - id: fred_vxv_1d
+    loader: generic
+    asset_class: macro
+    instruments: CBOE S&P 500 3-Month Volatility Index (VIX3M, formerly VXV), FRED series
+      VXVCLS, daily close in index points, not seasonally adjusted; one series, key
+      VXVCLS; signal only, not tradable
+    frequency: 1d
+    range:
+    - '2007-12-04'
+    - '2026-10-19'
+    clock: next_morning
+    source: FRED (St. Louis Fed) fredgraph.csv download for series VXVCLS, originally
+      CBOE; free, public, no key. CBOE data on FRED are used under FRED terms for research
+      use.
+    quality: 'lab ingest 2026-10-21: 4748 rows, 1 series, see LAB_HOME/data/fred_vxv_1d/report.json'
+    holdout_from: '2021-01-01'
+    known_biases:
+    - FRED serves only the latest vintage and no publication timestamps; the close of
+      day d is assumed known the next morning (clock next_morning), which is conservative.
+      CBOE index values are computed from option prices and are not revised in the ordinary
+      sense.
+    - 'Methodology: the index was published as VXV until the 2017 rename to VIX3M; the
+      series is continuous on FRED but CBOE has changed constituents and calculation
+      details over time, so level shifts could reflect that. History starts 2007-12-04,
+      before that there is no value.'
+    - Missing values (FRED '.', mostly US market holidays) are dropped, not filled;
+      a few XNYS sessions may have no value. Index points are not a tradable instrument;
+      the VIX/VIX3M ratio mixes two indices from the same source.
+    - Terms/availability of CBOE series on FRED can change (licensing); if FRED truncates
+      the history served, the fetch returns what it serves.
+    forward_source: same FRED endpoint (https://fred.stlouisfed.org/graph/fredgraph.csv?id=VXVCLS),
+      refetched daily; FRED API series/observations with a free key is an alternative
+    calendar: XNYS
+    fields:
+    - VXVCLS
+    location: LAB_HOME/data/fred_vxv_1d
+    cost_model: null

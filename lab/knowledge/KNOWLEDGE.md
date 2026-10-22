@@ -120,6 +120,12 @@ Three daily designs in liquid Binance perps over the 2020-2022 dev window tried 
 
 *confidence low · 2026-10-21 · librarian · supersedes K-0066 · evidence: H-0071; H-0049; H-0039; K-0060*
 
+### K-0088 Short VIXY timing: the unconditional roll-down is the effect
+
+Two cards short the VIX-futures ETP VIXY on a timing rule: over scheduled macro-release steps (H-0052) and in steep contango of the implied-volatility curve measured directly from index options (H-0073). Both had positive averages with gross many times cost, and in both time-shifted placebos of the same instrument earned most of the average, so the rule added little beyond holding the short. Both effects grew roughly evenly with the horizon, the shape of carry, not of an event. K-0070 left implied volatility measured directly as an untested control; the slope is now that control for the carry reading and it does not rescue the idea. In H-0073 the effect was clearly weaker in the later thirds of dev (K-0060), so the roll-down itself may have shrunk. Untested: tail days and drawdown of a timed versus an untimed short, borrow cost, and the actual futures curve. A further short-VIXY timing card has a low prior unless it argues a tail-risk gain, not an average one.
+
+*confidence low · 2026-10-21 · librarian · evidence: H-0052; H-0073; K-0070; K-0060; K-0025*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -379,6 +385,12 @@ H-0040 is the first card that is an earlier owner rule re-run through the lab (r
 On the Librarian's question the Chair staged a merge of perp-leverage-crowding into short-term-reversal, because H-0071 shares the forced-versus-informational-flow question with H-0049, H-0035 and H-0006. Families cannot be split, so H-0039 moves too, which only makes the multiple-testing penalty stricter. H-0039 itself is a different mechanism: a cross-sectional sort on the trailing funding level (crowded longs against crowded shorts, held for days), not a rebound or fade after a big move. It was decided at G1 on cost, so nothing else changes. A reader of the registry should not take H-0039 as another stress-rebound test; for the mechanism evidence see K-0085. Read lessons filed under the old family name as part of short-term-reversal for the trial count.
 
 *confidence high · 2026-10-21 · librarian · evidence: H-0039; H-0071; H-0049; H-0035; H-0006; K-0085; chair reply to question 531*
+
+### K-0089 Family macro-announcement-premium merged into variance-risk-premium-timing
+
+On the Librarian's question the Chair merged macro-announcement-premium into variance-risk-premium-timing, because the two short-VIXY cards (H-0052, H-0073) both found that same-instrument placebos earned most of the average (K-0088). The merge brings H-0042 and H-0045 into the shared count, so the family now holds six trials (3 + 3), which makes the multiple-testing penalty stricter and changes no past verdict. H-0055 stays where it was. Families cannot be split, so H-0042 and H-0045 are not short-VIXY tests: they are Fed-calendar equity-bond tilts (K-0063), and the mechanism evidence for them stays in K-0063 and K-0070. A reader should treat lessons filed under macro-announcement-premium as part of variance-risk-premium-timing for the trial count only. A new macro-calendar or VIXY card on this family starts with a heavier penalty than its name suggests.
+
+*confidence high · 2026-10-21 · librarian · evidence: H-0052; H-0073; H-0042; H-0045; K-0088; K-0070; K-0087; chair reply to question 541*
 
 ## Superseded
 

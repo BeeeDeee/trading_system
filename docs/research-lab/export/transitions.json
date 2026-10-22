@@ -4366,5 +4366,89 @@
   "message_id": null,
   "reason": "G1 failed (run 143, qlab)",
   "ts": "2026-10-20T09:08:15.681244+00:00"
+ },
+ {
+  "id": 365,
+  "hypothesis_id": "H-0073",
+  "version": 1,
+  "from_status": null,
+  "to_status": "IDEA",
+  "actor": "scout",
+  "invocation_id": "scout-20261021T040516-e8c788",
+  "message_id": 535,
+  "reason": "created",
+  "ts": "2026-10-21T04:16:55.641839+00:00"
+ },
+ {
+  "id": 366,
+  "hypothesis_id": "H-0073",
+  "version": 1,
+  "from_status": "IDEA",
+  "to_status": "SPECIFIED",
+  "actor": "scout",
+  "invocation_id": "scout-20261021T040516-e8c788",
+  "message_id": 535,
+  "reason": "spec complete",
+  "ts": "2026-10-21T04:16:55.786656+00:00"
+ },
+ {
+  "id": 367,
+  "hypothesis_id": "H-0073",
+  "version": 1,
+  "from_status": "SPECIFIED",
+  "to_status": "BLOCKED_DATA",
+  "actor": "system",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "missing dataset fred_vxv_1d",
+  "ts": "2026-10-21T04:16:55.917591+00:00"
+ },
+ {
+  "id": 368,
+  "hypothesis_id": "H-0073",
+  "version": 1,
+  "from_status": "BLOCKED_DATA",
+  "to_status": "DATA_READY",
+  "actor": "system",
+  "invocation_id": null,
+  "message_id": 537,
+  "reason": "dataset fred_vxv_1d ingested",
+  "ts": "2026-10-21T04:36:02.905673+00:00"
+ },
+ {
+  "id": 369,
+  "hypothesis_id": "H-0073",
+  "version": 1,
+  "from_status": "DATA_READY",
+  "to_status": "IMPLEMENTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G0 passed (run 144, qlab)",
+  "ts": "2026-10-21T05:10:07.856529+00:00"
+ },
+ {
+  "id": 370,
+  "hypothesis_id": "H-0073",
+  "version": 1,
+  "from_status": "IMPLEMENTED",
+  "to_status": "REJECTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G1 failed (run 145, qlab)",
+  "ts": "2026-10-21T05:10:08.073500+00:00"
+ },
+ {
+  "id": 371,
+  "hypothesis_id": "H-0074",
+  "version": 1,
+  "from_status": null,
+  "to_status": "IDEA",
+  "actor": "human",
+  "invocation_id": null,
+  "message_id": 546,
+  "reason": "created",
+  "ts": "2026-10-21T06:35:45.551011+00:00"
  }
 ]

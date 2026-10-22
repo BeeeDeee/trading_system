@@ -1857,5 +1857,31 @@
   "thresholds_sha256": "1fa12f0f224eb48b82d6f8a60235b2d8283d127fc42c77c9af72c01c2a20f443",
   "evaluator": "qlab",
   "ts": "2026-10-20T09:08:15.677909+00:00"
+ },
+ {
+  "id": 144,
+  "run_id": 144,
+  "hypothesis_id": "H-0073",
+  "version": 1,
+  "gate": "G0",
+  "passed": 1,
+  "reason_code": null,
+  "metrics_json": "{\"events_in_dev\":1456,\"events_lookahead_failures\":{\"cuts\":25,\"perturbation\":[],\"truncation\":[]},\"lookahead_failures\":{\"cuts\":25,\"perturbation\":[],\"truncation\":[]},\"problems\":[],\"runtime_s\":0.004}",
+  "thresholds_sha256": "1fa12f0f224eb48b82d6f8a60235b2d8283d127fc42c77c9af72c01c2a20f443",
+  "evaluator": "qlab",
+  "ts": "2026-10-21T05:10:07.851649+00:00"
+ },
+ {
+  "id": 145,
+  "run_id": 145,
+  "hypothesis_id": "H-0073",
+  "version": 1,
+  "gate": "G1",
+  "passed": 0,
+  "reason_code": "g1_mechanism_placebo_percentile",
+  "metrics_json": "{\"checks\":{\"mechanism_abnormal_return\":{\"op\":\">\",\"pass\":true,\"threshold\":0.0,\"value\":0.009189},\"mechanism_blocks\":{\"op\":\">=\",\"pass\":true,\"threshold\":2.0,\"value\":3.0},\"mechanism_costs\":{\"op\":\">=\",\"pass\":true,\"threshold\":1.0,\"value\":9.188837},\"mechanism_events\":{\"op\":\">=\",\"pass\":true,\"threshold\":200.0,\"value\":1451.0},\"mechanism_placebo_percentile\":{\"op\":\">=\",\"pass\":false,\"threshold\":0.95,\"value\":0.715}},\"mechanism\":{\"blocks\":[{\"events\":415,\"mean_abnormal\":0.019163741453705387},{\"events\":606,\"mean_abnormal\":0.008540031440593605},{\"events\":430,\"mean_abnormal\":0.0004762568123193789}],\"cost_ratio\":9.1888367922707,\"events_per_year\":145.3,\"horizon_days\":5,\"mean_abnormal\":0.009188836792270704,\"n_event_dates\":1451,\"n_events\":1451,\"other_horizons_mean_abnormal\":{\"1\":0.0018150239068804867,\"10\":0.016023927775633533,\"2\":0.004153878851414848,\"20\":0.030995239247156293},\"placebo\":{\"mean\":0.007475504320844472,\"p95\":0.012845513644785346,\"runs\":200,\"sd\":0.0030514039270894576},\"placebo_percentile\":0.715,\"round_trip_cost\":0.0010000000000000005,\"z_vs_placebo\":0.5614898952628907},\"strategy_not_run\":true}",
+  "thresholds_sha256": "1fa12f0f224eb48b82d6f8a60235b2d8283d127fc42c77c9af72c01c2a20f443",
+  "evaluator": "qlab",
+  "ts": "2026-10-21T05:10:08.068133+00:00"
  }
 ]

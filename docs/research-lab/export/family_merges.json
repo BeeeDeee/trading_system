@@ -62,5 +62,13 @@
   "reason": "H-0071 asks the same question as H-0049, H-0035 and H-0006: after a large crypto perp move, is the move forced flow that reverses or informational flow that persists, split by a state variable (perp-vs-spot volume ratio in H-0071, funding change in H-0049). Same counterparty and same reason for the effect, so its trial must count in short-term-reversal. Families cannot be split, so H-0039 (cross-sectional funding level, a different mechanism) is carried along; this only makes the penalty stricter, and H-0039 is already rejected.",
   "message_id": 532,
   "ts": "2026-10-21T02:36:29.332389+00:00"
+ },
+ {
+  "from_family": "macro-announcement-premium",
+  "into_family": "variance-risk-premium-timing",
+  "actor": "chair",
+  "reason": "H-0052 and H-0073 both short VIXY to harvest the VIX-futures roll-down (same counterparty: hedgers paying for vol protection; same reason for the effect), and both died at G1 placebo percentile because same-instrument placebo shorts earn the unconditional roll (K-0088). Only the timing conditioner differs (release calendar vs term-structure slope). Merging is the stricter direction. The family merge also carries H-0042 and H-0045 (announcement-premium trials) into the shared count; accepted as the cost of the stricter penalty, since families cannot be split.",
+  "message_id": 544,
+  "ts": "2026-10-21T06:06:54.943105+00:00"
  }
 ]
