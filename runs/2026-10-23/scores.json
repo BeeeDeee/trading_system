@@ -1,0 +1,363 @@
+{
+ "claude_volne": {
+  "comment": "Před FOMC a v risk-off snižuji expozici na ~60 % s důrazem na BTC a nízkobetové alty, SOL a ZEC prodávám a zbytek nechávám v hotovosti.",
+  "positions": [
+   {
+    "coin": "BNB",
+    "invalidation": "Pokles pod 30d minimum nebo rel7 pod −3.",
+    "reason": "Defenzivní alt s nízkou betou a kladnou relativní silou za 7 dní.",
+    "weight_pct": 12.0
+   },
+   {
+    "coin": "BTC",
+    "invalidation": "Denní uzávěr pod 78k (pod 30d minimem).",
+    "reason": "Rostoucí dominance, BTC v poklesu ztrácí nejméně z velkých coinů.",
+    "weight_pct": 20.0
+   },
+   {
+    "coin": "HYPE",
+    "invalidation": "Uzávěr pod 72 USD nebo propad příjmů/objemu na Hyperliquid.",
+    "reason": "Přeprodaný s buybacky z příjmů, očekávám odraz nebo aspoň výkon v linii s BTC.",
+    "weight_pct": 8.0
+   },
+   {
+    "coin": "NEAR",
+    "invalidation": "Uzávěr pod SMA50 nebo další týden s rel7 pod −5.",
+    "reason": "Střednědobý trend nad SMA50 zůstává, pozici držím menší kvůli AI výprodeji.",
+    "weight_pct": 8.0
+   },
+   {
+    "coin": "TRX",
+    "invalidation": "Uzávěr pod 0,32 nebo negativní regulatorní zpráva k Tronu.",
+    "reason": "Nulová korelace s BTC a stabilní stablecoinový byznys tlumí volatilitu portfolia.",
+    "weight_pct": 12.0
+   }
+  ]
+ },
+ "coins": {
+  "BNB": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Nízká beta a mírně kladný rel7 dělají z BNB defenzivní alt v risk-off prostředí, bez nových zpráv.",
+   "p_outperform_btc_7d": 0.52,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 0
+  },
+  "BTC": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "jine",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "BTC kolem SMA50 po neúspěšném výpadu na 85k, dominance roste, rozhoduje FOMC a nálada na akciích.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/business/2026/10/22/live-updates-bitcoin-s-round-trip-to-usd85-000-burns-traders-on-both-sides",
+    "https://www.cryptotimes.io/2026/10/23/crypto-long-liquidations-hit-418m-as-bitcoin-and-ethereum-extend-losses/"
+   ],
+   "trend": 0
+  },
+  "DOGE": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.5,
+   "mr": 1,
+   "news": 0,
+   "note": "DOGE je pod všemi SMA s rel30 −16 a klesajícím objmem, blízko 30d minima je jen slabý potenciál odrazu.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "ENA": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Konec emisí a buybacky ENA jsou známé, cena s betou 2,6 a ATR 11 % je v risk-off zranitelná.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://finder.techleap.nl/news/feed/ethena-s-360m-boost-for-ena-rally"
+   ],
+   "trend": -1
+  },
+  "ETH": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 0,
+   "news": 0,
+   "note": "ETH pod SMA20/50 a slabší než BTC za 30 dní, ETF toky smíšené a L/S 3,5 ukazuje přeplněné longy.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.fool.com/coverage/stock-market-today/2026/10/22/crypto-market-today-oct-22-bitcoin-and-altcoins-slide-as-wall-street-fears-spill-into-crypto-markets/"
+   ],
+   "trend": -1
+  },
+  "HBAR": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "HBAR je 39 % pod 30d maximem těsně u minima s RSI 38, trend je jasně dolů a bez čerstvého katalyzátoru.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "HYPE": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 1,
+   "news": 0,
+   "note": "HYPE s RSI 34 je přeprodaný a buybacky z příjmů i nákupy treasury firmy dávají podporu, nové zprávy jsou ale očekávané.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.tokenpost.com/news/business/38335",
+    "https://www.tokenpost.com/news/investing/36889"
+   ],
+   "trend": -1
+  },
+  "NEAR": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Střednědobý trend NEAR je stále silný (SMA50 +18 %), ale jako AI token padá s výprodejem čipových akcií.",
+   "p_outperform_btc_7d": 0.46,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptoticker.io/en/near-price-drop-ai-stocks-selloff/"
+   ],
+   "trend": 1
+  },
+  "PUMP": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": 0,
+   "news": 0,
+   "note": "PUMP spadl za den o 11 % a buybacky dlouhodobě cenu nezvedly, L/S 0,9 ale nechává malou šanci na short squeeze.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.4,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://thedefiant.io/news/defi/pump-fun-s-pump-buybacks-top-usd400m-as-token-stays-flat"
+   ],
+   "trend": -1
+  },
+  "SOL": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Upgrade Alpenglow dokončen bez dopadu na cenu, SOL pod SMA20/50 a funding nejvyšší z univerza.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.fool.com/coverage/stock-market-today/2026/10/22/crypto-market-today-oct-22-bitcoin-and-altcoins-slide-as-wall-street-fears-spill-into-crypto-markets/"
+   ],
+   "trend": -1
+  },
+  "SUI": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "SUI za týden −6 % a 9 % pod SMA20, objem se propadl o 53 % a beta 2,1 zůstává v risk-off nevýhodou.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -1
+  },
+  "TAO": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": 1,
+   "news": 0,
+   "note": "TAO je těsně u 30d minima a jako AI token ho tlačí odchod z AI obchodu na Nasdaqu.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptoticker.io/en/near-price-drop-ai-stocks-selloff/"
+   ],
+   "trend": -2
+  },
+  "TRX": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "TRX má nulovou korelaci s BTC a nízkou volatilitu, v risk-off týdnu pravděpodobně drží hodnotu lépe než trh.",
+   "p_outperform_btc_7d": 0.53,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/research/tron-network-q3-2026"
+   ],
+   "trend": 0
+  },
+  "UNI": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": 1,
+   "news": 0,
+   "note": "UNI je 36 % pod 30d maximem s rel30 −26 a betou 2,8, start CME futures už je za námi bez pozitivního efektu.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://247wallst.com/investing/cryptocurrency/2026/09/24/can-uniswap-maintain-its-lead-over-ethereum-until-october-19/?.tsrc=rss"
+   ],
+   "trend": -2
+  },
+  "XRP": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 0,
+   "news": 0,
+   "note": "XRP 21 % pod 30d maximem, slábnoucí objem a přeplněné longy (L/S 3,3) při becie 1,4.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -1
+  },
+  "ZEC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 0,
+   "news": 0,
+   "note": "ZEC po výpadu na 1346 spadl o 7 %, rotace do privacy coinů teď zvýhodňuje spíš Monero a beta 2,8 je v risk-off riziko.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://247wallst.com/investing/cryptocurrency/2026/10/21/zcash-price-prediction-zec-just-jumped-12-in-a-day-can-it-get-back-to-1500/",
+    "https://thecurrencyanalytics.com/altcoins/monero-jumps-8-while-zcash-drops-3-7-privacy-coins-arent-one-trade-304902"
+   ],
+   "trend": -1
+  }
+ },
+ "date": "2026-10-23",
+ "events_7d": [
+  {
+   "date": "2026-10-28",
+   "title": "Zasedání FOMC (27.–28. 10.), rozhodnutí o sazbách a tisková konference",
+   "type": "makro"
+  },
+  {
+   "date": "2026-10-23",
+   "title": "Pokračující výsledková sezóna big tech a odchod z AI obchodu na Nasdaqu",
+   "type": "makro"
+  }
+ ],
+ "regime": {
+  "label": "Risk-off, zvýšená volatilita",
+  "summary": "BTC spadl z ~85k zpět na ~81k při výprodeji Nasdaqu (odchod z AI obchodu), ropě nad 111 USD a likvidacích longů ~420 mil. USD; dominance BTC je nejvýš od května a altcoiny ztrácejí víc. Do FOMC 27.–28. 10. čekáme spíš opatrný trh s vyšší betou altů směrem dolů."
+ },
+ "top10": [
+  {
+   "coin": "TRX",
+   "reason": "Nekorelovaný s BTC a s nízkou volatilitou, v risk-off nejlepší relativní obrana."
+  },
+  {
+   "coin": "BNB",
+   "reason": "Nízká beta a kladný rel7, drží se lépe než ostatní alty."
+  },
+  {
+   "coin": "HYPE",
+   "reason": "Přeprodaný (RSI 34) a s průběžnými buybacky z příjmů."
+  },
+  {
+   "coin": "ZEC",
+   "reason": "Privacy narativ žije, ale vysoká beta brzdí, relativně neutrální."
+  },
+  {
+   "coin": "NEAR",
+   "reason": "Střednědobý uptrend, ale krátkodobě ho tlačí AI výprodej."
+  },
+  {
+   "coin": "SOL",
+   "reason": "Upgrade hotový a beta jen 1,2, ale trend je pod SMA."
+  },
+  {
+   "coin": "SUI",
+   "reason": "Přeprodaný za poslední týden s možností odrazu, ale beta 2,1."
+  },
+  {
+   "coin": "ETH",
+   "reason": "Likvidní large cap, ale slabší než BTC a s přeplněnými longy."
+  },
+  {
+   "coin": "XRP",
+   "reason": "Velká kapitalizace, ale klesající trend a vysoký L/S."
+  },
+  {
+   "coin": "ENA",
+   "reason": "Emise skončily a běží buybacky, ale s vysokou betou."
+  }
+ ]
+}
