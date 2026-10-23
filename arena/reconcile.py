@@ -76,6 +76,11 @@ class Reconciler:
                 if fix:
                     self.risk.freeze(sym, f"QTY_MISMATCH burza {amt} DB {sign * remaining}")
                 continue
+            if pos.state in ("EXITING", "EMERGENCY_CLOSE"):
+                diffs.append(Diff("EXIT_PENDING", sym, f"{pos.slot_id} {pos.state}, na burze {amt}", "zkusit výstup znovu"))
+                if fix:
+                    await self.executor.retry_close(pos)
+                continue
             have = {c for c in open_algo if c in pos.orders.values()}
             missing = [k for k in ("HS", "TS") if (k == "HS" or pos.plan.get("callback_rate"))
                        and pos.orders.get(k) not in have]

@@ -29,7 +29,8 @@ fi
 sudo chown arena:arena /etc/arena/env && sudo chmod 600 /etc/arena/env
 
 # kód + venv (systémový python, aby k němu měl uživatel arena přístup)
-sudo install -d -o "$OWNER" -g "$OWNER" -m 755 /opt/arena5m
+sudo install -d -m 755 /opt/arena5m
+sudo chown -R "$OWNER:$OWNER" /opt/arena5m      # opakovaný běh: na konci se vrací root
 rsync -a --delete --exclude .venv --exclude .git --exclude __pycache__ --exclude .pytest_cache \
   --exclude 'tests/data' "$REPO/" /opt/arena5m/
 "$UV" venv --quiet --allow-existing --python "$PY" /opt/arena5m/.venv

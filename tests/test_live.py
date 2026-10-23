@@ -261,3 +261,34 @@ async def test_200_round_trips_never_unprotected():
         fx.algo_fail.clear()
     assert len(closed) == 200
     assert not conditional_on_order_endpoint(fx)
+
+
+async def test_time_exit_rejected_restores_protection():
+    ex, fx, db, alerts, closed = make()
+    pos = await open_(ex)
+    fx.order_fail = [errors.BinanceError(400, -1001, "Internal error")] * 3
+    await ex.on_bar_close(BAR + 36 * 300_000, {SYM: 0.5})
+    assert ex.positions[SYM].state == "PROTECTED"
+    assert algo_types(fx) == ["STOP_MARKET", "TRAILING_STOP_MARKET"]      # stopy zpět na burze
+    assert any(a[0] == "výstup selhal" for a in alerts)
+
+
+async def test_reconcile_retries_pending_emergency_close():
+    fx = FakeExchange(algo_fail={"STOP_MARKET": [errors.BinanceError(400, -1000, "x")] * 3})
+    ex, fx, db, alerts, closed = make(fx)
+    fx.order_fail = []
+    orig = fx.new_order
+    calls = {"n": 0}
+
+    async def flaky(p):
+        if p.get("newClientOrderId", "").endswith("-EM"):
+            calls["n"] += 1
+            if calls["n"] <= 3:
+                raise errors.BinanceError(400, -1001, "Internal error")
+        return await orig(p)
+
+    fx.new_order = flaky
+    await open_(ex)
+    assert ex.positions[SYM].state == "EMERGENCY_CLOSE" and fx.positions[SYM] != 0
+    diffs = await Reconciler(fx, ex, RiskGuard(load_config(), db, False), (SYM,)).run(fix=True)
+    assert diffs[0].kind == "EXIT_PENDING" and fx.positions[SYM] == 0

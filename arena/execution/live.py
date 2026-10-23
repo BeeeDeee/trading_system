@@ -181,8 +181,16 @@ class LiveExecutor:
             pos.ack_ms = self.now_ms()
             self._latency(pos.trade_id, "send_to_ack", pos.ack_ms - pos.sent_ms)
             self._order_row(cid, pos, "E", False, req, str(resp.get("status")), resp, resp.get("orderId"))
-            self._on_entry_filled(pos, resp)
-            await self._protect(pos)
+            try:
+                self._on_entry_filled(pos, resp)
+                await self._protect(pos)
+            except asyncio.CancelledError:
+                raise   # pád procesu: po restartu dorovná rekonciliace
+            except Exception as e:  # noqa: BLE001 – pozice nesmí zůstat bez ochrany
+                log.exception("chyba po fillu vstupu %s", slot_id)
+                if not pos.plan:
+                    pos.qty = str(Decimal(str(resp["executedQty"])))
+                await self.emergency_close(pos, f"chyba po fillu vstupu: {e!r}")
             return pos
 
     async def _query_until_known(self, symbol: str, cid: str, tries: int = 5) -> dict[str, Any] | None:
@@ -313,27 +321,33 @@ class LiveExecutor:
             pos.state = "PROTECTED"
         self.save(pos)
 
-    async def ensure_protection(self, pos: LivePosition, open_algo_cids: set[str]) -> None:
+    async def ensure_protection(self, pos: LivePosition, open_algo_cids: set[str], locked: bool = False) -> None:
         """Rekonciliace: pozice bez tvrdého stopu nebo trailingu → okamžitě doplnit (SPEC §9)."""
-        async with self.lock(pos.symbol):
-            plan = self._plan(pos)
-            need_hs = pos.orders.get("HS") not in open_algo_cids
-            need_ts = plan.callback_rate is not None and pos.orders.get("TS") not in open_algo_cids
-            if not (need_hs or need_ts):
-                return
-            self.alert("doplňuji ochranu", f"{pos.slot_id}: HS={'chybí' if need_hs else 'ok'} "
-                                           f"TS={'chybí' if need_ts else 'ok'}")
-            ok = True
-            if need_hs:
-                ok = await self._place_algo(pos, "HS", {"type": "STOP_MARKET", "triggerPrice": plan.hard_stop_px})
-            if ok and need_ts:
-                tp: dict[str, Any] = {"type": "TRAILING_STOP_MARKET", "callbackRate": plan.callback_rate}
-                ok = await self._place_algo(pos, "TS", tp)
-            if not ok:
-                await self.emergency_close(pos, "ochranu nejde doplnit")
-                return
-            pos.state = "PROTECTED"
-            self.save(pos)
+        if not locked:
+            async with self.lock(pos.symbol):
+                await self._ensure_protection(pos, open_algo_cids)
+        else:
+            await self._ensure_protection(pos, open_algo_cids)
+
+    async def _ensure_protection(self, pos: LivePosition, open_algo_cids: set[str]) -> None:
+        plan = self._plan(pos)
+        need_hs = pos.orders.get("HS") not in open_algo_cids
+        need_ts = plan.callback_rate is not None and pos.orders.get("TS") not in open_algo_cids
+        if not (need_hs or need_ts):
+            return
+        self.alert("doplňuji ochranu", f"{pos.slot_id}: HS={'chybí' if need_hs else 'ok'} "
+                                       f"TS={'chybí' if need_ts else 'ok'}")
+        ok = True
+        if need_hs:
+            ok = await self._place_algo(pos, "HS", {"type": "STOP_MARKET", "triggerPrice": plan.hard_stop_px})
+        if ok and need_ts:
+            tp: dict[str, Any] = {"type": "TRAILING_STOP_MARKET", "callbackRate": plan.callback_rate}
+            ok = await self._place_algo(pos, "TS", tp)
+        if not ok:
+            await self.emergency_close(pos, "ochranu nejde doplnit")
+            return
+        pos.state = "PROTECTED"
+        self.save(pos)
 
     # --- výstupy ------------------------------------------------------------
 
@@ -367,7 +381,13 @@ class LiveExecutor:
             pos.exit_trigger_ts = self.now_ms()
             self.save(pos)
             await self._cancel_siblings(pos)
-            await self._send_close(pos, "TX" if kind == "TX" else "EM")
+            if not await self._send_close(pos, "TX" if kind == "TX" else "EM"):
+                # stopy jsou zrušené a market výstup neprošel → vrátit ochranu, výstup zkusí rekonciliace
+                self.alert("výstup selhal", f"{pos.slot_id}: {kind} neprošel, obnovuji ochranu")
+                pos.state, pos.exit_kind = "PROTECTED", None
+                pos.orders.pop("HS", None)
+                pos.orders.pop("TS", None)
+                await self.ensure_protection(pos, set(), locked=True)
 
     async def emergency_close(self, pos: LivePosition, reason: str) -> None:
         pos.state = "EMERGENCY_CLOSE"
@@ -379,35 +399,52 @@ class LiveExecutor:
         await self._cancel_siblings(pos)
         await self._send_close(pos, "EM")
 
-    async def _send_close(self, pos: LivePosition, kind: str) -> None:
+    async def _send_close(self, pos: LivePosition, kind: str, attempts: int = 3) -> bool:
+        """MARKET reduceOnly na zbytek pozice. True = příkaz prošel nebo pozice už není (-2022)."""
         cid = client_id(pos.slot_id, pos.seq, kind)
         pos.orders[kind] = cid
         remaining = pos.qty_d - Decimal(str(pos.exit_qty))
         if remaining <= 0:
-            return
+            return True
         req = {"symbol": pos.symbol, "side": pos.close_side, "type": "MARKET", "quantity": remaining,
                "reduceOnly": "true", "newClientOrderId": cid, "newOrderRespType": "RESULT"}
-        try:
-            resp = await self.rest.new_order(req)
-        except errors.UnknownOrderStatus:
-            resp = await self._query_until_known(pos.symbol, cid)
-        except errors.ReduceOnlyRejected:
-            # -2022: pozice mezitím skončila jinak → rekonciliace dopočítá (SPEC §8)
-            self._order_row(cid, pos, kind, False, req, "REJECTED_2022")
-            self.db.event("WARN", "live", "-2022 při výstupu → rekonciliace", {"slot": pos.slot_id})
-            pos.notes.append(f"-2022 při výstupu {kind}")
-            pos.exit_kind = "RC"
-            self.save(pos)
-            return
-        except errors.BinanceError as e:
-            self._order_row(cid, pos, kind, False, req, "REJECTED", {"code": e.code, "msg": e.msg})
-            self.alert("výstup odmítnut", f"{pos.slot_id}: {e}")
-            return
-        self._order_row(cid, pos, kind, False, req, str((resp or {}).get("status", "UNKNOWN")), resp,
-                        (resp or {}).get("orderId"))
-        if resp and Decimal(str(resp.get("executedQty", "0"))) > 0 and pos.exit_qty == 0:
-            # fill z RESULT; ORDER_TRADE_UPDATE ho doplní poplatkem (idempotentně podle trade id)
-            pos.exit_time = int(resp.get("updateTime") or self.now_ms())
+        for attempt in range(attempts):
+            try:
+                resp = await self.rest.new_order(req)
+            except errors.UnknownOrderStatus:
+                resp = await self._query_until_known(pos.symbol, cid)
+                if resp is None:
+                    continue
+            except errors.ReduceOnlyRejected:
+                # -2022: pozice mezitím skončila jinak → rekonciliace dopočítá (SPEC §8)
+                self._order_row(cid, pos, kind, False, req, "REJECTED_2022")
+                self.db.event("WARN", "live", "-2022 při výstupu → rekonciliace", {"slot": pos.slot_id})
+                pos.notes.append(f"-2022 při výstupu {kind}")
+                pos.exit_kind = "RC"
+                self.save(pos)
+                return True
+            except errors.BinanceError as e:
+                self._order_row(cid, pos, kind, False, req, "REJECTED", {"code": e.code, "msg": e.msg})
+                self.alert("výstup odmítnut", f"{pos.slot_id}: {e} (pokus {attempt + 1})")
+                await asyncio.sleep(0.3)
+                continue
+            self._order_row(cid, pos, kind, False, req, str((resp or {}).get("status", "UNKNOWN")), resp,
+                            (resp or {}).get("orderId"))
+            if resp and Decimal(str(resp.get("executedQty", "0"))) > 0 and pos.exit_qty == 0:
+                # fill z RESULT; ORDER_TRADE_UPDATE ho doplní poplatkem (idempotentně podle trade id)
+                pos.exit_time = int(resp.get("updateTime") or self.now_ms())
+            return True
+        return False
+
+    async def retry_close(self, pos: LivePosition) -> None:
+        """Rekonciliace: pozice v EXITING/EMERGENCY_CLOSE je pořád na burze → zkusit výstup znovu."""
+        async with self.lock(pos.symbol):
+            kind = "EM" if pos.state == "EMERGENCY_CLOSE" or pos.exit_kind != "TX" else "TX"
+            if not await self._send_close(pos, kind) and pos.state == "EXITING":
+                pos.state, pos.exit_kind = "PROTECTED", None
+                pos.orders.pop("HS", None)
+                pos.orders.pop("TS", None)
+                await self.ensure_protection(pos, set(), locked=True)
 
     # --- user data stream ---------------------------------------------------
 

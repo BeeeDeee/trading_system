@@ -58,6 +58,9 @@ def _parser() -> argparse.ArgumentParser:
     rp.add_argument("--book", help="adresář s bookDepth soubory (zip nebo csv.gz)")
     rp.add_argument("--src-db", help="zdrojová DB s bary a bar_book (default paths.db)")
 
+    bc = sub.add_parser("bars-check", help="P1: bary v DB vs REST klines (bitová shoda, mezery)")
+    bc.add_argument("--hours", type=float, default=24)
+
     bb = sub.add_parser("backfill-book", help="předplní bar_book z bookDepth (source=bookDepth)")
     bb.add_argument("--days", type=int, required=True)
 
@@ -246,6 +249,37 @@ def _replay(cfg: Config, args: argparse.Namespace) -> int:
     return 0
 
 
+async def _bars_check(cfg: Config, hours: float) -> int:
+    from arena.binance.rest import RestClient
+    from arena.data.bars import BAR_MS, bar_floor
+    from arena.db import Bar, Database
+
+    db = Database(cfg.paths.db)
+    bad = 0
+    async with RestClient(cfg.data_endpoints.rest) as rest:
+        await rest.sync_time()
+        end = bar_floor(rest.clock.now_ms()) - BAR_MS
+        start = end - int(hours * 12) * BAR_MS + BAR_MS
+        for sym in cfg.universe:
+            ref: dict[int, Bar] = {}
+            cur = start
+            while cur <= end:
+                rows = await rest.klines(sym, "5m", cur, end + BAR_MS - 1, 1500)
+                if not rows:
+                    break
+                ref.update({int(k[0]): Bar.from_rest(sym, k) for k in rows if int(k[0]) <= end})
+                cur = int(rows[-1][0]) + BAR_MS
+            mine = {b.open_time: b for b in db.bars(sym, start, end)}
+            missing = sorted(set(ref) - set(mine))
+            diff = [t for t in ref if t in mine and ref[t] != mine[t]]
+            bad += len(missing) + len(diff)
+            print(f"{sym:9} REST {len(ref):4}  DB {len(mine):4}  chybí {len(missing):3}  liší se {len(diff):3}"
+                  + (f"  první rozdíl {diff[0]}" if diff else ""))
+    db.close()
+    print("VÝSLEDEK:", "OK (0 chybějících, bitově shodné)" if bad == 0 else f"{bad} problémů")
+    return 0 if bad == 0 else 1
+
+
 async def _backfill_book(cfg: Config, days: int) -> int:
     from arena.data.book_validate import backfill_book
     from arena.db import Database
@@ -297,6 +331,8 @@ def main(argv: list[str] | None = None) -> int:
             return asyncio.run(_exchange_admin(apply_data_root(load_config(args.config), args.data_root), args))
         if args.cmd == "replay":
             return _replay(apply_data_root(load_config(args.config), args.data_root), args)
+        if args.cmd == "bars-check":
+            return asyncio.run(_bars_check(apply_data_root(load_config(args.config), args.data_root), args.hours))
         if args.cmd == "backfill-book":
             return asyncio.run(_backfill_book(apply_data_root(load_config(args.config), args.data_root), args.days))
         if args.cmd == "book-validate":
