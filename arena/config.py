@@ -138,7 +138,8 @@ class VariantSpec:
 
 @dataclass(frozen=True)
 class Config:
-    env: str
+    env: str                  # obchodní účet (podepsané REST, private WS, live executor)
+    data_env: str             # tržní data (bary, kniha, aggTrades); default mainnet, jen veřejná read-only volání
     universe: tuple[str, ...]
     endpoints_by_env: Mapping[str, Endpoints]
     paper: PaperCfg
@@ -157,6 +158,10 @@ class Config:
     @property
     def endpoints(self) -> Endpoints:
         return self.endpoints_by_env[self.env]
+
+    @property
+    def data_endpoints(self) -> Endpoints:
+        return self.endpoints_by_env[self.data_env]
 
 
 # --- načtení -----------------------------------------------------------------------------------
@@ -206,7 +211,7 @@ def load_config(config_dir: Path | str | None = None, *, env_override: str | Non
     cdir = Path(config_dir or os.environ.get("ARENA_CONFIG_DIR") or DEFAULT_CONFIG_DIR)
     main_text = (cdir / "arena.yaml").read_text(encoding="utf-8")
     raw = load_yaml(main_text) or {}
-    allowed = {"env", "universe", "endpoints", "paper", "live", "risk", "engine", "recorder", "book", "paths", "alerts"}
+    allowed = {"env", "data_env", "universe", "endpoints", "paper", "live", "risk", "engine", "recorder", "book", "paths", "alerts"}
     unknown = set(raw) - allowed
     if unknown:
         raise ConfigError(f"arena.yaml: neznámé klíče {sorted(unknown)}")
@@ -243,6 +248,7 @@ def load_config(config_dir: Path | str | None = None, *, env_override: str | Non
     }
     cfg = Config(
         env=str(env_override or raw.get("env", "testnet")),
+        data_env=str(raw.get("data_env", "mainnet")),
         universe=tuple(raw.get("universe") or ()),
         endpoints_by_env=endpoints,
         paper=_build(PaperCfg, raw.get("paper"), "paper"),
@@ -289,20 +295,22 @@ def validate(cfg: Config, *, check_lock: bool = True) -> None:
     errs: list[str] = []
     if cfg.env not in ("testnet", "mainnet"):
         errs.append(f"env musí být testnet|mainnet, je {cfg.env!r}")
+    if cfg.data_env not in ("testnet", "mainnet"):
+        errs.append(f"data_env musí být testnet|mainnet, je {cfg.data_env!r}")
     if cfg.universe != FROZEN_UNIVERSE:
         errs.append(f"universe je zmrazené (D5) na {list(FROZEN_UNIVERSE)}, je {list(cfg.universe)}")
     for name in ("testnet", "mainnet"):
         if name not in cfg.endpoints_by_env:
             errs.append(f"chybí endpoints.{name}")
-    if cfg.env in cfg.endpoints_by_env:
-        e = cfg.endpoints
+    for name in sorted({cfg.env, cfg.data_env} & set(cfg.endpoints_by_env)):
+        e = cfg.endpoints_by_env[name]
         for fld in ("rest", "ws_market", "ws_public", "ws_private"):
             val = getattr(e, fld)
             if not val.startswith(("https://", "wss://")):
-                errs.append(f"endpoints.{cfg.env}.{fld}: neplatná URL {val!r}")
+                errs.append(f"endpoints.{name}.{fld}: neplatná URL {val!r}")
         for fld, route in (("ws_market", "/market"), ("ws_public", "/public"), ("ws_private", "/private")):
             if not getattr(e, fld).rstrip("/").endswith(route):
-                errs.append(f"endpoints.{cfg.env}.{fld} musí končit routou {route} (nástraha 2)")
+                errs.append(f"endpoints.{name}.{fld} musí končit routou {route} (nástraha 2)")
 
     for fam in ("brk", "obi", "ll"):
         n = sum(1 for v in cfg.variants.values() if v.family == fam)

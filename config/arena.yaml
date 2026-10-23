@@ -1,5 +1,6 @@
 # Globální konfigurace arena5m (SPEC §11). Klíče sem nepatří (D9): /etc/arena/env nebo env proměnné.
 env: testnet            # testnet | mainnet
+data_env: mainnet       # tržní data (bary, kniha, aggTrades) vždy z mainnetu: jen veřejná read-only volání
 universe: [BTCUSDT, ETHUSDT, SOLUSDT, XRPUSDT, DOGEUSDT]   # D5, zmrazené
 endpoints:
   mainnet: {rest: https://fapi.binance.com, ws_market: wss://fstream.binance.com/market,
