@@ -1,0 +1,26 @@
+# Rodina B: nerovnováha hloubky knihy (SPEC §5.5). Parametry jsou zmrazené priory: změna = nové ID.
+family: obi
+symbols: [BTCUSDT, ETHUSDT, SOLUSDT, XRPUSDT, DOGEUSDT]
+defaults:
+  p: 1.0                # pásmo knihy ±p %
+  zt: 2.5               # práh |obi_z|
+  direction: both
+  max_hold_bars: 48
+  k_cb: 5.0
+  cvd_filter: false     # v08: LONG jen při cvd12_z ≥ 0, SHORT jen při ≤ 0
+  tp_mult: null         # v09: TP LIMIT na c_t × (1 ± tp_mult × callback/100)
+  cb_min: 0.2
+  cb_max: 3.0
+  hs_mult: 2.0
+  hs_min_pct: 1.0
+variants:
+  v00: {}
+  v01: {zt: 2.0}
+  v02: {zt: 3.0}
+  v03: {p: 2.0}
+  v04: {p: 0.2}
+  v05: {direction: long}
+  v06: {max_hold_bars: 96}
+  v07: {k_cb: 8.0}
+  v08: {cvd_filter: true}
+  v09: {tp_mult: 2.0}

@@ -1,0 +1,26 @@
+# Globální konfigurace arena5m (SPEC §11). Klíče sem nepatří (D9): /etc/arena/env nebo env proměnné.
+env: testnet            # testnet | mainnet
+universe: [BTCUSDT, ETHUSDT, SOLUSDT, XRPUSDT, DOGEUSDT]   # D5, zmrazené
+endpoints:
+  mainnet: {rest: https://fapi.binance.com, ws_market: wss://fstream.binance.com/market,
+            ws_public: wss://fstream.binance.com/public, ws_private: wss://fstream.binance.com/private}
+  # testnet = Binance „demo trading“ (ověřeno 2026-10-23, docs/VERIFIED.md)
+  testnet: {rest: https://demo-fapi.binance.com, ws_market: wss://demo-fstream.binance.com/market,
+            ws_public: wss://demo-fstream.binance.com/public, ws_private: wss://demo-fstream.binance.com/private}
+paper: {notional_usdt: 1000, entry_latency_ms: 250, trigger_latency_ms: 100, stale_book_penalty_bps: 1,
+        outage_penalty_bps: 2, extra_slippage_bps: {}, cost_model_version: 1}
+live:
+  enabled: false
+  leverage: 2
+  slots:                      # max. 1 na symbol (validace)
+    BTCUSDT: {variant: brk.v00, notional_usdt: 200}
+    ETHUSDT: {variant: ll.v00,  notional_usdt: 150}
+    SOLUSDT: {variant: obi.v09, notional_usdt: 150}   # v09 kvůli měření TP LIMIT (maker výstup)
+    XRPUSDT: {variant: brk.v00, notional_usdt: 150}
+    DOGEUSDT: {variant: ll.v00, notional_usdt: 150}
+risk: {account_daily_loss_pct: 3, slot_daily_loss_pct: 3, slot_max_dd_pct: 15, max_live_positions: 5}
+engine: {cooldown_bars: 3, bar_close_wait_s: 3, snapshot_every_s: 15, reconcile_every_s: 60}
+recorder: {raw_dir: /srv/arena/raw, raw_aggtrades: true, raw_depth: false, retention_days: null}
+book: {bands_pct: [0.2, 1, 2, 5], sample_every_s: 30, resnapshot_every_min: 30, max_diff_age_s: 2}
+paths: {db: /srv/arena/arena.db, site: /srv/arena/site, kill_file: /srv/arena/KILL}
+alerts: {ntfy_topic_env: NTFY_TOPIC}

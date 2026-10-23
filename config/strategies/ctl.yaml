@@ -1,0 +1,15 @@
+# Kontrolní rodina (SPEC §5.7): náhodný vstup, výstupy identické s V00 cílové rodiny. Jen paper.
+# Pravděpodobnost vstupu na bar = empirická frekvence V00 za 7 dní; dokud nejsou data, platí prior.
+# Priory: obi z research/obi_prior (7 signálů/den na 5 symbolů ≈ 0,0049/bar), brk a ll odhad.
+family: ctl
+symbols: [BTCUSDT, ETHUSDT, SOLUSDT, XRPUSDT, DOGEUSDT]
+defaults:
+  target: brk
+  prior_entry_prob: 0.005
+  prior_long_share: 0.5
+  lookback_days: 7
+variants:
+  brk: {target: brk, prior_entry_prob: 0.007}
+  obi: {target: obi, prior_entry_prob: 0.0049}
+  ll: {target: ll, prior_entry_prob: 0.0035, prior_long_share: 1.0,
+       symbols: [ETHUSDT, SOLUSDT, XRPUSDT, DOGEUSDT]}

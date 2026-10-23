@@ -1,0 +1,25 @@
+# Rodina A: breakout s potvrzením objemem (SPEC §5.4). Parametry jsou zmrazené: změna = nové ID.
+family: brk
+symbols: [BTCUSDT, ETHUSDT, SOLUSDT, XRPUSDT, DOGEUSDT]
+defaults:
+  N: 24                 # Donchian lookback (bez aktuálního baru)
+  vz: 1.0               # min. lvz288; null = bez objemového filtru
+  direction: both       # both | long
+  max_hold_bars: 36
+  k_cb: 4.0             # callback = clip(round1(k_cb × atr14_pct), cb_min, cb_max)
+  activate_mult: null   # activate_offset_pct = activate_mult × callback; null = trailing hned
+  cb_min: 0.2
+  cb_max: 3.0
+  hs_mult: 2.0          # hard_stop_pct = max(hs_mult × callback, hs_min_pct)
+  hs_min_pct: 1.0
+variants:
+  v00: {}
+  v01: {N: 12}
+  v02: {N: 48}
+  v03: {vz: null}
+  v04: {vz: 2.0}
+  v05: {k_cb: 2.5}
+  v06: {k_cb: 7.0}
+  v07: {direction: long}
+  v08: {max_hold_bars: 96}
+  v09: {k_cb: 2.5, activate_mult: 1.5}

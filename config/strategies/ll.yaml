@@ -1,0 +1,27 @@
+# Rodina C: BTC vede, alt zaostává (SPEC §5.6). BTC je jen signál.
+family: ll
+symbols: [ETHUSDT, SOLUSDT, XRPUSDT, DOGEUSDT]
+defaults:
+  k: 3.0                # práh rb = ret1_btc / sigma288_btc
+  lam: 0.3              # alt musí mít ret1 ≤ lam × beta288 × ret1_btc
+  direction: long       # long | both (SHORT zrcadlově)
+  max_hold_bars: 48
+  k_cb: 5.0             # null = bez trailingu (v09)
+  trigger_bars: 1       # v07: spouštěč na 2 barech, škálováno √2
+  regime_ema: null      # v08: BTC close > EMA(576)
+  fixed_hard_stop_pct: null   # v09: tvrdý stop 2 % místo pravidla z callbacku
+  cb_min: 0.2
+  cb_max: 3.0
+  hs_mult: 2.0
+  hs_min_pct: 1.0
+variants:
+  v00: {}
+  v01: {k: 2.5}
+  v02: {k: 4.0}
+  v03: {lam: 0.0}
+  v04: {max_hold_bars: 12}
+  v05: {max_hold_bars: 96}
+  v06: {direction: both}
+  v07: {trigger_bars: 2}
+  v08: {regime_ema: 576}
+  v09: {k_cb: null, fixed_hard_stop_pct: 2.0}
