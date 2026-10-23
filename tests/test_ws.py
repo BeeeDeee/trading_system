@@ -41,3 +41,24 @@ async def test_messages_and_forced_reconnect():
         await asyncio.wait_for(task, 3)
     assert connects == [False, True]
     assert got and got[0][0] == "btcusdt@aggTrade"
+
+
+async def test_idle_timeout_reconnects():
+    async def handler(ws):
+        await ws.send(json.dumps({"stream": "x", "data": {}}))
+        await asyncio.sleep(5)       # pak ticho
+
+    async with websockets.serve(handler, "127.0.0.1", 0) as server:
+        port = server.sockets[0].getsockname()[1]
+        connects = []
+
+        async def on_connect(reconnected):
+            connects.append(reconnected)
+
+        conn = WsConnection("t", f"ws://127.0.0.1:{port}", lambda s, d: None, on_connect, idle_timeout_s=0.3)
+        stop = asyncio.Event()
+        task = asyncio.create_task(conn.run(stop))
+        await asyncio.sleep(2.5)
+        stop.set()
+        await asyncio.wait_for(task, 3)
+    assert connects[:2] == [False, True]

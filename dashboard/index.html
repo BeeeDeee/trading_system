@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Arena 5m</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<div id="stale" role="alert" hidden>Data neaktuální: snapshot je starší než 60 s (<span id="stale-age"></span>).</div>
+<header>
+  <strong>Arena 5m</strong>
+  <span id="meta" class="muted"></span>
+  <span class="sp"></span>
+  <label class="muted"><input type="checkbox" id="clean"> bez tainted</label>
+</header>
+<nav role="tablist">
+  <button role="tab" data-tab="overview" aria-selected="true">Přehled</button>
+  <button role="tab" data-tab="board">Žebříček</button>
+  <button role="tab" data-tab="detail">Detail varianty</button>
+  <button role="tab" data-tab="costs">Náklady</button>
+  <button role="tab" data-tab="log">Log</button>
+</nav>
+<main>
+  <section id="tab-overview">
+    <div class="tiles" id="tiles"></div>
+    <h3>Health</h3>
+    <div class="scroll"><table id="health"></table></div>
+    <h3>Otevřené live pozice</h3>
+    <div class="scroll"><table id="live-pos"></table></div>
+    <h3>Otevřené paper pozice <span id="paper-n" class="muted"></span></h3>
+    <div class="scroll"><table id="paper-pos"></table></div>
+  </section>
+  <section id="tab-board" hidden>
+    <p class="warn">Pořadí nejlepších variant je zkreslené výběrem. Rozhoduj podle p_holm a DSR, a jen v termínech
+      den 45 a den 90 (SPEC §14.2).</p>
+    <div class="scroll"><table id="board"></table></div>
+    <h3>Varianta × symbol (net bps, n)</h3>
+    <div class="scroll"><table id="heat" class="heat"></table></div>
+  </section>
+  <section id="tab-detail" hidden>
+    <label>Varianta <select id="variant"></select></label>
+    <div class="chart"><canvas id="c-cum"></canvas></div>
+    <div class="grid2">
+      <div><h3>Podle symbolů</h3><div class="scroll"><table id="d-sym"></table></div></div>
+      <div><h3>Důvod výstupu</h3><div class="scroll"><table id="d-exit"></table></div></div>
+    </div>
+    <h3>Histogram net bps</h3>
+    <div class="chart small"><canvas id="c-hist"></canvas></div>
+    <h3>Posledních 200 obchodů</h3>
+    <div class="scroll"><table id="d-trades"></table></div>
+  </section>
+  <section id="tab-costs" hidden>
+    <p id="cmv" class="muted"></p>
+    <h3>Live náklady podle symbolu</h3>
+    <div class="scroll"><table id="costs-live"></table></div>
+    <h3>Paper náklady podle symbolu</h3>
+    <div class="scroll"><table id="costs-paper"></table></div>
+    <h3>Model error (live − paper dvojče)</h3>
+    <div class="scroll"><table id="model-err"></table></div>
+    <h3>Latence</h3>
+    <div class="scroll"><table id="lat"></table></div>
+  </section>
+  <section id="tab-log" hidden>
+    <div class="scroll"><table id="log"></table></div>
+  </section>
+</main>
+</body>
+</html>

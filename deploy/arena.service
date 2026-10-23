@@ -1,0 +1,26 @@
+[Unit]
+Description=arena5m: 5m strategie na Binance USDⓈ-M (paper + live sondy)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=arena
+Group=arena
+WorkingDirectory=/opt/arena5m
+Environment=ARENA_CONFIG_DIR=/opt/arena5m/config
+EnvironmentFile=-/etc/arena/env
+# live executor se vytvoří jen s live.enabled: true v konfiguraci A flagem --live (SPEC §10)
+ExecStart=/opt/arena5m/.venv/bin/arena --log-file /srv/arena/log/arena.log run
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=30
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/arena
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

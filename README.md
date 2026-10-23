@@ -28,3 +28,21 @@ NTFY_TOPIC=...
 Parametry variant jsou v `config/strategies/*.yaml` a jejich hashe v `config/variants.lock.json`.
 Změna parametrů existující varianty je chyba validace. Nová varianta dostane nové ID a zaregistruje se
 příkazem `uv run arena lock-variants`.
+
+## Nasazení na nový server
+```
+git clone -b arena5m git@github.com:BeeeDeee/trading_system.git ~/ccode/arena5m
+cd ~/ccode/arena5m && uv sync && uv run pytest
+deploy/install.sh            # sudo, idempotentní: uživatel arena, /srv/arena, systemd, Caddy /arena/, portál
+sudo -e /etc/arena/env       # klíče (viz výše); pak: sudo systemctl restart arena
+uv run arena backfill-book --days 3 --data-root /srv/arena   # volitelně: obi nemusí čekat 288 barů (jako arena)
+```
+Data (`/srv/arena/arena.db`, `/srv/arena/raw`) nejsou v gitu. Při migraci běžícího experimentu je zkopíruj
+po zastavení služby (`systemctl stop arena`), jinak se `tainted` označí obchody přes výpadek.
+
+## Provoz
+- `systemctl status arena`, log `/srv/arena/log/arena.log`, dashboard `/arena/`.
+- `arena kill` / `arena unkill`: kill switch (live se zavře, paper běží dál).
+- `arena reconcile [--fix]`, `arena flatten`, `arena risk-reset`, `arena stats`, `arena calibrate`.
+- Live jen s `live.enabled: true` v `config/arena.yaml` **a** `arena run --live` (v unitu `ExecStart`).
+- `env` = obchodní účet (testnet/mainnet), `data_env` = tržní data (vždy mainnet, jen veřejná volání).

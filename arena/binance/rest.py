@@ -216,3 +216,56 @@ class RestClient:
 
     async def account_config(self) -> dict[str, Any]:
         return await self.signed("GET", "/fapi/v1/accountConfig")
+
+    # --- příkazy (SPEC §6, §8) ---------------------------------------------
+
+    async def new_order(self, params: dict[str, Any]) -> dict[str, Any]:
+        """POST /fapi/v1/order. Podmíněné typy odmítne guard (patří na algoOrder). Timeout = UnknownOrderStatus."""
+        return await self.signed("POST", "/fapi/v1/order", params, client_id=params.get("newClientOrderId"))
+
+    async def query_order(self, symbol: str, client_id: str) -> dict[str, Any]:
+        return await self.signed("GET", "/fapi/v1/order", {"symbol": symbol, "origClientOrderId": client_id})
+
+    async def cancel_order(self, symbol: str, client_id: str) -> dict[str, Any]:
+        return await self.signed("DELETE", "/fapi/v1/order", {"symbol": symbol, "origClientOrderId": client_id},
+                                 client_id=client_id)
+
+    async def open_orders(self, symbol: str | None = None) -> list[dict[str, Any]]:
+        return await self.signed("GET", "/fapi/v1/openOrders", {"symbol": symbol})
+
+    async def new_algo_order(self, params: dict[str, Any]) -> dict[str, Any]:
+        p = {"algoType": "CONDITIONAL", **params}
+        return await self.signed("POST", "/fapi/v1/algoOrder", p, client_id=p.get("clientAlgoId"))
+
+    async def query_algo_order(self, client_algo_id: str) -> dict[str, Any]:
+        return await self.signed("GET", "/fapi/v1/algoOrder", {"clientAlgoId": client_algo_id})
+
+    async def cancel_algo_order(self, client_algo_id: str) -> dict[str, Any]:
+        return await self.signed("DELETE", "/fapi/v1/algoOrder", {"clientAlgoId": client_algo_id},
+                                 client_id=client_algo_id)
+
+    async def open_algo_orders(self, symbol: str | None = None) -> list[dict[str, Any]]:
+        data = await self.signed("GET", "/fapi/v1/openAlgoOrders", {"symbol": symbol})
+        return data.get("orders", data) if isinstance(data, dict) else data
+
+    async def user_trades(self, symbol: str, start_ms: int | None = None, limit: int = 1000) -> list[dict[str, Any]]:
+        return await self.signed("GET", "/fapi/v1/userTrades", {"symbol": symbol, "startTime": start_ms,
+                                                               "limit": limit})
+
+    async def income(self, start_ms: int | None = None, income_type: str | None = None,
+                     limit: int = 1000) -> list[dict[str, Any]]:
+        return await self.signed("GET", "/fapi/v1/income", {"incomeType": income_type, "startTime": start_ms,
+                                                           "limit": limit})
+
+    async def set_leverage(self, symbol: str, leverage: int) -> dict[str, Any]:
+        return await self.signed("POST", "/fapi/v1/leverage", {"symbol": symbol, "leverage": leverage})
+
+    async def set_margin_type(self, symbol: str, margin_type: str = "ISOLATED") -> dict[str, Any]:
+        return await self.signed("POST", "/fapi/v1/marginType", {"symbol": symbol, "marginType": margin_type})
+
+    async def listen_key(self) -> str:
+        data = await self.signed("POST", "/fapi/v1/listenKey")
+        return str(data["listenKey"])
+
+    async def keepalive_listen_key(self) -> None:
+        await self.signed("PUT", "/fapi/v1/listenKey")

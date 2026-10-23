@@ -93,29 +93,36 @@ class WsConnection:
             except asyncio.TimeoutError:
                 pass
 
-    async def _recv_loop(self, ws: Any, stop: asyncio.Event) -> None:
+    async def _watch(self, ws: Any, stop: asyncio.Event) -> None:
+        """Hlídač spojení: stop, vynucený reconnect, preventivní rotace a idle timeout zavřou socket,
+        `async for` ve čtecí smyčce pak skončí. Čtení samo nevytváří future na každou zprávu."""
         loop = asyncio.get_running_loop()
         deadline = loop.time() + self.rotate_after_s
         stop_task = asyncio.ensure_future(stop.wait())
         kick_task = asyncio.ensure_future(self._kick.wait())
         try:
             while True:
-                remaining = deadline - loop.time()
-                if remaining <= 0:
+                done, _ = await asyncio.wait({stop_task, kick_task}, timeout=min(5.0, self.idle_timeout_s),
+                                             return_when=asyncio.FIRST_COMPLETED)
+                if done:
+                    break
+                if loop.time() >= deadline:
                     log.info("WS %s: preventivní rotace", self.name)
                     self._kick.set()
-                    return
-                recv = asyncio.ensure_future(ws.recv())
-                done, _ = await asyncio.wait({recv, stop_task, kick_task}, timeout=min(self.idle_timeout_s, remaining),
-                                             return_when=asyncio.FIRST_COMPLETED)
-                if recv not in done:
-                    recv.cancel()
-                    if stop_task in done or kick_task in done:
-                        return
-                    if loop.time() < deadline:
-                        raise TimeoutError(f"žádná zpráva {self.idle_timeout_s:.0f} s")
-                    continue
-                raw = recv.result()
+                    break
+                last = self.last_msg_ms or self.connected_since_ms or wall_ms()
+                if wall_ms() - last > self.idle_timeout_s * 1000:
+                    log.warning("WS %s: žádná zpráva %.0f s → reconnect", self.name, self.idle_timeout_s)
+                    break
+        finally:
+            stop_task.cancel()
+            kick_task.cancel()
+            await ws.close()
+
+    async def _recv_loop(self, ws: Any, stop: asyncio.Event) -> None:
+        watcher = asyncio.ensure_future(self._watch(ws, stop))
+        try:
+            async for raw in ws:
                 self.last_msg_ms = wall_ms()
                 msg = json.loads(raw)
                 if "stream" in msg and "data" in msg:
@@ -127,5 +134,5 @@ class WsConnection:
                 except Exception:  # noqa: BLE001 – chyba handleru nesmí shodit spojení
                     log.exception("WS %s: chyba handleru pro %s", self.name, stream)
         finally:
-            stop_task.cancel()
-            kick_task.cancel()
+            watcher.cancel()
+            await asyncio.gather(watcher, return_exceptions=True)

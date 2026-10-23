@@ -1,0 +1,14 @@
+[Unit]
+Description=arena5m: validace lokální knihy proti bookDepth za včerejšek (SPEC §4.3)
+
+[Service]
+Type=oneshot
+User=arena
+Group=arena
+WorkingDirectory=/opt/arena5m
+Environment=ARENA_CONFIG_DIR=/opt/arena5m/config
+ExecStart=/opt/arena5m/.venv/bin/arena --log-file /srv/arena/log/book-validate.log book-validate
+SuccessExitStatus=1
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/arena
