@@ -40,6 +40,8 @@ import re
 from datetime import timedelta
 from pathlib import Path
 
+from datetime import date
+
 import numpy as np
 
 FIELD_CAP = 6
@@ -156,7 +158,7 @@ def reaction_matrix(cols: np.ndarray, day: np.ndarray, after_close: np.ndarray, 
     T, N = len(dates), len(first)
     out = np.zeros((T, N), dtype=np.float32)
     idx = np.where(after_close, np.searchsorted(dates, day, side="right"), np.searchsorted(dates, day, side="left"))
-    keep = idx < T
+    keep = (idx < T) & (day >= dates[0])      # a filing before the first row is not an event on the first row
     out[idx[keep], cols[keep]] = 1.0
     unknown = np.isnat(first)[None, :] | (dates[:, None] < first[None, :])
     out[unknown] = np.nan
@@ -181,7 +183,10 @@ def _attach_8k(view, home: Path, dataset: str = "sec_8k_item202"):
     first = np.full(view.shape[1], np.datetime64("NaT"), dtype="datetime64[D]")
     f = pl.read_parquet(d / "first.parquet").join(cc, on="cik")
     first[f["col"].to_numpy()] = f["first"].to_numpy().astype("datetime64[D]")
-    ev = (pl.read_parquet(d / "filings.parquet")
+    ev = pl.read_parquet(d / "filings.parquet")
+    if dataset == "sec_8k_items":      # before the August 2004 reform the item numbers mean something else (5, 7, 12)
+        ev = ev.filter(pl.col("filed") >= date(2004, 8, 23))
+    ev = (ev
           .with_columns(pl.col("accepted").str.to_datetime(time_zone="UTC").dt.convert_time_zone("America/New_York")
                         .alias("et")).join(cc, on="cik"))
     et = pl.col("et")

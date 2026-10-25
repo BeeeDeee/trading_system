@@ -190,3 +190,10 @@ def test_a_limited_run_never_rewrites_the_frozen_item_202_files(tmp_path, monkey
     before = pl.read_parquet(tmp_path / "data" / edgar.DATASET / "filings.parquet").height
     edgar.build(tmp_path, tmp_path, client=Fake(), limit=1)
     assert pl.read_parquet(tmp_path / "data" / edgar.DATASET / "filings.parquet").height == before == 2
+
+
+def test_filings_before_the_first_row_are_not_events_on_the_first_row():
+    day = np.array([D("2023-12-20"), D("2024-01-02")])               # first one is before DATES[0] = 2024-01-01
+    m = attached.reaction_matrix(np.array([0, 1]), day, np.array([True, False]),
+                                 np.array([D("2000-01-01"), D("2000-01-01")]), DATES)
+    assert m[0, 0] == 0.0 and m[row("2024-01-02"), 1] == 1.0 and m[:, 0].sum() == 0.0
