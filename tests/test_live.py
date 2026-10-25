@@ -302,3 +302,30 @@ async def test_positions_view_has_hard_stop_and_entry_time():
     me = SimpleNamespace(executor=ex, last_price=lambda sym: 0.5)
     (v,) = LiveRuntime.positions_view(me)
     assert v["hard_stop"] == pytest.approx(0.49) and v["entry_time"] == pos.entry_time > 0
+
+
+async def test_entry_response_without_avg_price_demo_testnet():
+    """Demo/testnet vrací u MARKET RESULT bez avgPrice a s price 0.00 (2026-10-25): ochrana z lokální ceny, cena vstupu
+    se zpřesní dotazem na příkaz, tvrdý stop nikdy s nulou."""
+    fx = FakeExchange()
+    fx.no_avg_price = True
+    ex, fx, db, alerts, closed = make(fx)
+    pos = await open_(ex)
+    assert pos.state == "PROTECTED" and not alerts
+    hs = fx.algos[pos.orders["HS"]]
+    assert Decimal(hs["triggerPrice"]) == Decimal("0.4900")
+    assert pos.entry_px == pytest.approx(0.5) and any(n.startswith("entry_px") for n in pos.notes)
+    assert algo_types(fx) == ["STOP_MARKET", "TRAILING_STOP_MARKET"]
+
+
+async def test_entry_price_unknown_emergency_close_and_trade_recorded():
+    fx = FakeExchange()
+    fx.no_avg_price = True
+    ex, fx, db, alerts, closed = make(fx)
+    ex.last_price = lambda s: None
+    await open_(ex)
+    assert fx.positions[SYM] == 0 and fx.algos == {}                 # zavřeno, nic nezůstalo otevřené
+    assert any(a[0] == "EMERGENCY_CLOSE" for a in alerts)
+    await deliver(ex, fx.events)                                     # fill emergency close přes user stream
+    assert not ex.positions and len(closed) == 1                     # obchod zapsán (dřív ZeroDivisionError)
+    assert closed[0].exit_reason == "emergency" and closed[0].entry_px > 0

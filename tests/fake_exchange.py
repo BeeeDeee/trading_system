@@ -23,6 +23,7 @@ class FakeExchange:
     algo_fail: dict[str, list[Exception]] = field(default_factory=dict)   # typ → fronta výjimek
     order_fail: list[Exception] = field(default_factory=list)
     entry_timeout_but_filled: bool = False
+    no_avg_price: bool = False        # demo/testnet: MARKET RESULT bez avgPrice, price "0.00"
     events: list[dict[str, Any]] = field(default_factory=list)            # ORDER_TRADE_UPDATE market fillů (WS)
     _ids: Any = field(default_factory=lambda: itertools.count(1000))
 
@@ -80,7 +81,10 @@ class FakeExchange:
             if self.entry_timeout_but_filled:
                 self.entry_timeout_but_filled = False
                 raise errors.UnknownOrderStatus("POST", "/fapi/v1/order", cid, "ReadTimeout")
-            return {k: v for k, v in res.items() if k != "_trade"}
+            out = {k: v for k, v in res.items() if k != "_trade"}
+            if self.no_avg_price:
+                out.pop("avgPrice"); out["price"] = "0.00"
+            return out
         self.orders[cid] = {"orderId": oid, "clientOrderId": cid, "symbol": p["symbol"], "type": p["type"],
                             "status": "NEW", "executedQty": "0", "open": True, "price": str(p.get("price"))}
         return dict(self.orders[cid])

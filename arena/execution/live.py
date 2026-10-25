@@ -184,12 +184,16 @@ class LiveExecutor:
             try:
                 self._on_entry_filled(pos, resp)
                 await self._protect(pos)
+                if "entry_px_approx" in pos.notes and pos.symbol in self.positions:
+                    await self._refine_entry_px(pos)
             except asyncio.CancelledError:
                 raise   # pád procesu: po restartu dorovná rekonciliace
             except Exception as e:  # noqa: BLE001 – pozice nesmí zůstat bez ochrany
                 log.exception("chyba po fillu vstupu %s", slot_id)
                 if not pos.plan:
                     pos.qty = str(Decimal(str(resp["executedQty"])))
+                if not pos.entry_px:
+                    pos.entry_px = float(resp.get("avgPrice") or 0) or self.last_price(symbol) or decision_px
                 await self.emergency_close(pos, f"chyba po fillu vstupu: {e!r}")
             return pos
 
@@ -209,10 +213,40 @@ class LiveExecutor:
         self.alert("neznámý stav vstupu", f"{symbol} {cid}: po {tries} dotazech stále neznámý")
         return None
 
+    async def _refine_entry_px(self, pos: LivePosition) -> None:
+        """Skutečná cena vstupu, když ji odpověď na MARKET neobsahovala: dotaz na příkaz, jinak vážený průměr fillů."""
+        try:
+            q = await self.rest.query_order(pos.symbol, pos.orders["E"])
+            px = float(q.get("avgPrice") or 0)
+            if px <= 0:
+                oid = str(q.get("orderId"))
+                fills = [t for t in await self.rest.user_trades(pos.symbol, start_ms=pos.entry_time - 5000)
+                         if str(t.get("orderId")) == oid]
+                qty = sum(float(t["qty"]) for t in fills)
+                px = sum(float(t["price"]) * float(t["qty"]) for t in fills) / qty if qty else 0.0
+            if px > 0:
+                pos.notes.append(f"entry_px {pos.entry_px} → {px}")
+                pos.entry_px = px
+                self.save(pos)
+                return
+        except Exception as e:  # noqa: BLE001 – ochrana už stojí, jen zpřesnění
+            log.warning("cena vstupu %s se nepodařilo zpřesnit: %r", pos.slot_id, e)
+        self.db.event("WARN", "live", f"entry_px zůstává odhad {pos.slot_id}", {"px": pos.entry_px})
+
     def _on_entry_filled(self, pos: LivePosition, resp: Mapping[str, Any]) -> None:
         f = self.filters[pos.symbol]
         qty = Decimal(str(resp["executedQty"]))
-        px = Decimal(str(resp.get("avgPrice") or resp.get("price")))
+        px = Decimal(str(resp.get("avgPrice") or 0))
+        if px <= 0:
+            px = Decimal(str(resp.get("price") or 0))     # u MARKET je price 0
+        if px <= 0:
+            # demo/testnet vrací u RESULT bez avgPrice (zjištěno 2026-10-25): ochrana se nesmí zdržovat dotazem,
+            # úrovně se počítají z poslední ceny a skutečná cena vstupu se dohledá až po ochraně (_refine_entry_px)
+            last = self.last_price(pos.symbol)
+            if not last:
+                raise RuntimeError("cena vstupu neznámá: odpověď bez avgPrice a bez lokální ceny")
+            px = Decimal(str(last))
+            pos.notes.append("entry_px_approx")
         plan = plan_exits(Intent(**pos.intent), f, px, f.floor_qty(qty))
         pos.qty, pos.entry_px = str(plan.qty), float(px)
         pos.entry_time = int(resp.get("updateTime") or self.now_ms())
@@ -280,15 +314,18 @@ class LiveExecutor:
         plan = self._plan(pos)
 
         async def hard_and_trail() -> bool:
-            ok = await self._place_algo(pos, "HS", {"type": "STOP_MARKET", "triggerPrice": plan.hard_stop_px})
-            if not ok:
-                return False
+            # HS a TS se posílají souběžně: na demu trvá jedno volání ~1 s a dvě po sobě by nestihla limit 2 s
+            jobs = [self._place_algo(pos, "HS", {"type": "STOP_MARKET", "triggerPrice": plan.hard_stop_px})]
             if plan.callback_rate is not None:
                 tp: dict[str, Any] = {"type": "TRAILING_STOP_MARKET", "callbackRate": plan.callback_rate}
                 if plan.activate_px is not None:
                     tp["activatePrice"] = plan.activate_px
-                return await self._place_algo(pos, "TS", tp)
-            return True
+                jobs.append(self._place_algo(pos, "TS", tp))
+            res = await asyncio.gather(*jobs, return_exceptions=True)
+            for r in res:
+                if isinstance(r, BaseException):
+                    raise r
+            return all(res)
 
         try:
             ok = await asyncio.wait_for(hard_and_trail(), timeout=self.protect_deadline_s)
@@ -565,8 +602,8 @@ class LiveExecutor:
             funding=funding, gross_pnl=gross, net_pnl=net, gross_bps=bps(gross, notional), net_bps=bps(net, notional),
             entry_slip_bps=sg * (pos.entry_px - pos.decision_px) / pos.decision_px * 1e4,
             exit_slip_bps=sg * (trig - exit_px) / trig * 1e4 if trig else 0.0,
-            mfe_bps=(sg * (sim["mfe_px"] - pos.entry_px) / pos.entry_px * 1e4) if sim.get("mfe_px") else None,
-            mae_bps=(sg * (sim["mae_px"] - pos.entry_px) / pos.entry_px * 1e4) if sim.get("mae_px") else None,
+            mfe_bps=(sg * (sim["mfe_px"] - pos.entry_px) / pos.entry_px * 1e4) if sim.get("mfe_px") and pos.entry_px else None,
+            mae_bps=(sg * (sim["mae_px"] - pos.entry_px) / pos.entry_px * 1e4) if sim.get("mae_px") and pos.entry_px else None,
             bars_held=max(0, ((pos.exit_time or self.now_ms()) - (pos.entry_bar + BAR_MS)) // BAR_MS),
             tainted=0, cost_model_version=self.cost_model_version, config_hash=pos.config_hash,
             twin_trade_id=pos.twin_trade_id, extra={"notes": pos.notes, "realized_pnl": pos.realized},
