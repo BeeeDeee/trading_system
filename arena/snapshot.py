@@ -175,6 +175,41 @@ class SnapshotWriter:
         st["last_reconcile"] = self.db.meta_get("last_reconcile")
         return st
 
+    def _market(self) -> dict[str, Any]:
+        """Posledních 288 uzavřených 5m barů na symbol (24 h) pro sparklines a 24h změnu."""
+        out: dict[str, Any] = {}
+        for sym in self.cfg.universe:
+            rows = self.db.execute("SELECT open_time, c FROM bars WHERE symbol=? ORDER BY open_time DESC LIMIT 288",
+                                   (sym,)).fetchall()[::-1]
+            if rows:
+                out[sym] = {"t0": rows[0][0], "step": BAR_MS, "close": [r[1] for r in rows]}
+        return out
+
+    def _equity_curve(self, now: int, max_points: int = 240) -> dict[str, list[Any]]:
+        rows = self.db.execute("SELECT ts, wallet, unrealized FROM equity WHERE ts>=? ORDER BY ts",
+                               (now - DAY,)).fetchall()
+        if len(rows) > max_points:
+            step = len(rows) / max_points
+            rows = [rows[int(i * step)] for i in range(max_points)] + [rows[-1]]
+        return {"t": [r[0] for r in rows], "equity": [r[1] + (r[2] or 0.0) for r in rows]}
+
+    def _recent_trades(self, limit: int = 40) -> list[dict[str, Any]]:
+        rows = self.db.execute(
+            "SELECT trade_id, slot_id, mode, side, entry_px, exit_px, exit_time, exit_reason, net_bps, net_pnl, tainted "
+            "FROM trades ORDER BY exit_time DESC LIMIT ?", (limit,)).fetchall()
+        return [dict(r) for r in rows]
+
+    def _activity(self, now: int) -> dict[str, Any]:
+        """Signály za 24 h: počty podle akce a po hodinách (jen `entered`)."""
+        since = now - DAY
+        acts = self.db.execute("SELECT action, COUNT(*) FROM signals WHERE decided_at>=? GROUP BY action",
+                               (since,)).fetchall()
+        hours = [0] * 24
+        for (t,) in self.db.execute("SELECT decided_at FROM signals WHERE decided_at>=? AND action='entered'",
+                                    (since,)).fetchall():
+            hours[min(23, int((t - since) // 3_600_000))] += 1
+        return {"by_action": {a: n for a, n in acts}, "entered_by_hour": hours, "since": since}
+
     def write_snapshot(self) -> None:
         now = wall_ms()
         day0 = now // DAY * DAY
@@ -197,4 +232,11 @@ class SnapshotWriter:
             "health": self.health(),
             "stats": self.leaderboard_cache,
             "events": [dict(r) for r in events],
+            "market": self._market(),
+            "equity_curve": self._equity_curve(now),
+            "recent_trades": self._recent_trades(),
+            "activity": self._activity(now),
+            "universe": list(self.cfg.universe),
+            "live_slots": {sym: {"variant": sl.variant, "notional": sl.notional_usdt}
+                           for sym, sl in self.cfg.live.slots.items()},
         })

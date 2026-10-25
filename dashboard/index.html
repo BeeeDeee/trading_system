@@ -5,65 +5,103 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Arena 5m</title>
 <link rel="stylesheet" href="style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
 <script src="app.js" defer></script>
 </head>
 <body>
 <div id="stale" role="alert" hidden>Data neaktuální: snapshot je starší než 60 s (<span id="stale-age"></span>).</div>
-<header>
-  <strong>Arena 5m</strong>
-  <span id="meta" class="muted"></span>
+<div class="top">
+  <div class="brand"><b>Arena 5m</b><span id="envline"></span></div>
+  <span class="pill" id="status"><i class="dot off"></i><span>načítám…</span></span>
   <span class="sp"></span>
-  <label class="muted"><input type="checkbox" id="clean"> bez tainted</label>
-</header>
-<nav role="tablist">
-  <button role="tab" data-tab="overview" aria-selected="true">Přehled</button>
+  <div class="clock" title="Čas do uzavření dalšího 5m baru">
+    <svg class="ring" viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15"/><circle class="fg" id="ring" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+    <span>další bar za <b id="countdown">–:––</b></span>
+  </div>
+  <label class="switch"><input type="checkbox" id="clean"> bez tainted</label>
+</div>
+<nav role="tablist" aria-label="Sekce">
+  <button role="tab" data-tab="overview" aria-selected="true">Živě</button>
   <button role="tab" data-tab="board">Žebříček</button>
-  <button role="tab" data-tab="detail">Detail varianty</button>
+  <button role="tab" data-tab="detail">Varianta</button>
   <button role="tab" data-tab="costs">Náklady</button>
-  <button role="tab" data-tab="log">Log</button>
+  <button role="tab" data-tab="system">Systém</button>
 </nav>
 <main>
   <section id="tab-overview">
-    <div class="tiles" id="tiles"></div>
-    <h3>Health</h3>
-    <div class="scroll"><table id="health"></table></div>
-    <h3>Otevřené live pozice</h3>
-    <div class="scroll"><table id="live-pos"></table></div>
-    <h3>Otevřené paper pozice <span id="paper-n" class="muted"></span></h3>
-    <div class="scroll"><table id="paper-pos"></table></div>
+    <div class="hero">
+      <div class="card hero-main">
+        <div class="lbl"><span id="eq-lbl">Účet</span><span class="pill" id="env-pill" style="padding:2px 9px"></span></div>
+        <div class="big num" id="eq-big">—</div>
+        <div class="sub" id="eq-sub"></div>
+        <div class="hero-chart cht" id="eq-chart"></div>
+      </div>
+      <div class="kpis" id="kpis"></div>
+    </div>
+
+    <h2>Trh <small>posledních 24 h, 5m bary</small></h2>
+    <div class="grid market" id="market"></div>
+
+    <h2>Otevřené pozice <small id="pos-n"></small></h2>
+    <div class="grid pos-grid" id="positions"></div>
+
+    <div class="grid two" style="margin-top:12px">
+      <div>
+        <h2>Poslední obchody</h2>
+        <div class="card"><div class="feed feed-scroll" id="feed"></div></div>
+      </div>
+      <div>
+        <h2>Nové vstupy podle hodiny <small>posledních 24 h</small></h2>
+        <div class="card">
+          <div class="bars24" id="bars24"></div>
+          <div class="axis24"><span>před 24 h</span><span>před 12 h</span><span>teď</span></div>
+        </div>
+        <h2>Signály 24 h</h2>
+        <div class="card"><div class="chips" id="signals"></div></div>
+      </div>
+    </div>
   </section>
+
   <section id="tab-board" hidden>
-    <p class="warn">Pořadí nejlepších variant je zkreslené výběrem. Rozhoduj podle p_holm a DSR, a jen v termínech
-      den 45 a den 90 (SPEC §14.2).</p>
+    <div class="note">Pořadí nejlepších variant je zkreslené výběrem z 30 pokusů. Rozhoduj podle <b>p_holm</b> a <b>DSR</b>, a jen v termínech
+      den 45 a den 90 (SPEC §14.2). Šedé buňky mají méně než 30 obchodů.</div>
     <div class="scroll"><table id="board"></table></div>
-    <h3>Varianta × symbol (net bps, n)</h3>
+    <h2>Varianta × symbol <small>průměr net bps · počet obchodů</small></h2>
     <div class="scroll"><table id="heat" class="heat"></table></div>
   </section>
+
   <section id="tab-detail" hidden>
-    <label>Varianta <select id="variant"></select></label>
-    <div class="chart"><canvas id="c-cum"></canvas></div>
-    <div class="grid2">
-      <div><h3>Podle symbolů</h3><div class="scroll"><table id="d-sym"></table></div></div>
-      <div><h3>Důvod výstupu</h3><div class="scroll"><table id="d-exit"></table></div></div>
+    <div class="toolbar"><label class="sec">Varianta <select id="variant"></select></label><span class="muted" id="vinfo"></span></div>
+    <div class="tiles" id="vtiles"></div>
+    <div class="card">
+      <div class="legend" id="cum-legend"></div>
+      <div class="cht" id="c-cum"></div>
     </div>
-    <h3>Histogram net bps</h3>
-    <div class="chart small"><canvas id="c-hist"></canvas></div>
-    <h3>Posledních 200 obchodů</h3>
+    <div class="grid split" style="margin-top:12px">
+      <div><h2>Podle symbolů</h2><div class="card" id="d-sym"></div></div>
+      <div><h2>Důvod výstupu</h2><div class="card" id="d-exit"></div></div>
+    </div>
+    <h2>Rozdělení net bps</h2>
+    <div class="card"><div class="cht" id="c-hist"></div></div>
+    <h2>Posledních 200 obchodů</h2>
     <div class="scroll"><table id="d-trades"></table></div>
   </section>
+
   <section id="tab-costs" hidden>
     <p id="cmv" class="muted"></p>
-    <h3>Live náklady podle symbolu</h3>
+    <h2>Live náklady podle symbolu</h2>
     <div class="scroll"><table id="costs-live"></table></div>
-    <h3>Paper náklady podle symbolu</h3>
+    <h2>Paper náklady podle symbolu</h2>
     <div class="scroll"><table id="costs-paper"></table></div>
-    <h3>Model error (live − paper dvojče)</h3>
-    <div class="scroll"><table id="model-err"></table></div>
-    <h3>Latence</h3>
-    <div class="scroll"><table id="lat"></table></div>
+    <div class="grid split">
+      <div><h2>Model error <small>live − paper dvojče</small></h2><div class="scroll"><table id="model-err"></table></div></div>
+      <div><h2>Latence</h2><div class="scroll"><table id="lat"></table></div></div>
+    </div>
   </section>
-  <section id="tab-log" hidden>
+
+  <section id="tab-system" hidden>
+    <h2>Zdraví systému</h2>
+    <div class="scroll"><table id="health"></table></div>
+    <h2>Log <small>posledních 200 událostí</small></h2>
     <div class="scroll"><table id="log"></table></div>
   </section>
 </main>
