@@ -32,7 +32,8 @@ Kritérium: 24 h běh, `arena bars-check --hours 24` bez mezer, `arena book-vali
 
 ## 2. (ODLOŽENO, mainnet) P0 akceptace: `arena check --env mainnet` (read-only) – musí projít celé, vč. one-way a oprávnění klíče.
 
-## 3. P5 testnet (paralelně s krokem 1)
+## 3. P5 testnet (paralelně s krokem 1), exec probe
+Live sloty jsou po dobu P5 `xp.v00` (viz CHANGELOG). Po akceptaci: vrátit strategické sloty v `config/arena.yaml` a limity risku.
 V `/opt/arena5m/config/arena.yaml`: `env: testnet` (už je), `live.enabled: true` (zapne vlastník/asistent až po klíčích); nasadit drop-in `deploy/arena-live.conf`.
 Ověřit: `/fapi/v1/algoOrder` na demo, vazba `ALGO_UPDATE.ai` ↔ fill, `arena reconcile`, `kill -9` test, 200 round tripů,
 žádná pozice bez tvrdého stopu > 2 s. Zapsat do `docs/VERIFIED.md` a `CHANGELOG.md`.

@@ -158,7 +158,8 @@ def test_ctl_deterministic_and_frequency():
 
 def test_registry_slot_counts():
     slots = build_slots(load_config())
-    assert sum(not s.is_control for s in slots) == 140
+    assert sum(not s.is_control and s.strategy.family != "xp" for s in slots) == 140
+    assert sum(s.strategy.family == "xp" for s in slots) == 5
     assert sorted(s.slot_id for s in slots if s.is_control)[:2] == ["ctl.brk.BTCUSDT", "ctl.brk.DOGEUSDT"]
     assert sum(s.is_control for s in slots) == 14
     assert global_warmup(S) == 1440

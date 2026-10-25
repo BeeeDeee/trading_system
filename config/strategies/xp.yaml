@@ -1,0 +1,10 @@
+# Exec probe (arena/strategies/xp.py): náhodné vstupy s rotací výstupních mechanismů pro zátěžový test live executoru
+# na TESTNETU. Mimo experiment (stats, žebříček, DSR, kalibrace nákladů xp ignorují). Validace odmítne env: mainnet.
+family: xp
+symbols: [BTCUSDT, ETHUSDT, SOLUSDT, XRPUSDT, DOGEUSDT]
+defaults:
+  entry_prob: 0.15          # na bar, když je slot flat; ≈ 20 round tripů denně na symbol
+  long_share: 0.5
+  mechanisms: [trail, trail_act, stop_time, tp, tight]
+variants:
+  v00: {}

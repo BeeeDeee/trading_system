@@ -18,7 +18,7 @@ def calibrate(db: Database) -> dict[str, Any]:
         "SELECT l.slot_id, l.entry_px le, p.entry_px pe, l.exit_px lx, p.exit_px px, l.side, "
         "l.entry_slip_bps les, p.entry_slip_bps pes, l.exit_slip_bps lxs, p.exit_slip_bps pxs, "
         "l.net_bps ln, p.net_bps pn FROM trades l JOIN trades p ON p.trade_id = l.twin_trade_id "
-        "WHERE l.mode='live' AND p.mode='paper' AND l.tainted=0 AND p.tainted=0").fetchall()
+        "WHERE l.mode='live' AND p.mode='paper' AND l.tainted=0 AND p.tainted=0 AND l.slot_id NOT LIKE 'xp.%'").fetchall()
     by_sym: dict[str, list[Any]] = {}
     for r in rows:
         by_sym.setdefault(r["slot_id"].rsplit(".", 1)[1], []).append(r)

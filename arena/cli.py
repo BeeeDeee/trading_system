@@ -172,9 +172,9 @@ def _admin(cfg: Config, args: argparse.Namespace) -> int:
             return 0
         from arena import stats
 
-        q = "SELECT * FROM trades WHERE mode=?" + (" AND tainted=0" if args.clean else "")
+        q = "SELECT * FROM trades WHERE mode=? AND slot_id NOT LIKE 'xp.%'" + (" AND tainted=0" if args.clean else "")
         trades = stats.from_rows(db.execute(q, (args.mode,)).fetchall())
-        variants = {vid: list(v.symbols) for vid, v in sorted(cfg.variants.items())}
+        variants = {vid: list(v.symbols) for vid, v in sorted(cfg.variants.items()) if v.family != "xp"}
         lb = stats.leaderboard(trades, variants)
         keys = [args.variant] if args.variant else sorted(lb)
         print(f"{'varianta':10} {'n':>5} {'/den':>5} {'net':>7} {'95% CI':>17} {'gross':>7} {'nákl.':>6} "

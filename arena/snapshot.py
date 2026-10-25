@@ -62,14 +62,14 @@ class SnapshotWriter:
     # --- 5 min: statistiky, varianty, náklady -------------------------------
 
     def _trades(self, mode: str = "paper", exclude_tainted: bool = False) -> list[stats.T]:
-        q = "SELECT * FROM trades WHERE mode=? AND cost_model_version=?"
+        q = "SELECT * FROM trades WHERE mode=? AND cost_model_version=? AND slot_id NOT LIKE 'xp.%'"   # exec probe mimo experiment
         rows = self.db.execute(q + (" AND tainted=0" if exclude_tainted else ""),
                                (mode, self.cfg.paper.cost_model_version)).fetchall()
         return stats.from_rows(rows)
 
     def write_heavy(self) -> None:
         t0 = time.monotonic()
-        variants = {vid: list(v.symbols) for vid, v in sorted(self.cfg.variants.items())}
+        variants = {vid: list(v.symbols) for vid, v in sorted(self.cfg.variants.items()) if v.family != "xp"}
         first = self.db.meta_get("first_bar_time")
         period = (wall_ms() - int(first)) if first else None
         out: dict[str, Any] = {}
@@ -146,7 +146,7 @@ class SnapshotWriter:
         rows = self.db.execute(
             "SELECT l.slot_id, l.net_bps - p.net_bps d, l.entry_slip_bps - p.entry_slip_bps de, "
             "l.exit_slip_bps - p.exit_slip_bps dx FROM trades l JOIN trades p ON p.trade_id = l.twin_trade_id "
-            "WHERE l.mode='live'").fetchall()
+            "WHERE l.mode='live' AND l.slot_id NOT LIKE 'xp.%'").fetchall()
         if not rows:
             return {"n": 0}
         d = np.array([r["d"] for r in rows])
@@ -202,10 +202,10 @@ class SnapshotWriter:
     def _activity(self, now: int) -> dict[str, Any]:
         """Signály za 24 h: počty podle akce a po hodinách (jen `entered`)."""
         since = now - DAY
-        acts = self.db.execute("SELECT action, COUNT(*) FROM signals WHERE decided_at>=? GROUP BY action",
+        acts = self.db.execute("SELECT action, COUNT(*) FROM signals WHERE decided_at>=? AND slot_id NOT LIKE 'xp.%' GROUP BY action",
                                (since,)).fetchall()
         hours = [0] * 24
-        for (t,) in self.db.execute("SELECT decided_at FROM signals WHERE decided_at>=? AND action='entered'",
+        for (t,) in self.db.execute("SELECT decided_at FROM signals WHERE decided_at>=? AND action='entered' AND slot_id NOT LIKE 'xp.%'",
                                     (since,)).fetchall():
             hours[min(23, int((t - since) // 3_600_000))] += 1
         return {"by_action": {a: n for a, n in acts}, "entered_by_hour": hours, "since": since}
@@ -215,7 +215,7 @@ class SnapshotWriter:
         day0 = now // DAY * DAY
         today = self.db.execute(
             "SELECT mode, COUNT(*) n, SUM(net_pnl) pnl, SUM(entry_fee + exit_fee) fee, SUM(funding) funding "
-            "FROM trades WHERE exit_time>=? GROUP BY mode", (day0,)).fetchall()
+            "FROM trades WHERE exit_time>=? AND slot_id NOT LIKE 'xp.%' GROUP BY mode", (day0,)).fetchall()
         eq = self.db.execute("SELECT * FROM equity ORDER BY ts DESC LIMIT 1").fetchone()
         events = self.db.execute("SELECT ts, level, component, msg FROM events ORDER BY id DESC LIMIT 200").fetchall()
         _dump(self.data_dir / "snapshot.json", {

@@ -26,15 +26,15 @@ def test_repo_config_is_valid():
     fams = {}
     for v in cfg.variants.values():
         fams[v.family] = fams.get(v.family, 0) + 1
-    assert fams == {"brk": 10, "obi": 10, "ll": 10, "ctl": 3}
+    assert fams == {"brk": 10, "obi": 10, "ll": 10, "ctl": 3, "xp": 1}
     assert cfg.variants["ll.v00"].symbols == ("ETHUSDT", "SOLUSDT", "XRPUSDT", "DOGEUSDT")
     assert cfg.variants["ctl.ll"].symbols == ("ETHUSDT", "SOLUSDT", "XRPUSDT", "DOGEUSDT")
     assert cfg.endpoints.rest == "https://demo-fapi.binance.com"
 
 
 def test_two_live_slots_on_one_symbol_rejected(cdir):
-    _edit(cdir / "arena.yaml", "    XRPUSDT: {variant: brk.v00, notional_usdt: 150}",
-          "    XRPUSDT: {variant: brk.v00, notional_usdt: 150}\n    XRPUSDT: {variant: obi.v00, notional_usdt: 150}")
+    _edit(cdir / "arena.yaml", "    XRPUSDT: {variant: xp.v00, notional_usdt: 100}",
+          "    XRPUSDT: {variant: xp.v00, notional_usdt: 100}\n    XRPUSDT: {variant: obi.v00, notional_usdt: 150}")
     with pytest.raises(ConfigError, match="duplicitní klíč 'XRPUSDT'"):
         load_config(cdir)
 
@@ -60,13 +60,13 @@ def test_new_variant_requires_lock(cdir):
 
 
 def test_live_slot_rules(cdir):
-    _edit(cdir / "arena.yaml", "BTCUSDT: {variant: brk.v00", "BTCUSDT: {variant: ll.v00")
+    _edit(cdir / "arena.yaml", "BTCUSDT: {variant: xp.v00", "BTCUSDT: {variant: ll.v00")
     with pytest.raises(ConfigError, match="na symbolu neběží"):
         load_config(cdir)
 
 
 def test_control_cannot_be_live(cdir):
-    _edit(cdir / "arena.yaml", "BTCUSDT: {variant: brk.v00", "BTCUSDT: {variant: ctl.brk")
+    _edit(cdir / "arena.yaml", "BTCUSDT: {variant: xp.v00", "BTCUSDT: {variant: ctl.brk")
     with pytest.raises(ConfigError, match="kontrolní rodina"):
         load_config(cdir)
 

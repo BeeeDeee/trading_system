@@ -12,6 +12,19 @@ Stav akceptace (SPEC §17) k 2026-10-23. ✅ = splněno a ověřeno, ⏳ = ček�
 | P5 | ✅ (falešná burza) | ⏳ testnet: klíče, 200 round tripů, `kill -9`, ověřit algoOrder na testnetu |
 | P6, P7 | – | – (mainnet live jen s výslovným souhlasem vlastníka) |
 
+## Exec probe (rodina xp), 2026-10-25
+
+- Důvod: strategie dávají ~7 live vstupů denně na 5 slotů, takže 200 round tripů z P5 by trvalo týdny. `xp.v00` vstupuje
+  náhodně (RNG z hashe slotu a baru, deterministické) s p = 0,15 na bar ve stavu flat, ≈ 100 round tripů denně na 5 symbolů.
+- Rotuje 5 výstupních mechanismů, aby každý symbol procvičil všechny cesty: trailing od vstupu, trailing s aktivací
+  (`activatePrice`/`-2021`), jen tvrdý stop + časový výstup (bez trailingu), TP LIMIT, úzký trailing + úzký stop.
+- Mimo experiment: stats, žebříček, heatmapa, DSR, `calibrate`, `costs.json`, „dnes“ a signály 24 h ignorují `xp.*`
+  (nepočítá se do N). Validace odmítne `xp` s `env: mainnet` (před mainnetem smazat `config/strategies/xp.yaml`).
+- `config/arena.yaml`: všech 5 live slotů = `xp.v00` (100 USDT), slotové limity risk guardu uvolněné na 100 %
+  (probe záměrně ztrácí náklady), účetní limit 3 % platí. Po akceptaci P5 vrátit strategie (viz komentář v souboru).
+- Testy: `tests/test_probe.py` (determinismus, jen flat, všechny mechanismy dávají platné úrovně přes `plan_exits`,
+  vyloučení ze statistik, zákaz na mainnetu). 163 testů.
+
 ## P5: live executor, rekonciliace, risk, income (kód; testnet čeká na klíče)
 
 - `execution/live.py`: stavový automat ENTRY_SENT → PROTECTING → PROTECTED → EXITING (+ EMERGENCY_CLOSE).

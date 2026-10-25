@@ -226,7 +226,7 @@
         host.querySelectorAll(".empty").forEach(function (e) { e.parentNode.remove(); });
         el = document.createElement("div"); el.className = "card pc" + (p.mode === "live" ? " live" : ""); el.dataset.k = key;
         el.innerHTML = '<div class="hd"><i class="sw" style="background:' + (SYMCOL[sp.symbol] || "var(--muted)") + '"></i><span class="nm">' + esc(short(sp.symbol)) + '</span><span class="fam">' + esc(sp.variant) + "</span>" +
-          '<span class="side ' + esc(p.side) + '">' + esc(p.side) + '</span><span class="mode ' + p.mode + '">' + (p.mode === "live" ? "LIVE" : "PAPER") + "</span>" +
+          '<span class="side ' + esc(p.side) + '">' + esc(p.side) + '</span><span class="mode ' + p.mode + '">' + (p.mode === "live" ? "LIVE" : "PAPER") + "</span>" + (sp.family === "xp" ? '<span class="mode">PROBE</span>' : "") +
           '<span class="pnl num"></span></div>' +
           '<div class="ladder"><div class="rail"><div class="fill"></div></div>' +
           '<div class="mkr stop"><span>stop</span><i></i></div><div class="mkr entry"><span>vstup</span><i></i></div><div class="mkr trail"><span>trailing</span><i></i></div>' +
@@ -265,7 +265,7 @@
       var sp = slotParts(t.slot_id), win = t.net_bps > 0, isNew = !firstLoad && !seen[t.trade_id];
       return '<div class="fi"' + (isNew ? ' style="background:var(--accent-soft);border-radius:8px"' : "") + '><span class="ic ' + (win ? "p" : "n") + '">' + (win ? "▲" : "▼") + "</span>" +
         '<div><div class="t1">' + esc(short(sp.symbol)) + " " + esc(t.side) + ' <span class="muted" style="font-weight:500">' + esc(sp.variant) + "</span> " +
-        '<span class="mode ' + esc(t.mode) + '">' + esc(String(t.mode).toUpperCase()) + "</span>" + (t.tainted ? ' <span class="mode">TAINTED</span>' : "") + "</div>" +
+        '<span class="mode ' + esc(t.mode) + '">' + esc(String(t.mode).toUpperCase()) + "</span>" + (sp.family === "xp" ? ' <span class="mode">PROBE</span>' : "") + (t.tainted ? ' <span class="mode">TAINTED</span>' : "") + "</div>" +
         '<div class="t2">' + esc(t.exit_reason) + " · před " + ago(t.exit_time) + "</div></div>" +
         '<div class="v num ' + cls(t.net_bps) + '">' + sgn(t.net_bps, 1) + ' bps<div class="t2" style="font-weight:500">' + (fin(t.net_pnl) ? sgn(t.net_pnl, 3) + " USDT" : "") + "</div></div></div>";
     }).join("");

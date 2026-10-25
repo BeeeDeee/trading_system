@@ -8,8 +8,9 @@ from arena.config import Config
 from arena.strategies.base import Strategy
 from arena.strategies.ctl import Control
 from arena.strategies.families import BookImbalance, Breakout, LeadLag
+from arena.strategies.xp import ExecProbe
 
-FAMILY_CLASSES = {"brk": Breakout, "obi": BookImbalance, "ll": LeadLag}
+FAMILY_CLASSES = {"brk": Breakout, "obi": BookImbalance, "ll": LeadLag, "xp": ExecProbe}
 
 
 @dataclass(frozen=True)

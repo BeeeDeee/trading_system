@@ -14,7 +14,7 @@ from arena.binance.signing import Ed25519Signer, HmacSigner, Signer
 from arena.util import canonical_json, sha256_hex
 
 FROZEN_UNIVERSE = ("BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT", "DOGEUSDT")  # D5
-FAMILIES = ("brk", "obi", "ll", "ctl")
+FAMILIES = ("brk", "obi", "ll", "ctl", "xp")   # xp = exec probe: jen testnet, mimo experiment
 DEFAULT_CONFIG_DIR = Path(__file__).resolve().parent.parent / "config"
 LOCK_FILE = "variants.lock.json"
 ENV_FILE = Path("/etc/arena/env")
@@ -321,6 +321,9 @@ def validate(cfg: Config, *, check_lock: bool = True) -> None:
         if bad or not v.symbols:
             errs.append(f"{v.variant_id}: symboly {sorted(bad) or '[]'} mimo universe")
 
+    if cfg.env != "testnet" and any(v.family == "xp" for v in cfg.variants.values()):
+        errs.append("rodina xp (exec probe) smí existovat jen s env: testnet; před mainnetem smaž config/strategies/xp.yaml "
+                    "a její záznam v variants.lock.json")
     # live sloty: max. 1 na symbol (D2) – klíč mapy je symbol a duplicity odmítá loader
     if len(cfg.live.slots) > cfg.risk.max_live_positions:
         errs.append(f"live.slots: {len(cfg.live.slots)} slotů > max_live_positions {cfg.risk.max_live_positions}")
