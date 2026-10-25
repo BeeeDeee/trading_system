@@ -95,8 +95,9 @@ def _parser() -> argparse.ArgumentParser:
     s.add_argument("name", nargs="?", help="fixture name (default: list)")
     s.add_argument("--no-holdout", action="store_true")
     s.add_argument("--root", type=Path, help="scratch directory (default: LAB_HOME/calibration)")
-    s = sub.add_parser("edgar-fetch", help="owner, network, long (resumable): fetch the SEC 8-K Item 2.02 filings of "
-                                           "all SEP stocks, add dataset sec_8k_item202, unblock waiting hypotheses")
+    s = sub.add_parser("edgar-fetch", help="owner, network, long (resumable): fetch the SEC 8-K filings of all SEP "
+                                           "stocks, add datasets sec_8k_item202 (Item 2.02, frozen once written) and "
+                                           "sec_8k_items (non-earnings news), unblock waiting hypotheses")
     s.add_argument("--limit", type=int, help="only the first N CIKs (a trial run; the entry is not added)")
     s.add_argument("--contact", help="contact e-mail for the SEC User-Agent (default: $EDGAR_CONTACT); sent only to sec.gov")
     s = sub.add_parser("intraday-build", help="owner: build the 15m / 5m crypto perpetual panel for the scalping branch "
@@ -315,9 +316,12 @@ def _direct(args) -> int:
             print(json.dumps(rep))
             if args.limit:
                 return 0
-            if edgar.DATASET not in catalog.load(lab.paths.catalog):
+            known = catalog.load(lab.paths.catalog)
+            if edgar.DATASET not in known:
                 catalog.add(lab.paths.catalog, edgar.catalog_entry(rep))
-            print("unblocked:", tick.unblock(lab, f"dataset {edgar.DATASET} fetched") or "none")
+            if edgar.DATASET_ITEMS not in known:
+                catalog.add(lab.paths.catalog, edgar.catalog_entry_items(rep))
+            print("unblocked:", tick.unblock(lab, f"datasets {edgar.DATASET}, {edgar.DATASET_ITEMS} fetched") or "none")
         case "intraday-build":
             from lab.framework import data, intraday_data
             snap = "binance_2026-10-03"

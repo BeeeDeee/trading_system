@@ -92,6 +92,22 @@ def test_crypto_top_n_view_has_a_universe(card):
     assert v.delisting.any() and not np.is_busday(v.dates).all()
 
 
+def test_event_flags_are_sparse_zero_one_in_the_synthetic_market(card):
+    from lab.framework import catalog
+    from lab.framework.paths import LAB_DIR
+    cat = catalog.load(LAB_DIR / "data" / "catalog.yaml")
+    cat["sec_8k_items"] = {**cat["sec_8k_item202"], "id": "sec_8k_items"}
+    reqs = [{"dataset": "sharadar_sep", "frequency": "1d", "period": ["2005-01-03", "2020-12-31"]},
+            {"dataset": "sec_8k_item202", "fields": ["ea_reaction_day"], "frequency": "event", "period": ["2005-01-03", "2020-12-31"]},
+            {"dataset": "sec_8k_items", "fields": ["nonearn_8k_reaction_day"], "frequency": "event", "period": ["2005-01-03", "2020-12-31"]}]
+    card = dict(card, asset_classes=["us_equity"], universe={"kind": "liq_n", "n": 30}, data_requirements=reqs)
+    v = dryrun.synthetic_view(card, cat, seed=1)
+    for f in ("ea_reaction_day", "nonearn_8k_reaction_day"):
+        x = v.extras[f]
+        assert set(np.unique(x[np.isfinite(x)])) == {0.0, 1.0}
+        assert 0.003 < np.nanmean(x) < 0.03                    # sparse: a few events a year, not noise on 0-10
+
+
 def test_builder_definition():
     s = agents.spec("builder")
     assert "try" in s.lab_verbs and "check" not in s.lab_verbs and "WebSearch" not in s.tools

@@ -29,6 +29,9 @@ TEST_TIMEOUT_S = 300
 TEST_EXTRA_IMPORTS = ("pytest", "strategy", "lab.framework.intraday")
 
 
+EVENT_FLAGS = ("ea_reaction_day", "nonearn_8k_reaction_day")   # attached 0/1 event flags (attached.py)
+EVENT_FLAG_RATE = 0.012                                         # about 3 reaction sessions a year per stock
+
 def instruments(card: dict, cat: dict) -> tuple[list[str], list[str], int | None]:
     """(names, asset classes, top-n) of the strategy's instruments, resolved exactly as the gate runner does.
     Universe-based datasets get synthetic names in the same format (SYNxxUSDT pairs, E<number> stocks)."""
@@ -111,8 +114,11 @@ def synthetic_view(card: dict, cat: dict, seed: int) -> DataView:
     for r in reqs:                                                 # signal-only datasets (Archivist ingest)
         if cat[r["dataset"]].get("loader") == "sep_attached":      # SF1 / insiders / 13F: (T, N) extras on the stocks
             for f in r.get("fields") or []:
-                step = rng.random((T // 63 + 2, N)).astype(np.float32) * 10
-                m = np.repeat(step, 63, axis=0)[:T].copy()          # a new value about every quarter
+                if f in EVENT_FLAGS:                                 # sparse 0/1 event flag, like the real one
+                    m = (rng.random((T, N)) < EVENT_FLAG_RATE).astype(np.float32)
+                else:
+                    step = rng.random((T // 63 + 2, N)).astype(np.float32) * 10
+                    m = np.repeat(step, 63, axis=0)[:T].copy()      # a new value about every quarter
                 m[: T // 8] = np.nan                                 # data starts later than the prices
                 m[~stocks[None, :] | ~listed] = np.nan
                 attached_extras[f] = m

@@ -18,6 +18,12 @@ every field is a float32 matrix of about 70 MB and this machine has 3.9 GB):
                                   change in the log number of holders, in breadth (holders / filers), and the
                                   put-call imbalance. A quarter ending D is usable from D + 46 days.
 
+    nonearn_8k_reaction_day       (dataset sec_8k_items, SEC EDGAR, from 2004-08) the same flag with the same reaction
+                                  session rule for the primary form 8-Ks that carry news other than an earnings
+                                  release: at least one item outside {2.02, 5.07, 9.01} and no item 2.02. Several
+                                  8-Ks on one session count once. An earnings release filed under 7.01/8.01 only is
+                                  counted here (contamination): condition on ea_reaction_day as well.
+
     ea_reaction_day               (dataset sec_8k_item202, SEC EDGAR, from 2004-08) 1 on the reaction session of
                                   each primary form 8-K that lists Item 2.02 (earnings release): the first XNYS
                                   session whose 16:00 ET close is at or after the EDGAR acceptance time (a filing
@@ -49,18 +55,20 @@ SF1_COLUMNS = (
     "ncfdebt ncfdiv ncff ncfi ncfinv ncfo ncfx netinc netinccmn netincdis netincnci netmargin opex opinc payables "
     "payoutratio pb pe pe1 ppnenet prefdivis price ps ps1 receivables retearn revenue rnd roa roe roic ros sbcomp "
     "sgna sharesbas shareswa shareswadil sps tangibles taxassets taxexp taxliabilities tbvps workingcapital").split()
-DATASETS = ("sharadar_sf1", "sharadar_insiders", "sharadar_13f", "sec_8k_item202")
+DATASETS = ("sharadar_sf1", "sharadar_insiders", "sharadar_13f", "sec_8k_item202", "sec_8k_items")
 GRAMMAR = {
     "sharadar_sf1": "sf1_<art|arq>_<column>, e.g. sf1_art_roe (columns: " + ", ".join(SF1_COLUMNS[:12]) + ", ...)",
     "sharadar_insiders": "ins_<buy|sell>_<value|n>_<91d|182d|365d>, e.g. ins_buy_value_91d",
     "sharadar_13f": "f13_<" + "|".join(F13_FIELDS) + ">, e.g. f13_io",
     "sec_8k_item202": "ea_reaction_day (1 on the reaction session of an earnings-release 8-K, 0 otherwise)",
+    "sec_8k_items": "nonearn_8k_reaction_day (1 on the reaction session of a non-earnings 8-K, 0 otherwise)",
 }
 _PATTERN = {
     "sharadar_sf1": re.compile(r"^sf1_(art|arq)_(\w+)$"),
     "sharadar_insiders": re.compile(r"^ins_(buy|sell)_(value|n)_(91d|182d|365d)$"),
     "sharadar_13f": re.compile(r"^f13_(\w+)$"),
     "sec_8k_item202": re.compile(r"^(ea_reaction_day)$"),
+    "sec_8k_items": re.compile(r"^(nonearn_8k_reaction_day)$"),
 }
 
 
@@ -76,7 +84,7 @@ def requirement_problems(card: dict, catalog_entries: dict) -> list[str]:
     out, total = [], 0
     reqs = [r for r in card.get("data_requirements", []) if catalog_entries.get(r["dataset"], {}).get("loader") == "sep_attached"]
     if reqs and not any(r["dataset"] == "sharadar_sep" for r in card["data_requirements"]):
-        out.append("sharadar_sf1 / sharadar_insiders / sharadar_13f / sec_8k_item202 attach to sharadar_sep: add it as a requirement "
+        out.append("sharadar_sf1 / sharadar_insiders / sharadar_13f / sec_8k_item202 / sec_8k_items attach to sharadar_sep: add it as a requirement "
                    "(universe kind liq_n or sp500)")
     for r in reqs:
         fields = r.get("fields") or []
@@ -155,12 +163,13 @@ def reaction_matrix(cols: np.ndarray, day: np.ndarray, after_close: np.ndarray, 
     return out
 
 
-def _attach_8k(view, home: Path):
-    """The ea_reaction_day matrix from LAB_HOME/data/sec_8k_item202 (see edgar.py), mapped permaticker -> CIK."""
+def _attach_8k(view, home: Path, dataset: str = "sec_8k_item202"):
+    """The ea_reaction_day (sec_8k_item202) or nonearn_8k_reaction_day (sec_8k_items) matrix from LAB_HOME/data/<dataset>
+    (see edgar.py), mapped permaticker -> CIK."""
     import polars as pl
 
     from lab.framework import edgar
-    d = home / "data" / edgar.DATASET
+    d = home / "data" / dataset
     if not (d / "filings.parquet").exists():
         raise FileNotFoundError(f"{d}/filings.parquet is missing: run `lab edgar-fetch` first")
     col_of = {int(n[1:]): j for j, n in enumerate(view.instruments) if n.startswith("E")}
@@ -202,10 +211,11 @@ def attach(view, dataset: str, fields: list[str], src: Path, home: Path | None =
     for f in fields:
         if (p := field_problem(dataset, f)):
             raise NotImplementedError(p)
-    if dataset == "sec_8k_item202":
+    if dataset in ("sec_8k_item202", "sec_8k_items"):
         if home is None:
-            raise ValueError("sec_8k_item202 lives in LAB_HOME: pass home")
-        return replace(view, extras={**view.extras, "ea_reaction_day": _attach_8k(view, home)})
+            raise ValueError(f"{dataset} lives in LAB_HOME: pass home")
+        name = "ea_reaction_day" if dataset == "sec_8k_item202" else "nonearn_8k_reaction_day"
+        return replace(view, extras={**view.extras, name: _attach_8k(view, home, dataset)})
     tick = _ticker_cols(src, view.instruments)
     dates, N = view.dates, view.shape[1]
     extras = dict(view.extras)
