@@ -292,3 +292,13 @@ async def test_reconcile_retries_pending_emergency_close():
     assert ex.positions[SYM].state == "EMERGENCY_CLOSE" and fx.positions[SYM] != 0
     diffs = await Reconciler(fx, ex, RiskGuard(load_config(), db, False), (SYM,)).run(fix=True)
     assert diffs[0].kind == "EXIT_PENDING" and fx.positions[SYM] == 0
+
+
+async def test_positions_view_has_hard_stop_and_entry_time():
+    from types import SimpleNamespace
+    from arena.live_runtime import LiveRuntime
+    ex, fx, db, alerts, closed = make()
+    pos = await open_(ex)
+    me = SimpleNamespace(executor=ex, last_price=lambda sym: 0.5)
+    (v,) = LiveRuntime.positions_view(me)
+    assert v["hard_stop"] == pytest.approx(0.49) and v["entry_time"] == pos.entry_time > 0

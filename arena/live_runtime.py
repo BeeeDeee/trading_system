@@ -269,8 +269,9 @@ class LiveRuntime:
                 k = sim["callback_pct"] / 100
                 lvl = sim["extreme"] * (1 - k) if p.side == "LONG" else sim["extreme"] * (1 + k)
             sg = 1 if p.side == "LONG" else -1
+            hs = (p.plan or {}).get("hard_stop_px")
             out.append({"slot": p.slot_id, "side": p.side, "state": p.state, "entry_px": p.entry_px, "px": px,
-                        "trail": lvl, "trail_dist_bps": (sg * (px - lvl) / px * 1e4) if (px and lvl) else None,
+                        "entry_time": p.entry_time or None, "hard_stop": float(hs) if hs else None, "trail": lvl, "trail_dist_bps": (sg * (px - lvl) / px * 1e4) if (px and lvl) else None,
                         "algo_id": p.orders.get("TS") or p.orders.get("HS")})
         return out
 
