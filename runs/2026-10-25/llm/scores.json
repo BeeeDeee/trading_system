@@ -1,0 +1,52 @@
+{
+ "date": "2026-10-25",
+ "regime": {
+  "label": "Risk-off, zvýšená volatilita",
+  "summary": "BTC krátce pod 80 000 USD po likvidacích longů za ~820 mil. USD, odlivech z BTC ETF (~774 mil. USD čt–pá) a eskalaci napětí USA–Írán; altcoiny slabší než BTC. FOMC 28. 10. po zářijovém zvýšení sazeb je nejistý, trh je opatrný."
+ },
+ "events_7d": [
+  {"date": "2026-10-28", "title": "Rozhodnutí FOMC o sazbách (po zářijovém zvýšení na 3,75–4,00 %)", "type": "makro"},
+  {"date": "2026-11-01", "title": "Odemčení ~44 mil. SUI (~1,2 % oběhu)", "type": "unlock"},
+  {"date": "2026-10-25", "title": "Geopolitické napětí USA–Írán, evakuace amerického personálu", "type": "jine"},
+  {"date": "2026-11-05", "title": "Zcash NU7 upgrade (mimo 7denní okno, možný předběžný efekt)", "type": "upgrade"}
+ ],
+ "coins": {
+  "BTC": {"trend": -1, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.5, "p_up_7d": 0.47, "expected_move_7d_pct": -0.5, "event": true, "event_type": "jine", "risk_flag": false, "note": "Pod SMA20/50 po likvidacích a odlivech z ETF, ale drží nad SMA100; FOMC 28. 10. je hlavní riziko.", "sources": ["https://www.theblock.co/news/markets/2026-10-24-crypto-longs-lose-404-million-in-four-hours-as-bitcoin-briefly-slips-below-80000-431608", "https://www.cryptotimes.io/2026/10/25/bitcoin-price-today-btc-falls-below-80000-as-820m-crypto-liquidations-hit-longs/"]},
+  "ETH": {"trend": -1, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.42, "p_up_7d": 0.45, "expected_move_7d_pct": -1.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Trvalé odlivy z ETH ETF (>1 mld. USD v říjnu) a prodej Hayese drží ETH pod BTC, RSI 36 dává jen mírný odraz.", "sources": ["https://cointelegraph.com/markets/ether-etf-outflows-near-1-1-billion-october", "https://www.theblock.co/news/markets/2026-10-24-crypto-longs-lose-404-million-in-four-hours-as-bitcoin-briefly-slips-below-80000-431608"]},
+  "BNB": {"trend": 1, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.53, "p_up_7d": 0.49, "expected_move_7d_pct": 0.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Relativní síla vůči BTC (rel7 +3,8) a nízká beta 0,84 jsou v risk-off prostředí výhodou.", "sources": []},
+  "XRP": {"trend": -1, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.44, "p_up_7d": 0.46, "expected_move_7d_pct": -0.5, "event": false, "event_type": "none", "risk_flag": false, "note": "Měsíční downtrend (rel30 −11) s klesajícím objemem a přeplněnými longy (L/S 3,2), bez nové zprávy.", "sources": []},
+  "SOL": {"trend": -1, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.45, "p_up_7d": 0.46, "expected_move_7d_pct": -0.5, "event": false, "event_type": "none", "risk_flag": false, "note": "Pod SMA20/50, RSI 38 a vysoký L/S 2,9 s fundingem 0,01 % – riziko dalších likvidací longů.", "sources": []},
+  "TRX": {"trend": 0, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.5, "p_up_7d": 0.5, "expected_move_7d_pct": 0.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Nízká volatilita a záporná korelace s BTC dělají z TRX defenzivní pozici; záporný funding mírně pomáhá.", "sources": ["https://pluang.com/en/news-feed/settlement-stablecoin-tron-meningkat-triliun-q3"]},
+  "ZEC": {"trend": 0, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.5, "p_up_7d": 0.48, "expected_move_7d_pct": 0.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Silný týden vůči BTC (rel7 +7,9) a narativ NU7 upgradu 5. 11., ale beta 2,65 je v risk-off nebezpečná.", "sources": ["https://www.mexc.com/news/1186062"]},
+  "HYPE": {"trend": -1, "mr": 1, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.48, "p_up_7d": 0.47, "expected_move_7d_pct": -0.5, "event": false, "event_type": "none", "risk_flag": false, "note": "Pod SMA20 s RSI 33, ale zpětné odkupy z poplatků a vysoké objemy na burze tlumí propad.", "sources": ["https://cryptobriefing.com/hyperliquid-expands-markets-boosting-demand-for-hype-token/"]},
+  "DOGE": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.42, "p_up_7d": 0.44, "expected_move_7d_pct": -1.5, "event": false, "event_type": "none", "risk_flag": false, "note": "Pod všemi SMA, objem −39 % a vysoký L/S 2,8 – slabý trend bez katalyzátoru.", "sources": []},
+  "NEAR": {"trend": -1, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.43, "p_up_7d": 0.44, "expected_move_7d_pct": -2.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Propad −14,5 % za 3 dny po výstupu Hayese už je v ceně; silná nabídka v knize, ale beta 2,55 a zlomený krátký trend.", "sources": ["https://pluang.com/en/news-feed/near-turun-24-persen-karena-arthur-hayes-keluar-pembeli-tetap-bertahan"]},
+  "UNI": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.42, "p_up_7d": 0.43, "expected_move_7d_pct": -2.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Hluboký downtrend (rel30 −21) a prodej od Hayese, který je zčásti v ceně; vysoká beta 2,7.", "sources": ["https://www.theblock.co/news/markets/2026-10-24-crypto-longs-lose-404-million-in-four-hours-as-bitcoin-briefly-slips-below-80000-431608"]},
+  "SUI": {"trend": -1, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.42, "p_up_7d": 0.42, "expected_move_7d_pct": -2.0, "event": true, "event_type": "unlock", "risk_flag": false, "note": "10 % pod SMA20 a 1. 11. odemčení ~1,2 % oběhu přidá nabídku.", "sources": ["https://in.tradingview.com/news/coindar%3Af1d181f36094b%3A0-1-21-of-sui-tokens-will-be-unlocked-on-november-1st"]},
+  "HBAR": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.43, "p_up_7d": 0.44, "expected_move_7d_pct": -1.0, "event": false, "event_type": "none", "risk_flag": false, "note": "40 % pod 30d maximem a pod všemi SMA; přeprodanost je jediný argument pro odraz.", "sources": []},
+  "TAO": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.43, "p_up_7d": 0.43, "expected_move_7d_pct": -1.5, "event": false, "event_type": "none", "risk_flag": false, "note": "Pod SMA20/50 s rel30 −11 a slabým objemem, bez nového katalyzátoru.", "sources": []},
+  "ENA": {"trend": -1, "mr": 0, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.42, "p_up_7d": 0.42, "expected_move_7d_pct": -2.5, "event": false, "event_type": "none", "risk_flag": false, "note": "Prodej Hayese a beta 2,65 v risk-off prostředí, krátkodobý odraz z minulého týdne už vyprchává.", "sources": ["https://www.theblock.co/news/markets/2026-10-24-crypto-longs-lose-404-million-in-four-hours-as-bitcoin-briefly-slips-below-80000-431608"]},
+  "PUMP": {"trend": -1, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.43, "p_up_7d": 0.42, "expected_move_7d_pct": -2.0, "event": false, "event_type": "none", "risk_flag": false, "note": "Po −15,9 % za 3 dny je 14,6 % pod SMA20; nejvyšší beta (2,8) v universu je při risk-off nevýhodou.", "sources": []}
+ },
+ "top10": [
+  {"coin": "BNB", "reason": "Relativní síla a nízká beta v risk-off."},
+  {"coin": "TRX", "reason": "Defenzivní, nekorelovaný s BTC, záporný funding."},
+  {"coin": "BTC", "reason": "V risk-off prostředí altcoiny typicky zaostávají za BTC."},
+  {"coin": "ZEC", "reason": "Relativní síla za týden a narativ NU7, ale vysoká beta."},
+  {"coin": "HYPE", "reason": "Přeprodaný se zpětnými odkupy, nižší beta než většina altů."},
+  {"coin": "SOL", "reason": "Velký likvidní alt, RSI 38, možný odraz."},
+  {"coin": "XRP", "reason": "Přeprodanost, ale přeplněné longy."},
+  {"coin": "NEAR", "reason": "Propad po Hayesovi v ceně, silná nabídka v knize."},
+  {"coin": "ETH", "reason": "RSI 36, ale trvalé odlivy z ETF."},
+  {"coin": "HBAR", "reason": "Hluboce přeprodaný, spekulativní odraz."}
+ ],
+ "claude_volne": {
+  "comment": "Před FOMC a při geopolitickém napětí držím přibližně polovinu v hotovosti a jen defenzivní pozice s nízkou betou.",
+  "positions": [
+   {"coin": "BTC", "weight_pct": 20, "reason": "Jádro portfolia; v risk-off prostředí překonává altcoiny.", "invalidation": "Denní uzavření pod 78 000 USD nebo jestřábí překvapení FOMC."},
+   {"coin": "BNB", "weight_pct": 15, "reason": "Relativní síla vůči BTC a nízká beta.", "invalidation": "Rel7 vůči BTC se otočí do záporu a cena spadne pod 710 USD."},
+   {"coin": "TRX", "weight_pct": 10, "reason": "Nekorelovaný, nízkovolatilní diverzifikátor.", "invalidation": "Pokles pod 30d minimum se zrychlujícím objemem."},
+   {"coin": "HYPE", "weight_pct": 8, "reason": "Přeprodaný (RSI 33) se zpětnými odkupy; malá pozice na odraz.", "invalidation": "Uzavření pod 72 USD nebo další týden zaostávání za BTC."}
+  ]
+ }
+}
