@@ -38,11 +38,10 @@ rsync -a --delete --exclude .venv --exclude .git --exclude __pycache__ --exclude
 sudo chown -R root:root /opt/arena5m && sudo chmod -R go-w /opt/arena5m
 
 # dashboard (statické soubory; data/ zapisuje proces)
-# cache busting: bez toho prohlížeč drží starý app.js/style.css (Caddy neposílá Cache-Control) a nový index.html s ním padá
-V="$(cat "$REPO/dashboard/app.js" "$REPO/dashboard/style.css" | sha1sum | cut -c1-10)"
-IDX="$(mktemp)"; sed -e "s#href=\"style.css[^\"]*\"#href=\"style.css?v=$V\"#" -e "s#src=\"app.js[^\"]*\"#src=\"app.js?v=$V\"#" "$REPO/dashboard/index.html" > "$IDX"
+# jeden soubor: CSP webu povoluje jen inline skripty a styly (externí app.js/style.css by blokovala)
+IDX="$(mktemp)"; python3 -I "$HERE/build_dashboard.py" "$REPO/dashboard" "$IDX"
 sudo install -o arena -g arena -m 644 "$IDX" /srv/arena/site/index.html; rm -f "$IDX"
-for f in app.js style.css; do sudo install -o arena -g arena -m 644 "$REPO/dashboard/$f" "/srv/arena/site/$f"; done
+sudo rm -f /srv/arena/site/app.js /srv/arena/site/style.css
 
 # systemd
 for u in arena.service arena-book-validate.service arena-book-validate.timer; do
