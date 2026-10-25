@@ -12,7 +12,7 @@ SVC_HOME="/home/$SVC_USER"
 APP="$SVC_HOME/crypto-paper-bot"
 WEB="/srv/cpb"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PUBLIC_IP="$(curl -fsS -m 10 https://api.ipify.org || echo 38.109.11.51)"
+PUBLIC_IP="$(curl -fsS -m 10 https://api.ipify.org)" || { echo "Nelze zjistit veřejnou IP (api.ipify.org nedostupné)." >&2; exit 1; }
 
 ask() { printf '\n\033[1m== %s\033[0m\n%s\n' "$1" "$2"; read -r -p "Provést? [y/N] " a; [ "$a" = "y" ] || [ "$a" = "Y" ]; }
 as_svc() { sudo -u "$SVC_USER" -H bash -lc "$1"; }
