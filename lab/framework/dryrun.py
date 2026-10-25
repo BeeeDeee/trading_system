@@ -104,7 +104,8 @@ def synthetic_view(card: dict, cat: dict, seed: int) -> DataView:
         rank = np.where(stocks[None, :] & listed, np.argsort(np.argsort(-np.nan_to_num(dv), axis=1), axis=1) + 1.0,
                         np.nan)
         alt = data.crypto_top_n(view, min(N, int(top_n * 1.25)), window=63) & stocks[None, :]
-        view = replace(view, universe=member, extras={"liq_rank": rank, "alt_universe": alt.astype(float)})
+        view = replace(view, universe=member, extras={"liq_rank": rank, "alt_universe": alt.astype(float),
+                                                         "sp500_member": alt.astype(float)})
     if crypto.any() and any(c == "crypto_perp" for c in classes):
         perp = np.array([c == "crypto_perp" for c in classes])
         f = np.where(perp[None, :] & listed, rng.normal(3e-4, 4e-4, (T, N)), np.nan)
@@ -185,7 +186,7 @@ def run(ws: Path) -> tuple[bool, list[str]]:
                     events_path=path.parent / "diagnostic.py")
     if out.passed:
         lines.append(f"G0 integrity on synthetic data: passed ({out.metrics.get('runtime_s')} s, "
-                     f"{out.metrics['lookahead_failures']['cuts']} look-ahead cuts)")
+                     f"{out.metrics['lookahead_failures']['cuts_tested']} look-ahead cuts)")
     else:
         ok = False
         lines.append(f"G0 integrity on synthetic data: FAILED {out.reason_code}")

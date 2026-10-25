@@ -237,6 +237,28 @@ class Lab:
             self.con.execute("INSERT INTO family_merges (from_family, into_family, actor, reason, message_id, ts) "
                              "VALUES (?, ?, ?, ?, ?, ?)", (from_family, into, actor, reason, message_id, now()))
 
+    def add_prior_trials(self, family: str, n: int, source: str, actor: str, reason: str) -> int:
+        """Count `n` configurations tried in earlier studies (outside the lab) as trials of a family: the multiple-
+        testing penalty of its next cards. Append-only like every trial; only the owner may add them, because they
+        cannot be taken back. The rows have no Sharpe (they do not enter the variance of trial Sharpes)."""
+        if actor != "human":
+            raise LabError(f"{actor} cannot add prior-study trials (owner only)")
+        known = {r[0] for r in self.con.execute("SELECT family FROM hypotheses")}
+        if family not in known:
+            raise LabError(f"unknown family {family!r}")
+        if not 1 <= n <= 5000:
+            raise LabError("n must be between 1 and 5000")
+        if len(source.strip()) < 10 or len(reason.strip()) < 20:
+            raise LabError("say where the trials come from (--source) and why they belong to this family (--reason)")
+        root = self.canonical_family(family)
+        ts = now()
+        with Tx(self.con):
+            self.con.executemany(
+                "INSERT INTO trials (family, hypothesis_id, version, run_id, config_sha256, sharpe, n_obs, ts) "
+                "VALUES (?, 'prior-study', 0, 0, ?, NULL, 0, ?)",
+                [(root, f"prior:{source.strip()}:{k + 1}/{n}", ts) for k in range(n)])
+        return self.family_trials(root)
+
     def _in_family(self, family: str) -> tuple[str, list[str]]:
         members = self.family_members(family)
         return ",".join("?" * len(members)), members

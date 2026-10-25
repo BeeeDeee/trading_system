@@ -102,3 +102,21 @@ def test_load_events_validates_shape_and_side(view, tmp_path):
                                "    return np.ones(data.shape, bool), np.full(data.shape, 2.0)\n")
     with pytest.raises(ValueError, match="side"):
         load_events(bad_side, sv, {})
+
+
+def test_events_without_enough_unmarked_peers_are_counted_and_fail_loudly(view):
+    """H-0038 / H-0041: marking (almost) the whole universe on an event date leaves no control, the event study
+    used to drop those events silently and report zero events."""
+    N = view.shape[1]
+    mask = np.zeros(view.shape, dtype=bool)
+    mask[200:260, : N - 2] = True                      # only 2 unmarked instruments on every event date
+    st = diagnostic.event_study(view, mask, None, 1, placebo_runs=5)
+    assert st["n_events"] == 0 and st["n_events_no_controls"] > 0
+    checks = diagnostic.evaluate(st, TH)
+    assert not checks["mechanism_controls"]["pass"] and next(iter(checks)) == "mechanism_controls"
+    ctl = diagnostic.event_controls(view, mask)
+    assert ctl["events"] > 0 and ctl["with_controls"] == 0 and ctl["min_controls"] == 3
+    mask2 = np.zeros(view.shape, dtype=bool)
+    mask2[200:260, :4] = True                           # plenty of controls
+    st2 = diagnostic.event_study(view, mask2, None, 1, placebo_runs=5)
+    assert st2["n_events_no_controls"] == 0 and diagnostic.evaluate(st2, TH)["mechanism_controls"]["pass"]

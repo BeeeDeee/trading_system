@@ -130,7 +130,7 @@ def test_synthetic_views_for_stocks_and_perps(card):
                   data_requirements=[{"dataset": "sharadar_sep", "frequency": "1d"}])
     v = dryrun.synthetic_view(stocks, cat, seed=2)
     assert all(i.startswith("E") for i in v.instruments) and v.universe.sum(axis=1).max() == 40
-    assert {"liq_rank", "alt_universe"} <= set(v.extras) and v.delisting.sum() == 2
+    assert {"liq_rank", "alt_universe", "sp500_member"} <= set(v.extras) and v.delisting.sum() == 2
     perps = dict(card, asset_classes=["crypto_perp"], universe={"kind": "instruments", "instruments": ["BTCUSDT.P", "ETHUSDT.P", "SOLUSDT.P"]},
                  data_requirements=[{"dataset": "binance_perp_1d", "frequency": "1d"}])
     v = dryrun.synthetic_view(perps, cat, seed=2)

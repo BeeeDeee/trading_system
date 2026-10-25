@@ -45,3 +45,23 @@ def test_chair_merges_through_a_message(lab, card):
     tick(lab, None)
     assert lab.family_members("sector-momentum") == ["month-end-flows", "sector-momentum"]
     assert [f["family"] for f in agents.families(lab)] == ["sector-momentum"]
+
+
+def test_prior_study_trials_count_for_the_family_and_only_the_owner_adds_them(lab, card):
+    a, b = two_families(lab, card)
+    assert lab.family_trials("sector-momentum") == 0
+    n = lab.add_prior_trials("sector-momentum", 5, "research X grid", "human", "five configurations of the same rule")
+    assert n == 5 and lab.family_trial_sharpes("sector-momentum") == []         # no Sharpe: variance is untouched
+    lab.merge_family("month-end-flows", "sector-momentum", "chair", "same counterparty and same effect, really")
+    assert lab.family_trials("month-end-flows") == 5                            # counted through the merge
+    lab.add_prior_trials("month-end-flows", 2, "research Y", "human", "two more configurations of the rule")
+    assert lab.family_trials("sector-momentum") == 7                            # stored under the canonical family
+    for actor in ("chair", "scout", "system"):
+        with pytest.raises(LabError, match="owner only"):
+            lab.add_prior_trials("sector-momentum", 1, "research Z", actor, "agents cannot inflate the counter")
+    with pytest.raises(LabError, match="unknown family"):
+        lab.add_prior_trials("no-such-family", 1, "research Z grid", "human", "a family that does not exist here")
+    with pytest.raises(LabError, match="between 1 and 5000"):
+        lab.add_prior_trials("sector-momentum", 0, "research Z grid", "human", "zero is not a count of trials")
+    with pytest.raises(LabError, match="say where"):
+        lab.add_prior_trials("sector-momentum", 1, "x", "human", "short")

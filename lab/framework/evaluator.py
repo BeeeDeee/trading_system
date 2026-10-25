@@ -281,6 +281,21 @@ class QlabEvaluator:
                 "mean_exposure": float(run.sim.gross[win].mean()), "ppy": ppy, "n_obs": len(r),
                 "start": str(ctx.view.dates[win][0]), "end": str(ctx.view.dates[win][-1])}
 
+    def decomposition(self, ctx: Context, run: Run, win: slice, ppy: float, params: dict, end: int) -> dict:
+        """Descriptive, never a gate: where the net Sharpe comes from. Gross (no costs) vs net, and for a book with
+        shorts the long leg and the short leg on their own (each simulated alone, costs included, cash earns the
+        T-bill as in the book). Answers "real cost effect or a bug?" without a second run by hand."""
+        gross = self.run(ctx, params, end, cost_mult=0.0).returns
+        out = {"sharpe_net": self.sr(ctx, run.returns, win, ppy), "sharpe_gross": self.sr(ctx, gross, win, ppy),
+               "cost_drag_per_year": float((gross[win] - run.returns[win]).mean() * ppy)}
+        w = run.targets
+        if w is not None and (w < 0).any():
+            for name, part in (("long_leg", np.where(np.isnan(w), np.nan, np.maximum(w, 0.0))),
+                               ("short_leg", np.where(np.isnan(w), np.nan, np.minimum(w, 0.0)))):
+                sim = self._simulate(ctx, self._full_width(ctx, part), end)
+                out[f"sharpe_{name}"] = self.sr(ctx, sim.returns, win, ppy)
+        return {k: round(v, 4) for k, v in out.items()}
+
     # ------------------------------------------------------------------ G1 basic
 
     def _mechanism(self, ctx: Context, th: dict) -> tuple[dict, dict]:
@@ -326,6 +341,7 @@ class QlabEvaluator:
                                                    th["max_drawdown_vs_benchmark"] * s["bench_max_dd"])
         else:
             checks["sharpe_vs_tbill"] = _check(s["sharpe"], ">=", 0.5)
+        s["decomposition"] = self.decomposition(ctx, run, win, s["ppy"], params, end)
         return _outcome("g1", s | {"benchmark": ctx.bench_name} | ({"mechanism": mech_stats} if mech_stats else {}),
                         checks, mech_trial + [Trial(self.config_sha(ctx, params),
                                                     _per_period(self.excess(ctx, run.returns, win)),
@@ -632,6 +648,18 @@ def strategy_instruments(card: dict) -> dict[str, list[str] | None]:
 
 # ---------------------------------------------------------------------------- G0 on any view
 
+def empty_series(dev: DataView, full: DataView) -> list[str]:
+    """Signal-only series that have no finite value in the dev rows (e.g. FRED serves the ICE BofA spreads only for
+    the last three years): a card built on them sees zero events and "passes" G0 without ever being tested."""
+    out = []
+    for name, x in dev.series.items():
+        x = np.asarray(x, dtype=float)
+        if x.ndim == 1 and not np.isfinite(x).any():
+            later = np.flatnonzero(np.isfinite(np.asarray(full.series[name], dtype=float)))
+            out.append(f"{name} (first valid value {full.dates[later[0]] if len(later) else 'never'})")
+    return out
+
+
 def integrity(card: dict, path, view: DataView, strat_cols: list[str], params: dict, end: int, th: dict,
               runtime_limit_s: float, events_path=None) -> Outcome:
     """G0: static scan, crash/timeout, weight schema, universe, determinism, look-ahead (truncation +
@@ -653,6 +681,9 @@ def integrity(card: dict, path, view: DataView, strat_cols: list[str], params: d
     if problems:
         return Outcome(False, m, "g0_static")
     sv = view.slice(end).columns(strat_cols)
+    if (empty := empty_series(sv, view)):
+        return Outcome(False, m | {"error": "series without a single value in the dev period: " + "; ".join(empty)},
+                       "g0_series_empty")
 
     def targets(v: DataView) -> np.ndarray:
         module = strategy.load(path)
@@ -721,6 +752,13 @@ def _integrity_events(path, sv: DataView, params: dict, th: dict, m: dict, limit
     except Exception as e:  # noqa: BLE001
         return Outcome(False, m | {"error": f"diagnostic.py {type(e).__name__}: {e}"}, "g0_crash")
     m["events_in_dev"] = int(np.count_nonzero(full))
+    from lab.framework import diagnostic
+    m["event_controls"] = ctl = diagnostic.event_controls(sv, full != 0)
+    if ctl["events"] and ctl["with_controls"] < 0.5 * ctl["events"]:
+        m["error"] = (f"{ctl['events'] - ctl['with_controls']} of {ctl['events']} marked events sit on dates with fewer than "
+                      f"{ctl['min_controls']} eligible unmarked instruments: the event study cannot measure them. Mark fewer "
+                      "instruments per date or give the card more peers in its universe")
+        return Outcome(False, m, "g0_event_peer_set")
     if not np.array_equal(full, flat(sv)):
         return Outcome(False, m, "g0_nondeterministic")
     bad = _lookahead(flat, sv, full, th.get("leakage_cut_days", 12))
@@ -752,4 +790,4 @@ def _lookahead(targets, view: DataView, full: np.ndarray, n_cuts: int) -> dict:
             trunc.append(str(view.dates[t]))
         if not same(targets(data.perturb_after(view, t, rng))[: t + 1], full[: t + 1]):
             pert.append(str(view.dates[t]))
-    return {"cuts": len(cuts), "truncation": trunc, "perturbation": pert}
+    return {"cuts_tested": len(cuts), "truncation": trunc, "perturbation": pert}   # failures = the two lists

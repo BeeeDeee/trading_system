@@ -42,6 +42,8 @@ def test_positive_control_metrics_and_trials(slab):
     g1 = rows[1][3]
     assert g1["benchmark"] == "SYN_MKT" and g1["end"] == "2019-12-31"      # dev only: holdout_from 2020-01-01
     assert all(c["pass"] for c in g1["checks"].values())
+    d = g1["decomposition"]                                                  # descriptive: gross vs net, not a gate
+    assert d["sharpe_gross"] >= d["sharpe_net"] and d["cost_drag_per_year"] >= 0
     assert slab.family_trials("canary-positive") == 1 + 2                   # primary + two threshold neighbors
     thresholds = {r[0] for r in slab.con.execute("SELECT thresholds_sha256 FROM gate_results")}
     assert len(thresholds) == 1
@@ -96,3 +98,20 @@ def test_two_requirements_on_one_dataset_add_up(card):
     crypto = dict(card, universe={"kind": "crypto_top_n", "n": 20},
                   data_requirements=[{"dataset": "binance_spot_1d", "frequency": "1d"}])
     assert strategy_instruments(crypto) == {"binance_spot_1d": None}
+
+
+def test_series_without_dev_values_fail_g0_instead_of_showing_zero_events():
+    from dataclasses import replace
+
+    import numpy as np
+
+    from lab.framework import data
+    from lab.framework.evaluator import empty_series
+    v = data.synthetic()
+    T = len(v.dates)
+    late = np.full(T, np.nan)
+    late[T - 5:] = 1.0                                  # starts in the last rows only (like ICE BofA on FRED)
+    full = replace(v, series={"fred_macro.OAS": late, "fred_macro.DGS10": np.ones(T)})
+    dev = full.slice(T - 100)
+    assert empty_series(dev, full) == [f"fred_macro.OAS (first valid value {v.dates[T - 5]})"]
+    assert empty_series(full, full) == []

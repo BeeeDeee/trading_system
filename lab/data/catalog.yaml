@@ -14,7 +14,7 @@ datasets:
     loader: true
     asset_class: us_equity
     instruments: "US common stocks incl. delisted; loadable as universe kind liq_n (n <= 500, PIT liquidity rank among the LIQ1000 stocks) or sp500 (PIT membership). Ticker-blind: ids E<permaticker>."
-    fields: [ret_co, ret_oc, close_u, dollar_volume, tradable, listed, delisting, "extras: liq_rank, alt_universe"]
+    fields: [ret_co, ret_oc, close_u, dollar_volume, tradable, listed, delisting, "extras: liq_rank, alt_universe (reserved for G2), sp500_member"]
     frequency: 1d
     range: ["1998-01-02", "2026-09-25"]
     clock: us_close
@@ -31,6 +31,8 @@ datasets:
       - "Prices are unadjusted; use only total returns for P&L, unadjusted close only for filters."
       - "Pre-2001-04 quotes in fractions: cost model applies x2.5 before decimalization."
       - "Consumed: 2020-2026 used as holdout by research 1-7, 10-11; all history known to the LLM."
+      - "extras sp500_member (1.0/0.0) is the point-in-time S&P 500 membership, readable by liq_n cards: use it for index-change events (additions, deletions) inside LIQ-n. Deleted stocks that fall out of LIQ-n have no weight allowed, so a deletion leg only exists for stocks still in LIQ-n (H-0018 asked for weights on non-members of an sp500 universe, which the engine refuses)."
+      - "liq_n and sp500 membership needs at least 252 trading bars of history (qlab rank_universe min_history) and a 63-day median dollar volume: a stock is never a member in its first year after the IPO. Events tied to listing age under about 260 sessions (IPO lock-up expiry, new-listing overhang) have zero events by construction (H-0021)."
 
   - id: sharadar_sfp
     loader: true

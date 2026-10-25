@@ -1,6 +1,6 @@
 # What the owner has already tested (and how it ended)
 
-Fifteen earlier studies on the same data, all pre-registered, almost all negative. They count against you twice:
+Eighteen earlier studies on the same data, all pre-registered, almost all negative. They count against you twice:
 the families below are already "used" on this history, and their results are known. Re-proposing one of them
 without a genuinely new mechanism is a wasted run. Building on a *specific lesson* from them is welcome.
 
@@ -19,8 +19,19 @@ without a genuinely new mechanism is a wasted run. Building on a *specific lesso
 | 11 | LightGBM on fundamentals, insiders, 13F changes selecting 50 of LIQ1000 monthly | **No (0 of 6).** Sharpe 0.57 vs SPY 0.82, below EW and below the price-only model. Turnover 15x/y. |
 | 12 | Same model with a low-turnover hysteresis rule, forward test | Pre-registered, waiting for data (no Sharadar renewal). |
 | 13 | "Smart Zones" (buy liquid crypto in the discount zone of the swing range) | **No (0 of 6).** Holdout Sharpe -0.92, worse than all 500 random-entry runs; failed already in dev. |
+| 14 | Crypto multi-timeframe pullback: buy BTC/ETH after a strong 1 h drop (z <= -1.5 over 6 h) when the weekly and daily trends point up, hold 48 h (16 configurations) | **No (2 of 6).** Holdout 2022-2026 Sharpe 0.18, below 58 % of random entries in the same trend regime; the trend filter alone (long while W+D trend is up) had Sharpe 0.74. The edge sat in the higher-timeframe trend, not in the entry timing. |
+| 15 | Crypto multi-timeframe 4 h / 1 h / 15 m on BTC/ETH: 4 h trend direction, 1 h break or liquidity-sweep setup, 15 m confirmation, stop behind the structure (16 configurations) | **No (4 of 6).** Best BRK_N48_R3 long: holdout Sharpe 0.43, beat 99 % of random entries and both ablations, but the CI of the mean trade includes 0 and Sharpe is -0.01 at 2x costs (0.22 with a one-candle delay). Shorts and liquidity-sweep setups lose in every variant. Trigger: a price-structure break, not taker flow. |
+| 16 | Crypto intraday batch 1, 15 m BTC/ETH: eight simple families (opening-range breakout, funding extreme, BTC-led lead-lag, CME gap, squeeze, pullback, shock, range) with small grids (30 configurations; cumulative 46 with study 15) | **No.** Five families died in development; holdout rejected ORB (0 of 6, a bull-market artefact) and left FUND and LEAD at 5 of 6 (both failed only the CI of the mean trade; LEAD = long ETH for 4 h after a BTC 1 h move >= 3 sigma while ETH lags, 81 trades, all 4 LEAD variants and all holdout years positive). Holds under about two days lose everywhere on 15 bps round trip. |
+| 17 | LEAD_K3_LONG unchanged on the top-10 altcoins (perps, BTC as leader, 2020-05..2026-09), one configuration | **Yes, 6 of 6**, thin margins: Sharpe 0.80, 2260 trades, event-bootstrap CI of the mean trade [+0.06, +0.36] %; Sharpe 0.06 at 20 bps per side; 2022, 2025 and 2026 negative; shorts and K=2 lose. Forward paper test from 2026-10-01 (to 2027-03-31). The rule was chosen on the study-16 holdout, so the 2022-2026 history is contaminated for it. |
+| 18 | Two pre-registered forward hypotheses on LEAD after a post hoc backtest of 30 variants (hold, stop, delay, cost, size and filter variants; 25 of 30 have Sharpe > 0, every variant negative in 2022 and 2025): H1 = altcoin flat or down while BTC jumps (V05_lag0), H2 = LEAD_K3_LONG only while BTC spot is above its 200-day mean | Forward only, T0 2026-10-20, first decision 2027-10-19 (power about 10-30 %). Nothing evaluated yet. |
 | mrel | Cross-market daily lead-lag scan (706k tests: stocks, ETFs, FX, macro, crypto) | **No.** 3 candidates survived 2022-23 validation (MUB autocorrelation, LQD <- EWG), all died on the 2024-2026 holdout (t ~ 0). |
 | mrel-1h | Hourly crypto lead-lag | Short-term hourly reversal is real but only harvestable as a maker: taker turnover ~1 300x/y costs far more than it earns. |
+
+Trial counting for the lab: configurations tried in these studies that belong to the same rule as a lab card are added
+to its family's trial counter by the owner (`lab prior-trials`): btc-lead-altcoin-lag carries the four LEAD variants of
+study 16, the 30 variants of the post hoc backtest and the extra filter of study 18 H2, cross-sectional-momentum the 864
+candidates of the momentum sleeve of study 1 plus the 12-1 momentum run of the calibration. Study 15 is not counted
+for stop-cascade-breakout (price-structure breakout, not taker-flow trigger).
 
 Lessons the gates are built on (`gates.yaml`):
 

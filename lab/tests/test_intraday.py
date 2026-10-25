@@ -81,6 +81,9 @@ def test_trades_and_random_timing_keep_the_book():
     assert 20 <= len(tr["ret"]) <= 40 and (tr["bars"] >= 1).all() and set(np.unique(tr["side"])) <= {-1.0, 1.0}
     fake = I.random_timing(w, rng, 96)
     assert (fake != 0).sum() == (w != 0).sum() and not np.array_equal(fake, w)
+    same = I.random_timing(w, rng, 96, common=True)                       # one offset: the book keeps its structure
+    assert np.array_equal(np.sort(same, axis=0), np.sort(w, axis=0)) and not np.array_equal(same, w)
+    assert np.allclose(np.abs(np.diff(same, axis=0)).sum(), np.abs(np.diff(w, axis=0)).sum(), atol=1.0)
 
 
 def test_api_is_point_in_time():
@@ -142,6 +145,7 @@ def test_g1_g2_g3_run_and_report_controls(lab, evaluator):
               "blocks_positive"):
         assert k in g2.metrics["checks"]
     assert len(g2.trials) == 2 and g2.metrics["random_timing"]["runs"] == 100
+    assert g2.metrics["random_timing"]["matched"]["runs"] == 50 and g2.metrics["random_timing"]["turnover_ratio_null_to_strategy"]
     g3 = evaluator.evaluate(lab, "H-9001", CARD, "G3", {})
     assert "dsr" in g3.metrics["checks"]
 

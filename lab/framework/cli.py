@@ -106,6 +106,12 @@ def _parser() -> argparse.ArgumentParser:
     s = sub.add_parser("ack", help="owner: mark messages in the owner's inbox handled (optionally with a reply)")
     s.add_argument("ids", type=int, nargs="+")
     s.add_argument("--reply", help="answer, sent as a QUESTION back to the sender (agents) or logged (system)")
+    s = sub.add_parser("prior-trials", help="owner: count configurations tried in earlier studies as trials of a family "
+                                            "(append-only, cannot be taken back)")
+    s.add_argument("family")
+    s.add_argument("n", type=int)
+    s.add_argument("--source", required=True, help="where they were tried, e.g. 'research16 LEAD grid'")
+    s.add_argument("--reason", required=True)
     s = sub.add_parser("dashboard", help="build the static dashboard (a release + atomic `current` switch)")
     s.add_argument("web", type=Path)
     s = sub.add_parser("export", help="JSON export of lab.db (nightly, committed: decision Q2)")
@@ -328,6 +334,9 @@ def _direct(args) -> int:
             meta = intraday_data.build(data.DATA_ROOT / "raw" / snap, data.DATA_ROOT / "derived" / snap /
                                        f"lab_intraday_{args.tf}", args.tf)
             print(f"{args.tf}: {len(meta['symbols'])} symbols, {meta['n_rows']} rows")
+        case "prior-trials":
+            total = lab.add_prior_trials(args.family, args.n, args.source, HUMAN, args.reason)
+            print(f"{args.family}: +{args.n} prior-study trials ({args.source}); the family now counts {total} trials")
         case "ack":
             rows = [lab.con.execute("SELECT * FROM messages WHERE id = ?", (i,)).fetchone() for i in args.ids]
             bad = [i for i, r in zip(args.ids, rows) if r is None or r["to_agent"] != HUMAN]

@@ -22,6 +22,7 @@ import numpy as np
 from lab.framework.data import DataView
 
 MAX_HORIZON = 60
+MIN_CONTROLS = 3          # a date needs this many eligible, non-event instruments to form the control
 
 
 def forward_returns(view: DataView, h: int) -> tuple[np.ndarray, np.ndarray]:
@@ -43,19 +44,30 @@ def eligible(view: DataView) -> np.ndarray:
     return (view.listed if view.universe is None else view.universe) & view.tradable
 
 
+def event_controls(view: DataView, mask: np.ndarray) -> dict:
+    """How many marked events sit on a date with at least MIN_CONTROLS eligible, unmarked instruments. Events on
+    other dates cannot be measured by the event study (they are dropped without a word), so a card that marks
+    almost every instrument of a small universe on its event dates would show zero events at G1 (H-0038, H-0041)."""
+    ok = eligible(view)
+    E = np.asarray(mask, dtype=bool) & ok
+    n_c = ok.sum(axis=1) - E.sum(axis=1)
+    return {"events": int(E.sum()), "with_controls": int(E[n_c >= MIN_CONTROLS].sum()), "min_controls": MIN_CONTROLS}
+
+
 def _stats(Fz: np.ndarray, valid: np.ndarray, S_all: np.ndarray, n_all: np.ndarray, mask: np.ndarray,
-           side: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """Per-date sum of side-adjusted abnormal returns and number of events (date needs >= 3 non-event controls)."""
+           side: np.ndarray) -> tuple[np.ndarray, np.ndarray, int]:
+    """Per-date sum of side-adjusted abnormal returns, number of events (a date needs >= MIN_CONTROLS non-event
+    controls) and the number of events dropped for lack of them."""
     E = mask & valid
     nE = E.sum(axis=1)
     sE = (Fz * E).sum(axis=1)
     n_c = n_all - nE
-    ok = (nE > 0) & (n_c >= 3)
+    ok = (nE > 0) & (n_c >= MIN_CONTROLS)
     control = np.where(ok, (S_all - sE) / np.maximum(n_c, 1), 0.0)
     sg = np.where(E, side, 0.0)
     A = (Fz * sg).sum(axis=1)
     B = sg.sum(axis=1)
-    return np.where(ok, A - control * B, 0.0), np.where(ok, nE, 0)
+    return np.where(ok, A - control * B, 0.0), np.where(ok, nE, 0), int(nE[~ok].sum())
 
 
 def event_study(view: DataView, mask: np.ndarray, side: np.ndarray | None, horizon: int, *,
@@ -69,10 +81,11 @@ def event_study(view: DataView, mask: np.ndarray, side: np.ndarray | None, horiz
     valid &= eligible(view)
     Fz = np.where(valid, F, 0.0)
     S_all, n_all = Fz.sum(axis=1), valid.sum(axis=1)
-    sums, counts = _stats(Fz, valid, S_all, n_all, mask, side)
+    sums, counts, dropped = _stats(Fz, valid, S_all, n_all, mask, side)
     n_events = int(counts.sum())
     out = {"horizon_days": horizon, "n_events": n_events, "n_event_dates": int((counts > 0).sum()),
-           "events_per_year": round(n_events / max(T / 252.0, 1e-9), 1)}
+           "events_per_year": round(n_events / max(T / 252.0, 1e-9), 1),
+           "n_events_no_controls": dropped}       # marked events on dates with < MIN_CONTROLS unmarked peers
     if n_events == 0:
         return out | {"mean_abnormal": None}
     obs = float(sums.sum() / n_events)
@@ -81,7 +94,7 @@ def event_study(view: DataView, mask: np.ndarray, side: np.ndarray | None, horiz
     lo, hi = horizon + 22, T - horizon - 22
     for _ in range(placebo_runs if hi > lo else 0):
         k = int(rng.integers(lo, hi))
-        s, c = _stats(Fz, valid, S_all, n_all, np.roll(mask, k, axis=0), np.roll(side, k, axis=0))
+        s, c, _ = _stats(Fz, valid, S_all, n_all, np.roll(mask, k, axis=0), np.roll(side, k, axis=0))
         if c.sum() > 0:
             placebo.append(float(s.sum() / c.sum()))
     placebo = np.array(placebo)
@@ -109,7 +122,7 @@ def event_study(view: DataView, mask: np.ndarray, side: np.ndarray | None, horiz
         Fh, vh = forward_returns(view, h)
         vh &= eligible(view)
         Fhz = np.where(vh, Fh, 0.0)
-        s, c = _stats(Fhz, vh, Fhz.sum(axis=1), vh.sum(axis=1), mask, side)
+        s, c, _ = _stats(Fhz, vh, Fhz.sum(axis=1), vh.sum(axis=1), mask, side)
         by_h[str(h)] = float(s.sum() / c.sum()) if c.sum() else None
     if by_h:
         out["other_horizons_mean_abnormal"] = by_h        # descriptive only, never a gate
@@ -123,7 +136,11 @@ def evaluate(stats: dict, th: dict) -> dict:
     pct = stats.get("placebo_percentile")
     blocks = [b["mean_abnormal"] for b in stats.get("blocks", []) if b["mean_abnormal"] is not None]
     cr = stats.get("cost_ratio")
+    marked = stats["n_events"] + stats.get("n_events_no_controls", 0)
+    share = stats["n_events"] / marked if marked else 1.0
     return {
+        # named first so the rejection says why the events vanished instead of "below the event minimum"
+        "mechanism_controls": _check(share, ">=", th.get("min_control_share", 0.5)),
         "mechanism_events": _check(stats["n_events"] if stats["n_event_dates"] >= th["min_event_dates"] else 0,
                                    ">=", th["min_events"]),
         "mechanism_abnormal_return": _check(obs if obs is not None else float("nan"), ">", 0.0),

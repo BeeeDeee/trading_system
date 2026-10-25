@@ -338,7 +338,8 @@ def sharadar_sep(universe: dict) -> DataView:
     Columns are every stock that was ever in LIQ-n or the S&P 500 (the G2 alternative universe), the
     `universe` mask is the card's point-in-time membership: kind `liq_n` (n <= 500: liquidity rank <= n among
     the LIQ1000 stocks, price and listing filters of qlab) or `sp500`. extras: `liq_rank` (PIT liquidity rank,
-    1 = most liquid; the cost tiers use it), `alt_universe` (1.0 where the other universe has the stock)."""
+    1 = most liquid; the cost tiers use it), `alt_universe` (1.0 where the other universe has the stock; reserved for G2)
+    and `sp500_member` (PIT S&P 500 membership, 1.0/0.0, for cards that read index changes inside a liq_n universe)."""
     from qlab.data.panel import load_panel
 
     kind, n = universe["kind"], int(universe.get("n") or 0)
@@ -371,7 +372,8 @@ def sharadar_sep(universe: dict) -> DataView:
     return DataView(np.asarray(p.dates), tuple(f"E{int(a)}" for a in np.asarray(p.assets)[cols]),
                     ("us_equity",) * len(cols), f32(p.ret_co), f32(p.ret_oc), sel(p.tradable), sel(p.listed),
                     sel(p.delisting), f32(p.close_u), f32(p.dollar_volume), universe=main,
-                    extras={"liq_rank": f32(ex["liq_rank"]), "alt_universe": alt.astype(np.float32)})
+                    extras={"liq_rank": f32(ex["liq_rank"]), "alt_universe": alt.astype(np.float32),
+                            "sp500_member": sp.astype(np.float32)})
 
 
 # ---------------------------------------------------------------------------- Binance USD-M perpetuals

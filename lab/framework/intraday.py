@@ -154,12 +154,19 @@ def trades(sim: Sim) -> dict:
     return {k: (np.concatenate(v) if v else np.empty(0)) for k, v in out.items()}
 
 
-def random_timing(pos_targets: np.ndarray, rng, min_shift: int) -> np.ndarray:
+def random_timing(pos_targets: np.ndarray, rng, min_shift: int, common: bool = False) -> np.ndarray:
     """Null for the entry timing: every instrument's target series circularly shifted by its own random offset.
     Keeps the number of trades, their lengths and sides; destroys the link to the market. Rows whose shifted
-    positions add up to more than gross 1 are scaled down (the null may not use leverage either)."""
+    positions add up to more than gross 1 are scaled down (the null may not use leverage either).
+
+    `common=True` shifts all instruments by ONE offset: the book keeps its cross-instrument structure, so gross
+    exposure and notional turnover are identical to the strategy's. Independent offsets spread out entries that
+    arrive together (one BTC jump enters many altcoins at once, each at 1/N of the gross budget); the null then
+    holds bigger positions and trades more notional than the strategy, pays more cost and looks too harsh."""
     from lab.framework.intraday_api import normalize_gross
     T = len(pos_targets)
+    if common:
+        return np.roll(pos_targets, int(rng.integers(min_shift, max(min_shift + 1, T - min_shift))), axis=0)
     out = np.empty_like(pos_targets)
     for j in range(pos_targets.shape[1]):
         out[:, j] = np.roll(pos_targets[:, j], int(rng.integers(min_shift, max(min_shift + 1, T - min_shift))))
@@ -439,13 +446,27 @@ class IntradayEvaluator:
         # random timing null
         rng = np.random.default_rng(12345)
         shift = view.bars_per_day * 5
-        null = []
+        null, null_turn = [], []
         for _ in range(th["random_entry"]["runs"]):
             fake = random_timing(np.nan_to_num(_ffill_rows(w)), rng, shift)
-            null.append(sr(self.run(lab, hid, view, params, cfg, w=fake)))
+            sim = self.run(lab, hid, view, params, cfg, w=fake)
+            null.append(sr(sim))
+            null_turn.append(float(sim.turnover[win].mean()))
         pct = float(np.mean(np.array(null) < s0)) if null else 0.0
+        base_turn = float(base.turnover[win].mean())
         m["random_timing"] = {"runs": len(null), "median_sharpe": float(np.median(null)) if null else None,
-                              "p95_sharpe": float(np.quantile(null, 0.95)) if null else None}
+                              "p95_sharpe": float(np.quantile(null, 0.95)) if null else None,
+                              # > 1: the null trades more notional than the strategy and is harsher than it should be
+                              "turnover_ratio_null_to_strategy": round(float(np.median(null_turn)) / base_turn, 3)
+                              if null and base_turn > 0 else None}
+        # descriptive, not a gate: the same null with ONE offset for all instruments (same exposure and turnover)
+        rng2, matched = np.random.default_rng(54321), []
+        for _ in range(max(20, th["random_entry"]["runs"] // 2)):
+            matched.append(sr(self.run(lab, hid, view, params, cfg, w=random_timing(
+                np.nan_to_num(_ffill_rows(w)), rng2, shift, common=True))))
+        m["random_timing"]["matched"] = {
+            "runs": len(matched), "median_sharpe": float(np.median(matched)),
+            "p95_sharpe": float(np.quantile(matched, 0.95)), "percentile": float(np.mean(np.array(matched) < s0))}
         checks["random_timing_percentile"] = _check(pct, ">=", th["random_entry"]["min_percentile"])
         return _outcome("g2", m, checks, trials)
 

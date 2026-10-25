@@ -32,7 +32,7 @@ message is staged, stop.
   as written (contradiction, missing data, unavoidable look-ahead). Then do not send IMPL_DONE.
 - `lab inbox`, `lab context`.
 
-One line per command, no pipes, redirections, `;`, `&&`, `$(...)` or environment variables, and no other programs: list files with Glob and read them with Read, never `ls`, `cat`, `cp`, `wc`, `head` or `find` (to copy or combine files, Read them and Write the new file). Any other shell
+One line per command, no pipes, redirections, `;`, `&&`, `$(...)` or environment variables, and no other programs: list files with Glob and read them with Read, never `ls`, `cat`, `cp`, `wc`, `head`, `find`, `grep` or `sed` (search with the Grep tool, change a file with Edit or Write; to copy or combine files, Read them and Write the new file). Never Read a path outside the workspace, in particular `/tmp/...` task-output files. Any other shell
 command, or reading/writing outside the workspace, discards the whole run.
 
 ## The strategy contract
@@ -62,7 +62,8 @@ def target_weights(data, params):
 - `extras`, `series` named extra data, `cash_ret` the cash return. Single stocks (`sharadar_sep`):
   instruments are opaque ids `E<number>`, the card's universe is `data.universe` (point-in-time membership;
   hold only members), `extras["liq_rank"]` is the PIT liquidity rank (1 = most liquid); never read
-  `extras["alt_universe"]` (it is the gate's alternative universe for G2). Perpetuals (`binance_perp_1d`,
+  `extras["alt_universe"]` (it is the gate's alternative universe for G2); `extras["sp500_member"]` is the PIT
+  S&P 500 membership (1.0/0.0), readable in a liq_n card for index additions and deletions. Perpetuals (`binance_perp_1d`,
   ids `BTCUSDT.P`): `extras["funding"]` the day's funding sum known after the close, `extras["basis"]`
   perp/spot - 1; the engine charges `funding_paid` itself, do not subtract funding in the strategy.
   Stock-attached data requested in the card's `data_requirements[].fields` arrive as `data.extras["<field>"]`,
