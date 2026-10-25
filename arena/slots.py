@@ -136,7 +136,8 @@ class SlotRunner:
             self.db.meta_set("first_bar_time", str(t))
         closes: dict[str, float] = {}
         feats: dict[str, dict[str, float] | None] = {}
-        btc = self.features.arrays("BTCUSDT", t) if "BTCUSDT" in symbols else None
+        # BTC i pro samostatně vyhodnocený opožděný alt (BTC bar už je v DB); chybí-li BTC bar, arrays vrátí None
+        btc = self.features.arrays("BTCUSDT", t)
         for sym in sorted(symbols):
             if sym in stale_symbols:
                 feats[sym] = None

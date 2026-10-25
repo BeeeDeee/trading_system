@@ -9,7 +9,8 @@ endpoints:
   testnet: {rest: https://demo-fapi.binance.com, ws_market: wss://demo-fstream.binance.com/market,
             ws_public: wss://demo-fstream.binance.com/public, ws_private: wss://demo-fstream.binance.com/private}
 paper: {notional_usdt: 1000, entry_latency_ms: 250, trigger_latency_ms: 100, stale_book_penalty_bps: 1,
-        outage_penalty_bps: 2, extra_slippage_bps: {}, cost_model_version: 1}
+        outage_penalty_bps: 2, extra_slippage_bps: {}, cost_model_version: 1,
+        taker_fee: 0.0005, maker_fee: 0.0002}   # VIP0 napevno (demo účet má 0,04 %); jiný tier účtu = změnit + nová cost_model_version
 live:   # enabled: jen demo/testnet (env: testnet); před přepnutím na mainnet vypnout, viz docs/GOLIVE.md
   enabled: true
   leverage: 2

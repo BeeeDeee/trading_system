@@ -329,3 +329,53 @@ async def test_entry_price_unknown_emergency_close_and_trade_recorded():
     await deliver(ex, fx.events)                                     # fill emergency close přes user stream
     assert not ex.positions and len(closed) == 1                     # obchod zapsán (dřív ZeroDivisionError)
     assert closed[0].exit_reason == "emergency" and closed[0].entry_px > 0
+
+
+async def test_fill_before_algo_update_keeps_theoretical_trigger():
+    """Inspekce 2026-10-25: ALGO_UPDATE může dorazit po fillu (nebo vůbec, při výpadku private WS). Úroveň spuštění
+    pak musí být teoretická (HWM × (1 − cb)), ne cena fillu, jinak je exit slip trailingu vždy 0."""
+    ex, fx, db, alerts, closed = make()
+    pos = await open_(ex)
+    ex.on_trade_tick(SYM, {"p": "0.5100", "T": pos.entry_time + 1000, "a": 1})
+    fx.price[SYM] = Decimal("0.5040")
+    algo_ev, fill_ev = fx.trigger_algo(pos.orders["TS"])
+    await deliver(ex, [fill_ev, algo_ev])                  # obrácené pořadí
+    (t,) = closed
+    assert t.exit_reason == "trailing"
+    assert t.exit_trigger_px == pytest.approx(0.51 * 0.99)
+    assert t.exit_slip_bps == pytest.approx((0.5049 - 0.504) / 0.5049 * 1e4)
+    kinds = [r[0] for r in db.execute("SELECT kind FROM latencies").fetchall()]
+    assert "trigger_to_fill" not in kinds                   # čas spuštění neznáme → latence se nezapíše
+
+
+async def test_fill_before_algo_update_hard_stop_guessed_by_price():
+    ex, fx, db, alerts, closed = make()
+    pos = await open_(ex)
+    fx.price[SYM] = Decimal("0.4890")
+    algo_ev, fill_ev = fx.trigger_algo(pos.orders["HS"])
+    await deliver(ex, [fill_ev])                            # ALGO_UPDATE nedorazí vůbec
+    (t,) = closed
+    assert t.exit_reason == "hard_stop" and t.exit_trigger_px == pytest.approx(0.49)
+
+
+async def test_shadow_sim_stops_after_exit_trigger():
+    ex, fx, db, alerts, closed = make()
+    pos = await open_(ex)
+    fx.price[SYM] = Decimal("0.4890")
+    algo_ev, fill_ev = fx.trigger_algo(pos.orders["HS"])
+    pos.exit_kind = "HS"
+    ex.on_trade_tick(SYM, {"p": "0.4000", "T": pos.entry_time + 5000, "a": 9})   # tick po spuštění výstupu
+    assert pos.sim["mae_px"] != 0.4
+
+
+async def test_finalize_without_entry_price_uses_entry_fills():
+    """Obchod l-brk.v00.BTCUSDT-1 (2026-10-25) měl entry_px 0 → notional 0 a gross −193 USDT místo −0,07."""
+    ex, fx, db, alerts, closed = make()
+    pos = await open_(ex)
+    db.execute("INSERT INTO fills VALUES ('x1', ?, ?, 0.5, 300, 0.075, 'USDT', 0, 0, 0)", (pos.orders["E"], pos.trade_id))
+    pos.entry_px = 0.0
+    fx.price[SYM] = Decimal("0.4890")
+    await deliver(ex, fx.trigger_algo(pos.orders["HS"]))
+    (t,) = closed
+    assert t.entry_px == pytest.approx(0.5) and t.notional == pytest.approx(150.0)
+    assert t.gross_pnl == pytest.approx(-(0.5 - 0.489) * 300)

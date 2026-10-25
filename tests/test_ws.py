@@ -62,3 +62,33 @@ async def test_idle_timeout_reconnects():
         stop.set()
         await asyncio.wait_for(task, 3)
     assert connects[:2] == [False, True]
+
+
+async def test_idle_timeout_measured_from_current_connection():
+    """Inspekce 2026-10-25: po prvním idle timeoutu se `last_msg_ms` z minulého spojení nevynuloval a tichý private
+    stream se pak odpojoval každých ~13 s. Nové spojení musí mít celý idle timeout."""
+    async def handler(ws):
+        if not hasattr(handler, "n"):
+            handler.n = 0
+        handler.n += 1
+        if handler.n == 1:
+            await ws.send(json.dumps({"stream": "x", "data": {}}))
+        await asyncio.sleep(10)       # pak ticho
+
+    async with websockets.serve(handler, "127.0.0.1", 0) as server:
+        port = server.sockets[0].getsockname()[1]
+        connects = []
+
+        async def on_connect(reconnected):
+            connects.append(reconnected)
+
+        conn = WsConnection("t", f"ws://127.0.0.1:{port}", lambda s, d: None, on_connect, idle_timeout_s=1.0,
+                            backoff_max_s=0.05, check_every_s=0.1)   # kontrola častěji než timeout, jako v provozu
+        stop = asyncio.Event()
+        task = asyncio.create_task(conn.run(stop))
+        await asyncio.sleep(1.5)      # 1. spojení: zpráva, pak > 1 s ticha → reconnect
+        assert len(connects) == 2
+        await asyncio.sleep(0.4)      # 2. spojení je tiché < 1 s: nesmí se hned odpojit (dřív za 0,1 s)
+        assert len(connects) == 2
+        stop.set()
+        await asyncio.wait_for(task, 3)

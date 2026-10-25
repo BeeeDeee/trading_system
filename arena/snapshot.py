@@ -107,7 +107,7 @@ class SnapshotWriter:
 
         hist = np.histogram([t.net_bps for t in paper], bins=np.arange(-300, 325, 25))[0] if paper else []
         rows = self.db.execute(
-            "SELECT trade_id, slot_id, side, entry_time, exit_time, entry_px, exit_px, exit_reason, net_bps, "
+            "SELECT trade_id, slot_id, mode, side, entry_time, exit_time, entry_px, exit_px, exit_reason, net_bps, "
             "gross_bps, entry_slip_bps, exit_slip_bps, bars_held, tainted FROM trades WHERE slot_id LIKE ? "
             "ORDER BY exit_time DESC LIMIT 200", (f"{vid}.%",)).fetchall()
         _dump(self.data_dir / "variants" / f"{vid}.json", {
@@ -160,7 +160,8 @@ class SnapshotWriter:
         now = wall_ms()
         st = dict(self.status())
         bars_last = st.get("bars_last", {})
-        st["bar_delay_s"] = {s: (now - (int(t) + 2 * BAR_MS)) / 1000 for s, t in bars_last.items()}
+        # sekundy od uzavření posledního uzavřeného baru (normálně 0–300 s; > 320 s = další bar se zpozdil)
+        st["bar_age_s"] = {s: (now - (int(t) + BAR_MS)) / 1000 for s, t in bars_last.items()}
         day_ago = (now - DAY) // BAR_MS * BAR_MS
         st["book_ok_24h"] = {r["symbol"]: r["ok"] for r in self.db.execute(
             "SELECT symbol, AVG(book_ok) ok FROM bar_book WHERE pct=1.0 AND source='live' AND open_time>=? "

@@ -134,6 +134,8 @@ def run_replay(cfg: Config, src: Database, start: str, end: str, ticks_dir: Path
     fill = TradeFillModel(dict(cfg.paper.extra_slippage_bps))
     ex = PaperExecutor(filters, fill, cfg.paper.notional_usdt, cfg.paper.entry_latency_ms,
                        cfg.paper.trigger_latency_ms, cfg.paper.outage_penalty_bps,
+                       taker_fee=dict.fromkeys(cfg.universe, cfg.paper.taker_fee) if cfg.paper.taker_fee is not None else {},
+                       maker_fee=dict.fromkeys(cfg.universe, cfg.paper.maker_fee) if cfg.paper.maker_fee is not None else {},
                        cost_model_version=cfg.paper.cost_model_version)
     trades: list[TradeRecord] = []
     runner = SlotRunner(cfg, db, slots, ex, FeatureSource(db, warmup))

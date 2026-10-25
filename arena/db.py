@@ -55,6 +55,22 @@ class Database:
         self.conn.execute("PRAGMA synchronous=NORMAL")
         self.conn.execute("PRAGMA foreign_keys=ON")
         self.conn.executescript(SCHEMA.read_text(encoding="utf-8"))
+        self._migrate()
+
+    def _migrate(self) -> None:
+        """income: PK tran_id → (tran_id, income_type). Binance dává COMMISSION a REALIZED_PNL stejného fillu
+        stejné tranId, starý klíč výstupní poplatek zahodil (zjištěno 2026-10-25). Po migraci se income stáhne znovu."""
+        pk = [r["name"] for r in self.conn.execute("PRAGMA table_info(income)").fetchall() if r["pk"]]
+        if pk == ["tran_id"]:
+            self.conn.executescript("""
+                BEGIN;
+                ALTER TABLE income RENAME TO income_old;
+                CREATE TABLE income(tran_id TEXT, symbol TEXT, income_type TEXT, amount REAL, asset TEXT, ts INTEGER,
+                                    trade_id TEXT, PRIMARY KEY(tran_id, income_type));
+                INSERT INTO income SELECT * FROM income_old;
+                DROP TABLE income_old;
+                DELETE FROM meta WHERE key='income_since';
+                COMMIT;""")
 
     def close(self) -> None:
         self.conn.close()

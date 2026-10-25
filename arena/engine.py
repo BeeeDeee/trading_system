@@ -53,6 +53,38 @@ async def fetch_agg_trades(rest: RestClient, symbol: str, start: int, end: int) 
     return out
 
 
+async def fetch_agg_trades_from(rest: RestClient, symbol: str, from_id: int, end_ms: int | None = None,
+                                to_id: int | None = None) -> tuple[list[dict[str, Any]], bool]:
+    """aggTrades od ID `from_id` (fromId stránkování) do `to_id` nebo času `end_ms`.
+    Vrací (obchody, úplné): úplné = ID jdou bez mezery od `from_id` a data dosáhla konce rozsahu."""
+    out: list[dict[str, Any]] = []
+    nxt = from_id
+    reached = False
+    while True:
+        batch = await rest.agg_trades(symbol, from_id=nxt)
+        if not batch:
+            break
+        for b in batch:
+            a, t = int(b["a"]), int(b["T"])
+            if (to_id is not None and a > to_id) or (end_ms is not None and t > end_ms):
+                reached = True
+                break
+            out.append(b)
+        if reached:
+            break
+        nxt = int(batch[-1]["a"]) + 1
+        if to_id is not None and nxt > to_id:
+            reached = True
+            break
+    for t in out:
+        t.setdefault("s", symbol)
+    ids = [int(t["a"]) for t in out]
+    contiguous = all(b == a + 1 for a, b in zip(ids, ids[1:])) and (not ids or ids[0] == from_id)
+    if end_ms is not None and to_id is None:
+        reached = True   # časový konec: poslední obchod před `end_ms` je konec rozsahu i bez dalšího obchodu
+    return out, contiguous and reached
+
+
 @dataclass
 class Engine:
     cfg: Config
@@ -184,9 +216,12 @@ class Engine:
         return parse_exchange_info(info, self.cfg.universe)
 
     async def _load_fees(self) -> tuple[dict[str, float], dict[str, float]]:
-        """Skutečné sazby účtu z `commissionRate` (paper = taker sazba účtu, SPEC §7); bez klíče VIP0."""
+        """Paper sazby: pevné z `paper.taker_fee/maker_fee`, jinak sazby účtu z `commissionRate` (SPEC §7); bez klíče VIP0."""
         taker: dict[str, float] = {}
         maker: dict[str, float] = {}
+        pc = self.cfg.paper
+        if pc.taker_fee is not None and pc.maker_fee is not None:
+            return ({s: pc.taker_fee for s in self.cfg.universe}, {s: pc.maker_fee for s in self.cfg.universe})
         signer = load_signer(self.cfg.env)
         if signer is None:
             self.db.event("WARN", "engine", "bez klíče: paper používá VIP0 poplatky (taker 0,05 %, maker 0,02 %)")
@@ -201,23 +236,49 @@ class Engine:
         return taker, maker
 
     async def _recover_outage(self) -> None:
-        """Otevřené paper pozice po restartu: přehrát chybějící aggTrades, výstupy tainted (SPEC §7)."""
+        """Otevřené paper pozice po restartu: přehrát chybějící aggTrades (SPEC §7). Navazuje se podle aggTrade ID
+        (fromId), takže se nic neztratí ani na hranici milisekundy; tainted jsou jen výstupy za výpadku a pozice,
+        u kterých data úplná nejsou. Zbytek mezery do prvního WS obchodu doplní `on_gap`."""
         assert self.executor is not None
         now = self.rest.clock.now_ms()
-        by_sym: dict[str, int] = {}
+        by_sym: dict[str, list[Any]] = {}
         for p in self.executor.positions.values():
-            since = (p.sim.last_ts + 1) if (p.sim and p.sim.last_ts) else (p.entry_time or p.decision_ts)
-            by_sym[p.symbol] = min(by_sym.get(p.symbol, since), since)
-        for sym, since in by_sym.items():
+            by_sym.setdefault(p.symbol, []).append(p)
+        for sym, ps in by_sym.items():
+            sims = [p.sim for p in ps if p.status == "open" and p.sim is not None]
+            since = min(((p.sim.last_ts + 1) if (p.sim and p.sim.last_ts) else (p.entry_time or p.decision_ts))
+                        for p in ps)
+            complete = False
             try:
-                trades = await fetch_agg_trades(self.rest, sym, since, now)
+                if sims and all(s.last_agg >= 0 for s in sims):
+                    trades, complete = await fetch_agg_trades_from(self.rest, sym, min(s.last_agg for s in sims) + 1,
+                                                                   end_ms=now)
+                else:
+                    trades = await fetch_agg_trades(self.rest, sym, since, now)
+                    complete = True
             except Exception as e:  # noqa: BLE001
                 self.db.event("ERROR", "paper", "výpadek: aggTrades nejdou stáhnout", {"symbol": sym, "err": repr(e)})
                 trades = []
             closes = {b.open_time: b.c for b in self.db.bars(sym, start=since - BAR_MS)}
-            self.executor.replay_outage(sym, trades, now, closes)
+            self.executor.replay_outage(sym, trades, now, closes, complete=complete)
             self.db.event("WARN", "paper", "výpadek: přehráno aggTrades", {"symbol": sym, "n": len(trades),
-                                                                          "since": since})
+                                                                          "since": since, "complete": complete})
+
+    def _on_gap(self, symbol: str, from_id: int, to_id: int) -> None:
+        asyncio.ensure_future(self._fill_gap(symbol, from_id, to_id))
+
+    async def _fill_gap(self, symbol: str, from_id: int, to_id: int) -> None:
+        assert self.executor is not None
+        trades: list[dict[str, Any]] = []
+        complete = False
+        try:
+            trades, complete = await fetch_agg_trades_from(self.rest, symbol, from_id, to_id=to_id)
+        except Exception as e:  # noqa: BLE001
+            log.warning("doplnění mezery aggTrades %s selhalo: %r", symbol, e)
+        self.executor.fill_gap(symbol, trades, complete, self.rest.clock.now_ms())
+        self.db.event("INFO" if complete else "WARN", "paper", "mezera v aggTrades doplněna" if complete
+                      else "mezera v aggTrades nedoplněna → tainted",
+                      {"symbol": symbol, "from_id": from_id, "to_id": to_id, "n": len(trades)})
 
     async def _advance_loop(self) -> None:
         while not self.stop.is_set():
@@ -305,7 +366,8 @@ class Engine:
         return {
             "ws": {w.name: {"connected": w.connected, "connects": w.connects,
                             "last_msg_age_ms": (now - w.last_msg_ms) if w.last_msg_ms else None}
-                   for w in (self.ws_market, self.ws_public, self.ws_ticker)},
+                   for w in (self.ws_market, self.ws_public, self.ws_ticker,
+                             *([self.live.ws] if self.live is not None and self.live.ws is not None else []))},
             "books": {s: {"synced": b.book.synced, "resyncs": b.book.resyncs,
                           "levels": len(b.book.bids) + len(b.book.asks)} for s, b in self.books.items()},
             "bars_last": dict(self.bar_store.last_open), "stale": sorted(self.bar_store.stale),
@@ -327,7 +389,8 @@ class Engine:
                              cfg.paper.stale_book_penalty_bps, dict(cfg.paper.extra_slippage_bps))
         self.executor = PaperExecutor(filters, fill, cfg.paper.notional_usdt, cfg.paper.entry_latency_ms,
                                       cfg.paper.trigger_latency_ms, cfg.paper.outage_penalty_bps, taker, maker,
-                                      cfg.paper.cost_model_version, on_event=self._event_cb("paper"))
+                                      cfg.paper.cost_model_version, on_event=self._event_cb("paper"),
+                                      on_gap=self._on_gap)
         self.runner = SlotRunner(cfg, self.db, self.slots, self.executor, FeatureSource(self.db, self.warmup_bars))
         for s in cfg.universe:
             self.ticks.subscribe(s, lambda e, s=s: self.executor.on_trade(s, e))  # type: ignore[union-attr]

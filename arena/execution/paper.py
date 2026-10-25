@@ -152,8 +152,14 @@ class PaperExecutor:
     on_closed: Callable[[TradeRecord], None] | None = None
     on_state: Callable[[str, dict[str, Any] | None], None] | None = None     # (slot_id, state|None)
     on_event: Callable[[str, str, dict[str, Any]], None] | None = None
+    # mezera v aggTrade ID (reconnect WS, restart): (symbol, první chybějící ID, poslední chybějící ID).
+    # Volající stáhne chybějící obchody a zavolá `fill_gap`; mezitím se nové obchody symbolu drží v bufferu.
+    # Bez callbacku (replay) mezera jen označí otevřené pozice symbolu jako tainted.
+    on_gap: Callable[[str, int, int], None] | None = None
 
     positions: dict[str, PaperPosition] = field(default_factory=dict)
+    _last_agg: dict[str, int] = field(default_factory=dict)
+    _hold: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
 
     def taker(self, sym: str) -> float:
         return self.taker_fee.get(sym, 0.0005)
@@ -209,9 +215,30 @@ class PaperExecutor:
 
     # --- události trhu ------------------------------------------------------
 
+    def _open_with_sim(self, symbol: str) -> list[PaperPosition]:
+        return [p for p in self.positions.values() if p.symbol == symbol and p.status == "open" and p.sim is not None]
+
     def on_trade(self, symbol: str, trade: dict[str, Any]) -> None:
         """aggTrade (dict s p, T, a). Pořadí obchodů zajišťuje TickDispatcher."""
         ts, px, aid = int(trade["T"]), float(trade["p"]), int(trade["a"])
+        if symbol in self._hold:
+            self._hold[symbol].append(trade)
+            return
+        prev = self._last_agg.get(symbol)
+        if prev is None:   # po startu: navázat na poslední obchod, který viděly simy (po přehrání výpadku)
+            prev = max((p.sim.last_agg for p in self._open_with_sim(symbol) if p.sim and p.sim.last_agg >= 0),
+                       default=None)
+        if prev is not None and aid <= prev:
+            return
+        if prev is not None and aid > prev + 1 and self._open_with_sim(symbol):
+            if self.on_gap is not None:
+                self._hold[symbol] = [trade]
+                self._emit("WARN", "mezera v aggTrades u otevřených pozic, doplňuje se",
+                           {"symbol": symbol, "from_id": prev + 1, "to_id": aid - 1})
+                self.on_gap(symbol, prev + 1, aid - 1)
+                return
+            self._taint(symbol, "mezera v aggTrades", {"from_id": prev + 1, "to_id": aid - 1})
+        self._last_agg[symbol] = aid
         if isinstance(self.fill, TradeFillModel):
             self.fill.last[symbol] = px
         for pos in [p for p in self.positions.values() if p.symbol == symbol]:
@@ -278,18 +305,41 @@ class PaperExecutor:
 
     # --- výpadek ------------------------------------------------------------
 
+    def _taint(self, symbol: str, why: str, data: dict[str, Any]) -> None:
+        for pos in self._open_with_sim(symbol):
+            if not pos.tainted:
+                pos.tainted = 1
+                self._save(pos)
+        self._emit("WARN", f"tainted: {why}", {"symbol": symbol, **data})
+
+    def fill_gap(self, symbol: str, trades: list[dict[str, Any]], complete: bool, now: int) -> None:
+        """Doplnění mezery z `on_gap`: obchody z REST přehrát (výstup v mezeře = fill bez knihy → tainted),
+        neúplná data → tainted, pak zpracovat obchody držené v bufferu."""
+        held = self._hold.pop(symbol, [])
+        if complete:
+            self.replay_outage(symbol, trades, now, None, restart=False)
+        else:
+            self._taint(symbol, "mezeru v aggTrades se nepodařilo doplnit", {"n": len(trades)})
+        if held:
+            self._last_agg[symbol] = int(held[0]["a"]) - 1
+        for tr in held:
+            self.on_trade(symbol, tr)
+
     def replay_outage(self, symbol: str, trades: list[dict[str, Any]], now: int,
-                      bar_closes: Mapping[int, float] | None = None) -> None:
-        """Po restartu: přehraj chybějící aggTrades do TrailingSim. Kniha za výpadek není, fill = cena obchodu
-        ± `outage_penalty_bps` a obchod dostane `tainted = 1` (SPEC §7)."""
+                      bar_closes: Mapping[int, float] | None = None, restart: bool = True,
+                      complete: bool = True) -> None:
+        """Přehraj chybějící aggTrades do TrailingSim (po restartu nebo z `fill_gap`). Kniha za výpadek není:
+        výstup, který nastal během výpadku, má fill = cena obchodu ± `outage_penalty_bps` a `tainted = 1` (SPEC §7).
+        Pozice, která výpadek přečkala bez výstupu, tainted není, pokud jsou přehraná data úplná (`complete`)."""
         k = self.outage_penalty_bps / 1e4
         for pos in [p for p in self.positions.values() if p.symbol == symbol]:
-            pos.tainted = 1
-            if pos.status == "entering":
+            if restart and pos.status == "entering":
                 self._drop(pos)   # vstup za výpadku se neprovedl
                 continue
             if pos.status != "open" or pos.sim is None:
                 continue
+            if not complete:
+                pos.tainted = 1
             deadline = pos.entry_bar + (int(pos.plan["max_hold_bars"]) + 1) * BAR_MS
             for tr in trades:
                 ts = int(tr["T"])
@@ -298,6 +348,7 @@ class PaperExecutor:
                     px = bar_closes.get(deadline - BAR_MS)
                     if px is not None:
                         pos.exit_kind, pos.exit_trigger_px, pos.exit_trigger_ts = "TX", px, deadline
+                        pos.tainted = 1
                         self._close(pos, px * (1 - side_sign(pos.side) * k), deadline, self.taker(symbol), "outage")
                         break
                 trig = pos.sim.on_trade(float(tr["p"]), ts, int(tr["a"]))
@@ -305,6 +356,7 @@ class PaperExecutor:
                     trig = pos.sim.flush()
                 if trig is not None:
                     pos.exit_kind, pos.exit_trigger_px, pos.exit_trigger_ts = trig.kind, trig.trigger_px, trig.ts
+                    pos.tainted = 1
                     if trig.is_market:
                         px = float(tr["p"]) * (1 - side_sign(pos.side) * k)
                         self._close(pos, px, ts, self.taker(symbol), "outage")

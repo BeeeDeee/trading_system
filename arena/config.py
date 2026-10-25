@@ -66,6 +66,10 @@ class PaperCfg:
     outage_penalty_bps: float = 2.0
     extra_slippage_bps: Mapping[str, float] = field(default_factory=dict)
     cost_model_version: int = 1
+    # Pevné sazby paper (podíl, 0.0005 = 5 bps). null = sazby účtu z commissionRate; na testnetu jsou to sazby
+    # demo účtu (0,04 %), ne mainnet účtu, proto je experiment drží napevno.
+    taker_fee: float | None = None
+    maker_fee: float | None = None
 
 
 @dataclass(frozen=True)
@@ -343,6 +347,10 @@ def validate(cfg: Config, *, check_lock: bool = True) -> None:
         errs.append("live.leverage musí být ≥ 1")
     if cfg.paper.notional_usdt <= 0:
         errs.append("paper.notional_usdt musí být > 0")
+    for k in ("taker_fee", "maker_fee"):
+        v = getattr(cfg.paper, k)
+        if v is not None and not 0 <= v < 0.01:
+            errs.append(f"paper.{k} je podíl (0.0005 = 5 bps), ne procenta")
 
     if check_lock:
         lock = read_lock(cfg.config_dir)

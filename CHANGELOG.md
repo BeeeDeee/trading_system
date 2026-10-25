@@ -12,6 +12,41 @@ Stav akceptace (SPEC §17) k 2026-10-23. ✅ = splněno a ověřeno, ⏳ = ček�
 | P5 | ✅ (falešná burza) | ⏳ testnet: klíče, 200 round tripů, `kill -9`, ověřit algoOrder na testnetu |
 | P6, P7 | – | – (mainnet live jen s výslovným souhlasem vlastníka) |
 
+## Inspekce výpočtů a dashboardu, 2026-10-25
+
+Ověřeno a sedí: `stats.py` (nezávislý přepočet: průměr, sd, win rate, Sharpe, max DD, náklady, edge, n_req, Δ vs ctl,
+Holm, DSR), P&L obchodů (live gross = `realizedPnl` burzy, pokles walletu = fills realized + poplatky přesně),
+signály `brk` přepočtené z barů v DB, ukazatele paper pozic. Opraveno:
+
+- **Private WS reconnect smyčka:** `last_msg_ms` se při novém spojení nenuloval, tichý private stream se po prvním
+  idle timeoutu odpojoval každých ~13 s (spojen ~50 % času, ztrácely se `ALGO_UPDATE`). Private WS je teď v health.
+- **Úroveň spuštění live výstupu:** když fill přijde před `ALGO_UPDATE` (nebo ten nedorazí), trigger = tvrdý stop
+  z plánu / HWM stínového simu × (1 ∓ cb), ne cena fillu (exit slip byl jinak vždy 0). Neznámý algo fill se přiřadí
+  k HS/TS podle ceny (dřív „EM“). `trigger_to_fill` jen se skutečným časem spuštění. Stínový sim se po spuštění
+  výstupu zastaví (MAE se dřív počítal i po triggeru).
+- **Income:** Binance dává COMMISSION a REALIZED_PNL téhož fillu stejné `tranId`; PK `tran_id` zahazoval výstupní
+  poplatky a ledger kontrola hlásila rozdíl u každého obchodu. PK je `(tran_id, income_type)`, migrace v `Database`,
+  income se stáhne znovu.
+- **Live obchod bez ceny vstupu** (`l-brk.v00.BTCUSDT-1`, entry_px 0 z doby před 7bd6c1f3: net −193,44 místo
+  −0,223 USDT, v nákladech 1546 bps fee a 10000 bps slip) přepočten z fills. `_finalize` doplní cenu vstupu z fills,
+  `stats.from_rows` obchod s nulovým notional vynechá.
+- **Paper poplatky napevno** `paper.taker_fee/maker_fee` = VIP0 0,05 % / 0,02 %. Dřív se braly z účtu obchodního
+  `env`, tj. demo účtu (0,04 %), a pozice z doby bez klíče měly 0,05 % (dvě sazby v jedné cost_model_version).
+  Otevřená pozice se 4 bps (brk.v02.BTCUSDT) přepočtena. Jiný tier účtu = změnit sazby + nová cost_model_version.
+- **Opožděný symbol** (DOGE měl 4 z 26 barů po 3 s): bar se vyhodnotí zvlášť, až dorazí (vlastní decided_at),
+  nejpozději 20 s po hranici (= hranice stale dat), časové výstupy se tak neposouvají o bar. `ll` na opožděném altu
+  dostane BTC z DB.
+- **tainted jen při díře v datech:** dřív každý restart označil všechny otevřené paper pozice. Teď se navazuje podle
+  aggTrade ID (fromId), mezera v ID (restart, reconnect WS) se doplní z REST a nové obchody se do té doby drží
+  v bufferu. tainted = výstup nastal během výpadku (fill bez knihy) nebo data nejdou doplnit. Dřív se mezera po
+  reconnectu market WS (např. 215 obchodů BTC 19:24) nepřehrávala vůbec. Starší pozice zůstávají tainted.
+- **Dashboard:** win rate byl 100× (stats už vrací %); tabulka obchodů varianty má sloupec režimu (live a paper se
+  míchaly); místo gross ukazuje žebříček a detail hranu (`edge_mean`, net = hrana − náklady; gross obsahuje slippage
+  a gross − náklady ≠ net); popisek křivky (rozdíl net/gross = poplatky a funding); bar = stáří posledního
+  uzavřeného baru (dřív záporné „s od uzavření“).
+- Testy: 184 (WS idle, pořadí ALGO_UPDATE/fill, HS odhad, finalize bez ceny, income klíč a migrace, nulový notional,
+  mezery v aggTrades, fromId stahování, opožděný symbol).
+
 ## Exec probe (rodina xp), 2026-10-25
 
 - Důvod: strategie dávají ~7 live vstupů denně na 5 slotů, takže 200 round tripů z P5 by trvalo týdny. `xp.v00` vstupuje

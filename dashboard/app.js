@@ -342,7 +342,7 @@
 
   // --- žebříček ----------------------------------------------------------------------------------
   var COLS = [
-    ["key", "varianta"], ["n", "n"], ["trades_per_day", "obch./den"], ["net_mean", "net bps ± 95% CI"], ["gross_mean", "gross"],
+    ["key", "varianta"], ["n", "n"], ["trades_per_day", "obch./den"], ["net_mean", "net bps ± 95% CI"], ["edge_mean", "hrana"],
     ["cost", "náklady"], ["sharpe", "Sharpe"], ["delta", "Δ vs ctl"], ["p_holm", "p_holm"], ["dsr", "DSR"], ["n_req", "n_req"], ["badge", "stav"]
   ];
   function colVal(g, k) {
@@ -377,7 +377,7 @@
       var g = L[k], vc = g.vs_control || {}, b = g.badge || "";
       var bc = b === "LIVE" ? "live" : b === "KANDIDÁT" ? "cand" : b === "ZÁPORNÁ" ? "negb" : b === "KONTROLA" ? "ctl" : "";
       return '<tr class="click" data-v="' + esc(k) + '">' + td(esc(k) + famChip(k)) + td(g.n) + td(num(g.trades_per_day, 2)) + td(barCell(g)) +
-        td(sgn(g.gross_mean), cls(g.gross_mean)) + td(num((g.cost_bps || {}).total)) + td(num(g.sharpe, 2)) + td(sgn(vc.delta), cls(vc.delta)) +
+        td(sgn(g.edge_mean), cls(g.edge_mean)) + td(num((g.cost_bps || {}).total)) + td(num(g.sharpe, 2)) + td(sgn(vc.delta), cls(vc.delta)) +
         td(num(g.p_holm, 3)) + td(num(g.dsr, 2)) + td(g.n_req && g.n_req.z2 != null ? num(g.n_req.z2, 0) : "∞") +
         td('<span class="badge ' + bc + '">' + esc(b) + "</span>") + "</tr>";
     });
@@ -421,9 +421,9 @@
     $("vtiles").innerHTML = [
       tile("Obchodů", String(g.n || 0), num(g.trades_per_day, 2) + " / den · " + (g.days || 0) + " dní"),
       tile("Net bps", fin(g.net_mean) ? pnlHtml(g.net_mean, 1) : "—", fin(ci[0]) ? "CI [" + num(ci[0]) + ", " + num(ci[1]) + "]" : ""),
-      tile("Gross bps", fin(g.gross_mean) ? pnlHtml(g.gross_mean, 1) : "—", "náklady " + num((g.cost_bps || {}).total) + " bps"),
+      tile("Hrana bps", fin(g.edge_mean) ? pnlHtml(g.edge_mean, 1) : "—", "− náklady " + num((g.cost_bps || {}).total) + " = net · gross " + sgn(g.gross_mean)),
       tile("Sharpe", num(g.sharpe, 2), "max DD " + num(g.max_dd, 1)),
-      tile("Win rate", fin(g.win_rate) ? num(g.win_rate * 100, 0) + " %" : "—", "držení " + num(g.avg_hold_min, 0) + " min"),
+      tile("Win rate", fin(g.win_rate) ? num(g.win_rate, 0) + " %" : "—", "držení " + num(g.avg_hold_min, 0) + " min"),
       tile("p_holm / DSR", num(g.p_holm, 3) + " / " + num(g.dsr, 2), "n_req (t=2): " + (g.n_req && g.n_req.z2 != null ? num(g.n_req.z2, 0) : "∞"))
     ].join("");
     fetch("data/variants/" + encodeURIComponent(v) + ".json?t=" + Date.now(), { cache: "no-store" })
@@ -437,7 +437,7 @@
         if (lc.t.length > 1) ser.push({ name: "live net", color: "var(--s2)", pts: pts(lc, "net") });
         $("cum-legend").innerHTML = ser.map(function (s) { return '<span><i style="border-color:' + s.color + (s.dash ? ";border-top-style:dashed" : "") + '"></i>' + esc(s.name) + "</span>"; }).join("") || "";
         if (ser.length) lineChart($("c-cum"), ser, { height: 300, zero: true, yfmt: function (x) { return sgn(x, 0); }, xfmt: dayfmt, xfmtTip: function (x) { return ts(x); } });
-        else $("c-cum").innerHTML = emptyBox("Zatím žádné uzavřené obchody", "Kumulativní křivka net vs gross (rozdíl = náklady) se začne kreslit po prvních obchodech.");
+        else $("c-cum").innerHTML = emptyBox("Zatím žádné uzavřené obchody", "Kumulativní křivka net vs gross (rozdíl = poplatky a funding; slippage je už v gross) se začne kreslit po prvních obchodech.");
         var bs = d.by_symbol || {}, bk = Object.keys(bs);
         $("d-sym").innerHTML = bk.length ? '<table><thead><tr><th>symbol</th><th>n</th><th>net bps</th><th>gross bps</th></tr></thead><tbody>' + bk.map(function (k) {
           var x = bs[k]; return "<tr>" + td('<i class="sw" style="display:inline-block;background:' + (SYMCOL[k] || "var(--muted)") + ';margin-right:7px"></i>' + esc(short(k))) + td(x.n) + td(sgn(x.net_mean), cls(x.net_mean)) + td(sgn(x.gross_mean)) + "</tr>";
@@ -448,9 +448,9 @@
           '<div class="legend" style="margin-top:10px">' + ek.map(function (k, i) { return '<span><i style="border-color:' + ecol[i % 5] + '"></i>' + esc(k) + " <b class=num>" + em[k] + "</b> <span class=muted>" + Math.round(em[k] / tot * 100) + " %</span></span>"; }).join("") + "</div>" : emptyBox("Bez dat", "");
         var h = d.hist || { edges: [], counts: [] };
         renderHist($("c-hist"), h);
-        table("d-trades", ["slot", "strana", "vstup", "výstup", "důvod", "net bps", "gross bps", "slip in", "slip out", "barů", "tainted"],
+        table("d-trades", ["slot", "režim", "strana", "vstup", "výstup", "důvod", "net bps", "gross bps", "slip in", "slip out", "barů", "tainted"],
           (d.trades || []).map(function (t) {
-            return "<tr>" + td(esc(t.slot_id)) + td(esc(t.side)) + td(ts(t.entry_time)) + td(ts(t.exit_time)) + td(esc(t.exit_reason)) + td(sgn(t.net_bps), cls(t.net_bps)) +
+            return "<tr>" + td(esc(t.slot_id)) + td('<span class="mode ' + esc(t.mode) + '">' + esc(String(t.mode || "").toUpperCase()) + "</span>") + td(esc(t.side)) + td(ts(t.entry_time)) + td(ts(t.exit_time)) + td(esc(t.exit_reason)) + td(sgn(t.net_bps), cls(t.net_bps)) +
               td(sgn(t.gross_bps)) + td(num(t.entry_slip_bps)) + td(num(t.exit_slip_bps)) + td(t.bars_held) + td(t.tainted ? "ano" : "") + "</tr>";
           }), "Zatím žádné obchody.");
       });
@@ -492,12 +492,12 @@
   function renderSystem(s) {
     var h = s.health || {}, rows = [];
     function row(a, b, c, bad) { rows.push("<tr>" + td(a) + td(b, bad ? "neg" : "") + td(c || "") + "</tr>"); }
-    Object.keys(h.ws || {}).forEach(function (k) { var w = h.ws[k]; row("WS " + esc(k), w.connected ? "připojeno" : "ODPOJENO", "spojení " + w.connects + " · poslední zpráva " + num((w.last_msg_age_ms || 0) / 1000, 1) + " s", !w.connected); });
+    Object.keys(h.ws || {}).forEach(function (k) { var w = h.ws[k]; row("WS " + esc(k), w.connected ? "připojeno" : "ODPOJENO", "spojení " + w.connects + " · poslední zpráva " + (w.last_msg_age_ms == null ? "—" : num(w.last_msg_age_ms / 1000, 1) + " s"), !w.connected); });
     Object.keys(h.books || {}).forEach(function (k) {
       var b = h.books[k], ok = (h.book_ok_24h || {})[k];
       row("kniha " + esc(short(k)), b.synced ? "sync" : "NESYNC", "resynců " + b.resyncs + " · úrovní " + b.levels + " · book_ok 24 h " + (ok == null ? "—" : num(ok * 100, 0) + " %"), !b.synced);
     });
-    Object.keys(h.bar_delay_s || {}).forEach(function (k) { var d = h.bar_delay_s[k], st = (h.stale || []).indexOf(k) >= 0; row("bar " + esc(short(k)), st ? "STALE" : "ok", num(d, 0) + " s od uzavření", st || d > 20); });
+    Object.keys(h.bar_age_s || {}).forEach(function (k) { var d = h.bar_age_s[k], st = (h.stale || []).indexOf(k) >= 0; row("bar " + esc(short(k)), st ? "STALE" : "ok", "poslední uzavřený bar před " + num(d, 0) + " s", st || d > 320); });
     var bv = h.book_validate_result;
     row("book-validate", esc(h.book_validate || "—"), bv ? (bv.passed ? "OK" : "NEPROŠLO") : "", bv && !bv.passed);
     row("rekonciliace", h.last_reconcile ? ts(Number(h.last_reconcile)) : "—", "");

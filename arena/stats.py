@@ -13,12 +13,15 @@ Definice (zapsané i v CHANGELOG P4):
 
 from __future__ import annotations
 
+import logging
 import math
 from dataclasses import dataclass, field
 from statistics import NormalDist
 from typing import Any, Iterable, Mapping, Sequence
 
 import numpy as np
+
+log = logging.getLogger(__name__)
 
 DAY_MS = 86_400_000
 SEED = 20261021
@@ -65,11 +68,15 @@ class T:
 
 
 def from_rows(rows: Iterable[Mapping[str, Any]]) -> list[T]:
+    """Obchod s nulovým notional (neznámá cena vstupu) do statistik nepatří: bps by z něj byly nesmysl."""
     out = []
     for r in rows:
         slot = str(r["slot_id"])
         variant, symbol = slot.rsplit(".", 1)
-        n = float(r["notional"]) or 1.0
+        n = float(r["notional"] or 0)
+        if n <= 0:
+            log.warning("obchod %s bez notional, ve statistikách vynechán", r["trade_id"])
+            continue
         fee = (float(r["entry_fee"] or 0) + float(r["exit_fee"] or 0)) / n * 1e4
         out.append(T(slot, symbol, variant, variant.split(".")[0], str(r["side"]), int(r["entry_time"]),
                      int(r["exit_time"]), str(r["exit_reason"]), n, float(r["net_pnl"]), float(r["gross_bps"]),

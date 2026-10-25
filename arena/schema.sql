@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS orders(client_id TEXT PRIMARY KEY, trade_id TEXT, kin
                    status TEXT, request_json TEXT, last_response_json TEXT, sent_at INTEGER, ack_at INTEGER);
 CREATE TABLE IF NOT EXISTS fills(exchange_trade_id TEXT PRIMARY KEY, client_id TEXT, trade_id TEXT, px REAL, qty REAL,
                    fee REAL, fee_asset TEXT, is_maker INTEGER, ts INTEGER, realized_pnl REAL);
-CREATE TABLE IF NOT EXISTS income(tran_id TEXT PRIMARY KEY, symbol TEXT, income_type TEXT, amount REAL, asset TEXT, ts INTEGER,
-                   trade_id TEXT);
+CREATE TABLE IF NOT EXISTS income(tran_id TEXT, symbol TEXT, income_type TEXT, amount REAL, asset TEXT, ts INTEGER,
+                   trade_id TEXT, PRIMARY KEY(tran_id, income_type));   -- COMMISSION a REALIZED_PNL fillu mají stejné tranId
 CREATE TABLE IF NOT EXISTS equity(ts INTEGER PRIMARY KEY, wallet REAL, unrealized REAL, margin_used REAL);
 CREATE TABLE IF NOT EXISTS latencies(trade_id TEXT, kind TEXT, ms INTEGER);
 CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY, ts INTEGER, level TEXT, component TEXT, msg TEXT, data_json TEXT);

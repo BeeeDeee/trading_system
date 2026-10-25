@@ -116,10 +116,44 @@ async def test_coordinator_waits_for_all_symbols_or_timeout():
     co.on_closed(b("BTCUSDT", T0 + BAR_MS), True)
     await asyncio.sleep(0.15)
     assert emitted[-1] == (T0 + BAR_MS, frozenset({"BTCUSDT"}))
-    # pozdě dorazivší ETH už nic nevydá, stejně jako historie z backfillu
+    # pozdě dorazivší ETH se vyhodnotí zvlášť (jen jednou); historie z backfillu nic nevydá
     co.on_closed(b("ETHUSDT", T0 + BAR_MS), True)
+    assert emitted[-1] == (T0 + BAR_MS, frozenset({"ETHUSDT"}))
+    co.on_closed(b("ETHUSDT", T0 + BAR_MS), True)
+    co.on_closed(b("BTCUSDT", T0 + BAR_MS), True)
     co.on_closed(b("ETHUSDT", T0 - 10 * BAR_MS), False)
-    assert len(emitted) == 2
+    assert len(emitted) == 3
+
+
+async def test_coordinator_late_symbol_after_limit_is_skipped():
+    emitted = []
+    clock = {"now": T0 + BAR_MS + 50}
+    co = BarCloseCoordinator(("BTCUSDT", "ETHUSDT"), lambda t, s, d: emitted.append((t, s, d)),
+                             lambda: clock["now"], wait_s=0.05, late_max_s=20)
+    b = lambda sym, t: Bar(sym, t, 1, 1, 1, 1, 1, 1, 1, 1, 1)  # noqa: E731
+    co.on_closed(b("BTCUSDT", T0), True)
+    await asyncio.sleep(0.15)
+    assert emitted == [(T0, frozenset({"BTCUSDT"}), T0 + BAR_MS + 50)]
+    clock["now"] = T0 + BAR_MS + 21_000            # 21 s po hranici: pozdě i na samostatné vyhodnocení
+    co.on_closed(b("ETHUSDT", T0), True)
+    assert len(emitted) == 1
+    # další bar už nese oba symboly a seznam opožděných je prázdný
+    clock["now"] = T0 + 2 * BAR_MS + 50
+    co.on_closed(b("BTCUSDT", T0 + BAR_MS), True)
+    co.on_closed(b("ETHUSDT", T0 + BAR_MS), True)
+    assert emitted[-1][:2] == (T0 + BAR_MS, frozenset({"BTCUSDT", "ETHUSDT"}))
+
+
+async def test_coordinator_late_symbol_gets_own_decision_time():
+    emitted = []
+    clock = {"now": T0 + BAR_MS + 50}
+    co = BarCloseCoordinator(("BTCUSDT", "DOGEUSDT"), lambda t, s, d: emitted.append((t, s, d)),
+                             lambda: clock["now"], wait_s=0.05)
+    co.on_closed(Bar("BTCUSDT", T0, 1, 1, 1, 1, 1, 1, 1, 1, 1), True)
+    await asyncio.sleep(0.15)
+    clock["now"] = T0 + BAR_MS + 4_200
+    co.on_closed(Bar("DOGEUSDT", T0, 1, 1, 1, 1, 1, 1, 1, 1, 1), True)
+    assert emitted[-1] == (T0, frozenset({"DOGEUSDT"}), T0 + BAR_MS + 4_200)
 
 
 async def test_coordinator_ignores_late_backfill_bars():

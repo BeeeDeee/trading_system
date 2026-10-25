@@ -141,7 +141,8 @@ class BarStore:
 class BarCloseCoordinator:
     """Vydá „bar uzavřen“ pro čas T, až jsou uzavřené bary všech symbolů, nebo po `wait_s` od hranice.
 
-    Rodina C potřebuje BTC i alt ze stejného baru. Symbol, který nedorazil, se pro ten bar přeskočí a zaloguje.
+    Rodina C potřebuje BTC i alt ze stejného baru. Symbol, který do `wait_s` nedorazil, se vyhodnotí zvlášť, až jeho
+    bar přijde (s vlastním decided_at), nejpozději `late_max_s` po hranici; později se přeskočí a zaloguje.
     Bary starší než poslední vydaný čas (backfill historie) se nevydávají."""
 
     symbols: tuple[str, ...]
@@ -149,14 +150,28 @@ class BarCloseCoordinator:
     now_ms: Callable[[], int]
     wait_s: float = 3.0
     on_event: Callable[[str, str, dict[str, Any]], None] | None = None
+    late_max_s: float = 20.0      # = hranice stale dat (SPEC §10): později by vstupy stejně blokoval risk
 
     last_emitted: int | None = field(default=None, init=False)
     _pending: dict[int, set[str]] = field(default_factory=dict, init=False)
     _timers: dict[int, asyncio.TimerHandle] = field(default_factory=dict, init=False)
+    _late: dict[int, set[str]] = field(default_factory=dict, init=False)   # vydaný bar → symboly, které chyběly
 
     def on_closed(self, bar: Bar, live: bool) -> None:
         t = bar.open_time
         if self.last_emitted is not None and t <= self.last_emitted:
+            late = self._late.get(t)
+            if late is not None and bar.symbol in late:
+                late.discard(bar.symbol)
+                lag_ms = self.now_ms() - (t + BAR_MS)
+                if lag_ms <= self.late_max_s * 1000:
+                    if self.on_event is not None:
+                        self.on_event("INFO", "opožděný bar vyhodnocen zvlášť",
+                                      {"open_time": t, "symbol": bar.symbol, "lag_ms": lag_ms})
+                    self.on_bar_close(t, frozenset({bar.symbol}), self.now_ms())
+                elif self.on_event is not None:
+                    self.on_event("WARN", "opožděný bar po limitu, přeskočen",
+                                  {"open_time": t, "symbol": bar.symbol, "lag_ms": lag_ms})
             return
         # bar z backfillu (reconnect, start) spustí rozhodování jen v okně čekání po hranici;
         # starší bar by znamenal vstup se zpožděním, které live nikdy nemá
@@ -180,9 +195,10 @@ class BarCloseCoordinator:
             return
         missing = set(self.symbols) - got
         if missing and self.on_event is not None:
-            self.on_event("WARN", "bar bez všech symbolů, chybějící se přeskočí",
+            self.on_event("WARN", "bar bez všech symbolů, chybějící se vyhodnotí po příchodu",
                           {"open_time": t, "missing": sorted(missing)})
         self.last_emitted = t
+        self._late = {t: missing} if missing else {}
         for old in [k for k in self._pending if k < t]:
             self._pending.pop(old, None)
             h = self._timers.pop(old, None)

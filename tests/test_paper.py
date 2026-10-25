@@ -139,3 +139,71 @@ async def test_fetch_agg_trades_pages_past_sparse_first_window():
 
     out = await fetch_agg_trades(FakeRest(), "BTCUSDT", 0, trades[15]["T"])
     assert [t["a"] for t in out] == list(range(16))
+
+
+# --- tainted jen při skutečné díře v datech (inspekce 2026-10-25: každý restart označil všechny pozice) -----------
+
+def _open_pos(ex):
+    ex.open("s", "BTCUSDT", 1, intent(cb=1.0, hs=2.0), None, BAR, DEC, 50000.0, "cfg")
+    ex.on_trade("BTCUSDT", tr(50000, DEC + 300, 1))
+    return ex.positions["s"]
+
+
+def test_restart_replay_without_exit_is_not_tainted():
+    ex, closed = make()
+    _open_pos(ex)
+    ex.replay_outage("BTCUSDT", [tr(50100, DEC + 5000, 2), tr(50200, DEC + 6000, 3)], now=DEC + 60_000)
+    pos = ex.positions["s"]
+    assert pos.tainted == 0 and pos.sim.last_agg == 3 and pos.sim.extreme == 50200
+
+
+def test_restart_replay_incomplete_data_taints():
+    ex, closed = make()
+    _open_pos(ex)
+    ex.replay_outage("BTCUSDT", [], now=DEC + 60_000, complete=False)
+    assert ex.positions["s"].tainted == 1
+
+
+def test_gap_in_agg_ids_is_filled_before_newer_trades():
+    gaps = []
+    ex, closed = make(on_gap=lambda s, a, b: gaps.append((s, a, b)))
+    _open_pos(ex)
+    ex.on_trade("BTCUSDT", tr(50100, DEC + 1000, 2))
+    ex.on_trade("BTCUSDT", tr(50600, DEC + 9000, 6))         # chybí 3–5
+    assert gaps == [("BTCUSDT", 3, 5)]
+    ex.on_trade("BTCUSDT", tr(50610, DEC + 9100, 7))         # drží se v bufferu
+    assert ex.positions["s"].sim.last_agg == 2
+    ex.fill_gap("BTCUSDT", [tr(51000, DEC + 2000, 3), tr(50900, DEC + 3000, 4), tr(50800, DEC + 4000, 5)],
+                True, DEC + 9200)
+    pos = ex.positions["s"]
+    assert pos.tainted == 0 and pos.sim.last_agg == 7 and pos.sim.extreme == 51000   # HWM z doplněných obchodů
+
+
+def test_gap_with_exit_inside_is_tainted_and_unfilled_gap_taints():
+    ex, closed = make(on_gap=lambda s, a, b: None)
+    _open_pos(ex)
+    ex.on_trade("BTCUSDT", tr(50300, DEC + 9000, 5))
+    ex.fill_gap("BTCUSDT", [tr(51000, DEC + 2000, 2), tr(50400, DEC + 3000, 3), tr(50400, DEC + 3500, 4)],
+                True, DEC + 9200)
+    (t,) = closed
+    assert t.tainted == 1 and t.exit_reason == "trailing"   # výstup v mezeře = fill bez knihy
+    ex2, _ = make(on_gap=lambda s, a, b: None)
+    _open_pos(ex2)
+    ex2.on_trade("BTCUSDT", tr(50300, DEC + 9000, 5))
+    ex2.fill_gap("BTCUSDT", [], False, DEC + 9200)
+    assert ex2.positions["s"].tainted == 1
+
+
+def test_gap_without_callback_taints_replay():
+    ex, closed = make()
+    _open_pos(ex)
+    ex.on_trade("BTCUSDT", tr(50100, DEC + 1000, 5))
+    assert ex.positions["s"].tainted == 1
+
+
+def test_contiguous_trades_never_taint():
+    ex, closed = make(on_gap=lambda s, a, b: pytest.fail("žádná mezera"))
+    _open_pos(ex)
+    for i in range(2, 50):
+        ex.on_trade("BTCUSDT", tr(50000 + i, DEC + 300 + i, i))
+    assert ex.positions["s"].tainted == 0

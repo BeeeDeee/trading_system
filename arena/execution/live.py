@@ -65,6 +65,7 @@ class LivePosition:
     exit_kind: str | None = None
     exit_trigger_px: float | None = None
     exit_trigger_ts: int | None = None
+    trigger_src: str = ""                  # "algo" (ALGO_UPDATE) | "fill" (odhad z fillu, ALGO_UPDATE nedorazil)
     exit_qty: float = 0.0
     exit_notional: float = 0.0
     exit_fee: float = 0.0
@@ -488,8 +489,8 @@ class LiveExecutor:
     def on_trade_tick(self, symbol: str, e: Mapping[str, Any]) -> None:
         """aggTrade → stínový TrailingSim (HWM pro teoretickou úroveň trailingu = exit_trigger_px)."""
         pos = self.positions.get(symbol)
-        if pos is None or pos.sim is None or pos.state not in ("PROTECTING", "PROTECTED"):
-            return
+        if pos is None or pos.sim is None or pos.state not in ("PROTECTING", "PROTECTED") or pos.exit_kind is not None:
+            return   # po spuštění výstupu už HWM ani MFE/MAE neposouvat
         sim = TrailingSim(**{**pos.sim, "pending": None, "done": None})
         sim.on_trade(float(e["p"]), int(e["T"]), int(e["a"]))
         d = asdict(sim)
@@ -519,16 +520,14 @@ class LiveExecutor:
         if st in ("TRIGGERING", "TRIGGERED", "FINISHED") and kind in ("HS", "TS"):
             if o.get("ai"):
                 pos.algo_order_ids[str(o["ai"])] = kind
-            if pos.exit_kind is None:
+            if pos.exit_kind is None or pos.trigger_src == "fill":
+                # i když fill přišel dřív (ORDER_TRADE_UPDATE před ALGO_UPDATE), čas spuštění je až odtud
                 pos.exit_kind = kind
                 pos.exit_trigger_ts = int(o.get("tt") or e.get("T") or self.now_ms())
-                if kind == "HS":
-                    pos.exit_trigger_px = float(pos.plan["hard_stop_px"])
-                else:
-                    sim = pos.sim or {}
-                    lvl = TrailingSim(**{**sim, "pending": None, "done": None}).trail_level if sim else None
-                    pos.exit_trigger_px = lvl or (float(o["tp"]) if o.get("tp") else self.last_price(pos.symbol))
-                pos.state = "EXITING"
+                pos.exit_trigger_px = self._trigger_px(pos, kind, o)
+                pos.trigger_src = "algo"
+                if pos.state in ("PROTECTING", "PROTECTED"):
+                    pos.state = "EXITING"
             self.save(pos)
         elif st in ("REJECTED", "EXPIRED") and kind in ("HS", "TS") and pos.state in ("PROTECTING", "PROTECTED"):
             self.alert("ochrana zmizela", f"{pos.slot_id}: {kind} {st} {o.get('rm', '')}")
@@ -544,7 +543,8 @@ class LiveExecutor:
         cid, oid = o.get("c"), str(o.get("i"))
         kind = pos.kind_of(cid) or pos.algo_order_ids.get(oid)
         if kind is None and o.get("R") and o.get("S") == pos.close_side:
-            kind = pos.exit_kind or "EM"   # spuštěný algo příkaz s neznámým client ID: jediný slot na symbolu
+            # spuštěný algo příkaz s neznámým client ID (ALGO_UPDATE s `ai` ještě nedorazil): jediný slot na symbolu
+            kind = pos.exit_kind or self._guess_algo_kind(pos, float(o.get("L", 0)))
         if kind is None:
             return
         tid = str(o.get("t"))
@@ -566,13 +566,38 @@ class LiveExecutor:
         pos.exit_time = int(o.get("T", self.now_ms()))
         if pos.exit_kind is None:
             pos.exit_kind = kind
-            pos.exit_trigger_px = float(pos.plan["tp_px"]) if kind == "TP" and pos.plan.get("tp_px") else px
+            # ALGO_UPDATE nedorazil (nebo dorazí později): úroveň spuštění z plánu / stínového HWM, ne cena fillu,
+            # jinak by exit slip u HS/TS vycházel vždy 0
+            pos.exit_trigger_px = self._trigger_px(pos, kind, {}) if kind in ("HS", "TS", "TP") else px
             pos.exit_trigger_ts = pos.exit_time
-        if pos.exit_kind in ("HS", "TS") and pos.exit_trigger_ts:
+            pos.trigger_src = "fill"
+        if pos.exit_kind in ("HS", "TS") and pos.exit_trigger_ts and pos.trigger_src == "algo":
             self._latency(pos.trade_id, "trigger_to_fill", pos.exit_time - pos.exit_trigger_ts)
         self.save(pos)
         if Decimal(str(round(pos.exit_qty, 12))) >= pos.qty_d:
             await self._finalize(pos)
+
+    def _guess_algo_kind(self, pos: LivePosition, px: float) -> str:
+        """Fill bez známého příkazu: v EMERGENCY_CLOSE náš market, jinak HS nebo TS podle toho, ke které úrovni
+        má cena fillu blíž (trailing je vždy nad tvrdým stopem u LONG, pod ním u SHORT)."""
+        if pos.state == "EMERGENCY_CLOSE" or not pos.plan:
+            return "EM"
+        hs = float(pos.plan["hard_stop_px"])
+        lvl = self._trigger_px(pos, "TS", {}) if "TS" in pos.orders else None
+        if lvl is None:
+            return "HS" if "HS" in pos.orders else "EM"
+        pos.notes.append("exit_kind odhadnut z ceny fillu")
+        return "TS" if abs(px - lvl) < abs(px - hs) else "HS"
+
+    def _trigger_px(self, pos: LivePosition, kind: str, o: Mapping[str, Any]) -> float | None:
+        """Teoretická úroveň spuštění: HS = stop z plánu, TS = HWM stínového simu × (1 ∓ cb), TP = limit."""
+        if kind == "HS":
+            return float(pos.plan["hard_stop_px"])
+        if kind == "TP" and pos.plan.get("tp_px"):
+            return float(pos.plan["tp_px"])
+        sim = pos.sim or {}
+        lvl = TrailingSim(**{**sim, "pending": None, "done": None}).trail_level if sim else None
+        return lvl or (float(o["tp"]) if o.get("tp") else self.last_price(pos.symbol))
 
     async def _on_account_update(self, e: Mapping[str, Any]) -> None:
         for p in e.get("a", {}).get("P", []):
@@ -584,6 +609,17 @@ class LiveExecutor:
 
     async def _finalize(self, pos: LivePosition, reason_override: str | None = None) -> TradeRecord:
         await self._cancel_siblings(pos, keep=pos.exit_kind)
+        if not pos.entry_px or pos.entry_px <= 0:
+            # cena vstupu neznámá (např. odpověď bez avgPrice a pád před zpřesněním): vážený průměr vstupních fillů
+            r = self.db.execute("SELECT SUM(px * qty), SUM(qty) FROM fills WHERE trade_id=? AND client_id=?",
+                                (pos.trade_id, pos.orders.get("E", ""))).fetchone()
+            if r and r[1]:
+                pos.entry_px = float(r[0]) / float(r[1])
+                pos.notes.append("entry_px z fills při finalize")
+            else:
+                pos.entry_px = pos.decision_px
+                pos.notes.append("entry_px neznámá: decision_px")
+                self.alert("cena vstupu neznámá", f"{pos.slot_id}: finalize s decision_px")
         funding = await self._funding(pos)
         q = float(pos.qty_d)
         exit_px = pos.exit_notional / pos.exit_qty if pos.exit_qty else (pos.exit_trigger_px or pos.entry_px)

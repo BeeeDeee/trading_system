@@ -41,6 +41,7 @@ class WsConnection:
     rotate_after_s: float = 23 * 3600
     idle_timeout_s: float = 60.0
     backoff_max_s: float = 60.0
+    check_every_s: float = 5.0     # jak často hlídač kontroluje idle a rotaci
 
     connected: bool = field(default=False, init=False)
     connected_since_ms: int | None = field(default=None, init=False)
@@ -67,6 +68,7 @@ class WsConnection:
                     self.connects += 1
                     self.connected = True
                     self.connected_since_ms = wall_ms()
+                    self.last_msg_ms = None     # idle timeout se počítá od tohoto spojení, ne od minulého
                     self.disconnected_since_ms = None
                     backoff = 1.0
                     log.info("WS %s připojeno (reconnect=%s)", self.name, reconnected)
@@ -102,7 +104,7 @@ class WsConnection:
         kick_task = asyncio.ensure_future(self._kick.wait())
         try:
             while True:
-                done, _ = await asyncio.wait({stop_task, kick_task}, timeout=min(5.0, self.idle_timeout_s),
+                done, _ = await asyncio.wait({stop_task, kick_task}, timeout=min(self.check_every_s, self.idle_timeout_s),
                                              return_when=asyncio.FIRST_COMPLETED)
                 if done:
                     break
