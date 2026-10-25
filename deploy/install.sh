@@ -51,7 +51,7 @@ if [ "${NO_START:-0}" != 1 ]; then sudo systemctl restart arena.service; fi
 
 # Caddy
 TMP="$(mktemp)"; trap 'rm -f "$TMP"' EXIT
-set +e; sudo cat "$CF" | sudo -E python3 -I "$HERE/patch_caddyfile_arena.py" /dev/stdin "$TMP"; rc=${PIPESTATUS[1]}; set -e
+set +e; sudo cat "$CF" | python3 -I "$HERE/patch_caddyfile_arena.py" /dev/stdin "$TMP"; rc=${PIPESTATUS[1]}; set -e
 if [ "$rc" = 3 ]; then
   echo "Caddyfile už má /arena/."
 elif [ "$rc" = 0 ]; then
