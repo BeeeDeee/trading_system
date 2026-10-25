@@ -145,7 +145,9 @@ def test_g1_g2_g3_run_and_report_controls(lab, evaluator):
               "blocks_positive"):
         assert k in g2.metrics["checks"]
     assert len(g2.trials) == 2 and g2.metrics["random_timing"]["runs"] == 100
-    assert g2.metrics["random_timing"]["matched"]["runs"] == 50 and g2.metrics["random_timing"]["turnover_ratio_null_to_strategy"]
+    assert g2.metrics["random_timing"]["kind"] == "common_shift"
+    ind = g2.metrics["random_timing_independent"]
+    assert ind["runs"] == 50 and ind["turnover_ratio_null_to_strategy"] and "percentile" in ind
     g3 = evaluator.evaluate(lab, "H-9001", CARD, "G3", {})
     assert "dsr" in g3.metrics["checks"]
 

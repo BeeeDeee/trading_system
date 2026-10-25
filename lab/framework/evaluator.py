@@ -54,6 +54,7 @@ class Context:
     bench_weights: dict = field(default_factory=dict)
     runtime_limit_s: float = 1200.0
     dev_end: int = 0                 # number of dev rows
+    start_row: int = 0               # first scored row; rows before it are warm-up history of signal-only series
     data_end: int = 0
     path: object = None
     code_sha: str = ""
@@ -177,7 +178,12 @@ class QlabEvaluator:
         if any(r.get("period") for r in reqs):
             start = max([start] + [data.as_date(r["period"][0]) for r in reqs if r.get("period")])
         end = min(data.as_date(cat[d]["range"][1]) for d in all_ds)
-        view = view.between(start, end)
+        # Warm-up: a signal-only series (FRED, CFTC, ...) keeps its history from the start its requirement declares,
+        # even when that is before the instruments' start; the book is scored from `start` as before. Before this,
+        # `start` clipped every series, so a 5-year average could only be formed 5 years after the instruments began.
+        warm = min([start] + [data.as_date(r["period"][0]) for r in reqs
+                              if r["dataset"] in signal_ds and r.get("period")])
+        view = view.between(warm, end)
         synthetic_only = set(load_ds) == {"synthetic_market"}
         view = data.with_cash(view, None if synthetic_only else data.tbill_rates())
         holdout = min(data.as_date(cat[d]["holdout_from"]) for d in all_ds)
@@ -185,6 +191,7 @@ class QlabEvaluator:
         limit = _merge(gates_cfg["G0"], self.overrides.get("G0", {}))["max_runtime_min"] * 60.0
         ctx = Context(hid, card, view, strat_cols, bench, bweights, limit,
                       dev_end=int(np.searchsorted(view.dates, holdout, side="left")), data_end=len(view.dates),
+                      start_row=int(np.searchsorted(view.dates, np.datetime64(start, "D"), side="left")),
                       path=lab.paths.strategies / hid / "strategy.py", code_sha=code or "")
         self._ctx = {key: ctx}   # one hypothesis at a time: keeps memory flat on the small machine
         return ctx
@@ -234,6 +241,8 @@ class QlabEvaluator:
             else:
                 t = np.full(v.shape, np.nan)
                 rows = period_starts(v.dates, "M")
+                if ctx.start_row:                       # warm-up rows: the benchmark starts with the scored rows
+                    rows = np.union1d(rows[rows >= ctx.start_row], [ctx.start_row])
                 t[rows] = 0.0
                 for inst, w in ctx.bench_weights.items():
                     t[rows, v.instruments.index(inst)] = w
@@ -254,7 +263,7 @@ class QlabEvaluator:
         """Scored rows: from the first execution after the first decision (or `start`) to the end of the run."""
         decided = np.flatnonzero(~np.isnan(run.targets).all(axis=1))
         first = int(decided[0]) + 1 if len(decided) else len(run.returns)
-        return slice(max(first, start), len(run.returns))
+        return slice(max(first, start, ctx.start_row), len(run.returns))
 
     # ------------------------------------------------------------------ G0 integrity
 

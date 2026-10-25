@@ -443,30 +443,32 @@ class IntradayEvaluator:
         m["block_sharpes"] = [round(x, 3) for x in bs]
         checks["blocks_positive"] = _check(sum(x > 0 for x in bs), ">=", th["subperiods"]["min_blocks_positive"])
         checks["max_block_share_of_log_return"] = _check(share, "<=", th["subperiods"]["max_block_share"])
-        # random timing null
-        rng = np.random.default_rng(12345)
+        # random timing null. The gate uses the matched null: ONE offset for all instruments, so the fake book has the
+        # strategy's exposure and notional turnover and pays the same costs. Independent offsets per instrument spread
+        # out simultaneous entries, the fake book then trades more notional than the strategy and looks too harsh, so
+        # `random_timing_percentile` could pass for the wrong reason (H-0035, H-0007, owner decision 2026-10-25).
         shift = view.bars_per_day * 5
-        null, null_turn = [], []
-        for _ in range(th["random_entry"]["runs"]):
-            fake = random_timing(np.nan_to_num(_ffill_rows(w)), rng, shift)
-            sim = self.run(lab, hid, view, params, cfg, w=fake)
-            null.append(sr(sim))
-            null_turn.append(float(sim.turnover[win].mean()))
+        held = np.nan_to_num(_ffill_rows(w))
+        runs = th["random_entry"]["runs"]
+        rng = np.random.default_rng(54321)
+        null = [sr(self.run(lab, hid, view, params, cfg, w=random_timing(held, rng, shift, common=True)))
+                for _ in range(runs)]
         pct = float(np.mean(np.array(null) < s0)) if null else 0.0
+        m["random_timing"] = {"kind": "common_shift", "runs": len(null),
+                              "median_sharpe": float(np.median(null)) if null else None,
+                              "p95_sharpe": float(np.quantile(null, 0.95)) if null else None, "percentile": pct}
+        # descriptive, not a gate: the earlier null with an independent offset per instrument, and how much more
+        # notional it trades than the strategy (> 1: harsher than the strategy deserves)
+        rng2, indep, indep_turn = np.random.default_rng(12345), [], []
+        for _ in range(max(20, runs // 2)):
+            sim = self.run(lab, hid, view, params, cfg, w=random_timing(held, rng2, shift))
+            indep.append(sr(sim))
+            indep_turn.append(float(sim.turnover[win].mean()))
         base_turn = float(base.turnover[win].mean())
-        m["random_timing"] = {"runs": len(null), "median_sharpe": float(np.median(null)) if null else None,
-                              "p95_sharpe": float(np.quantile(null, 0.95)) if null else None,
-                              # > 1: the null trades more notional than the strategy and is harsher than it should be
-                              "turnover_ratio_null_to_strategy": round(float(np.median(null_turn)) / base_turn, 3)
-                              if null and base_turn > 0 else None}
-        # descriptive, not a gate: the same null with ONE offset for all instruments (same exposure and turnover)
-        rng2, matched = np.random.default_rng(54321), []
-        for _ in range(max(20, th["random_entry"]["runs"] // 2)):
-            matched.append(sr(self.run(lab, hid, view, params, cfg, w=random_timing(
-                np.nan_to_num(_ffill_rows(w)), rng2, shift, common=True))))
-        m["random_timing"]["matched"] = {
-            "runs": len(matched), "median_sharpe": float(np.median(matched)),
-            "p95_sharpe": float(np.quantile(matched, 0.95)), "percentile": float(np.mean(np.array(matched) < s0))}
+        m["random_timing_independent"] = {
+            "runs": len(indep), "median_sharpe": float(np.median(indep)), "p95_sharpe": float(np.quantile(indep, 0.95)),
+            "percentile": float(np.mean(np.array(indep) < s0)),
+            "turnover_ratio_null_to_strategy": round(float(np.median(indep_turn)) / base_turn, 3) if base_turn > 0 else None}
         checks["random_timing_percentile"] = _check(pct, ">=", th["random_entry"]["min_percentile"])
         return _outcome("g2", m, checks, trials)
 

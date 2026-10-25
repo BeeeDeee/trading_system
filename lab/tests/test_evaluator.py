@@ -115,3 +115,27 @@ def test_series_without_dev_values_fail_g0_instead_of_showing_zero_events():
     dev = full.slice(T - 100)
     assert empty_series(dev, full) == [f"fred_macro.OAS (first valid value {v.dates[T - 5]})"]
     assert empty_series(full, full) == []
+
+
+def test_warm_up_rows_are_not_scored_and_the_benchmark_starts_with_the_scored_rows():
+    import numpy as np
+
+    from lab.framework import data
+    from lab.framework.evaluator import Context, Run
+    v = data.synthetic()
+    T = len(v.dates)
+    ev = QlabEvaluator(require_canaries=False)
+    ctx = Context("x", {}, v, ["S00", "S01"], "B", {"S00": 0.6, "S01": 0.4}, start_row=120, dev_end=T, data_end=T)
+    w = np.full(v.shape, np.nan)
+    w[10:, 0] = 1.0                                       # a strategy that decides during the warm-up rows
+    w[10:, 1] = 0.0
+    run = Run(w, np.zeros(T), None)
+    assert ev.window(ctx, run) == slice(120, T)           # first decision row 10 would give 11
+    assert ev.window(replace_start(ctx, 0), run) == slice(11, T)
+    bench = ev.benchmark(ctx, T)
+    assert np.allclose(bench[:119], 0.0) and np.abs(bench[125:]).sum() > 0    # nothing held before the scored rows
+
+
+def replace_start(ctx, n):
+    from dataclasses import replace
+    return replace(ctx, start_row=n)
