@@ -82,3 +82,27 @@ def test_probe_excluded_from_stats(tmp_path):
                     cfg.paper.cost_model_version, "h", 0, 0, 0))
     w = SnapshotWriter(cfg, db, tmp_path, lambda: {}, lambda: [])
     assert [t.variant for t in w._trades()] == ["brk.v00"]
+
+
+def test_today_pnl_ignores_tainted_and_probe(tmp_path):
+    from arena.config import load_config as lc
+    from arena.db import Database
+    from arena.snapshot import SnapshotWriter
+    from arena.util import wall_ms
+
+    cfg = lc(DEFAULT_CONFIG_DIR)
+    db = Database(tmp_path / "t.db")
+    cols = ("trade_id,slot_id,mode,side,qty,notional,entry_px,entry_time,exit_px,exit_time,exit_reason,gross_pnl,net_pnl,"
+            "gross_bps,net_bps,entry_slip_bps,exit_slip_bps,bars_held,tainted,cost_model_version,config_hash,entry_fee,"
+            "exit_fee,funding")
+    now = wall_ms()
+    for tid, slot, taint, pnl in (("a", "brk.v00.BTCUSDT", 1, -193.0), ("b", "xp.v00.BTCUSDT", 0, -5.0),
+                                  ("c", "brk.v00.ETHUSDT", 0, 2.5)):
+        db.execute(f"INSERT INTO trades({cols}) VALUES ({','.join('?' * len(cols.split(',')))})",
+                   (tid, slot, "live", "LONG", 1, 1000, 1, now, 1, now, "time", 0, pnl, 0, 5, 0, 0, 1, taint,
+                    cfg.paper.cost_model_version, "h", 0, 0, 0))
+    w = SnapshotWriter(cfg, db, tmp_path, lambda: {}, lambda: [])
+    w.write_snapshot()
+    import json
+    today = json.loads((tmp_path / "data" / "snapshot.json").read_text())["overview"]["today"]
+    assert today["live"]["n"] == 1 and today["live"]["pnl"] == 2.5

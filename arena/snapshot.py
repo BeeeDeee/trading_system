@@ -215,7 +215,7 @@ class SnapshotWriter:
         day0 = now // DAY * DAY
         today = self.db.execute(
             "SELECT mode, COUNT(*) n, SUM(net_pnl) pnl, SUM(entry_fee + exit_fee) fee, SUM(funding) funding "
-            "FROM trades WHERE exit_time>=? AND slot_id NOT LIKE 'xp.%' GROUP BY mode", (day0,)).fetchall()
+            "FROM trades WHERE exit_time>=? AND tainted=0 AND slot_id NOT LIKE 'xp.%' GROUP BY mode", (day0,)).fetchall()
         eq = self.db.execute("SELECT * FROM equity ORDER BY ts DESC LIMIT 1").fetchone()
         events = self.db.execute("SELECT ts, level, component, msg FROM events ORDER BY id DESC LIMIT 200").fetchall()
         _dump(self.data_dir / "snapshot.json", {
