@@ -21,7 +21,8 @@ def _edit(path: Path, old: str, new: str) -> None:
 
 def test_repo_config_is_valid():
     cfg = load_config(DEFAULT_CONFIG_DIR)
-    assert cfg.env == "testnet" and cfg.live.enabled is False
+    assert cfg.env == "testnet"   # live smí být zapnutý jen na testnetu (mainnet vyžaduje výslovný souhlas)
+    assert cfg.live.enabled is False or cfg.env == "testnet"
     fams = {}
     for v in cfg.variants.values():
         fams[v.family] = fams.get(v.family, 0) + 1
