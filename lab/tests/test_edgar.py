@@ -172,3 +172,21 @@ def test_catalog_entry_items_and_the_field():
     assert attached.requirement_problems(card, cat) == []
     card["data_requirements"][1]["fields"] = ["ea_reaction_day"]
     assert "not a field of sec_8k_items" in attached.requirement_problems(card, cat)[0]
+
+
+def test_a_limited_run_never_rewrites_the_frozen_item_202_files(tmp_path, monkeypatch):
+    monkeypatch.setattr(edgar, "cik_map", lambda src: {10: 1, 11: 2})
+    block = {"form": ["8-K"], "filingDate": ["2010-02-01"], "acceptanceDateTime": ["2010-02-01T22:30:00.000Z"], "items": ["2.02"]}
+
+    class Fake(edgar.Client):
+        def __init__(self):
+            self.n = 0
+
+        def get(self, url):
+            self.n += 1
+            return json.dumps({"filings": {"recent": block, "files": []}}).encode()
+    edgar.build(tmp_path, tmp_path, client=Fake())
+    import polars as pl
+    before = pl.read_parquet(tmp_path / "data" / edgar.DATASET / "filings.parquet").height
+    edgar.build(tmp_path, tmp_path, client=Fake(), limit=1)
+    assert pl.read_parquet(tmp_path / "data" / edgar.DATASET / "filings.parquet").height == before == 2

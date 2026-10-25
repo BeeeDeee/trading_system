@@ -193,7 +193,7 @@ def build(home: Path, src: Path, client: Client | None = None, limit: int | None
     extra = {"requests_this_run": client.n, "seconds": round(time.monotonic() - t0, 1), "fetched": str(date.today())}
     out = home / "data" / DATASET
     out.mkdir(parents=True, exist_ok=True)
-    if (out / "report.json").exists() and not limit:
+    if (out / "report.json").exists():
         report = json.loads((out / "report.json").read_text())      # frozen
     else:
         _write_first(data, out)
