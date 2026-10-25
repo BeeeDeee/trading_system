@@ -31,6 +31,7 @@ def patch(s):
              "\t\tbasic_auth {\n"
              f"\t\t\t{credentials(s)}\n"
              "\t\t}\n"
+             "\t\theader Cache-Control \"no-cache\"\n"
              "\t\troot * /srv/arena/site\n"
              "\t\tfile_server\n"
              "\t}\n")
