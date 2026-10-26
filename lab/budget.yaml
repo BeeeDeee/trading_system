@@ -11,5 +11,5 @@ daily:
 total_daily: 33
 quiet_utc: [0, 2]     # no agent runs 00:00-02:00 UTC (the cpb bots' daily run uses the same subscription)
 max_agent_runs_per_cycle: 1
-propose_when_waiting_below: 2   # Scout proposes only while fewer hypotheses than this wait for the Builder
+propose_when_waiting_below: 4   # Scout proposes only while fewer hypotheses than this wait for the Builder (2 -> 4, owner, 2026-10-26: two cards stuck on Builder questions blocked the Scout)
 rate_limit_pause_hours: 5       # after a rate-limit error no agent runs for this long
