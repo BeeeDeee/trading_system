@@ -70,5 +70,13 @@
   "reason": "H-0052 and H-0073 both short VIXY to harvest the VIX-futures roll-down (same counterparty: hedgers paying for vol protection; same reason for the effect), and both died at G1 placebo percentile because same-instrument placebo shorts earn the unconditional roll (K-0088). Only the timing conditioner differs (release calendar vs term-structure slope). Merging is the stricter direction. The family merge also carries H-0042 and H-0045 (announcement-premium trials) into the shared count; accepted as the cost of the stricter penalty, since families cannot be split.",
   "message_id": 544,
   "ts": "2026-10-21T06:06:54.943105+00:00"
+ },
+ {
+  "from_family": "bond-index-extension-flow",
+  "into_family": "turn-of-month-flows",
+  "actor": "chair",
+  "reason": "Same mechanism: mandated month-end flows of benchmarked institutions (index extension and 60/40 rebalancing) traded through the same SPY/IEF/TLT pair in the last sessions of the month. H-0048 is a month-end flow idea on the same pair as H-0001, H-0002 and H-0050 already counted in turn-of-month-flows (which absorbed rebalancing-flow-pressure). Merging only makes the multiple-testing penalty stricter. Families that share data but not the counterparty (earnings-date families, macro-calendar families, quarter-end window dressing) are deliberately not merged.",
+  "message_id": 565,
+  "ts": "2026-10-25T20:05:58.754278+00:00"
  }
 ]

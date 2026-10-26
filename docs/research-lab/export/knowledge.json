@@ -1066,5 +1066,77 @@
   "actor": "librarian",
   "message_id": 548,
   "ts": "2026-10-21T06:36:15.330654+00:00"
+ },
+ {
+  "id": "K-0090",
+  "kind": "market",
+  "title": "CFTC speculator positioning through commodity and currency ETFs: levels and weekly changes both come out empty",
+  "statement": "Two designs on the same CFTC non-commercial positioning and almost the same commodity, metal and currency ETFs found no tradable effect: monthly positioning levels against their own history (H-0057) and the weekly change in speculator net position traded for five sessions (H-0051). Averages were about zero or wrong-signed and inside the placebo cloud, with no consistent sign across the thirds of dev: the levels design was positive only in the earliest third, the changes design only in the latest. In H-0051 the short horizons were flat and only the longest leaned the predicted way. Likely reasons are the reporting lag (entry days after the as-of date), futures roll and tracking noise in the ETFs, and physical trusts that do not hold the futures. The published premiums concern futures, so this does not refute them. A third ETF-based CFTC card has a low prior unless it changes the instrument to the futures themselves or controls for the market's own past return.",
+  "evidence": "[\"H-0051\",\"H-0057\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 554,
+  "ts": "2026-10-25T18:37:35.833171+00:00"
+ },
+ {
+  "id": "K-0091",
+  "kind": "framework",
+  "title": "A card whose data period starts before the dataset's first row is blocked and cannot be revised in BLOCKED_DATA",
+  "statement": "H-0051 asked for the CFTC dataset from 2004-01-02, three days before its first report (2004-01-05). The card went to BLOCKED_DATA on the missing dataset, and the later period mismatch could not be fixed there because BLOCKED_DATA cards cannot be revised; the owner had to park it, reopen it and file a one-line version 2, about eight days after the card was created. Nothing else changed in the card. A Scout should read the first date of a new dataset in the catalog or from the Archivist before writing the period, and the framework could allow period-only revisions in BLOCKED_DATA or flag a period that starts before the dataset when the card is specified.",
+  "evidence": "[\"H-0051 transitions 2026-10-17 to 2026-10-25\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 555,
+  "ts": "2026-10-25T18:37:35.838476+00:00"
+ },
+ {
+  "id": "K-0092",
+  "kind": "framework",
+  "title": "lab try cannot exercise weekly-report cards on the CFTC dataset: its synthetic COT series are daily random walks",
+  "statement": "The Builder of H-0051 reports that the synthetic cftc_cot_legacy_1d series in lab try are daily random walks, so no pair of reports exactly seven days apart exists and the book has zero trades and zero events there; it tested legs, weights, the seven-day rule, fewer than six eligible ETFs, late listing and truncation on hand-built weekly reports. On real data G0 reported events (about 2100) and no look-ahead failures in 25 cuts, and G1 counted nearly the same events, so G0 was the first meaningful check. Same kind of gap as K-0082 (synthetic 8-K flag never equal to one). Suggested: make synthetic report series weekly, stamped with a Friday release, so lab try produces events. The Builder also used the loader's usable-session date as the release date; whether the loader stamps holiday and shutdown delays correctly was not measured by any gate.",
+  "evidence": "[\"H-0051\",\"K-0082\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 556,
+  "ts": "2026-10-25T18:37:35.845905+00:00"
+ },
+ {
+  "id": "K-0093",
+  "kind": "market",
+  "title": "S&P 500 membership-change reversal: two designs end just under the placebo bar, with slow build and a faded latest third",
+  "statement": "Two designs on the forced trading around S&P 500 membership changes in liquid US stocks, additions only (H-0017) and additions plus deletions read inside LIQ-500 (H-0022), both showed the predicted sign, a gross effect well above cost and a placebo mean near zero, and both landed just under the placebo percentile bar, with a bar above cost. Both effects were small in the first sessions and larger at the longest horizons, so the reversal is slower than a five-session hold, and in both the latest third of dev was weakest (about zero in the second). Adding the deletion leg gave more events but did not remove the near miss. They share most of their events, so this is one piece of evidence seen twice. Mandated-flow events remain the nearest thing to a live effect in the large-cap short-horizon cross-section (K-0024), but the gate cannot confirm them with a few events per month. Further tests on the same membership events are retries; a card needs a slower horizon argued from the build-up, or many more events.",
+  "evidence": "[\"H-0017\",\"H-0022\",\"K-0024\",\"K-0026\",\"K-0034\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 573,
+  "ts": "2026-10-25T22:37:12.377411+00:00"
+ },
+ {
+  "id": "K-0094",
+  "kind": "market",
+  "title": "Reaction drift is specific to earnings releases: large moves on non-earnings 8-K sessions show none",
+  "statement": "On real earnings-release sessions, following a large standardized own-price reaction drifts in the same direction (H-0028, H-0031, H-0033). The same rule applied to sessions with a filed non-earnings 8-K (H-0034) gave a slightly wrong-signed average, inside the placebo cloud, with signs mixed across thirds and horizons beyond the first sessions leaning negative. Moves on sessions with no earnings release at all reverse slightly (H-0030). So a filing-identified news event did not turn reversal into drift: what separates the earnings case may be the scheduled date, the consensus benchmark and the attention an earnings release draws, not the presence of news. Caveats: the 8-K item types are pooled and the filing session can come after the press release, so the dated reaction may be a tail or a routine filing. Not tested: single item types, press-release timestamps, a news-versus-no-news comparison within the same stocks. Dated news outside earnings now has one flat verdict; a further filing-based drift card needs a reason that the item type is a surprise.",
+  "evidence": "[\"H-0034\",\"H-0030\",\"H-0028\",\"H-0031\",\"H-0033\",\"K-0083\",\"K-0024\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 574,
+  "ts": "2026-10-25T22:37:12.384454+00:00"
+ },
+ {
+  "id": "K-0095",
+  "kind": "framework",
+  "title": "PIT S&P 500 mask now reaches liq_n cards; G0 counted more events than G1",
+  "statement": "K-0032 recorded that H-0022 could not run because the PIT S&P 500 mask was not delivered to LIQ-500 cards. The owner reopened it after extras['sp500_member'] was deployed (prod ba7c4c2), the Builder read it directly, G0 passed with no look-ahead failures in 25 cuts, and G1 measured the mechanism, so the both-direction index-change test is feasible and a deleted stock that stays liquid can be held. The other parts of K-0032 stand: events on young or departing stocks that never sit in the declared universe give an empty set (H-0021), and weights outside the declared universe are refused (H-0018, K-0051). New: G0 counted 453 events in dev and G1 measured 395, about an eighth fewer, with zero events lacking controls. Cause unconfirmed: the G1 window start, the forward window at the end of dev, or a peer rule like K-0086. Scouts should expect G1 to cover somewhat fewer events than G0 reports.",
+  "evidence": "[\"H-0022\",\"H-0018\",\"H-0021\",\"K-0032\",\"K-0051\",\"K-0086\"]",
+  "confidence": "medium",
+  "supersedes": "K-0032",
+  "actor": "librarian",
+  "message_id": 577,
+  "ts": "2026-10-25T22:37:12.412616+00:00"
  }
 ]

@@ -107,7 +107,10 @@ notes: 'PROVENANCE (read before the verdict). This is a post hoc selection. Rese
   fixed monthly top 10; (3) costs are the lab''s tiers (5 bps fee + 1.5-15 bps slippage) instead of a flat 10 bps
   per side; (4) fill at the next candle''s open instead of the signal candle''s close; (5) a follower that leaves
   the universe is closed early. The grid keeps k_sigma 2.5 and 3.5 and hold 12 and 24; do not narrow it.'
-status: IDEA
+status: PARKED
+terminal:
+  stage: IDEA
+  reason_code: null
 history:
 - ts: '2026-10-21T06:35:45.551011+00:00'
   version: 1
@@ -116,3 +119,11 @@ history:
   agent: human
   invocation_id: null
   reason: created
+- ts: '2026-10-25T18:00:57.219803+00:00'
+  version: 1
+  from: IDEA
+  to: PARKED
+  agent: human
+  invocation_id: null
+  reason: 'owner: duplicate of H-0040 (same BTC-led catch-up rule, only the non-following condition differs; H-0040
+    was rejected at G2); the family''s prior-trial count is being settled first'

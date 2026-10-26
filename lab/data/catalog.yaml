@@ -750,3 +750,42 @@ datasets:
     - VXVCLS
     location: LAB_HOME/data/fred_vxv_1d
     cost_model: null
+
+  - id: sec_8k_items
+    loader: sep_attached
+    attaches_to: sharadar_sep
+    asset_class: alt
+    instruments: 'non-earnings 8-K news: primary form 8-K filings with at least one
+      item other than 2.02, 5.07 and 9.01 and without item 2.02 (SEC EDGAR), as the
+      daily flag nonearn_8k_reaction_day on the stocks of sharadar_sep'
+    frequency: event
+    range:
+    - '2004-08-23'
+    - '2026-10-23'
+    clock: us_close
+    source: SEC EDGAR submissions API (data.sec.gov, free, public), fetched by the framework
+      from the same per-CIK files as sec_8k_item202; CIK from the secfilings URL of
+      the Sharadar tickers table
+    location: LAB_HOME/data/sec_8k_items
+    quality: 'lab edgar-fetch 2026-10-25: 1096760 filings of 15559 of 17958 CIKs'
+    holdout_from: '2021-01-01'
+    cost_model: null
+    forward_source: null
+    known_biases:
+    - 'Attached to sharadar_sep as a daily (T, N) matrix: 1 on the reaction session
+      of each primary 8-K whose item list has at least one item outside {2.02, 5.07,
+      9.01} and does not contain 2.02, 0 on other sessions, NaN before the company''s
+      first EDGAR filing. Same reaction-session rule, same CIK mapping and same early-close
+      simplification as sec_8k_item202. Amendments (8-K/A) are dropped.'
+    - 'An 8-K that carries both an earnings release (2.02) and other news is excluded,
+      so a non-earnings event filed together with 2.02 is missed. Earnings releases
+      filed only under item 7.01 or 8.01 are counted as non-earnings news: the flag
+      is contaminated with earnings reactions, so a card must also condition on ea_reaction_day
+      (an event day itself can still carry such a release).'
+    - 'CIKs come from the Sharadar tickers table (the current CIK of a security): companies
+      that changed or reused a CIK can miss or mix filings, and a CIK EDGAR no longer
+      serves (404) has no data, so delisted firms are under-covered and the event set
+      leans to survivors (same as sec_8k_item202).'
+    - 'The EDGAR item list is as filed, never revised. The flag is a daily indicator
+      with no information on the news itself: several unrelated 8-Ks on one session
+      count once.'
