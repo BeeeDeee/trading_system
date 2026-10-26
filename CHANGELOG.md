@@ -22,6 +22,11 @@ signály `brk` přepočtené z barů v DB, ukazatele paper pozic. Opraveno:
   idle timeoutu odpojoval každých ~13 s (spojen ~50 % času, ztrácely se `ALGO_UPDATE`). Private WS je teď v health.
   Idle timeout private streamu zvednut z 300 s na 30 min (2026-10-26): bez obchodů stream mlčí a reconnectoval
   se každých ~6 min (nový listenKey + rekonciliace, ~200×/den); mrtvé spojení dál pozná ping každých 20 s.
+- **Cena vstupu live při selhaném zpřesnění (2026-10-26):** demo vrátilo na `query_order` hned po fillu `-2013`,
+  entry_px zůstal odhad z poslední ceny (l-xp.v00.DOGEUSDT-15: 0.07676 místo 0.07674, net +0.2457 místo +0.2196,
+  ledger hlásil rozdíl vůči income). Zpřesnění teď na `-2013` zkouší znovu a `_finalize` bere entry_px z váženého
+  průměru vstupních fills, když pokrývají celé qty (to opravuje i zaokrouhlený `avgPrice`, u 3 obchodů < 0.001 USDT).
+  4 historické obchody přepočteny z fills.
 - **Úroveň spuštění live výstupu:** když fill přijde před `ALGO_UPDATE` (nebo ten nedorazí), trigger = tvrdý stop
   z plánu / HWM stínového simu × (1 ∓ cb), ne cena fillu (exit slip byl jinak vždy 0). Neznámý algo fill se přiřadí
   k HS/TS podle ceny (dřív „EM“). `trigger_to_fill` jen se skutečným časem spuštění. Stínový sim se po spuštění

@@ -318,6 +318,33 @@ async def test_entry_response_without_avg_price_demo_testnet():
     assert algo_types(fx) == ["STOP_MARKET", "TRAILING_STOP_MARKET"]
 
 
+async def test_entry_px_refine_retries_order_not_found():
+    """Demo 2026-10-26: query_order hned po fillu vrátil -2013, cena vstupu zůstala odhadem z poslední ceny."""
+    fx = FakeExchange()
+    fx.no_avg_price, fx.query_not_found = True, 2
+    ex, fx, db, alerts, closed = make(fx)
+    ex.last_price = lambda s: 0.5003
+    pos = await open_(ex)
+    assert pos.entry_px == pytest.approx(0.5)
+
+
+async def test_finalize_takes_entry_px_from_fills_when_refine_failed():
+    """l-xp.v00.DOGEUSDT-15: entry_px zůstal odhad 0.07676 místo fillu 0.07674 → gross o 0.026 USDT vedle income."""
+    fx = FakeExchange()
+    fx.no_avg_price, fx.query_not_found = True, 10
+    ex, fx, db, alerts, closed = make(fx)
+    ex.last_price = lambda s: 0.5003
+    pos = await open_(ex)
+    assert pos.entry_px == pytest.approx(0.5003)                     # zpřesnění selhalo, zůstal odhad
+    await deliver(ex, fx.events)                                     # vstupní fill přes user stream
+    fx.price[SYM] = Decimal("0.4890")
+    ex.last_price = lambda s: float(fx.price[s])
+    await deliver(ex, fx.trigger_algo(pos.orders["HS"]))
+    (t,) = closed
+    assert t.entry_px == pytest.approx(0.5)
+    assert t.gross_pnl == pytest.approx(-(0.5 - 0.489) * float(t.qty))
+
+
 async def test_entry_price_unknown_emergency_close_and_trade_recorded():
     fx = FakeExchange()
     fx.no_avg_price = True

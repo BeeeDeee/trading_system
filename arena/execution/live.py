@@ -217,7 +217,14 @@ class LiveExecutor:
     async def _refine_entry_px(self, pos: LivePosition) -> None:
         """Skutečná cena vstupu, když ji odpověď na MARKET neobsahovala: dotaz na příkaz, jinak vážený průměr fillů."""
         try:
-            q = await self.rest.query_order(pos.symbol, pos.orders["E"])
+            for i in range(3):      # demo hned po fillu občas hlásí -2013 (příkaz neexistuje)
+                try:
+                    q = await self.rest.query_order(pos.symbol, pos.orders["E"])
+                    break
+                except errors.BinanceError as e:
+                    if e.code != -2013 or i == 2:
+                        raise
+                    await asyncio.sleep(0.5 * (i + 1))
             px = float(q.get("avgPrice") or 0)
             if px <= 0:
                 oid = str(q.get("orderId"))
@@ -609,13 +616,20 @@ class LiveExecutor:
 
     async def _finalize(self, pos: LivePosition, reason_override: str | None = None) -> TradeRecord:
         await self._cancel_siblings(pos, keep=pos.exit_kind)
+        # cena vstupu = vážený průměr vstupních fillů, když pokrývají celé qty (přesnější než zaokrouhlený avgPrice
+        # a jediný zdroj, když zpřesnění selhalo: demo vrací -2013 na query_order hned po fillu, zjištěno 2026-10-26)
+        r = self.db.execute("SELECT SUM(px * qty), SUM(qty) FROM fills WHERE trade_id=? AND client_id=?",
+                            (pos.trade_id, pos.orders.get("E", ""))).fetchone()
+        full = bool(r and r[1]) and Decimal(str(r[1])) >= pos.qty_d
+        if full and float(r[0]) / float(r[1]) != pos.entry_px:
+            vwap = float(r[0]) / float(r[1])
+            if pos.entry_px and abs(vwap - pos.entry_px) / vwap > 1e-6:
+                pos.notes.append(f"entry_px {pos.entry_px} → {vwap} z fills při finalize")
+            pos.entry_px = vwap
         if not pos.entry_px or pos.entry_px <= 0:
-            # cena vstupu neznámá (např. odpověď bez avgPrice a pád před zpřesněním): vážený průměr vstupních fillů
-            r = self.db.execute("SELECT SUM(px * qty), SUM(qty) FROM fills WHERE trade_id=? AND client_id=?",
-                                (pos.trade_id, pos.orders.get("E", ""))).fetchone()
             if r and r[1]:
                 pos.entry_px = float(r[0]) / float(r[1])
-                pos.notes.append("entry_px z fills při finalize")
+                pos.notes.append("entry_px z neúplných fills při finalize")
             else:
                 pos.entry_px = pos.decision_px
                 pos.notes.append("entry_px neznámá: decision_px")

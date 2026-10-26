@@ -24,6 +24,7 @@ class FakeExchange:
     order_fail: list[Exception] = field(default_factory=list)
     entry_timeout_but_filled: bool = False
     no_avg_price: bool = False        # demo/testnet: MARKET RESULT bez avgPrice, price "0.00"
+    query_not_found: int = 0          # demo: query_order hned po fillu vrací -2013 (tolikrát)
     events: list[dict[str, Any]] = field(default_factory=list)            # ORDER_TRADE_UPDATE market fillů (WS)
     _ids: Any = field(default_factory=lambda: itertools.count(1000))
 
@@ -91,7 +92,8 @@ class FakeExchange:
 
     async def query_order(self, symbol: str, cid: str) -> dict[str, Any]:
         o = self.orders.get(cid)
-        if o is None:
+        if o is None or self.query_not_found > 0:
+            self.query_not_found = max(0, self.query_not_found - 1)
             raise errors.BinanceError(400, -2013, "Order does not exist.")
         return {k: v for k, v in o.items() if k != "_trade"}
 
