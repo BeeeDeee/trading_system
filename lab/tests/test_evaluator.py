@@ -117,6 +117,46 @@ def test_series_without_dev_values_fail_g0_instead_of_showing_zero_events():
     assert empty_series(full, full) == []
 
 
+def test_unrequested_empty_series_do_not_fail_g0():
+    from dataclasses import replace
+
+    import numpy as np
+
+    from lab.framework import data
+    from lab.framework.evaluator import empty_series
+    v = data.synthetic()
+    T = len(v.dates)
+    late = np.full(T, np.nan)
+    late[T - 5:] = 1.0
+    full = replace(v, series={"fred_macro.OAS": late, "fred_macro.DGS10": np.ones(T)})
+    dev = full.slice(T - 100)
+    assert empty_series(dev, full, {"fred_macro.DGS10"}) == []             # H-0075: the card reads only DGS10
+    assert empty_series(dev, full, {"fred_macro"}) != []                   # no field list: every field counts
+    assert empty_series(dev, full, {"fred_macro.OAS"}) != []
+
+
+def test_signal_only_instruments_may_be_named_but_not_traded(tmp_path):
+    import numpy as np
+
+    from lab.framework import data
+    from lab.framework.evaluator import integrity
+    v = data.synthetic()
+    a, b = v.instruments[:2]
+    card = {"universe": {"kind": "instruments", "instruments": [a]},
+            "data_requirements": [{"dataset": "synthetic_market", "instruments": [a, b]}]}
+    src = ("import numpy as np\n\n\ndef target_weights(data, params):\n"
+           f"    w = np.zeros(data.shape)\n    sig = data.ret_oc[:, data.col({b!r})]\n    w[:, data.col({a!r})] = {{W}}\n"
+           "    return w\n")
+    cols = [a, b]
+    (tmp_path / "ok").mkdir(), (tmp_path / "bad").mkdir()                   # two files: one pyc cache entry each
+    good, bad = tmp_path / "ok" / "strategy.py", tmp_path / "bad" / "strategy.py"
+    good.write_text(src.replace("{W}", "0.5"))
+    bad.write_text(src.replace("{W}", "0.5").replace(f"w[:, data.col({a!r})] = 0.5", f"w[:, data.col({b!r})] = 0.5"))
+    run = lambda f: integrity(card, f, v.columns(cols), cols, {}, len(v.dates), {}, 60.0)  # noqa: E731
+    assert run(good).passed                                                 # H-0044: naming B is allowed
+    assert run(bad).reason_code == "g0_outside_universe"                    # but a weight on B is not
+
+
 def test_warm_up_rows_are_not_scored_and_the_benchmark_starts_with_the_scored_rows():
     import numpy as np
 

@@ -657,11 +657,15 @@ def strategy_instruments(card: dict) -> dict[str, list[str] | None]:
 
 # ---------------------------------------------------------------------------- G0 on any view
 
-def empty_series(dev: DataView, full: DataView) -> list[str]:
+def empty_series(dev: DataView, full: DataView, requested: set[str] | None = None) -> list[str]:
     """Signal-only series that have no finite value in the dev rows (e.g. FRED serves the ICE BofA spreads only for
-    the last three years): a card built on them sees zero events and "passes" G0 without ever being tested."""
+    the last three years): a card built on them sees zero events and "passes" G0 without ever being tested.
+    Only series the card requests count (`requested`: "dataset.field", or "dataset" for every field); the generic
+    loader attaches every catalog field of a dataset, and an unused empty one is not the card's fault (H-0075)."""
     out = []
     for name, x in dev.series.items():
+        if requested is not None and name not in requested and name.split(".")[0] not in requested:
+            continue
         x = np.asarray(x, dtype=float)
         if x.ndim == 1 and not np.isfinite(x).any():
             later = np.flatnonzero(np.isfinite(np.asarray(full.series[name], dtype=float)))
@@ -676,7 +680,10 @@ def integrity(card: dict, path, view: DataView, strat_cols: list[str], params: d
     on a synthetic market inside the Builder's workspace, so the Builder never needs real data to pass G0."""
     source = path.read_text() if path.exists() else ""
     universe = set(card["universe"].get("instruments") or strat_cols)
-    problems = strategy.scan(source, universe, set(view.instruments))
+    # signal-only inputs: instruments the card requests but does not put in its universe (H-0044: SPY and country
+    # ETFs drive the signal, only currency ETFs are traded). The code may name them; weights on them stay forbidden.
+    signal_only = {i for r in card["data_requirements"] for i in (r.get("instruments") or [])} - universe
+    problems = strategy.scan(source, universe | signal_only, set(view.instruments))
     m = {"problems": problems}
     if not source:
         return Outcome(False, m | {"problems": ["strategy.py missing"]}, "g0_missing")
@@ -685,12 +692,15 @@ def integrity(card: dict, path, view: DataView, strat_cols: list[str], params: d
         if not events_path.exists():
             return Outcome(False, m | {"problems": ["the card declares mechanism_test: diagnostic.py is missing"]},
                            "g0_missing_diagnostic")
-        problems += [f"diagnostic.py {p}" for p in strategy.scan(events_path.read_text(), universe, set(view.instruments))]
+        problems += [f"diagnostic.py {p}" for p in strategy.scan(events_path.read_text(), universe | signal_only,
+                                                                set(view.instruments))]
         m["problems"] = problems
     if problems:
         return Outcome(False, m, "g0_static")
     sv = view.slice(end).columns(strat_cols)
-    if (empty := empty_series(sv, view)):
+    requested = {f"{r['dataset']}.{f}" if r.get("fields") else r["dataset"]
+                 for r in card["data_requirements"] for f in (r.get("fields") or [None])}
+    if (empty := empty_series(sv, view, requested)):
         return Outcome(False, m | {"error": "series without a single value in the dev period: " + "; ".join(empty)},
                        "g0_series_empty")
 
@@ -716,6 +726,11 @@ def integrity(card: dict, path, view: DataView, strat_cols: list[str], params: d
         return Outcome(False, m | {"error": "; ".join(errors)}, "g0_weights")
     if not decided.any():
         return Outcome(False, m | {"error": "no decision row"}, "g0_no_decisions")
+    untradable = [j for j, c in enumerate(strat_cols) if c in signal_only]
+    if untradable and (decided[:, None] & (np.abs(np.nan_to_num(w[:, untradable])) > 1e-12)).any():
+        t, k = np.argwhere(decided[:, None] & (np.abs(np.nan_to_num(w[:, untradable])) > 1e-12))[0]
+        return Outcome(False, m | {"error": f"weight on signal-only instrument {strat_cols[untradable[k]]} on "
+                                             f"{sv.dates[t]}"}, "g0_outside_universe")
     if sv.universe is not None:
         outside = decided[:, None] & ~sv.universe & (np.abs(np.nan_to_num(w)) > 1e-12)
         if outside.any():
