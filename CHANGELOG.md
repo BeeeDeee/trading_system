@@ -20,6 +20,8 @@ signály `brk` přepočtené z barů v DB, ukazatele paper pozic. Opraveno:
 
 - **Private WS reconnect smyčka:** `last_msg_ms` se při novém spojení nenuloval, tichý private stream se po prvním
   idle timeoutu odpojoval každých ~13 s (spojen ~50 % času, ztrácely se `ALGO_UPDATE`). Private WS je teď v health.
+  Idle timeout private streamu zvednut z 300 s na 30 min (2026-10-26): bez obchodů stream mlčí a reconnectoval
+  se každých ~6 min (nový listenKey + rekonciliace, ~200×/den); mrtvé spojení dál pozná ping každých 20 s.
 - **Úroveň spuštění live výstupu:** když fill přijde před `ALGO_UPDATE` (nebo ten nedorazí), trigger = tvrdý stop
   z plánu / HWM stínového simu × (1 ∓ cb), ne cena fillu (exit slip byl jinak vždy 0). Neznámý algo fill se přiřadí
   k HS/TS podle ceny (dřív „EM“). `trigger_to_fill` jen se skutečným časem spuštění. Stínový sim se po spuštění

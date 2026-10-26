@@ -76,8 +76,9 @@ class LiveRuntime:
         diffs = await self.reconciler.run(fix=True)
         for d in diffs:
             log.warning("rekonciliace při startu: %s", d)
+        # private stream mlčí, dokud se neobchoduje; mrtvé spojení pozná ping (20 s), idle je jen pojistka
         self.ws = WsConnection("private", self._private_url, self._on_private, self._on_private_connect,
-                               idle_timeout_s=300)
+                               idle_timeout_s=30 * 60)
 
     async def _check_account(self, filters: Mapping[str, SymbolFilters]) -> None:
         """One-way, ISOLATED a páka na každém live symbolu; nastavit jen bez otevřené pozice (SPEC §9)."""
