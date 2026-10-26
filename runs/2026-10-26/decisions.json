@@ -1,0 +1,311 @@
+{
+ "date": "2026-10-26",
+ "llm_ok": true,
+ "locked_at": "2026-10-26T05:02:18.020Z",
+ "locked_ms": 1792990938020,
+ "portfolios": {
+  "b_btc": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_btc_eth": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_cash": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_ew20": {
+   "exits": {},
+   "info": {
+    "rebalance": true
+   },
+   "kind": "benchmark",
+   "targets": {
+    "BNB": 0.0909090909,
+    "BTC": 0.0909090909,
+    "DOGE": 0.0909090909,
+    "ENA": 0.0909090909,
+    "ETH": 0.0909090909,
+    "NEAR": 0.0909090909,
+    "SOL": 0.0909090909,
+    "SUI": 0.0909090909,
+    "UNI": 0.0909090909,
+    "XRP": 0.0909090909,
+    "ZEC": 0.0909090909
+   }
+  },
+  "b_mcap10": {
+   "exits": {},
+   "info": {
+    "rebalance": true
+   },
+   "kind": "benchmark",
+   "targets": {
+    "BNB": 0.0447877839,
+    "BTC": 0.7389343586,
+    "DOGE": 0.0055282091,
+    "ETH": 0.1300658907,
+    "NEAR": 0.002713248,
+    "SOL": 0.0274135057,
+    "SUI": 0.0017285925,
+    "UNI": 0.0019791225,
+    "XRP": 0.0374576651,
+    "ZEC": 0.0093916238
+   }
+  },
+  "bez_brany": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "BNB",
+     "ZEC",
+     "BTC",
+     "NEAR",
+     "ENA",
+     "XRP",
+     "SOL",
+     "ETH",
+     "DOGE",
+     "UNI"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.1774193548,
+    "BTC": 0.0967741935,
+    "DOGE": 0.0322580645,
+    "ENA": 0.0967741935,
+    "ETH": 0.0967741935,
+    "NEAR": 0.1129032258,
+    "SOL": 0.0967741935,
+    "UNI": 0.0322580645,
+    "XRP": 0.0806451613,
+    "ZEC": 0.1774193548
+   }
+  },
+  "btc_filtr": {
+   "exits": {},
+   "info": {
+    "overlay": "BTC pod SMA50 → hotovost",
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "claude_volne": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "BNB",
+     "BTC",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.2,
+    "BTC": 0.25,
+    "ZEC": 0.1
+   }
+  },
+  "inv_vol": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "jen_mr": {
+   "exits": {
+    "DOGE": "max_hold",
+    "HBAR": "max_hold",
+    "HYPE": "max_hold",
+    "SUI": "max_hold",
+    "UNI": "max_hold"
+   },
+   "info": {
+    "selected": [
+     "BTC",
+     "SOL",
+     "ETH"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BTC": 0.25,
+    "ETH": 0.25,
+    "SOL": 0.25
+   }
+  },
+  "jen_trend": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "BNB"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.25
+   }
+  },
+  "jen_zpravy": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ZEC": 0.25
+   }
+  },
+  "kontrarian": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "UNI",
+     "DOGE",
+     "SUI",
+     "XRP",
+     "BTC",
+     "SOL",
+     "ETH",
+     "ENA",
+     "NEAR",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BTC": 0.1,
+    "DOGE": 0.1,
+    "ENA": 0.1,
+    "ETH": 0.1,
+    "NEAR": 0.1,
+    "SOL": 0.1,
+    "SUI": 0.1,
+    "UNI": 0.1,
+    "XRP": 0.1,
+    "ZEC": 0.1
+   }
+  },
+  "mech_momentum": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "nahodny": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "BTC",
+     "DOGE",
+     "ENA",
+     "ETH",
+     "NEAR",
+     "SOL",
+     "SUI",
+     "UNI",
+     "XRP",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BTC": 0.1,
+    "DOGE": 0.1,
+    "ENA": 0.1,
+    "ETH": 0.1,
+    "NEAR": 0.1,
+    "SOL": 0.1,
+    "SUI": 0.1,
+    "UNI": 0.1,
+    "XRP": 0.1,
+    "ZEC": 0.1
+   }
+  },
+  "pravdepodobnost": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "BNB"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.25
+   }
+  },
+  "rovne": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "skore_vol": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "stop": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "top3": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "tydenni": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "vol_target": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "zaklad": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  }
+ },
+ "scores_sha256": "5d28db93079d9b48aee9ea9fd586ead056381a2a5d02d7dc80dfc530ddc67175"
+}

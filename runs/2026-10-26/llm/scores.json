@@ -1,0 +1,113 @@
+{
+ "date": "2026-10-26",
+ "regime": {
+  "label": "Risk-off, konsolidace před FOMC",
+  "summary": "BTC se drží těsně nad 30d minimem kolem 80 tis. USD pod SMA20/50, víkendová vlna likvidací (~815 mil. USD, z >90 % longy) část pák vyčistila. Altcoiny za BTC dlouhodobě zaostávají, ETF na ETH v říjnu hlavně v odlivu; rozhodne FOMC 28. 10. a PCE/HDP 29. 10."
+ },
+ "events_7d": [
+  {"date": "2026-10-28", "title": "Rozhodnutí FOMC o sazbách a tisková konference", "type": "makro"},
+  {"date": "2026-10-29", "title": "Předběžný odhad HDP USA za 3Q a inflace PCE za září", "type": "makro"},
+  {"date": "2026-11-01", "title": "Měsíční unlock SUI (~1 % oběžné nabídky)", "type": "unlock"},
+  {"date": "2026-11-02", "title": "Měsíční unlock ENA", "type": "unlock"},
+  {"date": "2026-11-05", "title": "Upgrade Zcash NU7 (25s bloky, rezerva z poplatků) – těsně za oknem, možný náběh předem", "type": "upgrade"}
+ ],
+ "coins": {
+  "BTC": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.5, "expected_move_7d_pct": 0.0,
+   "event": true, "event_type": "jine", "risk_flag": false,
+   "note": "Pod SMA20/50 u 30d minima, ale po vyčištění longů a s mírným fundingem je možný odraz; FOMC rozhodne o směru.",
+   "sources": ["https://cryptobriefing.com/over-815m-in-crypto-positions-liquidated-as-bitcoin-ether-prices-drop/", "https://www.federalreserve.gov/newsevents/2026-october.htm"]
+  },
+  "ETH": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.45, "p_up_7d": 0.47, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "RSI 34 a velký odliv z burz (bullish) proti trvalým odlivům z ETF a L/S 3,3 (přeplněné longy); relativně slabé vůči BTC.",
+   "sources": ["https://thecryptobasic.com/2026/10/24/tcb-daily-edition-what-happened-in-crypto-on-october-24-2026/", "https://coinmarketcap.com/cmc-ai/ethereum/latest-updates/"]
+  },
+  "BNB": {
+   "trend": 1, "mr": 0, "news": 0, "conviction": 4,
+   "p_outperform_btc_7d": 0.57, "p_up_7d": 0.52, "expected_move_7d_pct": 1.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejsilnější velký coin (rel7 +4,5, u SMA20) s nízkou betou 0,83 a nulovým fundingem; v risk-off prostředí obranná volba.",
+   "sources": ["https://pluang.com/en/news-feed/pertumbuhan-cepat-rwa-bnb-chain-2026"]
+  },
+  "XRP": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.47, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Týden držel lépe než BTC, ale rel30 −12,7, maximální funding a L/S 3,0 ukazují přeplněné longy při padajícím objemu.",
+   "sources": ["https://coinmarketcap.com/cmc-ai/xrp/latest-updates/"]
+  },
+  "SOL": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.46, "p_up_7d": 0.48, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "RSI 36 u 30d minima nabízí odraz, ale odlivy z SOL ETF, maximální funding a L/S 2,9 brzdí; přílivy do RWA už nejsou novinka.",
+   "sources": ["https://cryptoticker.io/en/solana-price-prediction-etf-outflow-30-million-october-2026/", "https://cryptoticker.io/en/solana-staking-guide/"]
+  },
+  "ZEC": {
+   "trend": 0, "mr": 0, "news": 1, "conviction": 4,
+   "p_outperform_btc_7d": 0.55, "p_up_7d": 0.53, "expected_move_7d_pct": 2.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Potvrzený upgrade NU7 na 5. 11. a návrat přílivů do ETF táhnou relativní sílu (rel7 +9,7); část je naceněná, ale náběh před upgradem je pravděpodobný, velmi vysoká volatilita.",
+   "sources": ["https://finance.yahoo.com/markets/crypto/articles/zcash-etf-lost-over-93-122858768.html", "https://blockonomi.com/zcash-etf-inflows-reverse-three-weeks-of-outflows-as-zec-rallies", "https://u.today/not-good-for-zcash-key-developer-josh-swihart-halts-zec-staking-upgrade"]
+  },
+  "DOGE": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.43, "p_up_7d": 0.45, "expected_move_7d_pct": -1.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Pod všemi průměry, rel30 −17,6 a objem −44 %; RSI 33,6 dává jen krátký odraz bez katalyzátoru.",
+   "sources": ["https://www.mexc.com/news/986111"]
+  },
+  "NEAR": {
+   "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.47, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Po prudkém výprodeji (−5,9 % za 3 dny) stále nad SMA50 a vysoko nad SMA100; integrace akciových trhů do Intents je drobná zpráva, volatilita extrémní.",
+   "sources": ["https://coinmarketcap.com/cmc-ai/near-protocol/latest-updates/", "https://u.today/near-protocol-oi-drops-95-amid-8-near-price-decline"]
+  },
+  "UNI": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.43, "p_up_7d": 0.45, "expected_move_7d_pct": -1.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejslabší 30d trend (rel30 −23,4), všechny krátké průměry jsou odporem; futures na CME už jsou naceněné a Arthur Hayes UNI prodal.",
+   "sources": ["https://coinmarketcap.com/cmc-ai/uniswap/latest-updates/", "https://blockchain.news/news/20261024-price-prediction-uni-every-moving-average-turns-resistance-after"]
+  },
+  "SUI": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.42, "p_up_7d": 0.44, "expected_move_7d_pct": -2.0,
+   "event": true, "event_type": "unlock", "risk_flag": false,
+   "note": "Hluboko pod SMA20 a u 30d minima, změna CEO v Mysten Labs a měsíční unlock 1. 11. tlačí; přeprodanost dává jen šanci na krátký odraz.",
+   "sources": ["https://coinmarketcap.com/cmc-ai/sui/latest-updates/", "https://blockchain.news/news/20261025-price-prediction-price-sui-stochastic-hits-extreme-lows-as-compresses"]
+  },
+  "ENA": {
+   "trend": 0, "mr": -1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.46, "expected_move_7d_pct": -0.5,
+   "event": true, "event_type": "unlock", "risk_flag": false,
+   "note": "Krátkodobá síla (rel7 +12,2, +5,9 % za den) bez nové zprávy, proti tomu prodej Arthura Hayese, nabídka USDe pod spouštěčem buybacku a unlock na začátku listopadu.",
+   "sources": ["https://coinmarketcap.com/cmc-ai/ethena/latest-updates/", "https://thecryptobasic.com/2026/10/24/tcb-daily-edition-what-happened-in-crypto-on-october-24-2026/"]
+  }
+ },
+ "top10": [
+  {"coin": "BNB", "reason": "Relativní síla s nízkou betou a neutrálním fundingem."},
+  {"coin": "ZEC", "reason": "Upgrade NU7 5. 11. a návrat přílivů do ETF."},
+  {"coin": "BTC", "reason": "Benchmark, v risk-off prostředí drží líp než bety."},
+  {"coin": "NEAR", "reason": "Nad SMA50 po výprodeji, šance na odraz při vysoké volatilitě."},
+  {"coin": "ENA", "reason": "Krátkodobé momentum, ale přepálené a před unlockem."},
+  {"coin": "XRP", "reason": "Týden stabilnější, ale přeplněné longy."},
+  {"coin": "SOL", "reason": "Přeprodaná, ale odlivy z ETF."},
+  {"coin": "ETH", "reason": "Přeprodaná, ale trvalé odlivy z ETF a slabost vůči BTC."},
+  {"coin": "DOGE", "reason": "Slabý trend bez katalyzátoru."},
+  {"coin": "UNI", "reason": "Nejslabší 30d trend, jen šance na odraz."}
+ ],
+ "claude_volne": {
+  "comment": "Zhruba 55 % v defenzivních pozicích (BTC, BNB) a malá sázka na ZEC, zbytek v hotovosti kvůli risk-off a FOMC; HYPE a TRX nejsou v universu, proto je prodávám.",
+  "positions": [
+   {"coin": "BTC", "weight_pct": 25, "reason": "Jádro portfolia u 30d minima po vyčištění longů; v risk-off prostředí méně rizikové než altcoiny.", "invalidation": "Denní uzavření pod 78 tis. USD nebo jestřábí FOMC s prolomením 30d minima."},
+   {"coin": "BNB", "weight_pct": 20, "reason": "Nejsilnější velký coin vůči BTC s nízkou betou a neutrálním fundingem.", "invalidation": "Pád pod 700 USD nebo rel7 vůči BTC záporné."},
+   {"coin": "ZEC", "weight_pct": 10, "reason": "Náběh před upgradem NU7 5. 11. a obrat přílivů do ETF; malá váha kvůli vysoké volatilitě.", "invalidation": "Odklad NU7 nebo pád pod 1 100 USD."}
+  ]
+ }
+}
