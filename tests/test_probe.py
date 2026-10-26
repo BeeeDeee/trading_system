@@ -106,3 +106,26 @@ def test_today_pnl_ignores_tainted_and_probe(tmp_path):
     import json
     today = json.loads((tmp_path / "data" / "snapshot.json").read_text())["overview"]["today"]
     assert today["live"]["n"] == 1 and today["live"]["pnl"] == 2.5
+    assert today["probe"]["n"] == 1 and today["probe"]["pnl"] == -5.0           # sonda zvlášť (hýbe účtem)
+    assert today["live"]["net_bps"] == 5 and today["live"]["slots"] == 1 and today["live"]["notional"] == 1000
+
+
+def test_equity_curves_per_range(tmp_path):
+    from arena.config import load_config as lc
+    from arena.db import Database
+    from arena.snapshot import SnapshotWriter
+    from arena.util import wall_ms
+    import json
+
+    cfg = lc(DEFAULT_CONFIG_DIR)
+    db = Database(tmp_path / "t.db")
+    now = wall_ms()
+    for i in range(3 * 24 * 60):                                   # 3 dny po minutě
+        db.execute("INSERT INTO equity VALUES (?,?,?,?)", (now - i * 60_000, 5000.0 - i * 0.01, 0.0, 0.0))
+    SnapshotWriter(cfg, db, tmp_path, lambda: {}, lambda: []).write_snapshot()
+    cur = json.loads((tmp_path / "data" / "snapshot.json").read_text())["equity_curves"]
+    assert set(cur) == {"1h", "6h", "24h", "7d", "30d", "all"}
+    assert all(len(c["t"]) <= 241 for c in cur.values())
+    assert cur["1h"]["t"][0] >= now - 3_600_000 and 60 <= len(cur["1h"]["t"]) <= 61
+    assert cur["all"]["t"][0] == now - (3 * 24 * 60 - 1) * 60_000 and cur["all"]["t"][-1] == now
+    assert cur["24h"]["equity"][-1] == 5000.0

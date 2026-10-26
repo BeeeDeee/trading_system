@@ -186,9 +186,15 @@ class SnapshotWriter:
                 out[sym] = {"t0": rows[0][0], "step": BAR_MS, "close": [r[1] for r in rows]}
         return out
 
-    def _equity_curve(self, now: int, max_points: int = 240) -> dict[str, list[Any]]:
+    EQUITY_RANGES = {"1h": 3_600_000, "6h": 6 * 3_600_000, "24h": DAY, "7d": 7 * DAY, "30d": 30 * DAY, "all": None}
+
+    def _equity_curves(self, now: int) -> dict[str, dict[str, list[Any]]]:
+        """Křivka účtu pro přepínač timeframe v dashboardu: každé okno zvlášť, nejvýš 240 bodů."""
+        return {k: self._equity_curve(now, span) for k, span in self.EQUITY_RANGES.items()}
+
+    def _equity_curve(self, now: int, span_ms: int | None = DAY, max_points: int = 240) -> dict[str, list[Any]]:
         rows = self.db.execute("SELECT ts, wallet, unrealized FROM equity WHERE ts>=? ORDER BY ts",
-                               (now - DAY,)).fetchall()
+                               (now - span_ms if span_ms else 0,)).fetchall()
         if len(rows) > max_points:
             step = len(rows) / max_points
             rows = [rows[int(i * step)] for i in range(max_points)] + [rows[-1]]
@@ -214,9 +220,15 @@ class SnapshotWriter:
     def write_snapshot(self) -> None:
         now = wall_ms()
         day0 = now // DAY * DAY
+        # dnes = od 00:00 UTC; exec probe (xp) zvlášť: není strategie, ale hýbe live účtem
+        agg = ("COUNT(*) n, SUM(net_pnl) pnl, SUM(entry_fee + exit_fee) fee, SUM(funding) funding, AVG(net_bps) net_bps, "
+               "AVG(notional) notional, COUNT(DISTINCT slot_id) slots")
         today = self.db.execute(
-            "SELECT mode, COUNT(*) n, SUM(net_pnl) pnl, SUM(entry_fee + exit_fee) fee, SUM(funding) funding "
-            "FROM trades WHERE exit_time>=? AND tainted=0 AND slot_id NOT LIKE 'xp.%' GROUP BY mode", (day0,)).fetchall()
+            f"SELECT mode, {agg} FROM trades WHERE exit_time>=? AND tainted=0 AND slot_id NOT LIKE 'xp.%' GROUP BY mode",
+            (day0,)).fetchall()
+        probe = self.db.execute(
+            f"SELECT 'probe' mode, {agg} FROM trades WHERE exit_time>=? AND mode='live' AND slot_id LIKE 'xp.%'",
+            (day0,)).fetchone()
         eq = self.db.execute("SELECT * FROM equity ORDER BY ts DESC LIMIT 1").fetchone()
         events = self.db.execute("SELECT ts, level, component, msg FROM events ORDER BY id DESC LIMIT 200").fetchall()
         _dump(self.data_dir / "snapshot.json", {
@@ -225,7 +237,8 @@ class SnapshotWriter:
             "cost_model_version": self.cfg.paper.cost_model_version,
             "overview": {
                 "equity": dict(eq) if eq else None,
-                "today": {r["mode"]: dict(r) for r in today},
+                "today": {**{r["mode"]: dict(r) for r in today}, **({"probe": dict(probe)} if probe["n"] else {})},
+                "day0": day0,
                 "paper_positions": self.positions(),
                 "live_positions": self.live_positions(),
                 "ledger_diffs": json.loads(self.db.meta_get("ledger_diffs") or "[]"),
@@ -234,7 +247,7 @@ class SnapshotWriter:
             "stats": self.leaderboard_cache,
             "events": [dict(r) for r in events],
             "market": self._market(),
-            "equity_curve": self._equity_curve(now),
+            "equity_curves": self._equity_curves(now),
             "recent_trades": self._recent_trades(),
             "activity": self._activity(now),
             "universe": list(self.cfg.universe),

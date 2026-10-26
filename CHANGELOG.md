@@ -12,6 +12,18 @@ Stav akceptace (SPEC §17) k 2026-10-23. ✅ = splněno a ověřeno, ⏳ = ček�
 | P5 | ✅ (falešná burza) | ⏳ testnet: klíče, 200 round tripů, `kill -9`, ověřit algoOrder na testnetu |
 | P6, P7 | – | – (mainnet live jen s výslovným souhlasem vlastníka) |
 
+## Dashboard: jednotky, nápovědy, timeframe účtu, 2026-10-26
+
+- **Paper P&L dnes** (např. −477 USDT / 106 obchodů) je správně spočtený součet net P&L všech paper obchodů od 00:00
+  UTC přes 54 souběžných slotů po ~1000 USDT notionalu; s testnet účtem (live, sonda xp po 100 USDT) nesouvisí.
+  Dlaždice teď ukazuje Ø net bps na obchod, počet slotů a notional a nápovědu, co číslo znamená.
+- **Live P&L dnes** vynechával sondu xp, která je jediným live obchodováním a hýbe účtem: ukazoval „žádný obchod“,
+  zatímco účet klesal. Snapshot má `today.probe` zvlášť, dlaždice ukazuje strategie + probe a rozpad.
+- Křivka účtu s přepínačem 1 h / 6 h / 24 h / 7 d / 30 d / vše (`equity_curves`, max 240 bodů na okno), změna za
+  období v USDT a %, min a max.
+- Jednotky u čísel (USDT, bps), nápovědy po najetí myší u sloupců žebříčku, heatmapy, detailu, nákladů, model error
+  a latencí a u dlaždic.
+
 ## Inspekce výpočtů a dashboardu, 2026-10-25
 
 Ověřeno a sedí: `stats.py` (nezávislý přepočet: průměr, sd, win rate, Sharpe, max DD, náklady, edge, n_req, Δ vs ctl,

@@ -5,7 +5,8 @@
   var SYMCOL = { BTCUSDT: "var(--s1)", ETHUSDT: "var(--s2)", SOLUSDT: "var(--s3)", XRPUSDT: "var(--s4)", DOGEUSDT: "var(--s5)" };
   var TABS = ["overview", "board", "detail", "costs", "system"];
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var state = { snap: null, tab: "overview", variant: null, vdata: null, sort: { key: "net_mean", dir: -1 }, seenTrades: null, prices: {} };
+  var state = { snap: null, tab: "overview", variant: null, vdata: null, sort: { key: "net_mean", dir: -1 }, seenTrades: null, prices: {}, eqRange: "24h" };
+  var EQ_RANGES = [["1h", "1 h"], ["6h", "6 h"], ["24h", "24 h"], ["7d", "7 d"], ["30d", "30 d"], ["all", "vše"]];
 
   // --- pomocné -----------------------------------------------------------------------------------
   function $(id) { return document.getElementById(id); }
@@ -31,7 +32,12 @@
   function table(el, head, rows, empty) {
     var t = $(el);
     if (!rows.length && empty) { t.innerHTML = '<tbody><tr><td class="empty" colspan="' + head.length + '" style="text-align:center">' + esc(empty) + "</td></tr></tbody>"; return; }
-    t.innerHTML = "<thead><tr>" + head.map(function (c) { return "<th>" + esc(c) + "</th>"; }).join("") + "</tr></thead><tbody>" + rows.join("") + "</tbody>";
+    t.innerHTML = "<thead><tr>" + head.map(thHtml).join("") + "</tr></thead><tbody>" + rows.join("") + "</tbody>";
+  }
+  // hlavička sloupce: "popisek" nebo [popisek, nápověda]; nápověda se ukáže po najetí myší
+  function thHtml(c, attrs) {
+    var l = Array.isArray(c) ? c[0] : c, tip = Array.isArray(c) ? c[1] : "";
+    return "<th" + (tip ? ' class="tip-h" title="' + esc(tip) + '"' : "") + (attrs || "") + ">" + esc(l) + "</th>";
   }
   function td(v, c) { return "<td" + (c ? ' class="' + c + '"' : "") + ">" + v + "</td>"; }
   function emptyBox(title, text) { return '<div class="empty"><b>' + esc(title) + "</b>" + esc(text || "") + "</div>"; }
@@ -64,6 +70,12 @@
   $("clean").checked = store("arena.clean") === "1";
   $("clean").addEventListener("change", function () { store("arena.clean", this.checked ? "1" : "0"); render(); });
   $("variant").addEventListener("change", function () { state.variant = this.value; loadVariant(); });
+  var savedRange = store("arena.eqRange");
+  if (EQ_RANGES.some(function (r) { return r[0] === savedRange; })) state.eqRange = savedRange;
+  $("eq-range").innerHTML = EQ_RANGES.map(function (r) { return '<button type="button" data-r="' + r[0] + '">' + r[1] + "</button>"; }).join("");
+  $("eq-range").querySelectorAll("button").forEach(function (b) {
+    b.addEventListener("click", function () { state.eqRange = b.dataset.r; store("arena.eqRange", b.dataset.r); if (state.snap) renderEquity(state.snap); });
+  });
 
   // --- načítání ----------------------------------------------------------------------------------
   function load() {
@@ -133,7 +145,7 @@
 
   // --- přehled -----------------------------------------------------------------------------------
   function renderOverview(s) {
-    var o = s.overview || {}, eq = o.equity, t = o.today || {}, lp = t.live || {}, pp = t.paper || {};
+    var o = s.overview || {}, eq = o.equity, t = o.today || {}, lp = t.live || {}, pp = t.paper || {}, pr = t.probe || {};
     var liveOn = s.live_enabled;
     $("env-pill").innerHTML = '<i class="dot ' + (liveOn ? "" : "off") + '"></i>' + (liveOn ? "LIVE · " + esc(s.env) : "jen paper");
     $("eq-lbl").textContent = liveOn ? "Hodnota účtu (" + s.env + ")" : "Účet";
@@ -141,22 +153,31 @@
       var big = $("eq-big");
       if (!big.firstChild || big.dataset.init !== "1") { big.innerHTML = '<span id="eq-num"></span><small>USDT</small>'; big.dataset.init = "1"; }
       tween($("eq-num"), eq.wallet + (eq.unrealized || 0), function (v) { return money(v, 2); });
-      $("eq-sub").innerHTML = "<span>wallet " + money(eq.wallet, 2) + "</span><span>nerealizováno " + pnlHtml(eq.unrealized, 2) +
-        "</span><span>margin " + money(eq.margin_used, 2) + "</span>";
+      $("eq-sub").innerHTML = '<span title="Zůstatek peněženky: vklad + realizovaný P&L − poplatky ± funding">wallet ' + money(eq.wallet, 2) + " USDT</span>" +
+        '<span title="Nerealizovaný P&L otevřených live pozic (mark price)">nerealizováno ' + pnlHtml(eq.unrealized, 2, "USDT") + "</span>" +
+        '<span title="Margin vázaný v otevřených pozicích">margin ' + money(eq.margin_used, 2) + " USDT</span>";
     } else {
       $("eq-big").innerHTML = '<span class="muted">—</span>';
       $("eq-sub").innerHTML = '<span class="muted">Účet se zatím nenačetl (live vypnuto nebo čeká na první equity vzorek).</span>';
     }
     renderEquity(s);
     var lpos = o.live_positions || [], ppos = o.paper_positions || [];
+    var U = '<small class="u">USDT</small>', liveN = (lp.n || 0) + (pr.n || 0), livePnl = (lp.pnl || 0) + (pr.pnl || 0);
+    var liveSub = liveN ? ["strategie " + (lp.n ? sgn(lp.pnl, 2) + " USDT (" + lp.n + ")" : "—"), "probe " + (pr.n ? sgn(pr.pnl, 2) + " USDT (" + pr.n + ")" : "—"),
+      "fee " + num((lp.fee || 0) + (pr.fee || 0), 2) + " USDT"].join(" · ") : "žádný uzavřený live obchod";
     var kp = [
-      ["Live P&L dnes", lp.pnl != null ? pnlHtml(lp.pnl, 2) : '<span class="muted">—</span>', lp.n ? lp.n + " obchodů · fee " + num(lp.fee, 2) + " · fund. " + num(lp.funding, 2) : "žádný uzavřený obchod"],
-      ["Paper P&L dnes", pp.pnl != null ? pnlHtml(pp.pnl, 2) : '<span class="muted">—</span>', (pp.n || 0) + " obchodů"],
-      ["Pozice", String(lpos.length) + '<span class="muted" style="font-size:15px"> live</span> · ' + ppos.length + '<span class="muted" style="font-size:15px"> paper</span>', "otevřených právě teď"],
-      ["Obchodů celkem", String((s.stats && s.stats.n_trades) || 0), "paper, všechny varianty"]
+      ["Live P&L dnes", liveN ? pnlHtml(livePnl, 2) + U : '<span class="muted">—</span>', liveSub,
+        "Net P&L live obchodů uzavřených dnes od 00:00 UTC, tedy to, co dnes realizovaně pohnulo účtem vlevo (bez nerealizovaného P&L otevřených pozic). Strategie = live sloty variant, probe = exekuční sonda xp (měří náklady a latence, není strategie). Bez tainted obchodů."],
+      ["Paper P&L dnes", pp.pnl != null ? pnlHtml(pp.pnl, 2) + U : '<span class="muted">—</span>',
+        pp.n ? pp.n + " obchodů · Ø " + sgn(pp.net_bps, 1) + " bps · " + pp.slots + " slotů × " + num(pp.notional, 0) + " USDT" : "0 obchodů",
+        "Součet net P&L všech paper obchodů uzavřených dnes od 00:00 UTC přes všechny varianty a symboly (včetně kontrol ctl, bez sondy xp a bez tainted). Každý paper obchod má notional ~1000 USDT a sloty běží souběžně, takže to není účet ani portfolio: je to jen součet hypotetických obchodů. Srovnatelné číslo je Ø bps na obchod."],
+      ["Pozice", String(lpos.length) + '<span class="muted" style="font-size:15px"> live</span> · ' + ppos.length + '<span class="muted" style="font-size:15px"> paper</span>', "otevřených právě teď",
+        "Počet právě otevřených pozic: live na testnet účtu a paper (simulace)."],
+      ["Obchodů celkem", String((s.stats && s.stats.n_trades) || 0), "paper, všechny varianty",
+        "Počet uzavřených paper obchodů ve statistikách (všechny varianty, od startu)."]
     ];
     $("kpis").innerHTML = kp.map(function (k) {
-      return '<div class="card kpi"><div class="lbl">' + esc(k[0]) + '</div><div class="val num">' + k[1] + '</div><div class="sub">' + esc(k[2]) + "</div></div>";
+      return '<div class="card kpi" title="' + esc(k[3]) + '"><div class="lbl tip-h">' + esc(k[0]) + '</div><div class="val num">' + k[1] + '</div><div class="sub">' + esc(k[2]) + "</div></div>";
     }).join("");
     renderMarket(s);
     renderPositions(s);
@@ -165,10 +186,19 @@
   }
 
   function renderEquity(s) {
-    var host = $("eq-chart"), c = s.equity_curve;
-    if (!c || c.t.length < 2) { host.innerHTML = '<div class="empty" style="padding-top:44px">Křivka účtu se začne kreslit po prvních vzorcích (každou minutu).</div>'; return; }
-    lineChart(host, [{ name: "Účet", color: "var(--accent)", area: true, pts: c.t.map(function (t, i) { return [t, c.equity[i]]; }) }],
-      { height: 130, yfmt: function (v) { return money(v, 2); }, xfmt: hm, minimal: true, minSpan: 0.0006 });
+    var host = $("eq-chart"), r = state.eqRange, c = (s.equity_curves || {})[r];
+    $("eq-range").querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.r === r)); });
+    if (!c || c.t.length < 2) {
+      $("eq-chg").textContent = "";
+      host.innerHTML = '<div class="empty" style="padding-top:44px">Křivka účtu se začne kreslit po prvních vzorcích (každou minutu).</div>'; host._lc = null; return;
+    }
+    var e = c.equity, a = e[0], b = e[e.length - 1], d = b - a, mn = Math.min.apply(null, e), mx = Math.max.apply(null, e);
+    var lbl = (EQ_RANGES.filter(function (x) { return x[0] === r; })[0] || [r, r])[1];
+    $("eq-chg").innerHTML = (r === "all" ? "od " + ts(c.t[0]).slice(0, 16) : "za " + lbl) + ": " + pnlHtml(d, 2, "USDT") + ' <span class="' + cls(d) + '">(' + sgn(d / a * 100, 2) + " %)</span>" +
+      ' <span class="muted">· min ' + money(mn, 2) + " · max " + money(mx, 2) + " USDT</span>";
+    var long = c.t[c.t.length - 1] - c.t[0] > 86400000;
+    lineChart(host, [{ name: "Účet", color: "var(--accent)", area: true, pts: c.t.map(function (t, i) { return [t, e[i]]; }) }],
+      { height: 130, yfmt: function (v) { return money(v, 2) + " USDT"; }, xfmt: long ? function (x) { return ts(x).slice(5, 16); } : hm, xfmtTip: function (x) { return ts(x) + " UTC"; }, minimal: true, minSpan: 0.0006 });
   }
 
   function renderMarket(s) {
@@ -342,8 +372,18 @@
 
   // --- žebříček ----------------------------------------------------------------------------------
   var COLS = [
-    ["key", "varianta"], ["n", "n"], ["trades_per_day", "obch./den"], ["net_mean", "net bps ± 95% CI"], ["edge_mean", "hrana"],
-    ["cost", "náklady"], ["sharpe", "Sharpe"], ["delta", "Δ vs ctl"], ["p_holm", "p_holm"], ["dsr", "DSR"], ["n_req", "n_req"], ["badge", "stav"]
+    ["key", "varianta", "ID varianty (rodina.verze). Rodiny: brk = breakout s potvrzením objemem, obi = nerovnováha hloubky knihy a objem, ll = BTC vede, alt zaostává, ctl = kontrola (náhodné vstupy se stejnými výstupy jako v00 rodiny). Statistiky jsou sloučené přes symboly. Klik otevře detail."],
+    ["n", "n", "Počet uzavřených paper obchodů varianty (při zapnutém „bez tainted“ jen čisté obchody)."],
+    ["trades_per_day", "obch./den", "Průměrný počet obchodů za den: n / délka období (min. 1 den)."],
+    ["net_mean", "net bps ± 95% CI", "Průměrný čistý výsledek obchodu v bps notionalu (po poplatcích, slippage a fundingu). Úsečka = 95% interval spolehlivosti z blokového bootstrapu po dnech UTC (2000 vzorků)."],
+    ["edge_mean", "hrana bps", "Hrubá hrana = net + náklady: pohyb ceny od rozhodnutí k úrovni výstupu, ještě před poplatky, slippage a fundingem. Kladná hrana se zápornou net znamená, že signál něco má, ale náklady ho sežerou."],
+    ["cost", "náklady bps", "Průměrné náklady na obchod v bps: poplatky (vstup + výstup) + entry slip + exit slip − funding. Break-even hrana = tyto náklady."],
+    ["sharpe", "Sharpe (roč.)", "Sharpe ratio denního net P&L (USDT, dny bez obchodu = 0) × √365. Na pár týdnech dat je velmi nepřesné."],
+    ["delta", "Δ vs ctl bps", "Rozdíl průměrného net bps varianty a kontroly ctl její rodiny. Kladné = signál je lepší než náhodný vstup se stejnými výstupy."],
+    ["p_holm", "p_holm", "Jednostranné p-value, že Δ vs kontrola ≤ 0 (bootstrap po dnech), korigované Holmem přes všech 30 variant. Významné až pod 0,05."],
+    ["dsr", "DSR", "Deflated Sharpe ratio (Bailey & López de Prado): pravděpodobnost, že skutečný Sharpe je kladný i po korekci na výběr nejlepší z 30 variant a na šikmost a špičatost. Blízko 1 = přesvědčivé, kolem 0,5 a níž = šum."],
+    ["n_req", "n_req", "Kolik obchodů by bylo potřeba, aby průměr net bps vyšel 2 směrodatné chyby nad nulou: (2·sd / průměr)². ∞ = průměr není kladný."],
+    ["badge", "stav", "PŘÍLIŠ BRZY: n < 200 · ZÁPORNÁ: horní mez CI net < 0 · NEJASNÁ: ani jedno · KANDIDÁT: splní všech 5 pravidel SPEC §14.2 (n ≥ 500 bez tainted, net > 0 při 1,5× nákladech, p_holm < 0,05, kladná na ≥ 4 z 5 symbolů, žádný propad měsíce) · LIVE: má live slot · KONTROLA: kontrolní slot ctl."]
   ];
   function colVal(g, k) {
     if (k === "cost") return (g.cost_bps || {}).total; if (k === "delta") return (g.vs_control || {}).delta;
@@ -371,7 +411,7 @@
     }
     var head = "<thead><tr>" + COLS.map(function (c) {
       var on = sk.key === c[0];
-      return '<th class="s"' + (on ? ' data-dir="' + (sk.dir < 0 ? "↓" : "↑") + '"' : "") + ' data-k="' + c[0] + '">' + esc(c[1]) + "</th>";
+      return '<th class="s tip-h" title="' + esc(c[2]) + '"' + (on ? ' data-dir="' + (sk.dir < 0 ? "↓" : "↑") + '"' : "") + ' data-k="' + c[0] + '">' + esc(c[1]) + "</th>";
     }).join("") + "</tr></thead>";
     var rows = order.map(function (k) {
       var g = L[k], vc = g.vs_control || {}, b = g.badge || "";
@@ -400,7 +440,7 @@
         return '<td><div class="hc" style="background:color-mix(in srgb,' + col + " " + Math.round(18 + a * 62) + '%,var(--div-mid));color:' + (a > 0.55 ? "#fff" : "var(--ink)") + '">' + sgn(c.net_mean) + "<small>n " + c.n + "</small></div></td>";
       }).join("") + "</tr>";
     });
-    table("heat", ["varianta"].concat(syms.map(short)), hrows, "Heatmapa se zaplní po prvních obchodech.");
+    table("heat", [["varianta", "Varianta (řádek) × symbol (sloupec)"]].concat(syms.map(function (x) { return [short(x), "Průměr net bps na obchod na " + x + ", pod ním počet obchodů n. Šedá buňka = n < 30, číslo je jen orientační."]; })), hrows, "Heatmapa se zaplní po prvních obchodech.");
   }
 
   // --- detail varianty ---------------------------------------------------------------------------
@@ -411,7 +451,7 @@
     sel.value = state.variant;
     loadVariant();
   }
-  function tile(l, v, sub) { return '<div class="card kpi"><div class="lbl">' + esc(l) + '</div><div class="val num">' + v + '</div><div class="sub">' + esc(sub || "") + "</div></div>"; }
+  function tile(l, v, sub, tip) { return '<div class="card kpi"' + (tip ? ' title="' + esc(tip) + '"' : "") + '><div class="lbl' + (tip ? " tip-h" : "") + '">' + esc(l) + '</div><div class="val num">' + v + '</div><div class="sub">' + esc(sub || "") + "</div></div>"; }
   function loadVariant() {
     var v = state.variant;
     if (!v) return;
@@ -419,12 +459,12 @@
     var g = lb()[v] || {}, ci = g.net_ci || [];
     $("vinfo").innerHTML = famChip(v) + ' <span class="muted">stav</span> <span class="badge">' + esc(g.badge || "") + "</span>";
     $("vtiles").innerHTML = [
-      tile("Obchodů", String(g.n || 0), num(g.trades_per_day, 2) + " / den · " + (g.days || 0) + " dní"),
-      tile("Net bps", fin(g.net_mean) ? pnlHtml(g.net_mean, 1) : "—", fin(ci[0]) ? "CI [" + num(ci[0]) + ", " + num(ci[1]) + "]" : ""),
-      tile("Hrana bps", fin(g.edge_mean) ? pnlHtml(g.edge_mean, 1) : "—", "− náklady " + num((g.cost_bps || {}).total) + " = net · gross " + sgn(g.gross_mean)),
-      tile("Sharpe", num(g.sharpe, 2), "max DD " + num(g.max_dd, 1)),
-      tile("Win rate", fin(g.win_rate) ? num(g.win_rate, 0) + " %" : "—", "držení " + num(g.avg_hold_min, 0) + " min"),
-      tile("p_holm / DSR", num(g.p_holm, 3) + " / " + num(g.dsr, 2), "n_req (t=2): " + (g.n_req && g.n_req.z2 != null ? num(g.n_req.z2, 0) : "∞"))
+      tile("Obchodů", String(g.n || 0), num(g.trades_per_day, 2) + " / den · " + (g.days || 0) + " dní s obchodem", "Počet uzavřených paper obchodů, průměr za den a počet dní UTC, kdy varianta obchodovala."),
+      tile("Net bps", fin(g.net_mean) ? pnlHtml(g.net_mean, 1) : "—", fin(ci[0]) ? "95% CI [" + num(ci[0]) + ", " + num(ci[1]) + "] bps" : "", "Průměrný čistý výsledek obchodu v bps notionalu po všech nákladech; CI z blokového bootstrapu po dnech."),
+      tile("Hrana bps", fin(g.edge_mean) ? pnlHtml(g.edge_mean, 1) : "—", "− náklady " + num((g.cost_bps || {}).total) + " bps = net · gross " + sgn(g.gross_mean) + " bps", "Hrana = net + náklady (poplatky + slippage − funding). Gross = cenový výsledek po slippage, ale před poplatky a fundingem."),
+      tile("Sharpe (roč.)", num(g.sharpe, 2), "max DD " + num(g.max_dd, 2) + " USDT", "Sharpe denního net P&L × √365. Max DD = největší propad kumulativního denního net P&L v USDT (paper notional ~1000 USDT na obchod)."),
+      tile("Win rate", fin(g.win_rate) ? num(g.win_rate, 0) + " %" : "—", "Ø držení " + num(g.avg_hold_min, 0) + " min", "Podíl obchodů s net > 0 a průměrná doba držení pozice."),
+      tile("p_holm / DSR", num(g.p_holm, 3) + " / " + num(g.dsr, 2), "n_req (2σ): " + (g.n_req && g.n_req.z2 != null ? num(g.n_req.z2, 0) + " obchodů" : "∞"), "p_holm: p-value Δ vs kontrola po Holmově korekci (významné < 0,05). DSR: deflated Sharpe, pravděpodobnost skutečně kladného Sharpe po korekci na výběr z 30 variant. n_req: potřebný počet obchodů pro 2 směrodatné chyby nad nulou.")
     ].join("");
     fetch("data/variants/" + encodeURIComponent(v) + ".json?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
@@ -439,7 +479,7 @@
         if (ser.length) lineChart($("c-cum"), ser, { height: 300, zero: true, yfmt: function (x) { return sgn(x, 0); }, xfmt: dayfmt, xfmtTip: function (x) { return ts(x); } });
         else $("c-cum").innerHTML = emptyBox("Zatím žádné uzavřené obchody", "Kumulativní křivka net vs gross (rozdíl = poplatky a funding; slippage je už v gross) se začne kreslit po prvních obchodech.");
         var bs = d.by_symbol || {}, bk = Object.keys(bs);
-        $("d-sym").innerHTML = bk.length ? '<table><thead><tr><th>symbol</th><th>n</th><th>net bps</th><th>gross bps</th></tr></thead><tbody>' + bk.map(function (k) {
+        $("d-sym").innerHTML = bk.length ? "<table><thead><tr>" + [["symbol", "Symbol"], ["n", "Počet obchodů na symbolu"], ["net bps", "Průměrný čistý výsledek obchodu po všech nákladech"], ["gross bps", "Průměrný cenový výsledek po slippage, před poplatky a fundingem"]].map(function (c) { return thHtml(c); }).join("") + "</tr></thead><tbody>" + bk.map(function (k) {
           var x = bs[k]; return "<tr>" + td('<i class="sw" style="display:inline-block;background:' + (SYMCOL[k] || "var(--muted)") + ';margin-right:7px"></i>' + esc(short(k))) + td(x.n) + td(sgn(x.net_mean), cls(x.net_mean)) + td(sgn(x.gross_mean)) + "</tr>";
         }).join("") + "</tbody></table>" : emptyBox("Bez dat", "");
         var em = d.exit_mix || {}, ek = Object.keys(em), tot = ek.reduce(function (a, k) { return a + em[k]; }, 0);
@@ -448,7 +488,11 @@
           '<div class="legend" style="margin-top:10px">' + ek.map(function (k, i) { return '<span><i style="border-color:' + ecol[i % 5] + '"></i>' + esc(k) + " <b class=num>" + em[k] + "</b> <span class=muted>" + Math.round(em[k] / tot * 100) + " %</span></span>"; }).join("") + "</div>" : emptyBox("Bez dat", "");
         var h = d.hist || { edges: [], counts: [] };
         renderHist($("c-hist"), h);
-        table("d-trades", ["slot", "režim", "strana", "vstup", "výstup", "důvod", "net bps", "gross bps", "slip in", "slip out", "barů", "tainted"],
+        table("d-trades", [["slot", "varianta.symbol"], ["režim", "PAPER = simulace, LIVE = skutečný příkaz na testnet účtu"], ["strana", "LONG / SHORT"],
+          ["vstup", "Čas fillu vstupu (UTC)"], ["výstup", "Čas výstupu (UTC)"], ["důvod", "Důvod výstupu: trailing = trailing stop, hard_stop = tvrdý stop, tp = take profit, time = vypršel max. počet barů držení, emergency = nouzové zavření"],
+          ["net bps", "Čistý výsledek obchodu v bps notionalu po poplatcích, slippage a fundingu"], ["gross bps", "Cenový výsledek po slippage, před poplatky a fundingem"],
+          ["slip in bps", "Slippage vstupu: cena fillu vs cena při rozhodnutí, kladné = horší"], ["slip out bps", "Slippage výstupu: cena fillu vs úroveň spuštění výstupu, kladné = horší"],
+          ["barů", "Počet 5m barů držení"], ["tainted", "Obchod zasažený mezerou v datech (výpadek), vyřazený přepínačem „bez tainted“"]],
           (d.trades || []).map(function (t) {
             return "<tr>" + td(esc(t.slot_id)) + td('<span class="mode ' + esc(t.mode) + '">' + esc(String(t.mode || "").toUpperCase()) + "</span>") + td(esc(t.side)) + td(ts(t.entry_time)) + td(ts(t.exit_time)) + td(esc(t.exit_reason)) + td(sgn(t.net_bps), cls(t.net_bps)) +
               td(sgn(t.gross_bps)) + td(num(t.entry_slip_bps)) + td(num(t.exit_slip_bps)) + td(t.bars_held) + td(t.tainted ? "ano" : "") + "</tr>";
@@ -464,7 +508,8 @@
       g += '<rect x="' + (x + 1) + '" y="' + (H - B - hh) + '" width="' + Math.max(1, bw - 2) + '" height="' + hh + '" rx="3" fill="' + (pos ? "var(--div-pos)" : "var(--div-neg)") + '"><title>' + lo + " … " + h.edges[i + 1] + " bps: " + v + "</title></rect>";
       if (i % 4 === 0) g += '<text x="' + x + '" y="' + (H - 6) + '" fill="var(--muted)" font-size="11">' + lo + "</text>";
     });
-    g += '<line x1="' + L + '" x2="' + (W - 8) + '" y1="' + (H - B) + '" y2="' + (H - B) + '" stroke="var(--axis)"/><text x="' + (L - 6) + '" y="' + (T + 8) + '" text-anchor="end" fill="var(--muted)" font-size="11">' + mx + "</text>";
+    g += '<line x1="' + L + '" x2="' + (W - 8) + '" y1="' + (H - B) + '" y2="' + (H - B) + '" stroke="var(--axis)"/><text x="' + (L - 6) + '" y="' + (T + 8) + '" text-anchor="end" fill="var(--muted)" font-size="11">' + mx + "</text>" +
+      '<text x="' + (W - 8) + '" y="' + (H - 6) + '" text-anchor="end" fill="var(--muted)" font-size="11">net bps</text>';
     host.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '">' + g + "</svg>";
   }
 
@@ -479,12 +524,16 @@
     fetch("data/costs.json?t=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (c) {
       if (!c) return;
       $("cmv").textContent = "cost_model_version " + c.cost_model_version + " · " + ts(c.generated_at);
-      var head = ["symbol", "n", "fee bps", "entry slip med", "entry p90", "exit slip med", "exit p90", "funding bps"];
+      var head = [["symbol", "Symbol"], ["n", "Počet uzavřených obchodů"], ["fee bps", "Průměrné poplatky vstupu + výstupu v bps notionalu"],
+        ["entry slip med bps", "Medián slippage vstupu: cena fillu vs cena při rozhodnutí, kladné = horší"], ["entry slip p90 bps", "90. percentil slippage vstupu (horší konec)"],
+        ["exit slip med bps", "Medián slippage výstupu: cena fillu vs úroveň spuštění, kladné = horší"], ["exit slip p90 bps", "90. percentil slippage výstupu"],
+        ["funding bps", "Průměrný funding v bps notionalu (kladné = přijato, snižuje náklady; záporné = zaplaceno)"]];
       table("costs-live", head, costRows(c.live), "Žádný uzavřený live obchod: náklady se změří po prvních round tripech.");
       table("costs-paper", head, costRows(c.paper), "Zatím žádný uzavřený paper obchod.");
       var m = c.model_error || {};
-      table("model-err", ["párů", "net med", "net p90", "vstup med", "výstup med"], m.n ? ["<tr>" + td(m.n) + td(num(m.net_med, 2)) + td(num(m.net_p90, 2)) + td(num(m.entry_med, 2)) + td(num(m.exit_med, 2)) + "</tr>"] : [], "Bez párů live × paper dvojče.");
-      table("lat", ["druh", "n", "průměr ms"], Object.keys(c.latencies || {}).map(function (k) { return "<tr>" + td(esc(k)) + td(c.latencies[k].n) + td(num(c.latencies[k].avg_ms, 0)) + "</tr>"; }), "Latence se měří u live obchodů.");
+      table("model-err", [["párů", "Počet párů live obchod × jeho paper dvojče (bez sondy xp)"], ["net med bps", "Medián rozdílu net bps live − paper: o kolik je realita horší (záporné) než simulace"],
+        ["net p90 bps", "90. percentil rozdílu net bps live − paper"], ["vstup med bps", "Medián rozdílu slippage vstupu live − paper"], ["výstup med bps", "Medián rozdílu slippage výstupu live − paper"]], m.n ? ["<tr>" + td(m.n) + td(num(m.net_med, 2)) + td(num(m.net_p90, 2)) + td(num(m.entry_med, 2)) + td(num(m.exit_med, 2)) + "</tr>"] : [], "Bez párů live × paper dvojče.");
+      table("lat", [["druh", "send_to_ack = odeslání → potvrzení burzy, ack_to_fill = potvrzení → fill, trigger_to_fill = spuštění výstupu → fill"], ["n", "Počet měření"], ["průměr ms", "Průměrná latence v milisekundách"]], Object.keys(c.latencies || {}).map(function (k) { return "<tr>" + td(esc(k)) + td(c.latencies[k].n) + td(num(c.latencies[k].avg_ms, 0)) + "</tr>"; }), "Latence se měří u live obchodů.");
     });
   }
 
