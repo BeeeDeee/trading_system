@@ -1,0 +1,13 @@
+[Unit]
+Description=arena5m: záloha arena.db a surových aggTrades
+
+[Service]
+Type=oneshot
+User=arena
+Group=arena
+EnvironmentFile=-/etc/arena/env
+ExecStart=/usr/bin/python3.12 -I /opt/arena5m/deploy/backup.py
+Nice=10
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/arena
