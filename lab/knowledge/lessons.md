@@ -193,12 +193,12 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 
 ## H-0022 – S&P 500 change price-pressure reversal, both directions, read inside LIQ-500 - long liquid stocks just deleted from the index, short just-added ones, dollar-neutral, hold 5 days
 
-- family: `index-inclusion-price-pressure` · mechanism: flow_structural · instruments: US liquid stocks (LIQ-500) with S&P 500 membership as an input: long liquid stocks just deleted from the index, short just-added ones, dollar-neutral, five-day hold (never built or run)
-- outcome: parked by the owner before any gate: the PIT S&P 500 mask is not available to LIQ-500 cards. Nothing simulated.
-- lesson: A feasibility failure, the second in this family. The card was the workaround H-0018 proposed (read S&P membership as an input inside LIQ-500), but the input is not delivered for that universe kind, although the catalog lists the extra. Both routes to the deletion leg are now closed: inside the S&P universe a deleted stock cannot be held (H-0018); inside LIQ-500 the membership signal is missing. H-0017's open question (more power from both directions) cannot be asked with today's loaders.
-- avoid: Do not file a third both-direction index-change card, or rebuild this one on a proxy for membership, until the owner confirms the loader supplies the PIT S&P mask for the declared universe. Do not resubmit addition-only events with new holds: that is H-0017 again.
-- open questions: The membership history exists on disk but has no loader; adding one, or exposing the mask to LIQ-500 cards, is an owner or Archivist task. Then additions plus deletions in one liquid universe remain the natural way to give the placebo test more power than H-0017 had.
-- related: H-0017, H-0018
+- family: `index-inclusion-price-pressure` · mechanism: flow_structural · instruments: US liquid stocks (LIQ-500) with S&P 500 membership as input: long just-deleted, short just-added, dollar-neutral, five-session hold, 1998 to 2020
+- outcome: rejected at G1: right sign, gross several times cost, but placebo percentile just under the bar; strategy not run
+- lesson: Second near miss in the family, now with both legs. Right sign, gross well above cost, placebo mean near zero, so not stock selection. But the placebo bar also lay above cost, so the gate could not separate a tradable effect from noise: a 'cannot tell' (K-0034), like H-0017. Against it: the latest third was about zero (K-0060), and the effect grew with horizon, so the reversal is slower than the hold. Events are sparse, and G0 counted more than G1 measured, unexplained. Deletions alone were not reported.
+- avoid: Do not resubmit the same S&P changes with another hold, seasoning rule or weighting to push the percentile: a third trial on the same sparse events. Two near misses with a fading latest third are the same evidence twice.
+- open questions: Only a design that changes power is worth a card: a slower horizon argued from the build-up seen here, or many more events. State the latest-third fade as a kill condition. Whether deletions alone carry the effect needs a by-side output.
+- related: H-0017, H-0018, H-0021
 
 ## H-0023 – Earnings-announcement premium on real 8-K dates - LIQ-500 dollar-neutral, long a 5-session window around last year's Item 2.02 date + 52 weeks
 
@@ -298,6 +298,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not enlarge the tilt budget, max_name_weight, z_threshold or hold_days to close the margin: new trials on the same events, with more tracking error and cost. Do not bring shorts or a hedge basket back (H-0028, H-0031).
 - open questions: A control that separates the tilt from the core, and a cheaper or slower way to take the same long-side drift, deserve a card. The era decay needs to be looked at on its own before more PEAD trials are spent.
 - related: H-0028, H-0031, H-0024
+
+## H-0034 – Non-earnings 8-K news-reaction drift - LIQ-500, follow large standardized reactions on sessions with a non-earnings 8-K filing, fixed event slots, hold 5 days
+
+- family: `post-earnings-announcement-drift` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), follow large reactions on sessions with a non-earnings 8-K, fixed slots, five-session hold, 2004 to 2020
+- outcome: rejected at G1: average slightly wrong-signed, far under the placebo bar, below cost; strategy not run
+- lesson: Clean negative on a dense event set, so not a power problem: narrow placebo cloud, wrong-signed average, positive in only one third. Following large reactions on days with a filed non-earnings 8-K gives no drift; longer horizons leaned negative, far below cost. Filing-identified news did not turn reversal into drift, so the earnings result (H-0028) seems tied to earnings releases, not to filed news. Untested dilution: item types are pooled, and the filing session can trail the press release by days.
+- avoid: Do not re-slice the same events by item type, threshold or hold, and do not trade the mirror: its sign is dev-selected and far below cost. Do not refile as news drift or headline momentum on the same 8-K flag. Filing under the earnings-drift family makes this failure count against it.
+- open questions: A card on one filing type with a surprise argued in advance is a different claim with its own trials. Press-release timestamps would remove the timing doubt but are not loadable.
+- related: H-0028, H-0030, H-0033, H-0009
 
 ## H-0035 – Intraday liquidation-cascade rebound on Binance perps - fade 1-hour moves of 4+ sigma on 3x volume dominated by aggressive takers, both sides, hold 2 hours
 
@@ -433,6 +442,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not lower the threshold, add EWMA or other vol-window variants, or change hold_days to raise the event count: same trigger, new trials. Do not flip the sign. Do not refile as vol-targeting or risk-parity deleveraging flow with the same SPY/IEF tilt (H-0041, H-0046 share it). State expected event dates and marked events separately.
 - open questions: Rule-mandated flows may exist where they trade (index futures, closing auction), which daily ETF bars cannot show. A deleveraging trigger, when a large day enters the window, is a separate claim, confounded with stress rebounds (K-0056), low prior.
 - related: H-0046, H-0041, H-0002, H-0003, H-0049
+
+## H-0051 – Speculator-flow liquidity premium - CFTC futures positioning into commodity and currency ETFs, long what speculators sold, short what they bought, hold 5 days
+
+- family: `speculator-flow-liquidity-provision` · mechanism: liquidity_provision · instruments: commodity, metal and currency ETFs sorted weekly on CFTC speculator flow, five-session hold, 2006 to 2020
+- outcome: rejected at G1 on the mechanism test: wrong-signed average inside the placebo cloud, gross below cost; no strategy run
+- lesson: No speculator-flow concession is visible in these ETFs at the report lag. Not a power problem: the event set was large and the sign was wrong, so this is not a near miss. Only the latest third had the predicted sign, the first two were wrong-signed, so there is no early-era decay to blame. The one- and two-session horizons were about zero and only the ten- and twenty-session horizons leaned the predicted way: the shape of slow drift, not a reverting concession. Entry is days after the Tuesday as-of date, so the fast part of any concession is gone, and the flow sort is tied to last week's return (reversal and beta confounds were not separated).
+- avoid: Do not flip the sign, move to the twenty-session horizon that looks better descriptively, split commodities from currencies, or retune leg_fraction and z_window_weeks: dev-selected variants of the same events are new trials. Do not refile CFTC speculator positioning (changes, levels, extremes) under another name; H-0057 used the same data and ETFs and also found nothing.
+- open questions: Two designs on CFTC positioning through ETFs have now ended without an effect, so further ETF-based cards have a low prior. Testing positioning against the futures returns themselves, or a design that controls for last week's return, would need data that is not loadable today. ETFs and COT have no forward source, so G4 would have been the ceiling.
+- related: H-0057, H-0062, H-0035
 
 ## H-0052 – Macro-release volatility crush - short the VIX-futures ETP (VIXY) over the open-to-open step containing each scheduled CPI, payrolls or FOMC release plus one step, bond and gold ETFs as unmarked peers
 
@@ -631,3 +649,12 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not re-time a short VIXY with another conditioner (VIX level, other curve ratios, calendar, k or d changes, another VIX ETP): the null is always the unconditional short, which already earns most of the gain. Do not read the positive gross without the placebo mean (K-0025).
 - open questions: The slope may matter for risk, not average return: does leaving the short in backwardation cut the tail days and drawdown of an untimed short? That is a drawdown claim and needs its own test, with borrow cost and spike days. The futures curve itself is not loadable. Whether the unconditional roll-down is still paid in the latest years is untested here.
 - related: H-0052, H-0055, H-0003
+
+## H-0074 – BTC-led catch-up in non-following altcoins - after a 1-hour BTC jump of 3+ sigma, long each top-volume altcoin that did not rise (flat or down over the same hour), hold 4 hours
+
+- family: `btc-lead-altcoin-lag` · mechanism: cross_asset_information · instruments: Binance USD-M perps, 15-minute candles: long each top-volume altcoin that did not rise (flat or down) in the hour of a large BTC upward jump, four-hour hold
+- outcome: parked by the owner before any gate as a duplicate of H-0040 (same BTC-led catch-up rule, only the non-following condition differs); no gate ran, nothing was learned about the mechanism
+- lesson: Not evidence. The card is a narrower version of the rule H-0040 already tried, chosen after a large post hoc backtest of variants on the same 2020 to 2026 history, so it is a dev-selected rescue and its pattern is the best of many looks. The lab's holdout is contaminated for it and the earlier trials are not seen by the trial counter. H-0040 died on neighbour fragility and one-block concentration, and a narrower condition shrinks the event set further, which usually worsens both. The clean test is the owner's forward registration, not this card.
+- avoid: Do not file further narrowed or widened versions of the same BTC-jump rule (lag condition, threshold, hold, leader) in the lab: each is a new trial on contaminated data. Do not argue from the dev-selected pattern that weaker reaction means a bigger catch-up.
+- open questions: Whether the lag depends on follower liquidity tier or on a news-driven rather than cascade-driven BTC jump is untested and would be a different card. The family's prior-trial count has to be settled by the Chair and owner before any new card here.
+- related: H-0040, H-0035, H-0013

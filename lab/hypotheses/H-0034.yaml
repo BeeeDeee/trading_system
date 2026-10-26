@@ -155,7 +155,10 @@ notes: 'Brief fit: short horizon (5 sessions), US single stocks, cross-sectional
   the synthetic market must carry both flags or the look-ahead check is vacuous; the Builder should report the event
   count G0 sees. No dates, no named stocks; the 60-session window, slot size 0.10 and the 2.0 threshold are round
   values chosen before seeing any data.'
-status: BLOCKED_DATA
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_abnormal_return
 history:
 - ts: '2026-10-13T08:18:22.466226+00:00'
   version: 1
@@ -178,3 +181,24 @@ history:
   agent: system
   invocation_id: null
   reason: missing dataset sec_8k_items
+- ts: '2026-10-25T20:28:01.720092+00:00'
+  version: 1
+  from: BLOCKED_DATA
+  to: DATA_READY
+  agent: system
+  invocation_id: null
+  reason: datasets sec_8k_item202, sec_8k_items fetched
+- ts: '2026-10-25T21:15:53.985560+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 150, qlab)
+- ts: '2026-10-25T21:17:25.529296+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 151, qlab)

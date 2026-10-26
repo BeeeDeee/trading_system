@@ -126,6 +126,24 @@ Two cards short the VIX-futures ETP VIXY on a timing rule: over scheduled macro-
 
 *confidence low · 2026-10-21 · librarian · evidence: H-0052; H-0073; K-0070; K-0060; K-0025*
 
+### K-0090 CFTC speculator positioning through commodity and currency ETFs: levels and weekly changes both come out empty
+
+Two designs on the same CFTC non-commercial positioning and almost the same commodity, metal and currency ETFs found no tradable effect: monthly positioning levels against their own history (H-0057) and the weekly change in speculator net position traded for five sessions (H-0051). Averages were about zero or wrong-signed and inside the placebo cloud, with no consistent sign across the thirds of dev: the levels design was positive only in the earliest third, the changes design only in the latest. In H-0051 the short horizons were flat and only the longest leaned the predicted way. Likely reasons are the reporting lag (entry days after the as-of date), futures roll and tracking noise in the ETFs, and physical trusts that do not hold the futures. The published premiums concern futures, so this does not refute them. A third ETF-based CFTC card has a low prior unless it changes the instrument to the futures themselves or controls for the market's own past return.
+
+*confidence low · 2026-10-25 · librarian · evidence: H-0051; H-0057*
+
+### K-0093 S&P 500 membership-change reversal: two designs end just under the placebo bar, with slow build and a faded latest third
+
+Two designs on the forced trading around S&P 500 membership changes in liquid US stocks, additions only (H-0017) and additions plus deletions read inside LIQ-500 (H-0022), both showed the predicted sign, a gross effect well above cost and a placebo mean near zero, and both landed just under the placebo percentile bar, with a bar above cost. Both effects were small in the first sessions and larger at the longest horizons, so the reversal is slower than a five-session hold, and in both the latest third of dev was weakest (about zero in the second). Adding the deletion leg gave more events but did not remove the near miss. They share most of their events, so this is one piece of evidence seen twice. Mandated-flow events remain the nearest thing to a live effect in the large-cap short-horizon cross-section (K-0024), but the gate cannot confirm them with a few events per month. Further tests on the same membership events are retries; a card needs a slower horizon argued from the build-up, or many more events.
+
+*confidence low · 2026-10-25 · librarian · evidence: H-0017; H-0022; K-0024; K-0026; K-0034; K-0060*
+
+### K-0094 Reaction drift is specific to earnings releases: large moves on non-earnings 8-K sessions show none
+
+On real earnings-release sessions, following a large standardized own-price reaction drifts in the same direction (H-0028, H-0031, H-0033). The same rule applied to sessions with a filed non-earnings 8-K (H-0034) gave a slightly wrong-signed average, inside the placebo cloud, with signs mixed across thirds and horizons beyond the first sessions leaning negative. Moves on sessions with no earnings release at all reverse slightly (H-0030). So a filing-identified news event did not turn reversal into drift: what separates the earnings case may be the scheduled date, the consensus benchmark and the attention an earnings release draws, not the presence of news. Caveats: the 8-K item types are pooled and the filing session can come after the press release, so the dated reaction may be a tail or a routine filing. Not tested: single item types, press-release timestamps, a news-versus-no-news comparison within the same stocks. Dated news outside earnings now has one flat verdict; a further filing-based drift card needs a reason that the item type is a surprise.
+
+*confidence low · 2026-10-25 · librarian · evidence: H-0034; H-0030; H-0028; H-0031; H-0033; K-0083; K-0024*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -282,12 +300,6 @@ min_position_entries counted only flat-to-position entries: a delta-neutral fund
 
 *confidence high · 2026-10-06 · human · evidence: docs/research-lab/calibration/funding_carry.json*
 
-### K-0032 Events on young or departing stocks, or needing index membership, do not fit the point-in-time universes
-
-Three cards in two families hit the same wall in different forms. H-0018 (deleted index members) failed at G0 because weights outside the S&P 500 universe are refused. H-0021 (IPO lockup expiry in LIQ-500) found zero events across the whole dev period, so G1 rejected it on the event count with no mechanism result; recent IPOs apparently never sit in the liquid universe at the event date (cause not confirmed). H-0022 (S&P changes read inside LIQ-500) was parked by the owner because the PIT S&P 500 mask is not available to liq_n cards, although the catalog lists alt_universe among the sharadar_sep extras. None produced evidence about its mechanism. Before a Builder run, a Scout should check that the event subject can be a member of the declared universe at the event date and that every input is delivered for that universe kind; a cheap event-count feasibility check would save runs.
-
-*confidence medium · 2026-10-11 · librarian · supersedes K-0029 · evidence: H-0018; H-0021; H-0022; K-0029*
-
 ### K-0051 The point-in-time universe rule also forces early exits in crypto perp cards
 
 K-0032 recorded that the engine refuses weights outside the declared point-in-time universe for stock events. H-0035 shows the same rule on crypto_top_n: a position held across a universe update was refused at G0, and the Builder had to close such trades at the first decision row outside the universe, contradicting the card's 'closed on schedule' clause. The deviation touched few trades, but the clause cannot be honored and a Scout should not promise it. Event cards on a rolling top-n universe should state an exit rule that tolerates leaving the universe. Separately, the intraday data has no forward source, so such cards can pass at most G4.
@@ -335,6 +347,24 @@ The Builders of H-0064, H-0066 and H-0067 each report that the synthetic ea_reac
 H-0041 showed that marking every universe instrument gives zero events at G1 and that dates with only two unmarked instruments with data were dropped (inferred: at least three unmarked peers per date; code not read). H-0072 adds a partial form of the same rule: G0 counted 647 events in dev, G1 measured 514, a gap of about a fifth. Its peers list from 2002 (SHY), 2007-01 (SHV) and 2007-05 (BIL), so events before the third peer exists were most likely dropped at G1 while G0 and the strategy still use them. The mechanism verdict then covers only about 2007 onward, not the full period of the card, and K-0054's statement that G0 and G1 counts agree does not hold when peers start late. Scouts with late-listing peers should state the first date with three unmarked peers and the expected events from that date; a G1 reading should say which years the event study covered.
 
 *confidence low · 2026-10-21 · librarian · supersedes K-0055 · evidence: H-0072; H-0041; H-0038; K-0054; K-0055*
+
+### K-0091 A card whose data period starts before the dataset's first row is blocked and cannot be revised in BLOCKED_DATA
+
+H-0051 asked for the CFTC dataset from 2004-01-02, three days before its first report (2004-01-05). The card went to BLOCKED_DATA on the missing dataset, and the later period mismatch could not be fixed there because BLOCKED_DATA cards cannot be revised; the owner had to park it, reopen it and file a one-line version 2, about eight days after the card was created. Nothing else changed in the card. A Scout should read the first date of a new dataset in the catalog or from the Archivist before writing the period, and the framework could allow period-only revisions in BLOCKED_DATA or flag a period that starts before the dataset when the card is specified.
+
+*confidence medium · 2026-10-25 · librarian · evidence: H-0051 transitions 2026-10-17 to 2026-10-25*
+
+### K-0092 lab try cannot exercise weekly-report cards on the CFTC dataset: its synthetic COT series are daily random walks
+
+The Builder of H-0051 reports that the synthetic cftc_cot_legacy_1d series in lab try are daily random walks, so no pair of reports exactly seven days apart exists and the book has zero trades and zero events there; it tested legs, weights, the seven-day rule, fewer than six eligible ETFs, late listing and truncation on hand-built weekly reports. On real data G0 reported events (about 2100) and no look-ahead failures in 25 cuts, and G1 counted nearly the same events, so G0 was the first meaningful check. Same kind of gap as K-0082 (synthetic 8-K flag never equal to one). Suggested: make synthetic report series weekly, stamped with a Friday release, so lab try produces events. The Builder also used the loader's usable-session date as the release date; whether the loader stamps holiday and shutdown delays correctly was not measured by any gate.
+
+*confidence medium · 2026-10-25 · librarian · evidence: H-0051; K-0082*
+
+### K-0095 PIT S&P 500 mask now reaches liq_n cards; G0 counted more events than G1
+
+K-0032 recorded that H-0022 could not run because the PIT S&P 500 mask was not delivered to LIQ-500 cards. The owner reopened it after extras['sp500_member'] was deployed (prod ba7c4c2), the Builder read it directly, G0 passed with no look-ahead failures in 25 cuts, and G1 measured the mechanism, so the both-direction index-change test is feasible and a deleted stock that stays liquid can be held. The other parts of K-0032 stand: events on young or departing stocks that never sit in the declared universe give an empty set (H-0021), and weights outside the declared universe are refused (H-0018, K-0051). New: G0 counted 453 events in dev and G1 measured 395, about an eighth fewer, with zero events lacking controls. Cause unconfirmed: the G1 window start, the forward window at the end of dev, or a peer rule like K-0086. Scouts should expect G1 to cover somewhat fewer events than G0 reports.
+
+*confidence medium · 2026-10-25 · librarian · supersedes K-0032 · evidence: H-0022; H-0018; H-0021; K-0032; K-0051; K-0086*
 
 ## How the lab works
 
@@ -399,6 +429,7 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0029 The engine cannot hold stocks that have left the declared universe, so exit-from-universe events are untestable
 - K-0030 A passing mechanism test is necessary, not sufficient: pooled events hide era fade, clustering and re-weighting costs
 - K-0031 Compare the placebo bar with the round-trip cost to tell a power problem from an untradable effect
+- K-0032 Events on young or departing stocks, or needing index membership, do not fit the point-in-time universes
 - K-0033 G0 look-ahead checks are vacuous for event cards, and diagnostics cannot be reported (now five cards)
 - K-0036 G0 look-ahead checks are vacuous for event cards, and diagnostics cannot be reported (now seven cards)
 - K-0037 Earnings-announcement premium: absent as a tradable effect in large liquid US stocks, with real dates too
