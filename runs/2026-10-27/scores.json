@@ -1,0 +1,297 @@
+{
+ "claude_volne": {
+  "comment": "Před FOMC a volbami držím zhruba polovinu v hotovosti a jen defenzivní BTC/BNB plus menší ZEC na NU7.",
+  "positions": [
+   {
+    "coin": "BNB",
+    "invalidation": "Uzávěr pod SMA50 a rel7 vůči BTC záporný.",
+    "reason": "Nejsilnější relativní trend vůči BTC s nízkou betou.",
+    "weight_pct": 20.0
+   },
+   {
+    "coin": "BTC",
+    "invalidation": "Denní uzávěr pod 77 000 USD nebo jestřábí překvapení Fedu.",
+    "reason": "Defenzivní jádro, mírně snižuji kvůli slabému trendu pod SMA50.",
+    "weight_pct": 20.0
+   },
+   {
+    "coin": "ZEC",
+    "invalidation": "Pokles pod 1 100 USD nebo odklad NU7.",
+    "reason": "Obrat přítoků do ETF a náběh na upgrade NU7 5. 11.",
+    "weight_pct": 10.0
+   }
+  ]
+ },
+ "coins": {
+  "BNB": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Relativně nejsilnější large-cap s nízkou betou, kvartální burn už je v ceně.",
+   "p_outperform_btc_7d": 0.53,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.octagonai.co/markets/crypto/bnb/bnb-price-range-on-oct-23-2026-at-5pm-edt/"
+   ],
+   "trend": 1
+  },
+  "BTC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "BTC konsoliduje u 80 tis. pod SMA20/50 s mírnými odtoky z ETF a čeká na Fed.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.kucoin.com/news/articles/crypto-daily-market-report-october-27-2026",
+    "https://www.coingabbar.com/en/crypto-market-volatility-ahead-fed-decision-and-us-midterms-2026"
+   ],
+   "trend": -1
+  },
+  "DOGE": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Pod všemi SMA s propadem objemu o 42 %, bez zpráv; jen mírně přeprodaný.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "ENA": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "unlock",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Krátkodobě nad všemi SMA (rel7 +11,6 %), ale beta 2,6 a malé měsíční odemčení drží výhled neutrální.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptobriefing.com/ethena-ena-buyback-usde-supply-growth/"
+   ],
+   "trend": 1
+  },
+  "ETH": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Pokračující odtoky z ETH ETF a slabost vůči BTC, RSI 34 dává jen omezený prostor k odrazu.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cointelegraph.com/markets/ether-etf-outflows-near-1-1-billion-october"
+   ],
+   "trend": -1
+  },
+  "NEAR": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Po velkém růstu konsoliduje pod SMA20; přítoky do ETF a hlasování o snížení inflace jsou známé pozitivní pozadí.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/near-protocol/latest-updates/",
+    "https://www.ad-hoc-news.de/boerse/news/marktberichte/protocol-governance-vote-targets-1-6-percent-what-it-means-for-the-near-protocol-price/70417701"
+   ],
+   "trend": 0
+  },
+  "SOL": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Pod SMA20/50 s rel30 −12 %, přeplněné longy a záporná nerovnováha knihy, bez nového katalyzátoru.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -1
+  },
+  "SUI": {
+   "conviction": 2,
+   "event": true,
+   "event_type": "unlock",
+   "expected_move_7d_pct": -3.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Silný sestupný trend (−10 % pod SMA20, rel30 −16 %) a blížící se měsíční odemčení tokenů.",
+   "p_outperform_btc_7d": 0.41,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://captainaltcoin.com/sui-and-ena-lead-this-weeks-653-million-token-unlock-wave-heres-what-to-expect/"
+   ],
+   "trend": -2
+  },
+  "UNI": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Vklady tokenizovaných akcií nad 300 mil. USD už cena vzala (+3,4 % za den), trend za 30 dní slabý.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.kucoin.com/news/articles/crypto-daily-market-report-october-27-2026"
+   ],
+   "trend": -1
+  },
+  "XRP": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "jine",
+   "expected_move_7d_pct": -1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Konference Swell 27.–29. 10. je očekávaná, přeplněné longy (L/S 3,1) a beta 1,4 v risk-off prostředí.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://247wallst.com/investing/cryptocurrency/2026/09/29/xrp-price-prediction-for-october-2026/"
+   ],
+   "trend": -1
+  },
+  "ZEC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Obrat přítoků do ZEC ETF a očekávání upgradu NU7 (5. 11.) podporují odraz, ale vysoká beta je riziko při slabém Fedu.",
+   "p_outperform_btc_7d": 0.52,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://invezz.com/news/2026/10/26/zcash-price-rebounds-as-etf-inflows-hit-41m-but-1000-risk-remains/",
+    "https://coincentral.com/zcash-zec-price-bounces-back-to-1200-before-big-nu7-upgrade"
+   ],
+   "trend": 0
+  }
+ },
+ "date": "2026-10-27",
+ "events_7d": [
+  {
+   "date": "2026-10-27",
+   "title": "Ripple Swell 2026 v New Yorku (27.–29. 10.)",
+   "type": "jine"
+  },
+  {
+   "date": "2026-10-28",
+   "title": "Rozhodnutí FOMC o sazbách a tisková konference předsedy Warshe",
+   "type": "makro"
+  },
+  {
+   "date": "2026-10-29",
+   "title": "Rozhodnutí ECB o sazbách",
+   "type": "makro"
+  },
+  {
+   "date": "2026-10-30",
+   "title": "Rozhodnutí Bank of Japan",
+   "type": "makro"
+  },
+  {
+   "date": "2026-10-31",
+   "title": "Ukončení provozu MyNearWallet",
+   "type": "jine"
+  },
+  {
+   "date": "2026-11-01",
+   "title": "Měsíční odemčení tokenů SUI a ENA (kolem přelomu měsíce)",
+   "type": "unlock"
+  },
+  {
+   "date": "2026-11-03",
+   "title": "Midterm volby v USA (vliv na CLARITY Act)",
+   "type": "regulace"
+  }
+ ],
+ "regime": {
+  "label": "Risk-off, konsolidace před FOMC",
+  "summary": "BTC se drží kolem 80 tis. USD pod SMA20/50, odtoky z ETF (ETH přes 1 mld. USD za říjen), ropa nad 110 USD a debata o zvýšení sazeb drží trh opatrný. Fed 28. 10. má podle trhu ~90 % šanci ponechat sazby, 3. 11. jsou midterm volby v USA."
+ },
+ "top10": [
+  {
+   "coin": "BNB",
+   "reason": "Nejlepší relativní trend mezi large-capy a nízká beta v risk-off."
+  },
+  {
+   "coin": "ZEC",
+   "reason": "Obrat přítoků do ETF a očekávání NU7, longy nejsou přeplněné (L/S 0,93)."
+  },
+  {
+   "coin": "ENA",
+   "reason": "Krátkodobý relativní trend nad SMA, ale vysoká beta."
+  },
+  {
+   "coin": "BTC",
+   "reason": "Benchmark, v nejistém prostředí defenzivní."
+  },
+  {
+   "coin": "NEAR",
+   "reason": "Fundamentálně pozitivní pozadí (ETF, nižší inflace), ale konsolidace."
+  },
+  {
+   "coin": "UNI",
+   "reason": "Tokenizované akcie na Uniswapu, silná nákupní strana knihy."
+  },
+  {
+   "coin": "XRP",
+   "reason": "Swell může přinést oznámení, ale longy přeplněné."
+  },
+  {
+   "coin": "ETH",
+   "reason": "Přeprodaný, ale pod tlakem odtoků z ETF."
+  },
+  {
+   "coin": "SOL",
+   "reason": "Přeprodaný bez katalyzátoru, slabá kniha."
+  },
+  {
+   "coin": "DOGE",
+   "reason": "Slabý trend a mizející objem."
+  }
+ ]
+}
