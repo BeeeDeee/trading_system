@@ -4690,5 +4690,89 @@
   "message_id": null,
   "reason": "all data requirements resolve in the catalog",
   "ts": "2026-10-26T02:19:44.980452+00:00"
+ },
+ {
+  "id": 392,
+  "hypothesis_id": "H-0075",
+  "version": 1,
+  "from_status": "DATA_READY",
+  "to_status": "IMPLEMENTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G0 passed (run 153, qlab)",
+  "ts": "2026-10-26T22:30:01.178169+00:00"
+ },
+ {
+  "id": 393,
+  "hypothesis_id": "H-0075",
+  "version": 1,
+  "from_status": "IMPLEMENTED",
+  "to_status": "REJECTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G1 failed (run 154, qlab)",
+  "ts": "2026-10-26T22:30:02.172217+00:00"
+ },
+ {
+  "id": 394,
+  "hypothesis_id": "H-0044",
+  "version": 1,
+  "from_status": "DATA_READY",
+  "to_status": "IMPLEMENTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G0 passed (run 155, qlab)",
+  "ts": "2026-10-26T22:43:15.431108+00:00"
+ },
+ {
+  "id": 395,
+  "hypothesis_id": "H-0044",
+  "version": 1,
+  "from_status": "IMPLEMENTED",
+  "to_status": "REJECTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G1 failed (run 156, qlab)",
+  "ts": "2026-10-26T22:43:17.643579+00:00"
+ },
+ {
+  "id": 396,
+  "hypothesis_id": "H-0076",
+  "version": 1,
+  "from_status": null,
+  "to_status": "IDEA",
+  "actor": "scout",
+  "invocation_id": "scout-20261026T233508-e60a4b",
+  "message_id": 595,
+  "reason": "created",
+  "ts": "2026-10-26T23:47:05.818568+00:00"
+ },
+ {
+  "id": 397,
+  "hypothesis_id": "H-0076",
+  "version": 1,
+  "from_status": "IDEA",
+  "to_status": "SPECIFIED",
+  "actor": "scout",
+  "invocation_id": "scout-20261026T233508-e60a4b",
+  "message_id": 595,
+  "reason": "spec complete",
+  "ts": "2026-10-26T23:47:05.905149+00:00"
+ },
+ {
+  "id": 398,
+  "hypothesis_id": "H-0076",
+  "version": 1,
+  "from_status": "SPECIFIED",
+  "to_status": "BLOCKED_DATA",
+  "actor": "system",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "missing dataset upbit_krw_1d",
+  "ts": "2026-10-26T23:47:05.992505+00:00"
  }
 ]
