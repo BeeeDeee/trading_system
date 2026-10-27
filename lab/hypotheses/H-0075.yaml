@@ -156,7 +156,10 @@ notes: 'Brief fit: horizon 5 sessions (within 1-5); cross-asset in the strict se
   enough (bar of order 0.1 %) to see an effect of that size. The most likely death is the strategy, not the mechanism:
   at that size a part-time dollar-neutral book has a Sharpe of order 0.2-0.4, below the 0.5 floor against T-bills
   (K-0027); it passes only if the effect is two to three times larger. ETFs have no forward data, so G4 is the ceiling.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-10-26T02:19:44.674915+00:00'
   version: 1
@@ -179,3 +182,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-26T22:30:01.178169+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 153, qlab)
+- ts: '2026-10-26T22:30:02.172217+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 154, qlab)

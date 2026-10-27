@@ -1138,5 +1138,29 @@
   "actor": "librarian",
   "message_id": 577,
   "ts": "2026-10-25T22:37:12.412616+00:00"
+ },
+ {
+  "id": "K-0096",
+  "kind": "data",
+  "title": "ICE BofA spread series in the lab's FRED copy are empty in dev",
+  "statement": "The G0 check of H-0075 reported fred_macro.BAMLC0A0CM and fred_macro.BAMLH0A0HYM2 as series without a single value in the dev period, with first valid value 2023-10-04 (FRED serves only a short ICE BofA history). This confirms the cause K-0062 suspected for H-0043, whose zero events came from the spread inputs, not from the market. The catalog entry for fred_macro lists both fields and a range from 1998 but does not say they start in 2023, so a Scout cannot see it. Separately, that G0 failure appeared on H-0075 although the card requested only DGS10; a re-run then passed. Cause not known (inferred: a whole-dataset check at that moment). Scouts should not use ICE BofA OAS series for any dev period before 2023, and the Archivist should add the start dates of these two series to the catalog known_biases. H-0043's question about credit ETF gaps stays untested.",
+  "evidence": "[\"H-0075\",\"H-0043\",\"K-0062\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 592,
+  "ts": "2026-10-26T23:07:17.941089+00:00"
+ },
+ {
+  "id": "K-0097",
+  "kind": "framework",
+  "title": "G1 now gives a gross/net split; H-0044 shows a positive event study beside a negative gross book",
+  "statement": "Earlier lessons (H-0028, H-0031) said the gate gave no gross versus net or long versus short split. H-0044's G1 result has one: gross Sharpe, net Sharpe, each leg's Sharpe and the yearly cost drag. It shows what K-0064 suspected: costs were a minor part of the loss. The book was negative before costs and in both legs, while the event study of nearly the same window was positive and just above the placebo bar. So the gap between study and book is construction (weights set by signal size versus equal weights by sign, exit at the next open versus the fix-day close, one shared dollar bet across six currencies) or a bug, not cost. Also: when a strategy is run, the G1 checks list holds only strategy checks, so a mechanism pass or near miss is visible only in the metrics block. Builders should report the event-study mean next to the book's gross mean per window on the same dates. A reconciliation question went to the owner.",
+  "evidence": "[\"H-0044\",\"H-0028\",\"H-0031\",\"H-0046\",\"K-0064\",\"K-0027\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 593,
+  "ts": "2026-10-26T23:07:17.945262+00:00"
  }
 ]

@@ -389,6 +389,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - open questions: Once the spread series are confirmed to cover the period, the card's question stands: does the wrapper's excess move against bond value revert, or does the ETF lead the evaluated index (the death the card predicted)? A cheap event-count and coverage check by year before filing would avoid another empty run.
 - related: H-0037, H-0038, H-0021, H-0041
 
+## H-0044 – Month-end FX hedge-rebalancing flow - equity month-to-date performance gaps (US vs six home markets) predict the currency move against the dollar into the month-end fix, currency ETFs, last 5 sessions
+
+- family: `rebalancing-flow-pressure` · mechanism: flow_structural · instruments: six currency ETFs against the dollar, last five sessions of each month, 2007 to 2020
+- outcome: rejected at G1 on the strategy: lost money before costs, bound below zero; the mechanism test passed narrowly
+- lesson: Mechanism test passed only narrowly: the move into the fix day beat the placebo bar by a hair, gross was a little above cost, and the bar itself sat above cost, so effect and luck cannot be told apart. The horizon shape fits a fix-day build and the latest third was positive, but the middle third, around the 2015 reform, was wrong-signed. The book lost before costs with both legs negative, though the event study is positive on nearly the same window. Possible causes: weights set by equity-gap size, one common dollar bet when all six gaps share a sign, exit at the next open. Unreconciled: construction or bug.
+- avoid: Do not refile the same month-ends with another entry_lead, another equity-gap proxy or other country ETFs, or a fix-window variant: same events, new trials. Do not read the narrow pass as a tradable edge: one window a month, flat in between (K-0027). Do not resubmit the gap-weighted book unchanged.
+- open questions: Reconcile event study and book first: equal weight by sign versus gap weight, exit at the fix-day close versus the next open, gross by sleeve. The flow trades intraday around the fix, which daily ETF opens cannot show; intraday FX or currency futures are not loadable. The decay-after-reform kill condition did not fire (latest third positive, middle negative), so era is not the explanation.
+- related: H-0002, H-0046, H-0050, H-0062, H-0070
+
 ## H-0045 – FOMC-cycle equity tilt - 60/40 SPY/IEF book overweight SPY in even weeks and underweight in odd weeks of FOMC cycle time, weekly switches
 
 - family: `macro-announcement-premium` · mechanism: risk_premium · instruments: SPY against IEF in a 60/40 book, overweight SPY in even weeks and underweight in odd weeks of FOMC cycle time; TLT, SHY, LQD as unmarked peers; daily ETFs 2002 to 2020
@@ -658,3 +667,12 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not file further narrowed or widened versions of the same BTC-jump rule (lag condition, threshold, hold, leader) in the lab: each is a new trial on contaminated data. Do not argue from the dev-selected pattern that weaker reaction means a bigger catch-up.
 - open questions: Whether the lag depends on follower liquidity tier or on a news-driven rather than cascade-driven BTC jump is untested and would be a different card. The family's prior-trial count has to be settled by the Chair and owner before any new card here.
 - related: H-0040, H-0035, H-0013
+
+## H-0075 – Treasury-yield shock overshoot in equity sectors - after a large 10y yield move, long the 2 sector ETFs it pushed down, short the 2 it pushed up, hold 5 days
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: ten US equity sector ETFs: long the two pushed down and short the two pushed up by a large ten-year Treasury yield move (FRED yield as signal only), five-session hold, 1999 to 2020
+- outcome: rejected at G1 on the mechanism test: average inside the placebo cloud near its middle, only one of three blocks positive, gross a small fraction of round-trip cost; strategy not run
+- lesson: No rate-shock overshoot in sector ETFs. The five-session spread move was about zero, at the middle of the placebo cloud, with the placebo bar well below cost and gross a small fraction of cost: not a power problem, not tradable. Only the first third of dev was positive; the other two were negative (K-0060). Horizons of one and three sessions leaned wrong-signed, as the reaching-for-income rival predicts, but the longest turned slightly positive: no shape fits either story. Strategy not run. The first G0 attempt failed on credit-spread series the card never requested (see the data finding on FRED credit spreads).
+- avoid: Do not flip the sign and refile as rate-driven continuation, income-fund flow or bond-proxy sector drift: the sign is dev-selected and inside the cloud. Do not vary k_sigma, beta_days, ETFs per side or hold, nor swap in the two-year yield, the curve or a Treasury ETF as trigger: same events, new trials.
+- open questions: The control the card did not run: the same sector spreads after large days without a rate shock, to see whether the sort adds anything over generic sector reversal. Rate sensitivity is slow and sector spreads are noisy, so a monthly or slower tilt on rate-sensitive sectors is a different claim with its own trial. Concession after the shock would show only in intraday data, which is not loadable.
+- related: H-0041, H-0047, H-0070, H-0072, H-0043

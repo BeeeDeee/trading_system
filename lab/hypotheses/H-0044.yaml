@@ -162,7 +162,10 @@ notes: 'Brief: short horizon, cross-asset. The signal is computed from equity ma
   UK or US holidays can make the last London business day differ from T in rare months. Data: currency ETFs start
   2005-12 to 2007-02 and BIL 2007-05, hence the 2007-06 start; dev runs to 2020-12 (about 160 month-ends, about
   960 events on about 160 dates). No date literals or episodes in the rule.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_sharpe_excess
 history:
 - ts: '2026-10-16T03:47:44.718817+00:00'
   version: 1
@@ -185,3 +188,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-26T22:43:15.431108+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 155, qlab)
+- ts: '2026-10-26T22:43:17.643579+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 156, qlab)
