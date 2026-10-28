@@ -144,6 +144,12 @@ On real earnings-release sessions, following a large standardized own-price reac
 
 *confidence low · 2026-10-25 · librarian · evidence: H-0034; H-0030; H-0028; H-0031; H-0033; K-0083; K-0024*
 
+### K-0100 Closed-end fund gaps revert against their ETF anchor in two asset classes; both books still fail at G1
+
+Two cards in family etf-premium-arbitrage marked a closed-end fund after a large relative shortfall against an open-end ETF anchor: national municipal funds against the muni ETF (H-0077) and single-country equity funds against their country ETFs (H-0078). Both cleared the placebo test far above the cloud, with gross several times cost and a positive sign in every third of dev. Both weakened from the earliest to the latest third (K-0060) but the latest stayed positive. Both kept building beyond the one-week hold, up to roughly two weeks. In both the ETF hedge lost money alone and the book failed G1 on thin mean exposure and on the absolute Sharpe floor, which was missed even before costs. So the gap reversion looks like a replicated event-study regularity where no creation or redemption link exists (twin ETFs with such a link showed little, H-0037), but it is sparse and clustered, and a flat-otherwise slot book cannot turn it into an absolute Sharpe of the required size. Caveats: raw returns against unmarked peers (K-0074), fund lists lean to survivors, events cluster on shared dates, no one has checked ticker reuse. Supersedes the single-pass reading of K-0099.
+
+*confidence low · 2026-10-27 · librarian · supersedes K-0099 · evidence: H-0078; H-0077; H-0037; K-0099; K-0098; K-0060; K-0074; K-0097*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -193,6 +199,12 @@ The EDGAR 8-K Item 2.02 flag (ea_reaction_day) replaces the volume proxies of H-
 The G0 check of H-0075 reported fred_macro.BAMLC0A0CM and fred_macro.BAMLH0A0HYM2 as series without a single value in the dev period, with first valid value 2023-10-04 (FRED serves only a short ICE BofA history). This confirms the cause K-0062 suspected for H-0043, whose zero events came from the spread inputs, not from the market. The catalog entry for fred_macro lists both fields and a range from 1998 but does not say they start in 2023, so a Scout cannot see it. Separately, that G0 failure appeared on H-0075 although the card requested only DGS10; a re-run then passed. Cause not known (inferred: a whole-dataset check at that moment). Scouts should not use ICE BofA OAS series for any dev period before 2023, and the Archivist should add the start dates of these two series to the catalog known_biases. H-0043's question about credit ETF gaps stays untested.
 
 *confidence medium · 2026-10-26 · librarian · evidence: H-0075; H-0043; K-0062*
+
+### K-0102 Sharadar SFP lacks some delisted closed-end funds (CH, MF); the card's data check passes at DATA_READY and fails at G0
+
+H-0078 listed 24 fund-ETF pairs on purpose to include delisted funds and reduce survivorship. G0 failed the first version with g0_no_data_adapter because CH and MF are not in Sharadar SFP; the owner removed both pairs and re-filed (version 2), about 14 hours of cycle time lost. The catalog check (DATA_READY) resolves datasets, not tickers, so a Scout cannot see ticker coverage before G0. What stays unchecked: ticker reuse after delisting (GCH, IF, TTF, SGF, ISL, TKF, BZF, SNF, and others were flagged by the card and the Builder), because the Builder has no data access and no gate reports first and last price dates per ticker. Missing funds are a data limit, not a selection, but they lean the fund list toward survivors, in the same direction as H-0077's list. Suggested: the Archivist reports first and last price date per instrument for named-ticker cards, and the DATA_READY check flags tickers absent from the dataset.
+
+*confidence medium · 2026-10-27 · librarian · evidence: H-0078; H-0077; K-0099*
 
 ## Methodology
 
@@ -378,6 +390,18 @@ Earlier lessons (H-0028, H-0031) said the gate gave no gross versus net or long 
 
 *confidence low · 2026-10-26 · librarian · evidence: H-0044; H-0028; H-0031; H-0046; K-0064; K-0027*
 
+### K-0098 The registry shows one failed G1 check; sparse event-slot books also need exposure arithmetic in the card
+
+H-0077 is registered as g1_mean_exposure (mean exposure about 0.11 against a floor of 0.2), but its G1 result also failed the absolute Sharpe floor (net about 0.39, gross about 0.58, floor 0.5), while the bootstrap bound and excess checks passed. A Scout reading only the registry code would take it for a sizing problem that bigger slots cure; since Sharpe is roughly scale-free, they would not. Same pattern as K-0069 (the code hides what was measured). Cause of the thin exposure: G1 counted 658 events on 278 dates against a forecast of 1300 to 2700, and the book capped at five slots of seven percent each, so the average book held a fraction of the forecast. Rule for cards: write expected events per year, hold, slot weight and slot cap, and compute mean exposure (events x hold / 252 x weight) next to the absolute Sharpe floor, and state that gross Sharpe must clear the floor with margin before costs and hedge drag. Suggested: list every failing check in the registry reason.
+
+*confidence medium · 2026-10-27 · librarian · evidence: H-0077; K-0069; K-0027; H-0016*
+
+### K-0101 Reported mean exposure of a paired fund-ETF book is about half the card's gross arithmetic; the cause is unknown
+
+H-0078 forecast about 0.5 mean gross exposure (60 events a year, 5-session hold, 0.25 long plus 0.25 short per event, cap 2 events). G1 counted 1263 events on 496 dates and 813 position entries over 5283 sessions, close to the event forecast, yet reported mean exposure 0.199, just under the 0.2 floor. Entries x hold / sessions x 0.5 gross would give about 0.39; entries x hold / sessions x 0.25 gives about 0.19. So either mean_exposure counts one leg (or half the gross) of a paired book, or position_entries counts legs, or the cap and held-fund rule removed more than the entry count shows. Not resolved from the metrics; code not read. K-0098 had asked cards to write exposure arithmetic, and this card did, and still missed by a factor of two to three, so the arithmetic is only reliable if the gate's definition is known. The same ambiguity may sit behind H-0077's thin exposure. Also: both fund-class cards failed the absolute Sharpe floor even gross, so the exposure code in the registry hides the binding failure (K-0069, K-0098). Owner: please state whether mean_exposure is gross, long-only or net for paired books, and what position_entries counts.
+
+*confidence low · 2026-10-27 · librarian · evidence: H-0078; H-0077; K-0098; K-0069; K-0097*
+
 ## How the lab works
 
 ### K-0010 Fail loudly on missing inputs
@@ -463,3 +487,4 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0071 Slow-horizon event studies: the placebo bar sits several times above cost, so only a large effect can pass G1
 - K-0072 Cross-market information-diffusion claims in liquid assets come out flat or wrong-signed from daily to monthly horizons
 - K-0081 On real earnings dates the events that cleared the placebo test sort on the stock's own price move
+- K-0099 Wrapper gaps revert where no arbitrage link exists: closed-end funds cleared the placebo test, twin ETFs did not

@@ -1162,5 +1162,65 @@
   "actor": "librarian",
   "message_id": 593,
   "ts": "2026-10-26T23:07:17.945262+00:00"
+ },
+ {
+  "id": "K-0098",
+  "kind": "framework",
+  "title": "The registry shows one failed G1 check; sparse event-slot books also need exposure arithmetic in the card",
+  "statement": "H-0077 is registered as g1_mean_exposure (mean exposure about 0.11 against a floor of 0.2), but its G1 result also failed the absolute Sharpe floor (net about 0.39, gross about 0.58, floor 0.5), while the bootstrap bound and excess checks passed. A Scout reading only the registry code would take it for a sizing problem that bigger slots cure; since Sharpe is roughly scale-free, they would not. Same pattern as K-0069 (the code hides what was measured). Cause of the thin exposure: G1 counted 658 events on 278 dates against a forecast of 1300 to 2700, and the book capped at five slots of seven percent each, so the average book held a fraction of the forecast. Rule for cards: write expected events per year, hold, slot weight and slot cap, and compute mean exposure (events x hold / 252 x weight) next to the absolute Sharpe floor, and state that gross Sharpe must clear the floor with margin before costs and hedge drag. Suggested: list every failing check in the registry reason.",
+  "evidence": "[\"H-0077\",\"K-0069\",\"K-0027\",\"H-0016\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 605,
+  "ts": "2026-10-27T07:36:55.700158+00:00"
+ },
+ {
+  "id": "K-0099",
+  "kind": "market",
+  "title": "Wrapper gaps revert where no arbitrage link exists: closed-end funds cleared the placebo test, twin ETFs did not",
+  "statement": "Two wrapper cards in family etf-premium-arbitrage differ in the arbitrage link. Twin ETFs holding the same basket, where authorized participants close gaps (H-0037), showed a small gap reversion inside the placebo cloud and below cost. National municipal closed-end funds, which have no creation or redemption link, faded after a shock relative to the open-end muni ETF anchor (H-0077): the average sat far above the placebo cloud, gross was well above cost, the sign was positive in every third of dev, and it built across horizons up to the longest. It weakened from the earliest to the latest third, as K-0060 expects. Caveats: the event study measures the marked fund raw against unmarked peers, so a beta difference is not netted (K-0074); the fund list leans to survivors; events cluster on few dates; the book lost on exposure and Sharpe, not on cost (K-0097), and the hedge leg lost money alone. Wrapper evidence is the Scout's ground for this family, but one pass is not a finding about tradability.",
+  "evidence": "[\"H-0077\",\"H-0037\",\"K-0060\",\"K-0074\",\"K-0097\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 606,
+  "ts": "2026-10-27T07:36:55.706550+00:00"
+ },
+ {
+  "id": "K-0100",
+  "kind": "market",
+  "title": "Closed-end fund gaps revert against their ETF anchor in two asset classes; both books still fail at G1",
+  "statement": "Two cards in family etf-premium-arbitrage marked a closed-end fund after a large relative shortfall against an open-end ETF anchor: national municipal funds against the muni ETF (H-0077) and single-country equity funds against their country ETFs (H-0078). Both cleared the placebo test far above the cloud, with gross several times cost and a positive sign in every third of dev. Both weakened from the earliest to the latest third (K-0060) but the latest stayed positive. Both kept building beyond the one-week hold, up to roughly two weeks. In both the ETF hedge lost money alone and the book failed G1 on thin mean exposure and on the absolute Sharpe floor, which was missed even before costs. So the gap reversion looks like a replicated event-study regularity where no creation or redemption link exists (twin ETFs with such a link showed little, H-0037), but it is sparse and clustered, and a flat-otherwise slot book cannot turn it into an absolute Sharpe of the required size. Caveats: raw returns against unmarked peers (K-0074), fund lists lean to survivors, events cluster on shared dates, no one has checked ticker reuse. Supersedes the single-pass reading of K-0099.",
+  "evidence": "[\"H-0078\",\"H-0077\",\"H-0037\",\"K-0099\",\"K-0098\",\"K-0060\",\"K-0074\",\"K-0097\"]",
+  "confidence": "low",
+  "supersedes": "K-0099",
+  "actor": "librarian",
+  "message_id": 618,
+  "ts": "2026-10-27T23:07:28.490427+00:00"
+ },
+ {
+  "id": "K-0101",
+  "kind": "framework",
+  "title": "Reported mean exposure of a paired fund-ETF book is about half the card's gross arithmetic; the cause is unknown",
+  "statement": "H-0078 forecast about 0.5 mean gross exposure (60 events a year, 5-session hold, 0.25 long plus 0.25 short per event, cap 2 events). G1 counted 1263 events on 496 dates and 813 position entries over 5283 sessions, close to the event forecast, yet reported mean exposure 0.199, just under the 0.2 floor. Entries x hold / sessions x 0.5 gross would give about 0.39; entries x hold / sessions x 0.25 gives about 0.19. So either mean_exposure counts one leg (or half the gross) of a paired book, or position_entries counts legs, or the cap and held-fund rule removed more than the entry count shows. Not resolved from the metrics; code not read. K-0098 had asked cards to write exposure arithmetic, and this card did, and still missed by a factor of two to three, so the arithmetic is only reliable if the gate's definition is known. The same ambiguity may sit behind H-0077's thin exposure. Also: both fund-class cards failed the absolute Sharpe floor even gross, so the exposure code in the registry hides the binding failure (K-0069, K-0098). Owner: please state whether mean_exposure is gross, long-only or net for paired books, and what position_entries counts.",
+  "evidence": "[\"H-0078\",\"H-0077\",\"K-0098\",\"K-0069\",\"K-0097\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 619,
+  "ts": "2026-10-27T23:07:28.502072+00:00"
+ },
+ {
+  "id": "K-0102",
+  "kind": "data",
+  "title": "Sharadar SFP lacks some delisted closed-end funds (CH, MF); the card's data check passes at DATA_READY and fails at G0",
+  "statement": "H-0078 listed 24 fund-ETF pairs on purpose to include delisted funds and reduce survivorship. G0 failed the first version with g0_no_data_adapter because CH and MF are not in Sharadar SFP; the owner removed both pairs and re-filed (version 2), about 14 hours of cycle time lost. The catalog check (DATA_READY) resolves datasets, not tickers, so a Scout cannot see ticker coverage before G0. What stays unchecked: ticker reuse after delisting (GCH, IF, TTF, SGF, ISL, TKF, BZF, SNF, and others were flagged by the card and the Builder), because the Builder has no data access and no gate reports first and last price dates per ticker. Missing funds are a data limit, not a selection, but they lean the fund list toward survivors, in the same direction as H-0077's list. Suggested: the Archivist reports first and last price date per instrument for named-ticker cards, and the DATA_READY check flags tickers absent from the dataset.",
+  "evidence": "[\"H-0078\",\"H-0077\",\"K-0099\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 620,
+  "ts": "2026-10-27T23:07:28.508371+00:00"
  }
 ]

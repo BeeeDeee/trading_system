@@ -676,3 +676,21 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not flip the sign and refile as rate-driven continuation, income-fund flow or bond-proxy sector drift: the sign is dev-selected and inside the cloud. Do not vary k_sigma, beta_days, ETFs per side or hold, nor swap in the two-year yield, the curve or a Treasury ETF as trigger: same events, new trials.
 - open questions: The control the card did not run: the same sector spreads after large days without a rate shock, to see whether the sort adds anything over generic sector reversal. Rate sensitivity is slow and sector spreads are noisy, so a monthly or slower tilt on rate-sensitive sectors is a different claim with its own trial. Concession after the shock would show only in intraday data, which is not loadable.
 - related: H-0041, H-0047, H-0070, H-0072, H-0043
+
+## H-0077 – Muni closed-end fund discount-shock reversal - buy national muni CEFs whose 5-session return fell far below what the open-end muni bond ETF (MUB) implies, MUB-hedged, hold 5 sessions
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: national municipal closed-end funds, long after a relative discount shock, hedged with a short in the muni ETF MUB, daily decisions, week-long slots, 2007 to 2020
+- outcome: rejected at G1 on exposure below the floor; the mechanism test passed, but net Sharpe also missed the absolute bar.
+- lesson: The mechanism passed clearly: funds far below their MUB-implied move beat peers and a same-fund placebo, gross well above cost, positive in every third but fading over time. The book failed on shape: events came well under the forecast rate, slots sat empty, exposure stayed about half the floor, and net Sharpe missed the absolute bar (gross only modestly above it), so upsizing would not fix it. The MUB hedge lost money alone, and the effect kept building past the one-week hold: the hold catches only the front of a slow reversion.
+- avoid: Do not raise slot weights, the slot cap or lower z_entry to lift exposure after seeing this: same events, new trials, and Sharpe does not scale with size. Do not refile the same discount-shock rule on other closed-end funds under a new family name. Do not read the mechanism pass as a tradable edge (K-0027, K-0064).
+- open questions: A slower hold argued from the build-up across horizons, with events, slots, weight and mean exposure written down in advance. Untested: a beta-matched control (K-0074), the split by many versus few funds on a date, the hedge's worth, stress before late 2008. Fund list leans to survivors.
+- related: H-0037, H-0043, H-0070
+
+## H-0078 – Country closed-end fund catch-up to the foreign market - long a US-listed single-country equity CEF after its 5-session return falls far below its country ETF's, short the ETF, hold 5 days
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: US-listed single-country equity closed-end funds, long after a relative shortfall against a fixed same-country ETF, short that ETF, event-driven, week-long slots, 2000 to 2020
+- outcome: rejected at G1: mechanism test passed, but exposure missed the floor by a hair and the absolute Sharpe floor was missed even gross; bootstrap bound passed.
+- lesson: Mechanism passed again, in a second asset class: funds far behind their country ETF recovered relative to it, well above the placebo cloud and gross several times cost, positive in all thirds though weaker in the latest (K-0060). The book still failed: exposure sat a hair under the floor and the absolute Sharpe floor was missed before costs, so neither costs nor slot size was the cause. The ETF hedge lost money alone; the fund leg carried the gain. The effect kept building for about two weeks, so a one-week hold takes only part of it.
+- avoid: Do not raise slot weights or the cap, or lower z_entry, to lift exposure: same events, new trials, and Sharpe does not scale with size. Do not file a third fund-discount card on another fund class as a new family.
+- open questions: Change the book, not the event: a hold argued from the build-up, one pooled book sharing slots across fund classes, or a tilt on an always-invested core (K-0027). Untested: split by many versus few funds firing, ticker reuse, survivor lean.
+- related: H-0077, H-0037
