@@ -694,3 +694,30 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not raise slot weights or the cap, or lower z_entry, to lift exposure: same events, new trials, and Sharpe does not scale with size. Do not file a third fund-discount card on another fund class as a new family.
 - open questions: Change the book, not the event: a hold argued from the build-up, one pooled book sharing slots across fund classes, or a tilt on an always-invested core (K-0027). Untested: split by many versus few funds firing, ticker reuse, survivor lean.
 - related: H-0077, H-0037
+
+## H-0079 – Pooled CEF catch-up to its asset-class ETF - seven fund classes share 2 slots: long a CEF after a 2-sigma shortfall vs its ETF anchor, short the anchor, hold 5 days
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: 38 closed-end funds in seven classes, long after a shortfall vs an ETF anchor, short the anchor, 2002 to 2020
+- outcome: rejected at G1: the mechanism test passed and all checks passed except the absolute Sharpe floor, missed net but cleared gross
+- lesson: Pooling seven fund classes fixed the thin exposure and sparse entries of H-0077 and H-0078. The event study sat at the top of the placebo cloud, gross covered cost several times, and the sign held in all three thirds, the latest included. Net Sharpe still missed the floor while gross cleared it: costs on thinly traded funds and the hedge took the margin. The anchor short lost money alone and added little over the long leg, whose result may carry asset-class beta from a falling-rate era. The effect was tiny at one session and built over about two weeks, then flattened: not a one-day bounce, and a five-session hold leaves part of it unharvested.
+- avoid: Do not lower z_entry, enlarge slot weights or the cap, or add fund classes to push net Sharpe over the floor: same events, new trials. Do not drop the hedge or swap anchors because the short lost money. Do not refile this event under another family name.
+- open questions: Untested: a longer hold argued from the two-week build-up (leaves the brief's short-hold range; write expected cost and net Sharpe first), a beta-matched control for the long leg (K-0074), and whether the hedge pays its cost. List leans to survivors (K-0102).
+- related: H-0077, H-0078, H-0037, H-0043
+
+## H-0080 – Credit-ETF liquidity overshoot vs SPY/IEF anchors - tilt a 60/40 book's IEF sleeve into a credit, EM, muni or loan ETF for 5 days after a 2-sigma residual drop
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: credit, EM, muni and loan ETFs tilted out of the IEF sleeve of a SPY/IEF mix for a week after a large drop against SPY and IEF; 2003 to 2020
+- outcome: rejected at G1 on the mechanism test: abnormal return wrong-signed, placebo percentile far under the bar, cost not covered; strategy not run
+- lesson: After a large residual drop against SPY and IEF the credit-type ETF did not rebound: the average was slightly negative at every horizon from one to ten sessions and far inside the placebo cloud, with losses in the earliest and latest thirds. The test leaned in the card's favour (higher equity beta than the peers, K-0074) and still failed. The negative longer horizons fit the card's own rivals: credit-specific news, persistent flow, falling knife. Not a power problem: events above the minimum, G0 and G1 counts agreed, placebo mean about zero.
+- avoid: Do not refile with other thresholds, holds, anchors or ETF lists: same events, wrong sign at all horizons. Do not trade the mirror: its sign is dev-selected. This is the stress-rebound evidence of K-0084 again.
+- open questions: Wrapper pressure shows only against the basket's own value (premium to NAV), not in daily closes versus factor proxies; that data is not loadable. The first third held few events because most ETFs list late (K-0075).
+- related: H-0043, H-0037, H-0041, H-0070, H-0075, H-0077, H-0078, H-0079
+
+## H-0082 – Perp-listing short-constraint relief - short Binance perps of seasoned-spot coins in their first 8 weeks after the perp launch, hedged with the other top-50 perps, weekly
+
+- family: `short-sale-constraint-relief` · mechanism: flow_structural · instruments: Binance perps (top fifty): short coins in the first weeks after the perp launch, seasoned spot pair, hedged with other perps, weekly
+- outcome: rejected at G1: the four-week abnormal return was wrong-signed (marked coins beat peers), far below the placebo bar
+- lesson: Seasoned coins in the first weeks after their perp launch did not lag the other liquid perps; on average they led, more at two months than at one or two weeks. That is the slow shape of trend or beta, not a launch-pump reversal or the relief of a short-sale constraint. The sign flipped across thirds and the wrong-signed middle third (probably the 2021 boom, most events) decided the pooled result. Events were ample and the placebo mean near zero, so this is a dev-period refutation, not a power failure, although the gap the card forecast was below the placebo bar.
+- avoid: Do not resubmit with another hold, seasoning age or top-n: same events, wrong sign at slow horizons. Do not trade the mirror: its sign is dev-selected and tied to one boom. Do not refile new coins under another channel name (overhang, vesting): H-0004, H-0058 and H-0082 cover it.
+- open questions: Only a beta- and attention-neutral design is new: launch events against coins matched on size, beta and prior run-up without a launch. The first days after a launch were never measured. Early launches lack provable seasoning (K-0075).
+- related: H-0058, H-0004, H-0039, H-0071

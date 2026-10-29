@@ -144,11 +144,23 @@ On real earnings-release sessions, following a large standardized own-price reac
 
 *confidence low · 2026-10-25 · librarian · evidence: H-0034; H-0030; H-0028; H-0031; H-0033; K-0083; K-0024*
 
-### K-0100 Closed-end fund gaps revert against their ETF anchor in two asset classes; both books still fail at G1
+### K-0103 Closed-end fund gaps revert in a pooled seven-class book; only the net Sharpe floor fails
 
-Two cards in family etf-premium-arbitrage marked a closed-end fund after a large relative shortfall against an open-end ETF anchor: national municipal funds against the muni ETF (H-0077) and single-country equity funds against their country ETFs (H-0078). Both cleared the placebo test far above the cloud, with gross several times cost and a positive sign in every third of dev. Both weakened from the earliest to the latest third (K-0060) but the latest stayed positive. Both kept building beyond the one-week hold, up to roughly two weeks. In both the ETF hedge lost money alone and the book failed G1 on thin mean exposure and on the absolute Sharpe floor, which was missed even before costs. So the gap reversion looks like a replicated event-study regularity where no creation or redemption link exists (twin ETFs with such a link showed little, H-0037), but it is sparse and clustered, and a flat-otherwise slot book cannot turn it into an absolute Sharpe of the required size. Caveats: raw returns against unmarked peers (K-0074), fund lists lean to survivors, events cluster on shared dates, no one has checked ticker reuse. Supersedes the single-pass reading of K-0099.
+A pooled book of closed-end funds from seven classes, long after a large shortfall against a beta-adjusted ETF anchor and short the anchor, again cleared the placebo test at the top of the cloud, with gross several times cost and a positive sign in every third. The middle third, which likely holds 2008, was strongest and the latest weakest but positive. Muni and country funds reuse the event type of H-0077 and H-0078, so this is partly the same evidence, not an independent confirmation. Pooling cured exposure and entry counts and passed the bootstrap check, but net Sharpe stayed under the absolute floor while gross cleared it: cost of thinly traded funds took the margin. The anchor short lost money alone again, so the long leg may include asset-class beta (K-0074). The effect was small at one session and built over about two weeks, so it is not a one-day bounce.
 
-*confidence low · 2026-10-27 · librarian · supersedes K-0099 · evidence: H-0078; H-0077; H-0037; K-0099; K-0098; K-0060; K-0074; K-0097*
+*confidence low · 2026-10-28 · librarian · supersedes K-0100 · evidence: H-0079; H-0078; H-0077; K-0100; K-0074; K-0060*
+
+### K-0105 Wrapper-gap reversion shows in closed-end funds but not in ETFs
+
+In the etf-premium-arbitrage family the gaps that reverted were closed-end fund gaps against an ETF anchor (H-0077, H-0078, H-0079, K-0103), where no creation or redemption link exists. ETF gaps did not: twin ETFs (H-0037) fell short of the placebo bar, and a credit, EM, muni or loan ETF far below what SPY and IEF implied (H-0080) did not rebound, with a wrong-signed average at every horizon even though the test leaned its way (K-0074). Daily closes against liquid factor proxies are probably not a mispricing signal. H-0043 stays untested; H-0080 is its nearest replacement. A fair test needs premium to NAV, not loadable.
+
+*confidence low · 2026-10-28 · librarian · evidence: H-0080; H-0037; H-0043; H-0077; H-0078; H-0079; K-0103; K-0084; K-0074*
+
+### K-0107 Newly available crypto coins did not underperform liquid peers in the dev window, in three designs
+
+Three cards shorted newly available Binance coins in different forms: young spot listings against seasoned ones (H-0004, decided on the strategy, could not tell), perps aged between one month and one year (H-0058, wrong-signed) and the first weeks after a perp launch of a coin with a seasoned spot pair (H-0082, wrong-signed). In both event studies the marked coins did not lag the other liquid perps on average; the sign followed the market cycle or alternated across thirds, and the wrong-signed effect grew with the horizon, the shape of trend or beta and not of a listing pump or a relief of short-sale constraints. Both used raw returns against unmarked peers (K-0074), so beta and attention are the leading readings, but no beta-matched control was run. All of it sits in one boom-and-bust window (K-0006). A further short-the-new-coin card has a low prior unless it neutralizes beta and prior run-up or changes the window.
+
+*confidence low · 2026-10-28 · librarian · evidence: H-0004; H-0058; H-0082; K-0074; K-0006; K-0060*
 
 ## Data
 
@@ -205,6 +217,12 @@ The G0 check of H-0075 reported fred_macro.BAMLC0A0CM and fred_macro.BAMLH0A0HYM
 H-0078 listed 24 fund-ETF pairs on purpose to include delisted funds and reduce survivorship. G0 failed the first version with g0_no_data_adapter because CH and MF are not in Sharadar SFP; the owner removed both pairs and re-filed (version 2), about 14 hours of cycle time lost. The catalog check (DATA_READY) resolves datasets, not tickers, so a Scout cannot see ticker coverage before G0. What stays unchecked: ticker reuse after delisting (GCH, IF, TTF, SGF, ISL, TKF, BZF, SNF, and others were flagged by the card and the Builder), because the Builder has no data access and no gate reports first and last price dates per ticker. Missing funds are a data limit, not a selection, but they lean the fund list toward survivors, in the same direction as H-0077's list. Suggested: the Archivist reports first and last price date per instrument for named-ticker cards, and the DATA_READY check flags tickers absent from the dataset.
 
 *confidence medium · 2026-10-27 · librarian · evidence: H-0078; H-0077; K-0099*
+
+### K-0108 Signal-only history before the view start is not delivered (H-0082 G0 crash)
+
+H-0082 requested Binance spot bars from 2017 as a signal-only dataset to verify that each coin's spot pair was seasoned before its perp launch. Its first G0 run crashed with 'view starts too late for the spot seasoning rule'. The Builder reports that the view starts at the perp panel's first date, so the spot history before it is not delivered although the catalog holds it. This is the direct confirmation of the cause K-0075 inferred from event counts (H-0061, H-0062). Consequences: any rule on a first-bar date, listing age or long look-back taken from a signal-only dataset is left-censored at the view start. The Builder had to count seasoning only when provable, so perp launches in roughly the first half year of dev were excluded for a data reason (longer for a stricter age rule), and G2 neighbors with a longer age lose early events too. The G1 event count came out well under the card's forecast, which fits but does not prove this cause. Scouts should compute first valid dates from the view start, not from the dataset range; the owner should either deliver signal-only history before the dev start or state in the catalog that it is not delivered.
+
+*confidence medium · 2026-10-28 · librarian · supersedes K-0075 · evidence: H-0082; H-0061; H-0062; K-0075; K-0020*
 
 ## Methodology
 
@@ -348,12 +366,6 @@ H-0049 (193 events against a minimum of 200) and H-0050 (172 marked events on 43
 
 *confidence medium · 2026-10-17 · librarian · supersedes K-0067 · evidence: H-0049; H-0050; K-0062; K-0054; K-0032*
 
-### K-0075 Signal history before the dev start or the ETFs' first date seems not to warm up the first signals
-
-H-0061 requested Moody's yields from 1986 for decisions from 2003 but reached G1 with 484 marked events against a forecast of 550 to 650, and its first dev third held far fewer events than the others, about its three-year minimum-observation rule. H-0062 requested FRED fixings from 1999 for ETFs listed in 2007; its strategy started in September 2011 (ETF start plus the 90 percent coverage rule on a five-year window), with 220 events against about 330 forecast and 4 in its first third. Both fit one cause: signal-only series reach the strategy only from the card's start, so warm-up eats the first dev years. Inferred from counts and dates; loader not read. Effects: shorter samples, an almost empty first block, a publication split with little earlier data. Until the owner confirms, Scouts should compute the first signal date from the card's own period.
-
-*confidence low · 2026-10-19 · librarian · evidence: H-0061; H-0062; K-0062*
-
 ### K-0082 lab try cannot exercise cards that need the 8-K flag: its synthetic ea_reaction_day never equals one
 
 The Builders of H-0064, H-0066 and H-0067 each report that the synthetic ea_reaction_day in lab try is uniform noise between 0 and 10, never exactly 1, so lab try shows zero events and its checks are vacuous for these cards; they tested events, book and point-in-time behaviour on hand-made data (one temporarily rounded the flag). On real data G0 did report events (counts within a handful of G1's) and no look-ahead failures in 25 cuts, so G0 is the first meaningful check, and an event-logic bug would surface only there. Suggested: make the synthetic flag a sparse 0/1 event series so lab try produces events.
@@ -396,11 +408,17 @@ H-0077 is registered as g1_mean_exposure (mean exposure about 0.11 against a flo
 
 *confidence medium · 2026-10-27 · librarian · evidence: H-0077; K-0069; K-0027; H-0016*
 
-### K-0101 Reported mean exposure of a paired fund-ETF book is about half the card's gross arithmetic; the cause is unknown
+### K-0104 Mean exposure of paired slot books fits entries x hold / sessions x leg weight
 
-H-0078 forecast about 0.5 mean gross exposure (60 events a year, 5-session hold, 0.25 long plus 0.25 short per event, cap 2 events). G1 counted 1263 events on 496 dates and 813 position entries over 5283 sessions, close to the event forecast, yet reported mean exposure 0.199, just under the 0.2 floor. Entries x hold / sessions x 0.5 gross would give about 0.39; entries x hold / sessions x 0.25 gives about 0.19. So either mean_exposure counts one leg (or half the gross) of a paired book, or position_entries counts legs, or the cap and held-fund rule removed more than the entry count shows. Not resolved from the metrics; code not read. K-0098 had asked cards to write exposure arithmetic, and this card did, and still missed by a factor of two to three, so the arithmetic is only reliable if the gate's definition is known. The same ambiguity may sit behind H-0077's thin exposure. Also: both fund-class cards failed the absolute Sharpe floor even gross, so the exposure code in the registry hides the binding failure (K-0069, K-0098). Owner: please state whether mean_exposure is gross, long-only or net for paired books, and what position_entries counts.
+H-0079 adds a second data point to K-0101. The card forecast mean exposure 0.25-0.30 on a one-leg count and 0.5-0.6 on gross; G1 reported 0.339 with 1192 entries over 4783 sessions, hold 5, weight 0.25 per leg. The formula entries x 5 / 4783 x 0.25 gives 0.31. H-0078 reported 0.199 with 813 entries over 5283 sessions; the formula gives 0.19. Both readings left open in K-0101 (entries count slots and exposure one leg, or entries count legs and exposure gross) give this same formula, so it can be used for forecasting while the definition stays unconfirmed. Until the owner answers, cards should compute exposure this way. The question in K-0101 stays open.
 
-*confidence low · 2026-10-27 · librarian · evidence: H-0078; H-0077; K-0098; K-0069; K-0097*
+*confidence low · 2026-10-28 · librarian · supersedes K-0101 · evidence: H-0079; H-0078; H-0077; K-0101; K-0098*
+
+### K-0106 lab try cannot exercise cards that pair perps with spot: the synthetic market has no spot columns and no '.P' ids
+
+The Builder of H-0082 reports that the synthetic market in lab try has no spot instruments and no '.P' perp ids, so the spot-seasoning rule finds no pairs and lab try shows zero events and zero exposure; the logic was tested on hand-made data. This is the third data family with the same gap after the 8-K flag (K-0082) and the weekly CFTC reports (K-0092). On real data G0 then crashed once on the missing spot history (K-0075) and, after the fix, reported events within a handful of the G1 count (366 against 363) and no look-ahead failures in 25 cuts. So the first meaningful check of such cards is G0 on real data, and a data problem costs a full cycle. Suggested: give the synthetic market spot twins for its perps with a '.P' naming, listed at staggered dates, so lab try can produce events.
+
+*confidence medium · 2026-10-28 · librarian · evidence: H-0082; K-0082; K-0092; K-0075*
 
 ## How the lab works
 
@@ -486,5 +504,8 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0067 The G1 reason code can name the event count while the mechanism was measured and failed; the count was visible at G0
 - K-0071 Slow-horizon event studies: the placebo bar sits several times above cost, so only a large effect can pass G1
 - K-0072 Cross-market information-diffusion claims in liquid assets come out flat or wrong-signed from daily to monthly horizons
+- K-0075 Signal history before the dev start or the ETFs' first date seems not to warm up the first signals
 - K-0081 On real earnings dates the events that cleared the placebo test sort on the stock's own price move
 - K-0099 Wrapper gaps revert where no arbitrage link exists: closed-end funds cleared the placebo test, twin ETFs did not
+- K-0100 Closed-end fund gaps revert against their ETF anchor in two asset classes; both books still fail at G1
+- K-0101 Reported mean exposure of a paired fund-ETF book is about half the card's gross arithmetic; the cause is unknown

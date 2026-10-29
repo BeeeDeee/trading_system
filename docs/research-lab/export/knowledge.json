@@ -1222,5 +1222,77 @@
   "actor": "librarian",
   "message_id": 620,
   "ts": "2026-10-27T23:07:28.508371+00:00"
+ },
+ {
+  "id": "K-0103",
+  "kind": "market",
+  "title": "Closed-end fund gaps revert in a pooled seven-class book; only the net Sharpe floor fails",
+  "statement": "A pooled book of closed-end funds from seven classes, long after a large shortfall against a beta-adjusted ETF anchor and short the anchor, again cleared the placebo test at the top of the cloud, with gross several times cost and a positive sign in every third. The middle third, which likely holds 2008, was strongest and the latest weakest but positive. Muni and country funds reuse the event type of H-0077 and H-0078, so this is partly the same evidence, not an independent confirmation. Pooling cured exposure and entry counts and passed the bootstrap check, but net Sharpe stayed under the absolute floor while gross cleared it: cost of thinly traded funds took the margin. The anchor short lost money alone again, so the long leg may include asset-class beta (K-0074). The effect was small at one session and built over about two weeks, so it is not a one-day bounce.",
+  "evidence": "[\"H-0079\",\"H-0078\",\"H-0077\",\"K-0100\",\"K-0074\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": "K-0100",
+  "actor": "librarian",
+  "message_id": 632,
+  "ts": "2026-10-28T05:07:39.616705+00:00"
+ },
+ {
+  "id": "K-0104",
+  "kind": "framework",
+  "title": "Mean exposure of paired slot books fits entries x hold / sessions x leg weight",
+  "statement": "H-0079 adds a second data point to K-0101. The card forecast mean exposure 0.25-0.30 on a one-leg count and 0.5-0.6 on gross; G1 reported 0.339 with 1192 entries over 4783 sessions, hold 5, weight 0.25 per leg. The formula entries x 5 / 4783 x 0.25 gives 0.31. H-0078 reported 0.199 with 813 entries over 5283 sessions; the formula gives 0.19. Both readings left open in K-0101 (entries count slots and exposure one leg, or entries count legs and exposure gross) give this same formula, so it can be used for forecasting while the definition stays unconfirmed. Until the owner answers, cards should compute exposure this way. The question in K-0101 stays open.",
+  "evidence": "[\"H-0079\",\"H-0078\",\"H-0077\",\"K-0101\",\"K-0098\"]",
+  "confidence": "low",
+  "supersedes": "K-0101",
+  "actor": "librarian",
+  "message_id": 633,
+  "ts": "2026-10-28T05:07:39.626257+00:00"
+ },
+ {
+  "id": "K-0105",
+  "kind": "market",
+  "title": "Wrapper-gap reversion shows in closed-end funds but not in ETFs",
+  "statement": "In the etf-premium-arbitrage family the gaps that reverted were closed-end fund gaps against an ETF anchor (H-0077, H-0078, H-0079, K-0103), where no creation or redemption link exists. ETF gaps did not: twin ETFs (H-0037) fell short of the placebo bar, and a credit, EM, muni or loan ETF far below what SPY and IEF implied (H-0080) did not rebound, with a wrong-signed average at every horizon even though the test leaned its way (K-0074). Daily closes against liquid factor proxies are probably not a mispricing signal. H-0043 stays untested; H-0080 is its nearest replacement. A fair test needs premium to NAV, not loadable.",
+  "evidence": "[\"H-0080\",\"H-0037\",\"H-0043\",\"H-0077\",\"H-0078\",\"H-0079\",\"K-0103\",\"K-0084\",\"K-0074\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 639,
+  "ts": "2026-10-28T06:36:21.125798+00:00"
+ },
+ {
+  "id": "K-0106",
+  "kind": "framework",
+  "title": "lab try cannot exercise cards that pair perps with spot: the synthetic market has no spot columns and no '.P' ids",
+  "statement": "The Builder of H-0082 reports that the synthetic market in lab try has no spot instruments and no '.P' perp ids, so the spot-seasoning rule finds no pairs and lab try shows zero events and zero exposure; the logic was tested on hand-made data. This is the third data family with the same gap after the 8-K flag (K-0082) and the weekly CFTC reports (K-0092). On real data G0 then crashed once on the missing spot history (K-0075) and, after the fix, reported events within a handful of the G1 count (366 against 363) and no look-ahead failures in 25 cuts. So the first meaningful check of such cards is G0 on real data, and a data problem costs a full cycle. Suggested: give the synthetic market spot twins for its perps with a '.P' naming, listed at staggered dates, so lab try can produce events.",
+  "evidence": "[\"H-0082\",\"K-0082\",\"K-0092\",\"K-0075\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 648,
+  "ts": "2026-10-28T09:38:27.640451+00:00"
+ },
+ {
+  "id": "K-0107",
+  "kind": "market",
+  "title": "Newly available crypto coins did not underperform liquid peers in the dev window, in three designs",
+  "statement": "Three cards shorted newly available Binance coins in different forms: young spot listings against seasoned ones (H-0004, decided on the strategy, could not tell), perps aged between one month and one year (H-0058, wrong-signed) and the first weeks after a perp launch of a coin with a seasoned spot pair (H-0082, wrong-signed). In both event studies the marked coins did not lag the other liquid perps on average; the sign followed the market cycle or alternated across thirds, and the wrong-signed effect grew with the horizon, the shape of trend or beta and not of a listing pump or a relief of short-sale constraints. Both used raw returns against unmarked peers (K-0074), so beta and attention are the leading readings, but no beta-matched control was run. All of it sits in one boom-and-bust window (K-0006). A further short-the-new-coin card has a low prior unless it neutralizes beta and prior run-up or changes the window.",
+  "evidence": "[\"H-0004\",\"H-0058\",\"H-0082\",\"K-0074\",\"K-0006\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 649,
+  "ts": "2026-10-28T09:38:27.661666+00:00"
+ },
+ {
+  "id": "K-0108",
+  "kind": "data",
+  "title": "Signal-only history before the view start is not delivered (H-0082 G0 crash)",
+  "statement": "H-0082 requested Binance spot bars from 2017 as a signal-only dataset to verify that each coin's spot pair was seasoned before its perp launch. Its first G0 run crashed with 'view starts too late for the spot seasoning rule'. The Builder reports that the view starts at the perp panel's first date, so the spot history before it is not delivered although the catalog holds it. This is the direct confirmation of the cause K-0075 inferred from event counts (H-0061, H-0062). Consequences: any rule on a first-bar date, listing age or long look-back taken from a signal-only dataset is left-censored at the view start. The Builder had to count seasoning only when provable, so perp launches in roughly the first half year of dev were excluded for a data reason (longer for a stricter age rule), and G2 neighbors with a longer age lose early events too. The G1 event count came out well under the card's forecast, which fits but does not prove this cause. Scouts should compute first valid dates from the view start, not from the dataset range; the owner should either deliver signal-only history before the dev start or state in the catalog that it is not delivered.",
+  "evidence": "[\"H-0082\",\"H-0061\",\"H-0062\",\"K-0075\",\"K-0020\"]",
+  "confidence": "medium",
+  "supersedes": "K-0075",
+  "actor": "librarian",
+  "message_id": 650,
+  "ts": "2026-10-28T09:38:27.671235+00:00"
  }
 ]
