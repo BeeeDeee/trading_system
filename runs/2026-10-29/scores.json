@@ -1,0 +1,309 @@
+{
+ "claude_volne": {
+  "comment": "Zhruba 50% expozice v defenzivních a relativně silných pozicích; zbytek zůstává v hotovosti kvůli jestřábímu Fedu, midterms a NFP.",
+  "positions": [
+   {
+    "coin": "BNB",
+    "invalidation": "Zamítnutí licence v Brazílii, regulační zásah proti Binance nebo denní uzavření pod SMA50 (~750).",
+    "reason": "Nejsilnější relativní trend nad všemi SMA s nízkou betou.",
+    "weight_pct": 20.0
+   },
+   {
+    "coin": "BTC",
+    "invalidation": "Denní uzavření pod 79,5 tis. (týdenní minimum) se zrychlením likvidací longů.",
+    "reason": "Defenzivní jádro portfolia, Fed byl v ceně a funding je neutrální.",
+    "weight_pct": 20.0
+   },
+   {
+    "coin": "ZEC",
+    "invalidation": "Pokles pod SMA50 / pod 1200, odtoky z ETF nebo problém s aktivací NU7.",
+    "reason": "Trend nad SMA, přítoky do ETF a upgrade NU7; menší váha kvůli betě 2,6.",
+    "weight_pct": 10.0
+   }
+  ]
+ },
+ "coins": {
+  "BNB": {
+   "conviction": 4,
+   "event": true,
+   "event_type": "regulace",
+   "expected_move_7d_pct": 1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Nejsilnější relativní trend v universu, je nad všemi SMA a má nízkou betu; nejistotu přináší termín brazilské licence 30. 10.",
+   "p_outperform_btc_7d": 0.57,
+   "p_up_7d": 0.53,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://themarketperiodical.com/2026/10/28/bnb-price-eyes-800-as-binance/",
+    "https://en.cryptonomist.ch/2026/10/28/bnb-binance-price-s-bullish-trend-faces-overbought-october-28-2026/"
+   ],
+   "trend": 2
+  },
+  "BTC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Konsolidace těsně pod SMA20/50 a jestřábí Fed brzdí růst, ponechání sazeb ale bylo očekávané a cenu nepohnulo.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/business/2026/10/28/live-updates-bitcoin-climbs-above-usd81-000-as-majors-rally-ahead-of-fed-decision",
+    "https://www.cryptotimes.io/2026/10/29/fomc-rate-decision-fed-holds-rates-at-3-75-4-in-10-2-vote/"
+   ],
+   "trend": 0
+  },
+  "DOGE": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Je pod všemi SMA a objem klesá o 41 %; nedávný odraz memecoinů nemá fundamentální oporu a funding i L/S ukazují přeplněné longy.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://fxstreet.com/cryptocurrencies/news/dogecoin-price-forecast-doge-bulls-eye-potential-bottom-amid-steady-retail-interest-202610271526",
+    "https://www.tokenpost.com/news/investing/42224"
+   ],
+   "trend": -2
+  },
+  "ENA": {
+   "conviction": 2,
+   "event": true,
+   "event_type": "unlock",
+   "expected_move_7d_pct": -1.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Po odrazu je těsně nad SMA20/50, ale 1. 11. ho čeká odemčení ~2 % kapitalizace a Hayes prodává; buybacky zatím nejsou aktivní (USDe pod 7,5 mld.).",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/ethena/latest-updates/",
+    "https://coincentral.com/ethena-ena-price-arthur-hayes-sells-14m-tokens-and-ena-bounces-9"
+   ],
+   "trend": 0
+  },
+  "ETH": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": -1,
+   "note": "Sestupný trend vůči BTC a ETH ETF mají rekordní říjnové odtoky přes 1 mld. USD, které stále pokračují; krátkodobě je ETH přeprodané.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cointelegraph.com/markets/ether-etf-outflows-near-1-1-billion-october",
+    "https://www.tokenpost.com/news/investing/42434"
+   ],
+   "trend": -2
+  },
+  "NEAR": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "jine",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Střednědobě silný trend nad SMA50/100 se za týden ochladil o 10 %; hlasování o snížení emise končí 2. 11. a schválení se už očekává.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.tradingview.com/news/coinmarketcal:c958b28f6094b:0-near-protocol-governance-proposal-seeks-issuance-cut-to-1-6-01-oct-2026/",
+    "https://u.today/near-protocol-launches-confidential-pre-ipo-futures-for-ai-giant-anthropic"
+   ],
+   "trend": 0
+  },
+  "SOL": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Za BTC zaostává o 11 % za 30 dní a z ETF mírně odtékají peníze; RSI kolem 40 a blízkost 30d minima nabízí jen malý odraz.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.tokenpost.com/news/investing/42447",
+    "https://phemex.com/news/article/us-sol-spot-etfs-record-566m-singleday-net-outflow-101663"
+   ],
+   "trend": -1
+  },
+  "SUI": {
+   "conviction": 2,
+   "event": true,
+   "event_type": "unlock",
+   "expected_move_7d_pct": -2.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Nejslabší trend v universu (−16,6 % vůči BTC za 30 dní, objem −47 %); malé odemčení 1. 11. sentiment nezlepší.",
+   "p_outperform_btc_7d": 0.4,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://en.coinotag.com/sui-unlock-13-15-million-sui-november-1",
+    "https://cryptoticker.io/en/sui-token-unlock-lockup-november/"
+   ],
+   "trend": -2
+  },
+  "UNI": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Pálení tokenů z poplatků je známé a cenu nedrží; za 30 dní zaostává za BTC o 15 % a má vysokou betu i nízkou likviditu.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://ambcrypto.com/uniswap-expands-trading-routes-bringing-outside-swaps-into-uni-burns/"
+   ],
+   "trend": -1
+  },
+  "XRP": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Firemní zprávy Ripple (rekordní tržby, RLUSD na Coinbase) jsou pozitivní, ale token je slabý a long pozice jsou přeplněné (L/S 3,1).",
+   "p_outperform_btc_7d": 0.46,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.kucoin.com/news/flash/ripple-eyes-record-900m-revenue-run-rate-in-2026-amid-xrp-s-worst-annual-decline-since-2022",
+    "https://247wallst.com/investing/cryptocurrency/2026/10/28/ripples-rlusd-has-a-moodys-a2-rating-and-is-live-on-coinbase-does-a-stronger-stablecoin-help-xrp"
+   ],
+   "trend": -1
+  },
+  "ZEC": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "upgrade",
+   "expected_move_7d_pct": 0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Upgrade NU7 (5.–6. 11.) a trvalé přítoky do ETF jsou známé a částečně v ceně (+8 % za 3 dny); hrozí scénář „sell the news“ při velmi vysoké betě.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://crypto.news/zcash-targets-nov-5-for-nu7-mainnet-upgrade/",
+    "https://cryptoticker.io/en/zcash-nu7-activation-block-height-set/",
+    "https://tokenpost.com/news/investing/43151"
+   ],
+   "trend": 1
+  }
+ },
+ "date": "2026-10-29",
+ "events_7d": [
+  {
+   "date": "2026-10-30",
+   "title": "Termín pro licenci Binance v Brazílii (Binance už omezila 8 služeb)",
+   "type": "regulace"
+  },
+  {
+   "date": "2026-11-01",
+   "title": "Odemčení tokenů SUI (~13 mil., ~0,3 % oběžné zásoby)",
+   "type": "unlock"
+  },
+  {
+   "date": "2026-11-01",
+   "title": "Odemčení tokenů ENA (~275 mil., ~57 mil. USD)",
+   "type": "unlock"
+  },
+  {
+   "date": "2026-11-02",
+   "title": "Konec hlasování NEAR o snížení emise z 2,5 % na 1,6 %",
+   "type": "jine"
+  },
+  {
+   "date": "2026-11-03",
+   "title": "Volby do Kongresu USA (midterms)",
+   "type": "makro"
+  },
+  {
+   "date": "2026-11-05",
+   "title": "Zcash NU7 upgrade na mainnetu (bloky 25 s; aktivace možná až 6. 11.)",
+   "type": "upgrade"
+  },
+  {
+   "date": "2026-11-06",
+   "title": "Zpráva o trhu práce USA (NFP)",
+   "type": "makro"
+  }
+ ],
+ "regime": {
+  "label": "Neutrální až risk-off, konsolidace",
+  "summary": "BTC se drží kolem 81 tis. USD pod SMA20/50 po jestřábím ponechání sazeb Fedu (3,75–4 %, dva hlasy pro zvýšení, trh čeká zvýšení v prosinci s pravděpodobností ~86 %). ETH ETF mají rekordní měsíční odtoky a altcoiny s vysokou betou za BTC zaostávají, likvidace jsou nízké a funding neutrální."
+ },
+ "top10": [
+  {
+   "coin": "BNB",
+   "reason": "Nejlepší relativní trend a nízká beta v opatrném trhu."
+  },
+  {
+   "coin": "ZEC",
+   "reason": "Kladný trend, přítoky do ETF a katalyzátor NU7, ale s rizikem sell-the-news."
+  },
+  {
+   "coin": "BTC",
+   "reason": "Defenzivní jádro v jestřábím makru."
+  },
+  {
+   "coin": "NEAR",
+   "reason": "Střednědobý trend drží a hlasování o nižší emisi končí 2. 11."
+  },
+  {
+   "coin": "XRP",
+   "reason": "Dobré firemní zprávy Ripple, slabý trend a přeplněné longy."
+  },
+  {
+   "coin": "SOL",
+   "reason": "Přeprodané, ale bez katalyzátoru a s odtoky z ETF."
+  },
+  {
+   "coin": "UNI",
+   "reason": "Neutrální krátkodobě, slabý 30d trend a vysoká beta."
+  },
+  {
+   "coin": "ETH",
+   "reason": "Přeprodané, ale tlak z odtoků z ETF pokračuje."
+  },
+  {
+   "coin": "ENA",
+   "reason": "Odemčení 1. 11. a prodeje velkých držitelů."
+  },
+  {
+   "coin": "DOGE",
+   "reason": "Pod všemi SMA a přeplněné longy."
+  }
+ ]
+}
