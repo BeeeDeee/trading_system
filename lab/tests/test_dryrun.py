@@ -135,3 +135,17 @@ def test_synthetic_views_for_stocks_and_perps(card):
                  data_requirements=[{"dataset": "binance_perp_1d", "frequency": "1d"}])
     v = dryrun.synthetic_view(perps, cat, seed=2)
     assert {"funding", "funding_paid", "basis"} <= set(v.extras)
+
+
+def test_synthetic_daily_perps_contain_instruments_named_by_the_strategy(card):
+    # H-0081: a crypto_top_n card reads BTCUSDT.P as the market factor; the real view has it, lab try did not
+    from lab.framework import catalog
+    from lab.framework.paths import LAB_DIR
+    cat = catalog.load(LAB_DIR / "data" / "catalog.yaml")
+    top = dict(card, asset_classes=["crypto_perp"], universe={"kind": "crypto_top_n", "n": 20},
+               data_requirements=[{"dataset": "binance_perp_1d", "frequency": "1d"}])
+    src = 'BTC = "BTCUSDT.P"\n\n\ndef target_weights(data, params):\n    return data.ret_oc * 0 + data.col("ETHUSDT.P")\n'
+    v = dryrun.synthetic_view(top, cat, seed=2, sources=(src,))
+    assert {"BTCUSDT.P", "ETHUSDT.P"} <= set(v.instruments) and len(v.instruments) == 42
+    assert "BTCUSDT.P" not in dryrun.synthetic_view(top, cat, seed=2).instruments
+    assert v.extras["funding"].shape == v.shape                    # the named perps carry the perp extras too

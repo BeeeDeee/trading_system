@@ -188,7 +188,7 @@ def named_instruments(source: str) -> tuple[str, ...]:
         return ()
     found: list[str] = []
     for node in ast.walk(tree):
-        if isinstance(node, ast.Constant) and isinstance(node.value, str) and re.fullmatch(r"[A-Z0-9]{2,15}USDT", node.value):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str) and re.fullmatch(r"[A-Z0-9]{2,15}USDT(\.P)?", node.value):
             if node.value not in found:
                 found.append(node.value)
     return tuple(found)

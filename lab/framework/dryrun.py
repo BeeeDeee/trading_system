@@ -52,13 +52,21 @@ def instruments(card: dict, cat: dict) -> tuple[list[str], list[str], int | None
     return names, classes, n
 
 
-def synthetic_view(card: dict, cat: dict, seed: int) -> DataView:
+def synthetic_view(card: dict, cat: dict, seed: int, sources: tuple[str, ...] = ()) -> DataView:
     reqs = card["data_requirements"]
     if {r["dataset"] for r in reqs} == {"synthetic_market"}:   # canaries: the generator itself (with its series)
         names = instruments(card, cat)[0]
         end = data.as_date(cat["synthetic_market"]["holdout_from"]) - np.timedelta64(1, "D")
         return data.with_cash(data.synthetic().between(None, end).columns(names), None)
     names, classes, top_n = instruments(card, cat)
+    if card["universe"]["kind"] == "crypto_top_n":
+        # a crypto_top_n card may name an instrument (the BTC factor, a leader): the real view has it, so lab try must too
+        from lab.framework.intraday import named_instruments
+        for src in sources:
+            for n in named_instruments(src):
+                if n not in names:
+                    names.append(n)
+                    classes.append(classes[0])
     start = max([data.as_date(cat[r["dataset"]]["range"][0]) for r in reqs]
                 + [data.as_date(r["period"][0]) for r in reqs if r.get("period")])
     end = min(data.as_date(cat[r["dataset"]]["holdout_from"]) for r in reqs) - np.timedelta64(1, "D")
@@ -176,7 +184,8 @@ def run(ws: Path) -> tuple[bool, list[str]]:
     path = ws / "strategy" / "strategy.py"
     content = {k: v for k, v in card.items() if k not in ("id", "version", "status", "history", "terminal")}
     seed = int(hashlib.sha256(json.dumps(content, sort_keys=True, default=str).encode()).hexdigest()[:8], 16)
-    view = synthetic_view(card, cat, seed)
+    sources = tuple(p.read_text() for p in (path, path.parent / "diagnostic.py") if p.exists())
+    view = synthetic_view(card, cat, seed, sources)
     cols = list(view.instruments)
     params = QlabEvaluator.primary(card)
     lines, ok = [f"synthetic market: {len(cols)} instruments, {view.dates[0]} .. {view.dates[-1]} "
