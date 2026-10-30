@@ -1,0 +1,86 @@
+{
+ "label": "2026-10-29T10",
+ "locked_at": "2026-10-29T10:02:10.835Z",
+ "locked_ms": 1793268130835,
+ "portfolios": {
+  "funding_kontra": {
+   "exits": {},
+   "info": {
+    "hold": "rebalanc jen v 00, 08, 16 UTC"
+   },
+   "keep": [],
+   "targets": null
+  },
+  "h_breakout": {
+   "exits": {},
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "h_kniha": {
+   "exits": {
+    "SUI": "signal",
+    "UNI": "signal"
+   },
+   "info": {
+    "signals": [
+     "BNB"
+    ]
+   },
+   "keep": [
+    "BTC"
+   ],
+   "targets": {
+    "BNB": 0.2
+   }
+  },
+  "h_momentum": {
+   "exits": {},
+   "info": {
+    "candidates": [
+     "ZEC",
+     "SOL",
+     "SUI"
+    ]
+   },
+   "keep": [
+    "SOL",
+    "ZEC"
+   ],
+   "targets": {
+    "SUI": 0.3333333333
+   }
+  },
+  "h_reverze": {
+   "exits": {
+    "NEAR": "max_hold"
+   },
+   "info": {
+    "signals": []
+   },
+   "keep": [],
+   "targets": {}
+  },
+  "llm_nacasovani": {
+   "exits": {},
+   "info": {
+    "waiting": []
+   },
+   "keep": [],
+   "targets": {
+    "BNB": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "seance_usa": {
+   "exits": {},
+   "info": {
+    "in_session": false
+   },
+   "keep": [],
+   "targets": {}
+  }
+ }
+}
