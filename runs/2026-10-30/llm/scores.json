@@ -1,0 +1,158 @@
+{
+  "date": "2026-10-30",
+  "regime": {
+    "label": "Risk-off, zvýšená volatilita",
+    "summary": "Hack Binance (dopad cca 6,3 mld USD, výběry pozastaveny) po jestřábím držení sazeb Fedem (3,75 %, dva hlasy pro zvýšení) vyvolal likvidace kolem 1,5 mld USD; BTC je u 30denního minima pod SMA20/50. Útočník drží nezmrazitelné ~18 tis. BTC a ~496 tis. ETH, což visí nad trhem; Standard Chartered čeká další pokles."
+  },
+  "events_7d": [
+    {"date": "2026-11-01", "title": "Binance: očekávané obnovení výběrů (do 48 h od 30. 10. 04:17 UTC)", "type": "jine"},
+    {"date": "2026-11-01", "title": "SUI unlock 13,15 mil. SUI (~0,3 % oběžné nabídky)", "type": "unlock"},
+    {"date": "2026-11-02", "title": "NEAR: konec hlasování HSP-029 o snížení max. inflace z 2,5 % na 1,6 %", "type": "jine"},
+    {"date": "2026-11-02", "title": "USA: ISM Manufacturing PMI", "type": "makro"},
+    {"date": "2026-11-03", "title": "USA: volby do Kongresu (midterms) a JOLTS", "type": "makro"},
+    {"date": "2026-11-05", "title": "Zcash NU7 – plánovaná aktivace na mainnetu", "type": "upgrade"},
+    {"date": "2026-11-06", "title": "USA: zpráva o trhu práce (NFP)", "type": "makro"}
+  ],
+  "coins": {
+    "BTC": {
+      "trend": -1, "mr": 1, "news": -1, "conviction": 3,
+      "p_outperform_btc_7d": 0.5, "p_up_7d": 0.44, "expected_move_7d_pct": -1.0,
+      "event": false, "event_type": "none", "risk_flag": false,
+      "note": "BTC u 30denního minima po hacku Binance; útočník drží ~18 tis. BTC a nejistota ohledně rozsahu škod trvá, krátkodobý odraz je možný, ale trend je dolů.",
+      "sources": [
+        "https://www.coindesk.com/markets/2026/10/30/usd6-billion-binance-hack-sends-bitcoin-ether-tumbling-standard-chartered-sees-more-losses-ahead",
+        "https://financefeeds.com/binance-hack-attacker-dumps-158m-altcoins/",
+        "https://www.fool.com/coverage/stock-market-today/2026/10/29/crypto-market-today-oct-29-bitcoin-slides-below-usd80k-as-big-tech-earnings-uncertainty-and-market-volatility-intensify/"
+      ]
+    },
+    "ETH": {
+      "trend": -2, "mr": 1, "news": -1, "conviction": 2,
+      "p_outperform_btc_7d": 0.42, "p_up_7d": 0.4, "expected_move_7d_pct": -2.5,
+      "event": false, "event_type": "none", "risk_flag": false,
+      "note": "Útočník drží ~496 tis. ETH (~1,1 mld USD), které nejde zmrazit a pravděpodobně se budou prát/prodávat, k tomu odliv z ETH ETF – převis nabídky vůči BTC.",
+      "sources": [
+        "https://financefeeds.com/binance-hack-attacker-dumps-158m-altcoins/",
+        "https://cryptoticker.io/en/ethereum-crash-binance-hacker-sits-on-195k-eth/",
+        "https://www.coindesk.com/markets/2026/10/30/usd6-billion-binance-hack-sends-bitcoin-ether-tumbling-standard-chartered-sees-more-losses-ahead"
+      ]
+    },
+    "BNB": {
+      "trend": -1, "mr": 1, "news": -1, "conviction": 2,
+      "p_outperform_btc_7d": 0.43, "p_up_7d": 0.4, "expected_move_7d_pct": -2.0,
+      "event": true, "event_type": "hack", "risk_flag": true,
+      "risk_reason": "Probíhající hack emitenta Binance (dopad ~6,3 mld USD, výběry pozastaveny, rozsah zatím nepotvrzen).",
+      "note": "Token přímo navázaný na hacknutou burzu; Binance slibuje krytí ztrát a obnovení výběrů do 48 h, ale dokud není rozsah jasný, je riziko asymetrické dolů.",
+      "sources": [
+        "https://techcrunch.com/2026/10/29/binance-pauses-withdrawals-as-hackers-suspected-of-stealing-billions-in-crypto/",
+        "https://en.cryptonomist.ch/2026/10/30/binance-hacking-update-withdrawal/",
+        "https://www.coindesk.com/business/2026/10/29/potential-multi-billion-binance-hack-hitting-crypto-markets"
+      ]
+    },
+    "XRP": {
+      "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+      "p_outperform_btc_7d": 0.44, "p_up_7d": 0.42, "expected_move_7d_pct": -2.0,
+      "event": false, "event_type": "none", "risk_flag": false,
+      "note": "Pod všemi SMA s rel30 −10 % a betou 1,45 v risk-off prostředí; žádná nová zpráva, která by trend zlomila.",
+      "sources": ["https://coinmarketcap.com/cmc-ai/xrp/latest-updates/"]
+    },
+    "SOL": {
+      "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+      "p_outperform_btc_7d": 0.44, "p_up_7d": 0.42, "expected_move_7d_pct": -2.5,
+      "event": false, "event_type": "none", "risk_flag": false,
+      "note": "Odlivy ze SOL ETF a ztráta 100 USD; RSI 29 nabízí odraz, ale relativní trend vůči BTC zůstává slabý.",
+      "sources": [
+        "https://coinmarketcap.com/cmc-ai/solana/latest-updates/",
+        "https://www.coindesk.com/markets/2026/10/30/usd6-billion-binance-hack-sends-bitcoin-ether-tumbling-standard-chartered-sees-more-losses-ahead"
+      ]
+    },
+    "ZEC": {
+      "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+      "p_outperform_btc_7d": 0.5, "p_up_7d": 0.47, "expected_move_7d_pct": 0.0,
+      "event": true, "event_type": "upgrade", "risk_flag": false,
+      "note": "Relativně nejsilnější coin (rel7 +4,5 %, nad SMA20) s blížícím se upgradem NU7 a přílivem do ETF, ale vysoká volatilita a spor o grantový fond drží názor neutrální.",
+      "sources": [
+        "https://coinmarketcap.com/cmc-ai/zcash/latest-updates/",
+        "https://crypto.news/winklevoss-twins-call-for-zcash-grants-committee-to-be-scrapped"
+      ]
+    },
+    "DOGE": {
+      "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+      "p_outperform_btc_7d": 0.42, "p_up_7d": 0.41, "expected_move_7d_pct": -2.5,
+      "event": false, "event_type": "none", "risk_flag": false,
+      "note": "Pod SMA100 se slábnoucím objemem (−39 %) a betou 1,47; bez katalyzátoru v riziku dalšího zaostávání.",
+      "sources": ["https://coinmarketcap.com/cmc-ai/dogecoin/latest-updates/"]
+    },
+    "NEAR": {
+      "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+      "p_outperform_btc_7d": 0.46, "p_up_7d": 0.43, "expected_move_7d_pct": -1.5,
+      "event": true, "event_type": "jine", "risk_flag": false,
+      "note": "Po týdenním propadu −17 % u 30denního minima; hlasování o snížení inflace (2. 11.) je známé a nejspíš z velké části v ceně.",
+      "sources": [
+        "https://www.ad-hoc-news.de/boerse/news/marktberichte/near-issuance-vote-closes-november-2-what-it-means-for-the-near-protocol-price/70427977"
+      ]
+    },
+    "UNI": {
+      "trend": -2, "mr": 2, "news": 1, "conviction": 4,
+      "p_outperform_btc_7d": 0.54, "p_up_7d": 0.5, "expected_move_7d_pct": 1.0,
+      "event": false, "event_type": "none", "risk_flag": false,
+      "note": "Propad −10,8 % způsobil hlavně nucený výprodej ukradených 7 mil. UNI útočníkem, který je hotový; hack CEX navíc posiluje narativ DEX, takže je prostor pro odraz.",
+      "sources": [
+        "https://financefeeds.com/binance-hack-attacker-dumps-158m-altcoins/",
+        "https://tokenpost.com/news/investing/44139",
+        "https://www.coindesk.com/markets/2026/10/30/usd6-billion-binance-hack-sends-bitcoin-ether-tumbling-standard-chartered-sees-more-losses-ahead"
+      ]
+    },
+    "SUI": {
+      "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+      "p_outperform_btc_7d": 0.43, "p_up_7d": 0.41, "expected_move_7d_pct": -3.0,
+      "event": true, "event_type": "unlock", "risk_flag": false,
+      "note": "Silný sestupný trend (rel30 −17,8 %) a padající objem; malý unlock 1. 11. je známý, ale v risk-off prostředí nepomůže.",
+      "sources": ["https://en.coinotag.com/sui-unlock-13-15-million-sui-november-1"]
+    },
+    "ENA": {
+      "trend": -2, "mr": 2, "news": 0, "conviction": 3,
+      "p_outperform_btc_7d": 0.48, "p_up_7d": 0.44, "expected_move_7d_pct": -0.5,
+      "event": false, "event_type": "none", "risk_flag": false,
+      "note": "Útočník už prodal 217,5 mil. ENA, takže nucený prodej skončil a možný je odraz, ale strukturální převis nabídky po říjnových unlockách a beta 2,9 brání pozitivnímu názoru.",
+      "sources": [
+        "https://financefeeds.com/binance-hack-attacker-dumps-158m-altcoins/",
+        "https://www.tokenpost.com/news/investing/43992"
+      ]
+    }
+  },
+  "top10": [
+    {"coin": "UNI", "reason": "Nucený výprodej útočníka je za námi a hack CEX nahrává DEX narativu."},
+    {"coin": "ZEC", "reason": "Nejsilnější relativní trend, nízká korelace s BTC a upgrade NU7 5. 11."},
+    {"coin": "BTC", "reason": "V risk-off prostředí je benchmark relativně nejbezpečnější volbou."},
+    {"coin": "ENA", "reason": "Odraz po skončení dumpu útočníka, ale slabá struktura nabídky."},
+    {"coin": "NEAR", "reason": "Přeprodaný po −17 % za týden, hlasování o nižší inflaci jako drobná podpora."},
+    {"coin": "XRP", "reason": "Bez specifické negativní zprávy, jen vyšší beta."},
+    {"coin": "SOL", "reason": "RSI 29 nabízí odraz, ale odlivy z ETF a slabý trend."},
+    {"coin": "DOGE", "reason": "Slábnoucí objem a pod SMA100, bez katalyzátoru."},
+    {"coin": "SUI", "reason": "Silný sestupný trend, vysoká beta a unlock."},
+    {"coin": "ETH", "reason": "Převis ~496 tis. ETH v rukou útočníka a odlivy z ETF."}
+  ],
+  "claude_volne": {
+    "comment": "Prodávám BNB kvůli probíhajícímu hacku emitenta a držím asi 68 % v hotovosti; malé pozice jen v BTC, ZEC a v taktickém odrazu UNI.",
+    "positions": [
+      {
+        "coin": "BTC",
+        "weight_pct": 15,
+        "reason": "Základní expozice snížená z ~20 %; u 30denního minima je BTC v risk-off fázi relativně nejodolnější.",
+        "invalidation": "Útočník začne prodávat svých ~18 tis. BTC na trh nebo denní uzavření BTC pod 74 000 USD."
+      },
+      {
+        "coin": "ZEC",
+        "weight_pct": 10,
+        "reason": "Nejsilnější relativní trend v universu, nízká korelace s BTC a upgrade NU7 5. 11.",
+        "invalidation": "Odklad NU7 nebo pokles ZEC pod 30denní minimum, případně ztráta rel7 vůči BTC."
+      },
+      {
+        "coin": "UNI",
+        "weight_pct": 7,
+        "reason": "Taktický odraz po skončení nuceného výprodeje ukradených UNI a narativ přesunu k DEX.",
+        "invalidation": "Nový velký prodej UNI z adres útočníka nebo pokles pod 30denní minimum během 3 dnů."
+      }
+    ]
+  }
+}
