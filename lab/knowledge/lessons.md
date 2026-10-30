@@ -721,3 +721,39 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not resubmit with another hold, seasoning age or top-n: same events, wrong sign at slow horizons. Do not trade the mirror: its sign is dev-selected and tied to one boom. Do not refile new coins under another channel name (overhang, vesting): H-0004, H-0058 and H-0082 cover it.
 - open questions: Only a beta- and attention-neutral design is new: launch events against coins matched on size, beta and prior run-up without a launch. The first days after a launch were never measured. Early launches lack provable seasoning (K-0075).
 - related: H-0058, H-0004, H-0039, H-0071
+
+## H-0083 – 52-week-high anchoring net of momentum and volatility - LIQ-500 long-only, monthly: hold the stocks nearest their 52-week high within matched 12-month-return x volatility cells
+
+- family: `52-week-high-anchoring` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), monthly: nearest vs farthest from the 52-week high inside momentum x volatility cells, quarter horizon, 1999 to 2020
+- outcome: rejected at G1 on the mechanism test: positive and above cost, placebo mean near zero, but clearly under the placebo bar, which lay above cost; strategy not run
+- lesson: Matching on momentum and volatility removed the stock-identity drift that sank H-0011: the placebo mean was near zero and the average was positive and above cost. But it stayed clearly under the placebo bar, which lies several times above cost, so a real effect of half the literature's size could not pass (cannot tell, not refuted). It was not a smooth drift: nothing at short horizons, about zero at one month, almost all of it only at the last horizon. Positive in the first and latest thirds, slightly negative in the middle (likely crisis-era junk rebounds). No strategy was run; the card itself called it borderline.
+- avoid: Do not retune leg_fraction, high_window_days, the matching cells or the horizon on these events, and do not run the long-only book as a rescue: same events, new trials. Do not refile nearness to the high as resistance, anchoring or George-Hwang momentum on LIQ-500. The declared horizon-shape condition failed; do not read two positive thirds as support.
+- open questions: Both trials of this family are dead at the mechanism test, so only a different claim merits a card: nearness to the high as a conditioner on a dated own-price event (K-0083), less covered stocks, or another asset class. Compare the expected effect with this design's placebo bar (K-0034), not only with cost.
+- related: H-0011, H-0054, H-0029, H-0059
+
+## H-0086 – Net share repurchasers held for a year - LIQ-500 long-only, monthly overlapping 12-month cohorts of the top quintile of trailing net repurchase yield
+
+- family: `trading-window-flows` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), long-only, year-long monthly cohorts of top net-repurchase quintile; event study on entries to both extreme quintiles
+- outcome: rejected at G1 on the mechanism test: quarter-horizon average below the placebo mean and far under the bar; book never simulated
+- lesson: No support for a slow net-repurchase style drift in LIQ-500. The quarter-horizon average was barely positive, below the average of same-stock placebos and below round-trip cost; the first weeks were slightly negative. The thirds show the K-0060 decay carried to its end: clearly positive early, about zero in the middle, clearly negative lately, where bull-market low-beta drag (K-0074) and publication decay cannot be separated. The placebo bar was far above cost, so a small true effect would have been missed, but the point estimate sat under the placebo mean: nearer 'nothing visible' than a near miss.
+- avoid: Do not refile the same sort as share-count change, net issuance, buyback yield or equity financing, or with another quantile, hold or horizon: the stocks and the score are those of H-0019 and H-0027, and across three anchors the evidence is now filing-linked or decayed. Do not argue that the quarter cap hides a year-long effect unless the design can show it.
+- open questions: The report gave no split by side, so an issuer-only effect (needs shorting and borrow) is untested. A persistent style premium in the level of repurchase, not in the entry, needs a control that the same-stock placebo does not absorb, ideally matched on size and beta, plus an era split; the judge has no beta-adjusted abnormal return (K-0074). Less covered stocks are not loadable.
+- related: H-0019, H-0027, H-0059, H-0083, H-0054
+
+## H-0088 – Currency value into country equity ETFs - long the 2 cheapest, short the 2 richest of 10 developed currencies vs 5-year average spot, 12-month cohorts
+
+- family: `long-term-reversal` · mechanism: risk_premium · instruments: ten unhedged developed-market country equity ETFs, long the two with the cheapest currency versus its five-year average, short the two richest, twelve-month cohorts
+- outcome: mechanism test passed; rejected at G1 on the strategy: net Sharpe near T-bills, far under the absolute floor, bootstrap bound below zero (registry shows only the excess check)
+- lesson: The FX-measured currency anchor predicted the USD return of country ETFs over a quarter: above the placebo cloud, gross several times cost, positive in every third, not fading late, so the equity leg did not offset the currency recovery. The twelve-month dollar-neutral book still earned about T-bill returns: costs were minor, gross was near zero, and the long leg's good stand-alone result was mirrored by an equally bad short leg (shared equity drift). Study and book disagree, as in H-0044: the test sees only the first quarter of a year hold, leg betas were not reported, and cash years before the first signal dilute the book. Cause not separated.
+- avoid: Do not retune lookback, leg size or hold, add countries, or lever the book to reach the floor. Do not file this score on another vehicle as a new family: it shares the signal with H-0062.
+- open questions: Reconcile study and book first: gross on the same dates, by year and leg, and leg betas to the country basket (asked for, not computed). Value versus carry stays unseparated.
+- related: H-0062, H-0060, H-0044
+
+## H-0089 – Absorbed taker flow on Binance perps - after an hour of extreme one-sided taker volume that failed to move the price, trade with the passive absorber, both sides, hold 6 hours
+
+- family: `taker-flow-absorption` · mechanism: liquidity_provision · instruments: Binance USD-M perps, point-in-time top twenty, 15-minute candles, both sides, hold of a few hours, dev 2020-2022
+- outcome: rejected at G1 on trade count: far too few trades, so Sharpe and bootstrap bound were noise; mechanism never measured
+- lesson: Could not tell, not refuted: absorption was never measured. The event is a joint tail (extreme one-sided taker flow, heavy volume, flat or opposite price), and the card itself says taker flow explains same-hour returns, so the set is rare by construction; the forecast of hundreds of trades was far off. Exact-zero tolerance and the five-slot cap add to it. The mirror-set and side controls could not run (no diagnostic channel). Exposure and turnover match the trade count: no sign of a bug.
+- avoid: Do not loosen the imbalance threshold, add a return tolerance band or lower the volume bar to raise the count: dev-selected, a new trial, and the looser set drifts toward generic reversal against taker flow (H-0035). State events per year for the joint conditions.
+- open questions: Absorption is untested. Needs many more events (more instruments, or a continuous rather than extreme cut) and a reportable control: absorbed hours against flow-driven hours, traded the same way, with a one-candle-later fill.
+- related: H-0035, H-0063, H-0040

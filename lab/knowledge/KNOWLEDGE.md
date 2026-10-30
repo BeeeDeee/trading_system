@@ -30,12 +30,6 @@ Real release dates now support three claims in liquid US stocks over a five-sess
 
 *confidence medium · 2026-10-12 · librarian · supersedes K-0037 · evidence: H-0023; H-0024; H-0026; K-0024; K-0034*
 
-### K-0041 The trading-window net-flow spread does not survive a move from the filing date to the real release date
-
-The net-repurchaser-minus-stock-compensation-supplier spread in liquid US stocks passed the event-study gate clearly when anchored to the quarterly filing (H-0019) but fell short of the placebo bar when anchored to the real earnings release (H-0027), where it also built slowly with the horizon, had nothing in the first sessions and reversed sign in the latest third. A flow concentrated just after the trading window opens would show up at the release anchor and early horizons; it did not. The filing-anchored result is better read as filing-linked news or earnings-season drift, or as a slow style difference between repurchasers and issuers that the placebo (same stocks) cannot net out. Treat the trading-window flow family as closed for five-session books in LIQ-500; any remaining claim is a slow tilt, to be argued as a style premium.
-
-*confidence medium · 2026-10-13 · librarian · evidence: H-0019; H-0027; K-0025; K-0030*
-
 ### K-0046 The release-session reaction drift reproduces on the same events in three book designs, and the long side alone shows it
 
 Three cards built on the same real-release-date reaction events (a long/short book, a fixed-slot long/short book, and a long-only tilt on positive reactions) each cleared the placebo bar with gross above cost and a positive sign in every third of the sample. They share events, so this is one piece of evidence seen three times, not three confirmations. What is new: the positive side alone carries drift, so the effect is not only a short-side artifact, and within the positive-only set it weakens from the earliest to the latest third while staying positive. The effect is real in an equal-weight event study but small next to cost: the market-neutral books lost to T-bills, and the long-only tilt on an always-invested core came nearest to a pass, beating the market on the point estimate with a reliable bound but not by the required margin.
@@ -77,12 +71,6 @@ Three daily-ETF cards tried to trade mechanical stock-bond reallocation pressure
 Four designs on the scheduled US macro calendar have ended at the event-study gate: announcement-session beta premium (H-0042), even-week FOMC-cycle tilt (H-0045), cross-asset reaction drift (H-0047) and short volatility over release windows through a VIX-futures ETP (H-0052). The last was the route K-0063 and K-0065 left open. It gave a positive average, but placebo windows of the same instrument already earned over half of it through roll-down, the effect grew with the horizon like generic carry, and the first third of dev was flat while the middle third carried most (not the early-heavy decay of K-0060). The placebo bar lay above cost although gross was several times cost, because a volatility ETP is noisy. A release-time volatility crush is not visible in daily ETP bars. A further macro-calendar card on daily ETFs has a low prior; implied volatility or index futures measured directly are untested and not loadable.
 
 *confidence low · 2026-10-17 · librarian · supersedes K-0065 · evidence: H-0052; H-0047; H-0045; H-0042; K-0063; K-0065; K-0034; K-0025; K-0060*
-
-### K-0073 Multi-year reversal: absent in country equity ETFs, present for currency value in a short sample
-
-Two cards tested the same long-horizon reversal idea in different assets. Country equity ETFs sorted on multi-year past returns (H-0060) showed no reversal over the next quarter, and the sign was wrong in the early and middle thirds. Six G10 currency trusts sorted on distance from a five-year average spot (H-0062) showed cheap currencies beating rich ones, building with the horizon, positive in the populated thirds and clearly above the placebo cloud. The currency result has caveats that keep it from being a finding: the effective sample is only about nine years after the warm-up, value and carry are mixed (rich currencies in the period were low-yield), the score is nominal and the book could not reach the absolute Sharpe floor. If the split is real it fits an anchor-based story (purchasing power) working where a return-chasing story does not. The equity sort is also confounded with currency, since USD country ETFs carry both. A third long-horizon reversal card should say which anchor it uses and how it separates carry.
-
-*confidence low · 2026-10-19 · librarian · evidence: H-0060; H-0062; K-0071*
 
 ### K-0077 Fifteen-minute crypto perp taker moves: a small edge in both directions, consumed within about a candle
 
@@ -161,6 +149,18 @@ In the etf-premium-arbitrage family the gaps that reverted were closed-end fund 
 Three cards shorted newly available Binance coins in different forms: young spot listings against seasoned ones (H-0004, decided on the strategy, could not tell), perps aged between one month and one year (H-0058, wrong-signed) and the first weeks after a perp launch of a coin with a seasoned spot pair (H-0082, wrong-signed). In both event studies the marked coins did not lag the other liquid perps on average; the sign followed the market cycle or alternated across thirds, and the wrong-signed effect grew with the horizon, the shape of trend or beta and not of a listing pump or a relief of short-sale constraints. Both used raw returns against unmarked peers (K-0074), so beta and attention are the leading readings, but no beta-matched control was run. All of it sits in one boom-and-bust window (K-0006). A further short-the-new-coin card has a low prior unless it neutralizes beta and prior run-up or changes the window.
 
 *confidence low · 2026-10-28 · librarian · evidence: H-0004; H-0058; H-0082; K-0074; K-0006; K-0060*
+
+### K-0110 Net repurchasers versus issuers: filing-anchored pass, no release flow, no slow drift
+
+The same repurchaser-versus-issuer sort was tested at three anchors in LIQ-500. Anchored to the quarterly filing, a five-session spread cleared the placebo bar clearly (H-0019). Anchored to the real release it did not, built slowly and reversed lately (H-0027). As a slow style premium, the route K-0041 left open, new entries to the extreme quintiles over a quarter (H-0086) averaged below same-stock placebos, were slightly negative in the first weeks, and faded from clearly positive in the earliest third to clearly negative in the latest. Reading: the filing-anchored pass was filing-linked news or an early-era effect, not a trading-window flow and not a drift visible in large caps. Caveats: the placebo bar lay well above cost, repurchasers have lower beta than issuers so late bull years bias the raw comparison (K-0074), no split by side was reported, and the year-long hold was never simulated. Treat the family as closed for event-study cards in LIQ-500 unless beta-neutral, side-split or in less covered stocks.
+
+*confidence low · 2026-10-29 · librarian · supersedes K-0041 · evidence: H-0019; H-0027; H-0086; K-0041; K-0060; K-0074*
+
+### K-0112 Currency value predicts country returns over a quarter in two vehicles, but neither dollar-neutral book is a strategy
+
+Country equity ETFs sorted on their own past return showed no reversal (H-0060). A five-year-average value score in G10 currency trusts passed the mechanism test (H-0062). The same score, measured only in FX and applied to unhedged country equity ETFs, also passed it (H-0088): above the placebo cloud, gross several times cost, positive in every third, so the local equity leg did not offset the currency recovery over a quarter. This answers the question K-0073 left open. The two currency cards share the signal, so this is one piece of evidence seen twice, on a short sample with few value cycles and a nominal score mixed with carry. Neither book became a strategy: the trust book missed the absolute Sharpe floor, and the equity book earned about T-bill returns, gross near zero, the long leg's gain mirrored by the short leg's loss. Study and book disagree for reasons not separated: G1 sees only the first quarter of a year-long hold, leg betas were not reported, and the book is in cash until the first signal. A further currency-value card has a low prior unless it reconciles study and book, hedges equity beta, or separates value from carry.
+
+*confidence low · 2026-10-29 · librarian · supersedes K-0073 · evidence: H-0088; H-0062; H-0060; K-0073; K-0074; K-0076; K-0097*
 
 ## Data
 
@@ -309,6 +309,18 @@ Since K-0071, five more cards with a primary horizon of a quarter reached a mech
 In H-0007 (weekly US stocks), H-0035, H-0040 and now H-0063 (fifteen-minute crypto perps) the random-entry or random-timing check passed with a median Sharpe far below zero. In H-0035 the null was several times worse than the strategy's cost drag; in H-0040 about one and three quarters times. H-0063 allows a sharper reading: doubling costs lowered its Sharpe by about one and a half, which is its cost drag at the model, and the null median (about minus one and eight tenths, 95th percentile still below zero) sits close to that. So the null is roughly 'same trades, zero gross, normal costs', and a percentile of one means only that gross is positive, not that the timing pays for itself: the same book failed doubled costs, delay and neighbors. The null's turnover, exposure and cost per trade are still not reported next to the strategy's, so for H-0007 and H-0035 the gap to cost drag is unexplained. Read a pass as 'gross above zero', never as evidence of tradable timing; an all-negative null makes the percentile uninformative. The question to the owner from H-0035 stays open.
 
 *confidence low · 2026-10-19 · librarian · supersedes K-0061 · evidence: H-0007; H-0035; H-0040; H-0063; K-0017*
+
+### K-0111 Slow monthly stock sorts: four designs, none passed; entry-only events widen the placebo cloud
+
+H-0086 is the fourth slow monthly-formation sort of liquid US stocks to end at the mechanism test (after H-0054, H-0059, H-0083): near misses with a bar above cost (H-0054, H-0083), right-signed but equal to the same-stock placebo (H-0059), and now below the placebo mean (H-0086). K-0109 said a card whose forecast is at or below the bar can only end in 'cannot tell'; H-0086 cited it, forecast an effect near the bar, and observed far less. New: to avoid the persistent-state trap of H-0059 it marked only new entries to the extreme quintiles. That left a few thousand events on a few hundred dates, and the placebo bar came out clearly wider than in H-0083 (inferred cause: fewer events per date, more dispersed stocks; not tested). So the cure for placebo-equals-level costs power, and a Scout should forecast the bar for the entry design, not copy it from a state design. Independent dates and dispersion matter, not event counts (K-0026, K-0034).
+
+*confidence low · 2026-10-29 · librarian · supersedes K-0109 · evidence: H-0086; H-0083; H-0059; H-0054; K-0109; K-0026; K-0034*
+
+### K-0113 Scout event-count forecasts too high in four cards; joint tails of correlated variables are worst
+
+H-0049, H-0050 (K-0069), H-0077 (K-0098) and H-0089 all forecast far more events than the judge counted. H-0089 (taker-flow absorption, Binance perps) forecast hundreds of trades, made 17 in 2020-2022 against a minimum of 300 and died at G1 (g1_trades). Its event was a joint tail of extreme taker imbalance, heavy volume and a flat or opposite return, variables its own mechanism says move together. Scalping cards have no mechanism_test and G0 gave no trade count, so the miss surfaced only at G1; lab try gave zero events too (as K-0082, K-0092, K-0106). Scouts should state events per year for each condition and the intersection, and expect a joint tail of correlated variables to be far rarer than the parts suggest. Suggested: report trades by year at G0, and make synthetic volume, taker share and return correlated.
+
+*confidence medium · 2026-10-29 · librarian · evidence: H-0089; H-0049; H-0050; H-0077; K-0069; K-0098; K-0082; K-0106*
 
 ## The judge (framework behaviour)
 
@@ -488,6 +500,7 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0036 G0 look-ahead checks are vacuous for event cards, and diagnostics cannot be reported (now seven cards)
 - K-0037 Earnings-announcement premium: absent as a tradable effect in large liquid US stocks, with real dates too
 - K-0040 G0 look-ahead checks are vacuous for event cards; diagnostics cannot be reported (eight cards)
+- K-0041 The trading-window net-flow spread does not survive a move from the filing date to the real release date
 - K-0042 A passing mechanism test can still end in a book below cash, even without fade
 - K-0043 The market's own release-session reaction predicts same-direction returns in liquid stocks
 - K-0044 Weekly return-sort effects in the most liquid US stocks are smaller than cost, in either sign
@@ -504,8 +517,10 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0067 The G1 reason code can name the event count while the mechanism was measured and failed; the count was visible at G0
 - K-0071 Slow-horizon event studies: the placebo bar sits several times above cost, so only a large effect can pass G1
 - K-0072 Cross-market information-diffusion claims in liquid assets come out flat or wrong-signed from daily to monthly horizons
+- K-0073 Multi-year reversal: absent in country equity ETFs, present for currency value in a short sample
 - K-0075 Signal history before the dev start or the ETFs' first date seems not to warm up the first signals
 - K-0081 On real earnings dates the events that cleared the placebo test sort on the stock's own price move
 - K-0099 Wrapper gaps revert where no arbitrage link exists: closed-end funds cleared the placebo test, twin ETFs did not
 - K-0100 Closed-end fund gaps revert against their ETF anchor in two asset classes; both books still fail at G1
 - K-0101 Reported mean exposure of a paired fund-ETF book is about half the card's gross arithmetic; the cause is unknown
+- K-0109 Monthly-formation, quarter-horizon stock sorts: the placebo bar is about the size of the literature's whole spread

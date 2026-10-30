@@ -11482,5 +11482,60 @@
   "sharpe": null,
   "n_obs": 49099,
   "ts": "2026-10-28T11:55:23.672921+00:00"
+ },
+ {
+  "id": 1045,
+  "family": "trading-window-flows",
+  "hypothesis_id": "H-0086",
+  "version": 1,
+  "run_id": 172,
+  "config_sha256": "1f2b0555c04b5e18|mechanism",
+  "sharpe": null,
+  "n_obs": 6144,
+  "ts": "2026-10-29T05:53:51.936842+00:00"
+ },
+ {
+  "id": 1046,
+  "family": "long-term-reversal",
+  "hypothesis_id": "H-0088",
+  "version": 1,
+  "run_id": 174,
+  "config_sha256": "42ee43c5ec4bf2a5|mechanism",
+  "sharpe": null,
+  "n_obs": 852,
+  "ts": "2026-10-29T07:39:35.096549+00:00"
+ },
+ {
+  "id": 1047,
+  "family": "long-term-reversal",
+  "hypothesis_id": "H-0088",
+  "version": 1,
+  "run_id": 174,
+  "config_sha256": "42ee43c5ec4bf2a5",
+  "sharpe": 0.005310280018922391,
+  "n_obs": 5768,
+  "ts": "2026-10-29T07:39:35.096722+00:00"
+ },
+ {
+  "id": 1048,
+  "family": "taker-flow-absorption",
+  "hypothesis_id": "H-0089",
+  "version": 1,
+  "run_id": 176,
+  "config_sha256": "3afe10d5865a1bb7",
+  "sharpe": -0.0022350445275972526,
+  "n_obs": 105215,
+  "ts": "2026-10-29T09:10:37.618619+00:00"
+ },
+ {
+  "id": 1049,
+  "family": "etf-premium-arbitrage",
+  "hypothesis_id": "H-0090",
+  "version": 1,
+  "run_id": 178,
+  "config_sha256": "8ea6ae330a0dbcca|mechanism",
+  "sharpe": null,
+  "n_obs": 66,
+  "ts": "2026-10-29T11:16:57.617073+00:00"
  }
 ]

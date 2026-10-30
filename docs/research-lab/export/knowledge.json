@@ -1294,5 +1294,65 @@
   "actor": "librarian",
   "message_id": 650,
   "ts": "2026-10-28T09:38:27.671235+00:00"
+ },
+ {
+  "id": "K-0109",
+  "kind": "method",
+  "title": "Monthly-formation, quarter-horizon stock sorts: the placebo bar is about the size of the literature's whole spread",
+  "statement": "H-0083 had tens of thousands of marked events on only a few hundred monthly dates with overlapping quarter-long windows. Its placebo cloud was wide: the upper bar was about 0.46 % per event, the observed side-adjusted average about 0.23 %, and the card's own forecast of the effect was 0.25-0.5 %, so even a true effect at the forecast's top would sit at the bar. The card said in advance that the bar would bind, and it did. Event count does not narrow the cloud (K-0026, K-0034): what counts is the number of non-overlapping dates. Same design family as H-0054 (right sign, bar above cost) and H-0059 (equal to the placebo mean). A card on a monthly sort with a quarter horizon should write down the expected effect next to the bar of earlier cards of this design, and treat a forecast below the bar as a card that can only end in 'cannot tell'. A cheaper test is a design that raises the number of independent dates (shorter horizon with non-overlapping windows, or several asset classes) or a stricter match that lowers the cloud.",
+  "evidence": "[\"H-0083\",\"H-0054\",\"H-0059\",\"K-0026\",\"K-0034\",\"K-0076\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 664,
+  "ts": "2026-10-29T03:36:32.721170+00:00"
+ },
+ {
+  "id": "K-0110",
+  "kind": "market",
+  "title": "Net repurchasers versus issuers: filing-anchored pass, no release flow, no slow drift",
+  "statement": "The same repurchaser-versus-issuer sort was tested at three anchors in LIQ-500. Anchored to the quarterly filing, a five-session spread cleared the placebo bar clearly (H-0019). Anchored to the real release it did not, built slowly and reversed lately (H-0027). As a slow style premium, the route K-0041 left open, new entries to the extreme quintiles over a quarter (H-0086) averaged below same-stock placebos, were slightly negative in the first weeks, and faded from clearly positive in the earliest third to clearly negative in the latest. Reading: the filing-anchored pass was filing-linked news or an early-era effect, not a trading-window flow and not a drift visible in large caps. Caveats: the placebo bar lay well above cost, repurchasers have lower beta than issuers so late bull years bias the raw comparison (K-0074), no split by side was reported, and the year-long hold was never simulated. Treat the family as closed for event-study cards in LIQ-500 unless beta-neutral, side-split or in less covered stocks.",
+  "evidence": "[\"H-0019\",\"H-0027\",\"H-0086\",\"K-0041\",\"K-0060\",\"K-0074\"]",
+  "confidence": "low",
+  "supersedes": "K-0041",
+  "actor": "librarian",
+  "message_id": 674,
+  "ts": "2026-10-29T06:07:29.794335+00:00"
+ },
+ {
+  "id": "K-0111",
+  "kind": "method",
+  "title": "Slow monthly stock sorts: four designs, none passed; entry-only events widen the placebo cloud",
+  "statement": "H-0086 is the fourth slow monthly-formation sort of liquid US stocks to end at the mechanism test (after H-0054, H-0059, H-0083): near misses with a bar above cost (H-0054, H-0083), right-signed but equal to the same-stock placebo (H-0059), and now below the placebo mean (H-0086). K-0109 said a card whose forecast is at or below the bar can only end in 'cannot tell'; H-0086 cited it, forecast an effect near the bar, and observed far less. New: to avoid the persistent-state trap of H-0059 it marked only new entries to the extreme quintiles. That left a few thousand events on a few hundred dates, and the placebo bar came out clearly wider than in H-0083 (inferred cause: fewer events per date, more dispersed stocks; not tested). So the cure for placebo-equals-level costs power, and a Scout should forecast the bar for the entry design, not copy it from a state design. Independent dates and dispersion matter, not event counts (K-0026, K-0034).",
+  "evidence": "[\"H-0086\",\"H-0083\",\"H-0059\",\"H-0054\",\"K-0109\",\"K-0026\",\"K-0034\"]",
+  "confidence": "low",
+  "supersedes": "K-0109",
+  "actor": "librarian",
+  "message_id": 675,
+  "ts": "2026-10-29T06:07:29.801456+00:00"
+ },
+ {
+  "id": "K-0112",
+  "kind": "market",
+  "title": "Currency value predicts country returns over a quarter in two vehicles, but neither dollar-neutral book is a strategy",
+  "statement": "Country equity ETFs sorted on their own past return showed no reversal (H-0060). A five-year-average value score in G10 currency trusts passed the mechanism test (H-0062). The same score, measured only in FX and applied to unhedged country equity ETFs, also passed it (H-0088): above the placebo cloud, gross several times cost, positive in every third, so the local equity leg did not offset the currency recovery over a quarter. This answers the question K-0073 left open. The two currency cards share the signal, so this is one piece of evidence seen twice, on a short sample with few value cycles and a nominal score mixed with carry. Neither book became a strategy: the trust book missed the absolute Sharpe floor, and the equity book earned about T-bill returns, gross near zero, the long leg's gain mirrored by the short leg's loss. Study and book disagree for reasons not separated: G1 sees only the first quarter of a year-long hold, leg betas were not reported, and the book is in cash until the first signal. A further currency-value card has a low prior unless it reconciles study and book, hedges equity beta, or separates value from carry.",
+  "evidence": "[\"H-0088\",\"H-0062\",\"H-0060\",\"K-0073\",\"K-0074\",\"K-0076\",\"K-0097\"]",
+  "confidence": "low",
+  "supersedes": "K-0073",
+  "actor": "librarian",
+  "message_id": 683,
+  "ts": "2026-10-29T08:07:02.581877+00:00"
+ },
+ {
+  "id": "K-0113",
+  "kind": "method",
+  "title": "Scout event-count forecasts too high in four cards; joint tails of correlated variables are worst",
+  "statement": "H-0049, H-0050 (K-0069), H-0077 (K-0098) and H-0089 all forecast far more events than the judge counted. H-0089 (taker-flow absorption, Binance perps) forecast hundreds of trades, made 17 in 2020-2022 against a minimum of 300 and died at G1 (g1_trades). Its event was a joint tail of extreme taker imbalance, heavy volume and a flat or opposite return, variables its own mechanism says move together. Scalping cards have no mechanism_test and G0 gave no trade count, so the miss surfaced only at G1; lab try gave zero events too (as K-0082, K-0092, K-0106). Scouts should state events per year for each condition and the intersection, and expect a joint tail of correlated variables to be far rarer than the parts suggest. Suggested: report trades by year at G0, and make synthetic volume, taker share and return correlated.",
+  "evidence": "[\"H-0089\",\"H-0049\",\"H-0050\",\"H-0077\",\"K-0069\",\"K-0098\",\"K-0082\",\"K-0106\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 689,
+  "ts": "2026-10-29T09:36:44.914176+00:00"
  }
 ]
