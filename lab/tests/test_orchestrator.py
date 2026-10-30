@@ -53,6 +53,15 @@ def test_rate_limit_pauses_agents(lab, card, tmp_path):
     assert "rate limited" in gate(lab, Policy.load(policy(tmp_path)), NOON)[1]
 
 
+def test_subscription_session_limit_pauses_agents(lab, card, tmp_path):
+    submit(lab, card)
+    msg = "success: You've hit your session limit \u00b7 resets 7am (UTC)"
+    rec = production_cycle(lab, policy(tmp_path), at=NOON, evaluator=Evaluator(),
+                           runners={"builder": lambda lab, inv: RunResult(1, note=msg)})
+    assert rec["agents"][0]["outcome"] == "failed"
+    assert (lab.paths.home / "RATE_LIMITED_UNTIL").exists()
+
+
 def test_scout_proposes_when_the_pipeline_is_empty(lab, tmp_path):
     rec = production_cycle(lab, policy(tmp_path), at=NOON, dry_run=True, evaluator=Evaluator())
     assert rec["would_run"][0]["agent"] == "scout" and "Brief" in rec["would_run"][0]["why"]

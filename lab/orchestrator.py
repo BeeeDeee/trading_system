@@ -177,7 +177,9 @@ def infrastructure_broken(lab: Lab, n: int = 3) -> bool:
     return len(rows) == n and all(r["outcome"] == "failed" and r["n_turns"] is None for r in rows)
 
 
-RATE_LIMIT_WORDS = ("rate limit", "rate_limit", "usage limit", "429", "overloaded", "quota")
+# "session limit": the Claude subscription window ("You've hit your session limit · resets 7am (UTC)"); without it
+# four Scout runs were burnt in a row before the reset (2026-10-30)
+RATE_LIMIT_WORDS = ("rate limit", "rate_limit", "usage limit", "session limit", "429", "overloaded", "quota")
 
 
 def production_cycle(lab: Lab, policy_path: Path, *, agents: bool = True, dry_run: bool = False,
