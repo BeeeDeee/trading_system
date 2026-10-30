@@ -30,6 +30,7 @@ FILE_TOOLS = {"Read": "file_path", "Write": "file_path", "Edit": "file_path", "N
               "Glob": "path", "Grep": "path"}
 HARMLESS_TOOLS = {"TodoWrite"}                  # bookkeeping inside the model, no side effects
 SHELL_OPERATORS = set(";&|<>()")
+BASH_TIMEOUT_MS = "900000"                          # 15 min = the shortest agent timeout_s
 DROP_ENV = ("CLAUDECODE", "CLAUDE_CODE_ENTRYPOINT", "LAB_HOME", "LAB_DATA_ROOT", "VIRTUAL_ENV")
 
 
@@ -70,13 +71,16 @@ def task_prompt(inv: Invocation) -> str:
 def environment(ws: Path) -> dict:
     env = {k: v for k, v in os.environ.items() if k not in DROP_ENV}
     env["LAB_WORKSPACE"] = str(ws)
+    # Claude Code moves a Bash command that outlives its timeout (default 2 min) to the background and the agent then
+    # polls it with Monitor/sleep/Read of /tmp: all policy violations. `lab fetch` needs minutes, so wait for it.
+    env["BASH_DEFAULT_TIMEOUT_MS"] = env["BASH_MAX_TIMEOUT_MS"] = BASH_TIMEOUT_MS
     env["PATH"] = f"{BIN_DIR}{os.pathsep}{env.get('PATH', '')}"
     return env
 
 
 # Production: the agent runs as its own OS user (`LAB_AGENT_USER`, e.g. labagent) through a narrow sudoers rule.
 # That user can write its workspace and read the app code, nothing else of the lab (no lab.db, no data).
-AGENT_ENV = ("LAB_WORKSPACE", "PATH", "CLAUDE_CODE_OAUTH_TOKEN", "LANG")
+AGENT_ENV = ("LAB_WORKSPACE", "PATH", "CLAUDE_CODE_OAUTH_TOKEN", "LANG", "BASH_DEFAULT_TIMEOUT_MS", "BASH_MAX_TIMEOUT_MS")
 
 
 def as_agent_user(cmd: list[str], ws: Path) -> list[str]:

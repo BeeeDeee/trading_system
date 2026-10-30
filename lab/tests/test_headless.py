@@ -202,7 +202,7 @@ def test_agent_user_wrapper(tmp_path, monkeypatch):
     assert headless.as_agent_user(["claude", "-p"], ws) == ["claude", "-p"]
     monkeypatch.setenv("LAB_AGENT_USER", "labagent")
     cmd = headless.as_agent_user(["claude", "-p"], ws)
-    assert cmd[:5] == ["sudo", "-n", "-u", "labagent", "--preserve-env=LAB_WORKSPACE,PATH,CLAUDE_CODE_OAUTH_TOKEN,LANG"]
+    assert cmd[:5] == ["sudo", "-n", "-u", "labagent", "--preserve-env=LAB_WORKSPACE,PATH,CLAUDE_CODE_OAUTH_TOKEN,LANG,BASH_DEFAULT_TIMEOUT_MS,BASH_MAX_TIMEOUT_MS"]
     assert (ws / "outbox.json").stat().st_mode & 0o777 == 0o660 and (ws / "strategy").stat().st_mode & 0o2000
 
 
@@ -242,3 +242,11 @@ def test_denied_attempts_keep_the_run_and_are_noted(lab, card, tmp_path):
     outcome = invocations.finish(lab, inv.id, 0, denied=["cp a b", "wc -c x"])
     row = lab.con.execute("SELECT outcome, error FROM agent_invocations WHERE id = ?", (inv.id,)).fetchone()
     assert outcome == "applied" and row["outcome"] == "applied" and "cp a b" in row["error"]
+
+
+def test_long_bash_commands_are_waited_for_not_backgrounded(tmp_path, monkeypatch):
+    # `lab fetch` takes minutes; a command moved to the background made the Archivist poll /tmp (policy violation)
+    env = headless.environment(tmp_path)
+    assert env["BASH_DEFAULT_TIMEOUT_MS"] == env["BASH_MAX_TIMEOUT_MS"] == headless.BASH_TIMEOUT_MS
+    assert {"BASH_DEFAULT_TIMEOUT_MS", "BASH_MAX_TIMEOUT_MS"} <= set(headless.AGENT_ENV)   # kept through sudo
+    assert int(headless.BASH_TIMEOUT_MS) / 1000 <= min(agents.spec(a).timeout_s for a in ("scout", "builder", "archivist", "librarian", "chair"))
