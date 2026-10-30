@@ -85,6 +85,35 @@ class ReplayResult:
     fingerprint: str
 
 
+def book_bar_rows(cfg: Config, sym: str, text: str) -> list[Any]:
+    """bookDepth CSV (jeden den) → řádky `bar_book` (source=bookDepth), 30s vzorky agregované na 5m bary."""
+    parsed = parse_bookdepth_csv(text)
+    flat = sorted(({"ts": ts, "pct": pct, "bid_notional": b, "ask_notional": a}
+                   for ts, bands in parsed.items() for pct, (b, a) in bands.items()), key=lambda r: r["ts"])
+    if not flat:
+        return []
+    first = flat[0]["ts"] - flat[0]["ts"] % BAR_MS
+    agg: list[Any] = []
+    j = 0
+    for ot in range(first, flat[-1]["ts"] + 1, BAR_MS):
+        k = j
+        while k < len(flat) and flat[k]["ts"] < ot + BAR_MS:
+            k += 1
+        agg.extend(aggregate_bar_book(sym, ot, flat[j:k], cfg.book.bands_pct, source="bookDepth"))
+        j = k
+    return agg
+
+
+def build_executor(cfg: Config, filters: Any) -> PaperExecutor:
+    """Paper executor bez knihy (fill = první obchod po latenci + extra slippage), jako v živém paperu."""
+    fill = TradeFillModel(dict(cfg.paper.extra_slippage_bps))
+    return PaperExecutor(filters, fill, cfg.paper.notional_usdt, cfg.paper.entry_latency_ms,
+                         cfg.paper.trigger_latency_ms, cfg.paper.outage_penalty_bps,
+                         taker_fee=dict.fromkeys(cfg.universe, cfg.paper.taker_fee) if cfg.paper.taker_fee is not None else {},
+                         maker_fee=dict.fromkeys(cfg.universe, cfg.paper.maker_fee) if cfg.paper.maker_fee is not None else {},
+                         cost_model_version=cfg.paper.cost_model_version)
+
+
 def _prepare_db(cfg: Config, src: Database, start_ms: int, end_ms: int, warmup: int,
                 book_dir: Path | None) -> Database:
     db = Database(":memory:")
@@ -98,21 +127,7 @@ def _prepare_db(cfg: Config, src: Database, start_ms: int, end_ms: int, warmup: 
             for p in sorted(book_dir.glob(f"{sym}-bookDepth-*")):
                 text = (zipfile.ZipFile(p).read(zipfile.ZipFile(p).namelist()[0]).decode() if p.suffix == ".zip"
                         else gzip.open(p, "rt").read())
-                parsed = parse_bookdepth_csv(text)
-                flat = sorted(({"ts": ts, "pct": pct, "bid_notional": b, "ask_notional": a}
-                               for ts, bands in parsed.items() for pct, (b, a) in bands.items()),
-                              key=lambda r: r["ts"])
-                if not flat:
-                    continue
-                first = flat[0]["ts"] - flat[0]["ts"] % BAR_MS
-                agg, j = [], 0
-                for ot in range(first, flat[-1]["ts"] + 1, BAR_MS):
-                    k = j
-                    while k < len(flat) and flat[k]["ts"] < ot + BAR_MS:
-                        k += 1
-                    agg.extend(aggregate_bar_book(sym, ot, flat[j:k], cfg.book.bands_pct, source="bookDepth"))
-                    j = k
-                db.upsert_bar_book(agg, replace=False)
+                db.upsert_bar_book(book_bar_rows(cfg, sym, text), replace=False)
     ei = src.meta_get("exchange_info")
     if ei:
         db.meta_set("exchange_info", ei)
@@ -131,12 +146,7 @@ def run_replay(cfg: Config, src: Database, start: str, end: str, ticks_dir: Path
         raise RuntimeError("chybí exchange_info v meta zdrojové DB (uloží ho `arena run` při startu)")
     filters = parse_exchange_info(json.loads(ei), cfg.universe)
     # replay má vlastní in-memory DB: nezávisí na cooldownech ani pozicích ze zdrojové DB
-    fill = TradeFillModel(dict(cfg.paper.extra_slippage_bps))
-    ex = PaperExecutor(filters, fill, cfg.paper.notional_usdt, cfg.paper.entry_latency_ms,
-                       cfg.paper.trigger_latency_ms, cfg.paper.outage_penalty_bps,
-                       taker_fee=dict.fromkeys(cfg.universe, cfg.paper.taker_fee) if cfg.paper.taker_fee is not None else {},
-                       maker_fee=dict.fromkeys(cfg.universe, cfg.paper.maker_fee) if cfg.paper.maker_fee is not None else {},
-                       cost_model_version=cfg.paper.cost_model_version)
+    ex = build_executor(cfg, filters)
     trades: list[TradeRecord] = []
     runner = SlotRunner(cfg, db, slots, ex, FeatureSource(db, warmup))
     runner.db.meta_set("first_bar_time", str(start_ms))

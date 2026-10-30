@@ -58,6 +58,16 @@ def _parser() -> argparse.ArgumentParser:
     rp.add_argument("--book", help="adresář s bookDepth soubory (zip nebo csv.gz)")
     rp.add_argument("--src-db", help="zdrojová DB s bary a bar_book (default paths.db)")
 
+    bt = sub.add_parser("backtest", help="backtest všech slotů nad historií z data.binance.vision (explorativní)")
+    bt.add_argument("--from", dest="date_from", required=True, help="YYYY-MM-DD")
+    bt.add_argument("--to", dest="date_to", required=True, help="YYYY-MM-DD (včetně)")
+    bt.add_argument("--label", help="id běhu (default FROM_TO)")
+    bt.add_argument("--symbols", help="čárkou oddělené symboly (default celé universe)")
+    bt.add_argument("--workers", type=int, default=3)
+    bt.add_argument("--no-fetch", action="store_true", help="nestahovat, použít data na disku")
+    bt.add_argument("--fetch-only", action="store_true", help="jen stáhnout data")
+    bt.add_argument("--force", action="store_true", help="pokračovat i s chybějícími dny")
+
     bc = sub.add_parser("bars-check", help="P1: bary v DB vs REST klines (bitová shoda, mezery)")
     bc.add_argument("--hours", type=float, default=24)
 
@@ -331,6 +341,9 @@ def main(argv: list[str] | None = None) -> int:
             return asyncio.run(_exchange_admin(apply_data_root(load_config(args.config), args.data_root), args))
         if args.cmd == "replay":
             return _replay(apply_data_root(load_config(args.config), args.data_root), args)
+        if args.cmd == "backtest":
+            from arena.backtest.cli import backtest
+            return backtest(apply_data_root(load_config(args.config), args.data_root), args)
         if args.cmd == "bars-check":
             return asyncio.run(_bars_check(apply_data_root(load_config(args.config), args.data_root), args.hours))
         if args.cmd == "backfill-book":

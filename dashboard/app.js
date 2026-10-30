@@ -3,7 +3,7 @@
   "use strict";
   var SNAP = "data/snapshot.json", STALE_MS = 60000, POLL_MS = 7000, BAR_MS = 300000;
   var SYMCOL = { BTCUSDT: "var(--s1)", ETHUSDT: "var(--s2)", SOLUSDT: "var(--s3)", XRPUSDT: "var(--s4)", DOGEUSDT: "var(--s5)" };
-  var TABS = ["overview", "board", "detail", "costs", "system"];
+  var TABS = ["overview", "board", "detail", "costs", "backtest", "system"];
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var state = { snap: null, tab: "overview", variant: null, vdata: null, sort: { key: "net_mean", dir: -1 }, seenTrades: null, prices: {}, eqRange: "24h" };
   var EQ_RANGES = [["1h", "1 h"], ["6h", "6 h"], ["24h", "24 h"], ["7d", "7 d"], ["30d", "30 d"], ["all", "vše"]];
@@ -103,6 +103,7 @@
     if (state.tab === "board") renderBoard(s);
     if (state.tab === "detail") renderDetailSelect();
     if (state.tab === "costs") loadCosts();
+    if (state.tab === "backtest") loadBacktest();
     if (state.tab === "system") renderSystem(s);
   }
 
@@ -534,6 +535,115 @@
       table("model-err", [["párů", "Počet párů live obchod × jeho paper dvojče (bez sondy xp)"], ["net med bps", "Medián rozdílu net bps live − paper: o kolik je realita horší (záporné) než simulace"],
         ["net p90 bps", "90. percentil rozdílu net bps live − paper"], ["vstup med bps", "Medián rozdílu slippage vstupu live − paper"], ["výstup med bps", "Medián rozdílu slippage výstupu live − paper"]], m.n ? ["<tr>" + td(m.n) + td(num(m.net_med, 2)) + td(num(m.net_p90, 2)) + td(num(m.entry_med, 2)) + td(num(m.exit_med, 2)) + "</tr>"] : [], "Bez párů live × paper dvojče.");
       table("lat", [["druh", "send_to_ack = odeslání → potvrzení burzy, ack_to_fill = potvrzení → fill, trigger_to_fill = spuštění výstupu → fill"], ["n", "Počet měření"], ["průměr ms", "Průměrná latence v milisekundách"]], Object.keys(c.latencies || {}).map(function (k) { return "<tr>" + td(esc(k)) + td(c.latencies[k].n) + td(num(c.latencies[k].avg_ms, 0)) + "</tr>"; }), "Latence se měří u live obchodů.");
+    });
+  }
+
+  // --- backtest (explorativní, statický výstup `arena backtest`) ---------------------------------
+  var bt = { index: null, run: null, sum: null, sort: { key: "net_mean", dir: -1 }, variant: null, loaded: false };
+  function getJson(url) { return fetch(url + "?t=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }
+  function loadBacktest() {
+    if (bt.loaded) return;
+    bt.loaded = true;
+    getJson("data/backtest/index.json").then(function (ix) {
+      bt.index = ix;
+      var runs = (ix && ix.runs) || [], sel = $("bt-run");
+      if (!runs.length) {
+        $("bt-body").hidden = true; $("bt-info").textContent = "";
+        $("bt-note").innerHTML = "<b>Zatím žádný backtest.</b> Spusť na serveru <code>arena backtest --from YYYY-MM-DD --to YYYY-MM-DD</code>; výsledek se tu objeví (stránka je statická, tlačítko spuštění neexistuje).";
+        bt.loaded = false; return;
+      }
+      sel.innerHTML = runs.map(function (r) { return '<option value="' + esc(r.id) + '">' + esc(r.label + " · " + r.n_trades + " obch.") + "</option>"; }).join("");
+      sel.value = store("arena.btrun") && runs.some(function (r) { return r.id === store("arena.btrun"); }) ? store("arena.btrun") : runs[0].id;
+      sel.onchange = function () { store("arena.btrun", sel.value); bt.variant = null; loadBtRun(sel.value); };
+      loadBtRun(sel.value);
+    });
+  }
+  function loadBtRun(id) {
+    getJson("data/backtest/" + encodeURIComponent(id) + "/summary.json").then(function (sm) {
+      if (!sm) return;
+      bt.sum = sm; bt.run = id; $("bt-body").hidden = false;
+      $("bt-info").innerHTML = '<span class="badge">' + esc(sm.sample) + "</span> " + esc(sm.from + " … " + sm.to) + " · " + sm.n_trades + " obchodů · " + sm.n_tainted_excluded + " tainted vynecháno · počítáno " + sm.runtime_s + " s";
+      $("bt-note").innerHTML = "<b>Explorativní backtest, ne experiment.</b> " + (sm.limits || []).map(esc).join(" ");
+      renderBtBoard();
+    });
+  }
+  var BT_COLS = [["key", "varianta", "Varianta zmrazená v config/variants.lock.json."], ["n", "n", "Počet uzavřených simulovaných obchodů."],
+    ["trades_per_day", "obch./den", "Obchodů za den (n / délka období)."], ["net_mean", "net bps ± 95% CI", "Průměrný čistý výsledek v bps notionalu; CI blokový bootstrap po dnech UTC."],
+    ["edge_mean", "hrana bps", "Net + náklady: hrubá hrana před poplatky, slippage a fundingem."], ["cost", "náklady bps", "Poplatky + slippage − funding. V backtestu bez dopadu na cenu, proto spíš optimistické."],
+    ["net_at_1_5x", "net @1,5× nákl.", "Hrana − 1,5 × náklady: citlivost na horší náklady."], ["net_at_2x", "net @2× nákl.", "Hrana − 2 × náklady."],
+    ["sharpe", "Sharpe", "Roční Sharpe denního net P&L."], ["delta", "Δ vs ctl bps", "Rozdíl proti kontrole ctl téže rodiny."],
+    ["p_holm", "p_holm", "Holm přes varianty jen v rámci tohoto backtestu."], ["dsr", "DSR", "Deflated Sharpe, N = počet variant backtestu."]];
+  function btVal(g, k) { return k === "cost" ? (g.cost_bps || {}).total : k === "delta" ? (g.vs_control || {}).delta : g[k]; }
+  function renderBtBoard() {
+    var L = bt.sum.leaderboard, keys = Object.keys(L), sk = bt.sort;
+    var real = keys.filter(function (k) { return k.indexOf("ctl.") !== 0; }), ctl = keys.filter(function (k) { return k.indexOf("ctl.") === 0; }).sort();
+    real.sort(function (a, b) {
+      var x = btVal(L[a], sk.key), y = btVal(L[b], sk.key);
+      if (sk.key === "key") return sk.dir * (a < b ? 1 : -1);
+      if (!fin(x) && !fin(y)) return a < b ? -1 : 1; if (!fin(x)) return 1; if (!fin(y)) return -1;
+      return sk.dir * (x - y);
+    });
+    var head = "<thead><tr>" + BT_COLS.map(function (c) {
+      return '<th class="s tip-h" title="' + esc(c[2]) + '"' + (sk.key === c[0] ? ' data-dir="' + (sk.dir < 0 ? "↓" : "↑") + '"' : "") + ' data-k="' + c[0] + '">' + esc(c[1]) + "</th>";
+    }).join("") + "</tr></thead>";
+    var rows = real.concat(ctl).map(function (k) {
+      var g = L[k], vc = g.vs_control || {}, ci = g.net_ci || [];
+      return '<tr class="click" data-v="' + esc(k) + '">' + td(esc(k) + famChip(k)) + td(g.n) + td(num(g.trades_per_day, 2)) +
+        td('<span class="' + cls(g.net_mean) + '">' + sgn(g.net_mean) + '</span> <span class="muted">[' + num(ci[0], 0) + ", " + num(ci[1], 0) + "]</span>") +
+        td(sgn(g.edge_mean), cls(g.edge_mean)) + td(num((g.cost_bps || {}).total)) + td(sgn(g.net_at_1_5x), cls(g.net_at_1_5x)) + td(sgn(g.net_at_2x), cls(g.net_at_2x)) +
+        td(num(g.sharpe, 2)) + td(sgn(vc.delta), cls(vc.delta)) + td(num(g.p_holm, 3)) + td(num(g.dsr, 2)) + "</tr>";
+    });
+    $("bt-board").innerHTML = head + "<tbody>" + rows.join("") + "</tbody>";
+    $("bt-board").querySelectorAll("th.s").forEach(function (th) {
+      th.addEventListener("click", function () { var k = th.dataset.k; bt.sort = { key: k, dir: bt.sort.key === k ? -bt.sort.dir : -1 }; renderBtBoard(); });
+    });
+    $("bt-board").querySelectorAll("tr.click").forEach(function (tr) { tr.addEventListener("click", function () { bt.variant = tr.dataset.v; loadBtVariant(); $("bt-detail").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); }); });
+    var Hm = bt.sum.heatmap || {}, syms = bt.sum.symbols || [], mx = 1;
+    Object.keys(Hm).forEach(function (v) { Object.keys(Hm[v]).forEach(function (y) { if (Hm[v][y].n >= 30) mx = Math.max(mx, Math.abs(Hm[v][y].net_mean)); }); });
+    table("bt-heat", [["varianta", "Varianta × symbol"]].concat(syms.map(function (x) { return [short(x), "Průměr net bps a počet obchodů na " + x + ". Šedá buňka = n < 30."]; })), real.concat(ctl).map(function (k) {
+      return "<tr>" + td(esc(k)) + syms.map(function (sym) {
+        var c = (Hm[k] || {})[sym];
+        if (!c) return '<td><div class="hc na">—</div></td>';
+        if (c.n < 30) return '<td><div class="hc na" title="n < 30">' + sgn(c.net_mean) + "<small>n " + c.n + "</small></div></td>";
+        var a = Math.min(1, Math.abs(c.net_mean) / mx), col = c.net_mean >= 0 ? "var(--div-pos)" : "var(--div-neg)";
+        return '<td><div class="hc" style="background:color-mix(in srgb,' + col + " " + Math.round(18 + a * 62) + '%,var(--div-mid));color:' + (a > 0.55 ? "#fff" : "var(--ink)") + '">' + sgn(c.net_mean) + "<small>n " + c.n + "</small></div></td>";
+      }).join("") + "</tr>";
+    }), "Bez obchodů.");
+    if (bt.variant) loadBtVariant();
+  }
+  function loadBtVariant() {
+    var v = bt.variant, id = bt.run;
+    if (!v || !bt.sum) return;
+    var g = bt.sum.leaderboard[v] || {}, ci = g.net_ci || [];
+    $("bt-detail").hidden = false;
+    $("bt-dtitle").innerHTML = esc(v) + " " + famChip(v) + ' <small>backtest ' + esc(bt.sum.label) + "</small>";
+    $("bt-tiles").innerHTML = [
+      tile("Obchodů", String(g.n || 0), num(g.trades_per_day, 2) + " / den"),
+      tile("Net bps", fin(g.net_mean) ? pnlHtml(g.net_mean, 1) : "—", fin(ci[0]) ? "95% CI [" + num(ci[0]) + ", " + num(ci[1]) + "]" : ""),
+      tile("Hrana bps", fin(g.edge_mean) ? pnlHtml(g.edge_mean, 1) : "—", "náklady " + num((g.cost_bps || {}).total) + " bps"),
+      tile("Net @1,5× / @2×", sgn(g.net_at_1_5x, 1) + " / " + sgn(g.net_at_2x, 1), "citlivost na náklady"),
+      tile("Sharpe (roč.)", num(g.sharpe, 2), "max DD " + num(g.max_dd, 0) + " USDT"),
+      tile("Win rate", fin(g.win_rate) ? num(g.win_rate, 0) + " %" : "—", "Ø držení " + num(g.avg_hold_min, 0) + " min")].join("");
+    getJson("data/backtest/" + encodeURIComponent(id) + "/variants/" + encodeURIComponent(v) + ".json").then(function (d) {
+      if (!d || v !== bt.variant) return;
+      var dayfmt = function (x) { return new Date(x).toISOString().slice(0, 10); };
+      function pts(c) { return c.t.map(function (t, i) { return [t, c.net[i]]; }); }
+      var ser = [{ name: "net bps (kumul.)", color: "var(--accent)", area: true, pts: pts(d.curve) }];
+      if (d.control_curve && d.control_curve.net.some(function (x) { return x !== 0; })) ser.push({ name: "kontrola ctl", color: "var(--neg)", dash: "5 4", w: 1.5, pts: pts(d.control_curve) });
+      $("bt-legend").innerHTML = ser.map(function (s) { return '<span><i style="border-color:' + s.color + (s.dash ? ";border-top-style:dashed" : "") + '"></i>' + esc(s.name) + "</span>"; }).join("");
+      lineChart($("bt-cum"), ser, { height: 300, zero: true, yfmt: function (x) { return sgn(x, 0); }, xfmt: function (x) { return dayfmt(x).slice(2, 7); }, xfmtTip: dayfmt });
+      var bs = d.by_symbol || {}, bk = Object.keys(bs);
+      $("bt-sym").innerHTML = bk.length ? "<table><thead><tr>" + [["symbol", ""], ["n", ""], ["net bps", ""], ["gross bps", ""]].map(function (c) { return thHtml(c); }).join("") + "</tr></thead><tbody>" + bk.map(function (k) {
+        var x = bs[k]; return "<tr>" + td('<i class="sw" style="display:inline-block;background:' + (SYMCOL[k] || "var(--muted)") + ';margin-right:7px"></i>' + esc(short(k))) + td(x.n) + td(sgn(x.net_mean), cls(x.net_mean)) + td(sgn(x.gross_mean)) + "</tr>";
+      }).join("") + "</tbody></table>" : emptyBox("Bez dat", "");
+      var sd = d.sides || {};
+      $("bt-month").innerHTML = (d.monthly || []).length ? "<table><thead><tr>" + [["měsíc", ""], ["n", ""], ["net bps", ""]].map(function (c) { return thHtml(c); }).join("") + "</tr></thead><tbody>" + d.monthly.map(function (m) {
+        return "<tr>" + td(esc(m.m)) + td(m.n) + td(sgn(m.net_mean), cls(m.net_mean)) + "</tr>";
+      }).join("") + "</tbody></table>" + '<p class="muted" style="margin:10px 0 0">LONG ' + (sd.LONG ? sd.LONG.n + " obch., " + sgn(sd.LONG.net_mean) + " bps" : "—") + " · SHORT " + (sd.SHORT ? sd.SHORT.n + " obch., " + sgn(sd.SHORT.net_mean) + " bps" : "—") + "</p>" : emptyBox("Bez dat", "");
+      var em = d.exit_mix || {}, ek = Object.keys(em), tot = ek.reduce(function (a, k) { return a + em[k]; }, 0), ecol = ["var(--s1)", "var(--s2)", "var(--s3)", "var(--s4)", "var(--s5)"];
+      $("bt-exit").innerHTML = tot ? '<div class="stack">' + ek.map(function (k, i) { return '<div title="' + esc(k) + ": " + em[k] + '" style="flex:' + em[k] + ";background:" + ecol[i % 5] + '"></div>'; }).join("") + "</div>" +
+        '<div class="legend" style="margin-top:10px">' + ek.map(function (k, i) { return '<span><i style="border-color:' + ecol[i % 5] + '"></i>' + esc(k) + " <b class=num>" + em[k] + "</b> <span class=muted>" + Math.round(em[k] / tot * 100) + " %</span></span>"; }).join("") + "</div>" : emptyBox("Bez dat", "");
+      renderHist($("bt-hist"), d.hist || { edges: [], counts: [] });
     });
   }
 

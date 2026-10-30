@@ -24,6 +24,7 @@
   <button role="tab" data-tab="board">Žebříček</button>
   <button role="tab" data-tab="detail">Varianta</button>
   <button role="tab" data-tab="costs">Náklady</button>
+  <button role="tab" data-tab="backtest">Backtest</button>
   <button role="tab" data-tab="system">Systém</button>
 </nav>
 <main>
@@ -96,6 +97,29 @@
     <div class="grid split">
       <div><h2>Model error <small>live − paper dvojče</small></h2><div class="scroll"><table id="model-err"></table></div></div>
       <div><h2>Latence</h2><div class="scroll"><table id="lat"></table></div></div>
+    </div>
+  </section>
+
+  <section id="tab-backtest" hidden>
+    <div class="toolbar"><label class="sec">Období <select id="bt-run"></select></label><span class="muted" id="bt-info"></span></div>
+    <div class="note" id="bt-note"></div>
+    <div id="bt-body">
+      <div class="scroll"><table id="bt-board"></table></div>
+      <h2>Varianta × symbol <small>průměr net bps · počet obchodů</small></h2>
+      <div class="scroll"><table id="bt-heat" class="heat"></table></div>
+      <div id="bt-detail" hidden>
+        <h2 id="bt-dtitle"></h2>
+        <div class="tiles" id="bt-tiles"></div>
+        <div class="card"><div class="legend" id="bt-legend"></div><div class="cht" id="bt-cum"></div></div>
+        <div class="grid split" style="margin-top:12px">
+          <div><h2>Podle symbolů</h2><div class="card" id="bt-sym"></div></div>
+          <div><h2>Podle měsíců <small>net bps</small></h2><div class="card" id="bt-month"></div></div>
+        </div>
+        <div class="grid split" style="margin-top:12px">
+          <div><h2>Důvod výstupu</h2><div class="card" id="bt-exit"></div></div>
+          <div><h2>Rozdělení net bps</h2><div class="card"><div class="cht" id="bt-hist"></div></div></div>
+        </div>
+      </div>
     </div>
   </section>
 

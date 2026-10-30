@@ -66,6 +66,15 @@ signály `brk` přepočtené z barů v DB, ukazatele paper pozic. Opraveno:
 - Testy: 184 (WS idle, pořadí ALGO_UPDATE/fill, HS odhad, finalize bez ceny, income klíč a migrace, nulový notional,
   mezery v aggTrades, fromId stahování, opožděný symbol).
 
+## Backtest (záložka Backtest v kartě Arena), 2026-10-30
+
+- `arena backtest --from --to`: stáhne klines, bookDepth, fundingRate a aggTrades (npz po dnech) z data.binance.vision,
+  spustí všechny sloty po symbolech (proces na symbol) a zapíše statistiky (`arena.stats`: leaderboard, heatmapa, CI,
+  Holm, DSR v rámci backtestu) do `site/data/backtest/<label>/`. Detail v `docs/BACKTEST.md`.
+- Ticky se podávají jen symbolům s otevřenou pozicí; featury z celých sloupců v paměti (`ArrayFeatureSource`, test shody
+  s DB verzí včetně díry v datech). `arena replay` sdílí `book_bar_rows` a `build_executor`.
+- Explorativní: mimo experiment a rozhodnutí na dni 45/90. Omezení (fill bez knihy, dnešní filtry) jsou i v záložce.
+
 ## Exec probe (rodina xp), 2026-10-25
 
 - Důvod: strategie dávají ~7 live vstupů denně na 5 slotů, takže 200 round tripů z P5 by trvalo týdny. `xp.v00` vstupuje
