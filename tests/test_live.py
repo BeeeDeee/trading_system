@@ -406,3 +406,51 @@ async def test_finalize_without_entry_price_uses_entry_fills():
     (t,) = closed
     assert t.entry_px == pytest.approx(0.5) and t.notional == pytest.approx(150.0)
     assert t.gross_pnl == pytest.approx(-(0.5 - 0.489) * 300)
+
+
+async def test_reconcile_stale_snapshot_does_not_close_entry_finished_meanwhile():
+    """2026-10-27 08:00: snímek burzy byl před fillem vstupu, rozhodování až po něm → pozice se špatně uzavřela."""
+    ex, fx, db, alerts, closed = make()
+    orig = fx.position_risk
+
+    async def stale_then_entry(symbol=None):
+        snap = await orig(symbol)          # burza je v tuto chvíli bez pozice
+        await open_(ex)                    # vstup doběhne dřív, než reconcile začne rozhodovat
+        return snap
+
+    fx.position_risk = stale_then_entry
+    risk = RiskGuard(load_config(), db, False)
+    diffs = await Reconciler(fx, ex, risk, (SYM,)).run(fix=True)
+    assert diffs == [] and ex.positions[SYM].state == "PROTECTED" and closed == []
+    assert algo_types(fx) == ["STOP_MARKET", "TRAILING_STOP_MARKET"]    # ochrana nezrušena jako sirotek
+    assert not risk.frozen(SYM) if hasattr(risk, "frozen") else True
+
+
+async def test_reconcile_skips_symbol_while_entry_in_flight():
+    """2026-10-27 14:25: reconcile při odeslaném vstupu dostal -2013 a pozici zahodil, ač se vyplnila."""
+    ex, fx, db, alerts, closed = make()
+    gate = asyncio.Event()
+    orig = fx.new_order
+
+    async def slow(p):
+        await gate.wait()
+        return await orig(p)
+
+    fx.new_order = slow
+    task = asyncio.ensure_future(open_(ex))
+    await asyncio.sleep(0)
+    assert ex.positions[SYM].state == "ENTRY_SENT"
+    diffs = await Reconciler(fx, ex, RiskGuard(load_config(), db, False), (SYM,)).run(fix=True)
+    assert diffs == [] and SYM in ex.positions            # nezahozeno
+    gate.set()
+    pos = await task
+    assert pos is not None and pos.state == "PROTECTED"
+
+
+async def test_reconcile_alert_not_repeated_every_cycle():
+    ex, fx, db, alerts, closed = make()
+    fx.positions[SYM] = Decimal("5")
+    rec = Reconciler(fx, ex, RiskGuard(load_config(), db, False), (SYM,), alert=lambda t, m: alerts.append((t, m)))
+    for _ in range(5):
+        await rec.run(fix=True)
+    assert [a[0] for a in alerts].count("FOREIGN_POSITION") == 1

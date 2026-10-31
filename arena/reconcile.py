@@ -5,7 +5,11 @@
 - pozice v DB, na burze žádná → dohledat výstup přes userTrades, zapsat obchod exit_reason=reconciled;
 - osiřelý algo/limit příkaz s prefixem `a5-` bez pozice → zrušit;
 - příkazy bez prefixu `a5-` → nikdy nesahat (patří vlastníkovi);
-- nesoulad množství → alert + zmrazit symbol."""
+- nesoulad množství → alert + zmrazit symbol.
+
+Snímek burzy (pozice, příkazy) se bere dřív, než se rozhoduje. Symbol, u kterého mezitím běží nebo proběhl vstup či
+výstup (zámek symbolu drží, nebo se změnil uložený stav), se v tomto kole přeskočí: snímek je zastaralý a rozhodnutí
+by se opíralo o burzu, která tu operaci ještě nevidí (2026-10-27: vstup uzavřený jako „reconciled“ a symbol zmrazený)."""
 
 from __future__ import annotations
 
@@ -42,9 +46,16 @@ class Reconciler:
     symbols: tuple[str, ...]
     alert: Any = lambda t, m: None
     last: list[Diff] = field(default_factory=list)
+    alert_every_ms: int = 1_800_000   # stejný alert se opakuje nejdřív po 30 min
+    _alerted: dict[str, int] = field(default_factory=dict)
+
+    def _stale(self, sym: str, rev0: dict[str, int]) -> bool:
+        return self.executor.lock(sym).locked() or self.executor.rev.get(sym, 0) != rev0.get(sym, 0)
 
     async def run(self, fix: bool = True) -> list[Diff]:
         diffs: list[Diff] = []
+        rev0 = dict(self.executor.rev)
+        skipped: set[str] = set()
         ex_pos = {p["symbol"]: Decimal(str(p["positionAmt"])) for p in await self.rest.position_risk()
                   if Decimal(str(p.get("positionAmt", "0"))) != 0}
         orders = await self.rest.open_orders()
@@ -53,6 +64,9 @@ class Reconciler:
         open_ord = {str(o.get("clientOrderId")): o for o in orders}
 
         for sym in self.symbols:
+            if self._stale(sym, rev0):
+                skipped.add(sym)
+                continue
             amt = ex_pos.get(sym, Decimal(0))
             pos = self.executor.positions.get(sym)
             if pos is None:
@@ -92,7 +106,7 @@ class Reconciler:
         # osiřelé a5- příkazy (bez pozice v DB); cizí příkazy se nikdy neruší
         live_cids = {c for p in self.executor.positions.values() for c in p.orders.values()}
         for cid, a in open_algo.items():
-            if is_ours(cid) and cid not in live_cids:
+            if is_ours(cid) and cid not in live_cids and str(a.get("symbol")) not in skipped:
                 diffs.append(Diff("ORPHAN_ALGO", str(a.get("symbol")), cid, "zrušit"))
                 if fix:
                     try:
@@ -100,16 +114,20 @@ class Reconciler:
                     except (errors.BinanceError, errors.UnknownOrderStatus) as e:
                         log.warning("zrušení %s selhalo: %r", cid, e)
         for cid, o in open_ord.items():
-            if is_ours(cid) and cid not in live_cids:
+            if is_ours(cid) and cid not in live_cids and str(o.get("symbol")) not in skipped:
                 diffs.append(Diff("ORPHAN_ORDER", str(o.get("symbol")), cid, "zrušit"))
                 if fix:
                     try:
                         await self.rest.cancel_order(str(o["symbol"]), cid)
                     except (errors.BinanceError, errors.UnknownOrderStatus) as e:
                         log.warning("zrušení %s selhalo: %r", cid, e)
+        now = self.executor.now_ms()
         for d in diffs:
             if d.kind in ("FOREIGN_POSITION", "QTY_MISMATCH", "UNPROTECTED"):
-                self.alert(d.kind, f"{d.symbol}: {d.detail}")
+                key = f"{d.kind} {d.symbol} {d.detail}"
+                if now - self._alerted.get(key, -self.alert_every_ms) >= self.alert_every_ms:
+                    self._alerted[key] = now
+                    self.alert(d.kind, f"{d.symbol}: {d.detail}")
         self.last = diffs
         self.executor.db.meta_set("last_reconcile", str(self.executor.now_ms()))
         if diffs:

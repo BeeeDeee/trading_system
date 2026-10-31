@@ -106,6 +106,7 @@ class LiveExecutor:
 
     positions: dict[str, LivePosition] = field(default_factory=dict)          # symbol → pozice (1 slot/symbol)
     _locks: dict[str, asyncio.Lock] = field(default_factory=dict)
+    rev: dict[str, int] = field(default_factory=dict)   # symbol → počet uložení stavu (rekonciliace pozná zastaralý snímek)
 
     def lock(self, symbol: str) -> asyncio.Lock:
         return self._locks.setdefault(symbol, asyncio.Lock())
@@ -114,6 +115,8 @@ class LiveExecutor:
 
     def save(self, pos: LivePosition | None, slot_id: str | None = None) -> None:
         sid = pos.slot_id if pos else slot_id
+        sym = pos.symbol if pos else str(slot_id).rsplit(".", 1)[-1]
+        self.rev[sym] = self.rev.get(sym, 0) + 1
         self.db.execute("INSERT OR REPLACE INTO slot_state VALUES (?,?,?,?,?)",
                         (sid, "live", pos.state if pos else "FLAT", json.dumps(asdict(pos)) if pos else None,
                          self.now_ms()))

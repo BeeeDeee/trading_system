@@ -66,6 +66,17 @@ signály `brk` přepočtené z barů v DB, ukazatele paper pozic. Opraveno:
 - Testy: 184 (WS idle, pořadí ALGO_UPDATE/fill, HS odhad, finalize bez ceny, income klíč a migrace, nulový notional,
   mezery v aggTrades, fromId stahování, opožděný symbol).
 
+## Oprava: rekonciliace vs. běžící vstup (nalezeno na testnetu), 2026-10-31
+
+- Příčina: reconcile (každých 60 s) bral snímek burzy a pak rozhodoval podle stavu v paměti. Když mezitím běžel nebo
+  doběhl vstup, snímek byl zastaralý: 2026-10-27 08:00 BTC vstup uzavřen jako `reconciled` (pozice na burze zůstala),
+  14:25 ETH `ENTRY_NOT_FOUND` → zahozeno a jeho HS/TS zrušeny jako sirotci; SOL 10-28 stejně. Symboly se zmrazily
+  (`FOREIGN_POSITION`) a živá sonda od té doby neobchoduje; reconcile spamoval alert každou minutu (13 000×).
+- Oprava: symbol se v kole přeskočí, když drží jeho zámek nebo se od snímku změnil uložený stav (`LiveExecutor.rev`);
+  osiřelé příkazy takového symbolu se neruší; stejný alert se opakuje nejdřív po 30 min.
+  3 testy (zastaralý snímek, vstup v letu, opakování alertu) selhávají na starém kódu a prochází na novém.
+- Nenasazeno. Po nasazení zůstanou na demu osiřelé pozice (BTC, ETH, SOL) a zmrazené symboly; úklid je ruční.
+
 ## Backtest (záložka Backtest v kartě Arena), 2026-10-30
 
 - `arena backtest --from --to`: stáhne klines, bookDepth, fundingRate a aggTrades (npz po dnech) z data.binance.vision,
