@@ -676,3 +676,93 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not flip the sign and refile as rate-driven continuation, income-fund flow or bond-proxy sector drift: the sign is dev-selected and inside the cloud. Do not vary k_sigma, beta_days, ETFs per side or hold, nor swap in the two-year yield, the curve or a Treasury ETF as trigger: same events, new trials.
 - open questions: The control the card did not run: the same sector spreads after large days without a rate shock, to see whether the sort adds anything over generic sector reversal. Rate sensitivity is slow and sector spreads are noisy, so a monthly or slower tilt on rate-sensitive sectors is a different claim with its own trial. Concession after the shock would show only in intraday data, which is not loadable.
 - related: H-0041, H-0047, H-0070, H-0072, H-0043
+
+## H-0077 – Muni closed-end fund discount-shock reversal - buy national muni CEFs whose 5-session return fell far below what the open-end muni bond ETF (MUB) implies, MUB-hedged, hold 5 sessions
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: national municipal closed-end funds, long after a relative discount shock, hedged with a short in the muni ETF MUB, daily decisions, week-long slots, 2007 to 2020
+- outcome: rejected at G1 on exposure below the floor; the mechanism test passed, but net Sharpe also missed the absolute bar.
+- lesson: The mechanism passed clearly: funds far below their MUB-implied move beat peers and a same-fund placebo, gross well above cost, positive in every third but fading over time. The book failed on shape: events came well under the forecast rate, slots sat empty, exposure stayed about half the floor, and net Sharpe missed the absolute bar (gross only modestly above it), so upsizing would not fix it. The MUB hedge lost money alone, and the effect kept building past the one-week hold: the hold catches only the front of a slow reversion.
+- avoid: Do not raise slot weights, the slot cap or lower z_entry to lift exposure after seeing this: same events, new trials, and Sharpe does not scale with size. Do not refile the same discount-shock rule on other closed-end funds under a new family name. Do not read the mechanism pass as a tradable edge (K-0027, K-0064).
+- open questions: A slower hold argued from the build-up across horizons, with events, slots, weight and mean exposure written down in advance. Untested: a beta-matched control (K-0074), the split by many versus few funds on a date, the hedge's worth, stress before late 2008. Fund list leans to survivors.
+- related: H-0037, H-0043, H-0070
+
+## H-0078 – Country closed-end fund catch-up to the foreign market - long a US-listed single-country equity CEF after its 5-session return falls far below its country ETF's, short the ETF, hold 5 days
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: US-listed single-country equity closed-end funds, long after a relative shortfall against a fixed same-country ETF, short that ETF, event-driven, week-long slots, 2000 to 2020
+- outcome: rejected at G1: mechanism test passed, but exposure missed the floor by a hair and the absolute Sharpe floor was missed even gross; bootstrap bound passed.
+- lesson: Mechanism passed again, in a second asset class: funds far behind their country ETF recovered relative to it, well above the placebo cloud and gross several times cost, positive in all thirds though weaker in the latest (K-0060). The book still failed: exposure sat a hair under the floor and the absolute Sharpe floor was missed before costs, so neither costs nor slot size was the cause. The ETF hedge lost money alone; the fund leg carried the gain. The effect kept building for about two weeks, so a one-week hold takes only part of it.
+- avoid: Do not raise slot weights or the cap, or lower z_entry, to lift exposure: same events, new trials, and Sharpe does not scale with size. Do not file a third fund-discount card on another fund class as a new family.
+- open questions: Change the book, not the event: a hold argued from the build-up, one pooled book sharing slots across fund classes, or a tilt on an always-invested core (K-0027). Untested: split by many versus few funds firing, ticker reuse, survivor lean.
+- related: H-0077, H-0037
+
+## H-0079 – Pooled CEF catch-up to its asset-class ETF - seven fund classes share 2 slots: long a CEF after a 2-sigma shortfall vs its ETF anchor, short the anchor, hold 5 days
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: 38 closed-end funds in seven classes, long after a shortfall vs an ETF anchor, short the anchor, 2002 to 2020
+- outcome: rejected at G1: the mechanism test passed and all checks passed except the absolute Sharpe floor, missed net but cleared gross
+- lesson: Pooling seven fund classes fixed the thin exposure and sparse entries of H-0077 and H-0078. The event study sat at the top of the placebo cloud, gross covered cost several times, and the sign held in all three thirds, the latest included. Net Sharpe still missed the floor while gross cleared it: costs on thinly traded funds and the hedge took the margin. The anchor short lost money alone and added little over the long leg, whose result may carry asset-class beta from a falling-rate era. The effect was tiny at one session and built over about two weeks, then flattened: not a one-day bounce, and a five-session hold leaves part of it unharvested.
+- avoid: Do not lower z_entry, enlarge slot weights or the cap, or add fund classes to push net Sharpe over the floor: same events, new trials. Do not drop the hedge or swap anchors because the short lost money. Do not refile this event under another family name.
+- open questions: Untested: a longer hold argued from the two-week build-up (leaves the brief's short-hold range; write expected cost and net Sharpe first), a beta-matched control for the long leg (K-0074), and whether the hedge pays its cost. List leans to survivors (K-0102).
+- related: H-0077, H-0078, H-0037, H-0043
+
+## H-0080 – Credit-ETF liquidity overshoot vs SPY/IEF anchors - tilt a 60/40 book's IEF sleeve into a credit, EM, muni or loan ETF for 5 days after a 2-sigma residual drop
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: credit, EM, muni and loan ETFs tilted out of the IEF sleeve of a SPY/IEF mix for a week after a large drop against SPY and IEF; 2003 to 2020
+- outcome: rejected at G1 on the mechanism test: abnormal return wrong-signed, placebo percentile far under the bar, cost not covered; strategy not run
+- lesson: After a large residual drop against SPY and IEF the credit-type ETF did not rebound: the average was slightly negative at every horizon from one to ten sessions and far inside the placebo cloud, with losses in the earliest and latest thirds. The test leaned in the card's favour (higher equity beta than the peers, K-0074) and still failed. The negative longer horizons fit the card's own rivals: credit-specific news, persistent flow, falling knife. Not a power problem: events above the minimum, G0 and G1 counts agreed, placebo mean about zero.
+- avoid: Do not refile with other thresholds, holds, anchors or ETF lists: same events, wrong sign at all horizons. Do not trade the mirror: its sign is dev-selected. This is the stress-rebound evidence of K-0084 again.
+- open questions: Wrapper pressure shows only against the basket's own value (premium to NAV), not in daily closes versus factor proxies; that data is not loadable. The first third held few events because most ETFs list late (K-0075).
+- related: H-0043, H-0037, H-0041, H-0070, H-0075, H-0077, H-0078, H-0079
+
+## H-0082 – Perp-listing short-constraint relief - short Binance perps of seasoned-spot coins in their first 8 weeks after the perp launch, hedged with the other top-50 perps, weekly
+
+- family: `short-sale-constraint-relief` · mechanism: flow_structural · instruments: Binance perps (top fifty): short coins in the first weeks after the perp launch, seasoned spot pair, hedged with other perps, weekly
+- outcome: rejected at G1: the four-week abnormal return was wrong-signed (marked coins beat peers), far below the placebo bar
+- lesson: Seasoned coins in the first weeks after their perp launch did not lag the other liquid perps; on average they led, more at two months than at one or two weeks. That is the slow shape of trend or beta, not a launch-pump reversal or the relief of a short-sale constraint. The sign flipped across thirds and the wrong-signed middle third (probably the 2021 boom, most events) decided the pooled result. Events were ample and the placebo mean near zero, so this is a dev-period refutation, not a power failure, although the gap the card forecast was below the placebo bar.
+- avoid: Do not resubmit with another hold, seasoning age or top-n: same events, wrong sign at slow horizons. Do not trade the mirror: its sign is dev-selected and tied to one boom. Do not refile new coins under another channel name (overhang, vesting): H-0004, H-0058 and H-0082 cover it.
+- open questions: Only a beta- and attention-neutral design is new: launch events against coins matched on size, beta and prior run-up without a launch. The first days after a launch were never measured. Early launches lack provable seasoning (K-0075).
+- related: H-0058, H-0004, H-0039, H-0071
+
+## H-0083 – 52-week-high anchoring net of momentum and volatility - LIQ-500 long-only, monthly: hold the stocks nearest their 52-week high within matched 12-month-return x volatility cells
+
+- family: `52-week-high-anchoring` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), monthly: nearest vs farthest from the 52-week high inside momentum x volatility cells, quarter horizon, 1999 to 2020
+- outcome: rejected at G1 on the mechanism test: positive and above cost, placebo mean near zero, but clearly under the placebo bar, which lay above cost; strategy not run
+- lesson: Matching on momentum and volatility removed the stock-identity drift that sank H-0011: the placebo mean was near zero and the average was positive and above cost. But it stayed clearly under the placebo bar, which lies several times above cost, so a real effect of half the literature's size could not pass (cannot tell, not refuted). It was not a smooth drift: nothing at short horizons, about zero at one month, almost all of it only at the last horizon. Positive in the first and latest thirds, slightly negative in the middle (likely crisis-era junk rebounds). No strategy was run; the card itself called it borderline.
+- avoid: Do not retune leg_fraction, high_window_days, the matching cells or the horizon on these events, and do not run the long-only book as a rescue: same events, new trials. Do not refile nearness to the high as resistance, anchoring or George-Hwang momentum on LIQ-500. The declared horizon-shape condition failed; do not read two positive thirds as support.
+- open questions: Both trials of this family are dead at the mechanism test, so only a different claim merits a card: nearness to the high as a conditioner on a dated own-price event (K-0083), less covered stocks, or another asset class. Compare the expected effect with this design's placebo bar (K-0034), not only with cost.
+- related: H-0011, H-0054, H-0029, H-0059
+
+## H-0086 – Net share repurchasers held for a year - LIQ-500 long-only, monthly overlapping 12-month cohorts of the top quintile of trailing net repurchase yield
+
+- family: `trading-window-flows` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), long-only, year-long monthly cohorts of top net-repurchase quintile; event study on entries to both extreme quintiles
+- outcome: rejected at G1 on the mechanism test: quarter-horizon average below the placebo mean and far under the bar; book never simulated
+- lesson: No support for a slow net-repurchase style drift in LIQ-500. The quarter-horizon average was barely positive, below the average of same-stock placebos and below round-trip cost; the first weeks were slightly negative. The thirds show the K-0060 decay carried to its end: clearly positive early, about zero in the middle, clearly negative lately, where bull-market low-beta drag (K-0074) and publication decay cannot be separated. The placebo bar was far above cost, so a small true effect would have been missed, but the point estimate sat under the placebo mean: nearer 'nothing visible' than a near miss.
+- avoid: Do not refile the same sort as share-count change, net issuance, buyback yield or equity financing, or with another quantile, hold or horizon: the stocks and the score are those of H-0019 and H-0027, and across three anchors the evidence is now filing-linked or decayed. Do not argue that the quarter cap hides a year-long effect unless the design can show it.
+- open questions: The report gave no split by side, so an issuer-only effect (needs shorting and borrow) is untested. A persistent style premium in the level of repurchase, not in the entry, needs a control that the same-stock placebo does not absorb, ideally matched on size and beta, plus an era split; the judge has no beta-adjusted abnormal return (K-0074). Less covered stocks are not loadable.
+- related: H-0019, H-0027, H-0059, H-0083, H-0054
+
+## H-0088 – Currency value into country equity ETFs - long the 2 cheapest, short the 2 richest of 10 developed currencies vs 5-year average spot, 12-month cohorts
+
+- family: `long-term-reversal` · mechanism: risk_premium · instruments: ten unhedged developed-market country equity ETFs, long the two with the cheapest currency versus its five-year average, short the two richest, twelve-month cohorts
+- outcome: mechanism test passed; rejected at G1 on the strategy: net Sharpe near T-bills, far under the absolute floor, bootstrap bound below zero (registry shows only the excess check)
+- lesson: The FX-measured currency anchor predicted the USD return of country ETFs over a quarter: above the placebo cloud, gross several times cost, positive in every third, not fading late, so the equity leg did not offset the currency recovery. The twelve-month dollar-neutral book still earned about T-bill returns: costs were minor, gross was near zero, and the long leg's good stand-alone result was mirrored by an equally bad short leg (shared equity drift). Study and book disagree, as in H-0044: the test sees only the first quarter of a year hold, leg betas were not reported, and cash years before the first signal dilute the book. Cause not separated.
+- avoid: Do not retune lookback, leg size or hold, add countries, or lever the book to reach the floor. Do not file this score on another vehicle as a new family: it shares the signal with H-0062.
+- open questions: Reconcile study and book first: gross on the same dates, by year and leg, and leg betas to the country basket (asked for, not computed). Value versus carry stays unseparated.
+- related: H-0062, H-0060, H-0044
+
+## H-0089 – Absorbed taker flow on Binance perps - after an hour of extreme one-sided taker volume that failed to move the price, trade with the passive absorber, both sides, hold 6 hours
+
+- family: `taker-flow-absorption` · mechanism: liquidity_provision · instruments: Binance USD-M perps, point-in-time top twenty, 15-minute candles, both sides, hold of a few hours, dev 2020-2022
+- outcome: rejected at G1 on trade count: far too few trades, so Sharpe and bootstrap bound were noise; mechanism never measured
+- lesson: Could not tell, not refuted: absorption was never measured. The event is a joint tail (extreme one-sided taker flow, heavy volume, flat or opposite price), and the card itself says taker flow explains same-hour returns, so the set is rare by construction; the forecast of hundreds of trades was far off. Exact-zero tolerance and the five-slot cap add to it. The mirror-set and side controls could not run (no diagnostic channel). Exposure and turnover match the trade count: no sign of a bug.
+- avoid: Do not loosen the imbalance threshold, add a return tolerance band or lower the volume bar to raise the count: dev-selected, a new trial, and the looser set drifts toward generic reversal against taker flow (H-0035). State events per year for the joint conditions.
+- open questions: Absorption is untested. Needs many more events (more instruments, or a continuous rather than extreme cut) and a reportable control: absorbed hours against flow-driven hours, traded the same way, with a one-candle-later fill.
+- related: H-0035, H-0063, H-0040
+
+## H-0090 – Dual-class twin-share gap reversion - LIQ-500, fade a 2-sigma 5-session gap between two share classes of the same company (return correlation >= 0.95), long laggard / short leader, hold 5 days
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: pairs of share classes of one US company in LIQ-500, found by return correlation; long laggard, short leader, 5 days
+- outcome: rejected at G1 (event count): far too few events; average about equal to cost but inside the placebo cloud, cost check also failed
+- lesson: Cannot tell, and barely testable here. Few share-class pairs have both classes in the liquid universe, so the judge counted about an order of magnitude fewer events than forecast, on a few dozen dates. The average was positive but inside the placebo cloud, whose bar lay well above cost, so a tradable effect could be missed; gross only matched cost, not the multiple forecast. Thirds were mixed (middle negative, latest positive and holding most events, likely a few pairs). The horizon shape peaked mid-range, at noise level.
+- avoid: Do not loosen the correlation threshold, z_entry or gap window to raise the count: dev-selected, and a looser threshold admits ordinary correlated peers, the dead peer-lead-lag test (H-0013, H-0066). Do not refile the same pair rule as dual-class or voting premium. Do not read this as evidence that share-class gaps do not revert.
+- open questions: Only a change in power deserves a card: a universe or explicit pair list holding both classes of every dual-class firm (RAM limits LIQ-1000, K-0003), with a pairs-by-year count written first. Untested: per-pair split, and the cost tier of the less liquid class. Gross near cost leaves a thin net even with more events.
+- related: H-0037, H-0077, H-0078, H-0079, H-0080, H-0013, H-0066
