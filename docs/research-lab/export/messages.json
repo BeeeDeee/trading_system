@@ -10390,8 +10390,8 @@
   "idempotency_key": "e067dcb0e0ed29b107b80ebbec6327632086186094ceac2e99b477ee6c97a3f7",
   "invocation_id": null,
   "created_at": "2026-10-29T11:16:57.622038+00:00",
-  "handled_at": null,
-  "handled_by": null,
+  "handled_at": "2026-10-30T03:37:08.075230+00:00",
+  "handled_by": "librarian-20261030T033552-310fe9",
   "reacted_at": "2026-10-29T11:16:57.645072+00:00"
  },
  {
@@ -10438,5 +10438,65 @@
   "handled_at": null,
   "handled_by": null,
   "reacted_at": "2026-10-30T03:22:30.187333+00:00"
+ },
+ {
+  "id": 697,
+  "type": "LESSON",
+  "from_agent": "librarian",
+  "to_agent": "system",
+  "hypothesis_id": "H-0090",
+  "payload_json": "{\"avoid\":\"Do not loosen the correlation threshold, z_entry or gap window to raise the count: dev-selected, and a looser threshold admits ordinary correlated peers, the dead peer-lead-lag test (H-0013, H-0066). Do not refile the same pair rule as dual-class or voting premium. Do not read this as evidence that share-class gaps do not revert.\",\"family\":\"etf-premium-arbitrage\",\"instruments\":\"pairs of share classes of one US company in LIQ-500, found by return correlation; long laggard, short leader, 5 days\",\"lesson\":\"Cannot tell, and barely testable here. Few share-class pairs have both classes in the liquid universe, so the judge counted about an order of magnitude fewer events than forecast, on a few dozen dates. The average was positive but inside the placebo cloud, whose bar lay well above cost, so a tradable effect could be missed; gross only matched cost, not the multiple forecast. Thirds were mixed (middle negative, latest positive and holding most events, likely a few pairs). The horizon shape peaked mid-range, at noise level.\",\"mechanism_class\":\"liquidity_provision\",\"open_questions\":\"Only a change in power deserves a card: a universe or explicit pair list holding both classes of every dual-class firm (RAM limits LIQ-1000, K-0003), with a pairs-by-year count written first. Untested: per-pair split, and the cost tier of the less liquid class. Gross near cost leaves a thin net even with more events.\",\"outcome\":\"rejected at G1 (event count): far too few events; average about equal to cost but inside the placebo cloud, cost check also failed\",\"related\":[\"H-0037\",\"H-0077\",\"H-0078\",\"H-0079\",\"H-0080\",\"H-0013\",\"H-0066\"]}",
+  "schema_version": 1,
+  "idempotency_key": "librarian-20261030T033552-310fe9:0",
+  "invocation_id": "librarian-20261030T033552-310fe9",
+  "created_at": "2026-10-30T03:37:08.074465+00:00",
+  "handled_at": "2026-10-30T03:37:08.499002+00:00",
+  "handled_by": "tick",
+  "reacted_at": "2026-10-30T03:37:08.498830+00:00"
+ },
+ {
+  "id": 698,
+  "type": "KNOWLEDGE",
+  "from_agent": "librarian",
+  "to_agent": "system",
+  "hypothesis_id": null,
+  "payload_json": "{\"confidence\":\"medium\",\"evidence\":[\"H-0090\",\"H-0089\",\"H-0077\",\"H-0049\",\"H-0050\",\"K-0069\",\"K-0098\",\"K-0113\"],\"kind\":\"process\",\"statement\":\"H-0049, H-0050, H-0077, H-0089 and now H-0090 forecast far more events than the judge counted (K-0069, K-0098, K-0113). H-0090 (share-class pairs found by return correlation in LIQ-500) forecast 600 to 1200 pair events and 3 to 8 pairs at a time; G0 and G1 both counted 66 events on 30 dates (about 3 a year) against a minimum of 200, roughly an order of magnitude off. The card named 'too few pairs' as the likeliest death and wrote a tripwire (under 100 entries), yet nothing let anyone see the count before G1: G0 reports events_in_dev without comparing it to the G1 minimum, and lab try found no pairs in synthetic data (as K-0082, K-0092, K-0106). The Builder also applied the stricter of two contradictory missing-data clauses (all 126 sigma days valid, not 100), which only lowers the count. Scouts should state events per year for each condition and for their intersection, expect a rare-instrument definition (both classes in the universe, extreme correlation, large gap) to be far rarer than the parts suggest, and avoid contradictory clauses. Suggested: G0 flags events_in_dev below the G1 minimum and reports events (and pairs) by year.\",\"supersedes\":\"K-0113\",\"title\":\"Scout event-count forecasts too high in five cards; rare-instrument definitions worst\"}",
+  "schema_version": 1,
+  "idempotency_key": "librarian-20261030T033552-310fe9:1",
+  "invocation_id": "librarian-20261030T033552-310fe9",
+  "created_at": "2026-10-30T03:37:08.075167+00:00",
+  "handled_at": "2026-10-30T03:37:08.507305+00:00",
+  "handled_by": "tick",
+  "reacted_at": "2026-10-30T03:37:08.507229+00:00"
+ },
+ {
+  "id": 699,
+  "type": "ALERT",
+  "from_agent": "system",
+  "to_agent": "human",
+  "hypothesis_id": null,
+  "payload_json": "{\"severity\":\"critical\",\"text\":\"archivist run archivist-20261031T020508-71ea3f discarded, policy violation: Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-archivist-20261031T020508-71ea3f/242f4087-605f-47dd-8dd5-0ed579f1a10b/tasks/bf50x6a24.output; Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-archivist-20261031T020508-71ea3f/242f4087-605f-47dd-8dd5-0ed579f1a10b/tasks/bf50x6a24.output; Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-archivist-20261031T020508-71ea3f/242f4087-605f-47dd-8dd5-0ed579f1a10b/tasks/bf50x6a24.output; Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-archivist-20261031T020508-71ea3f/242f4087-605f-47dd-8dd5-0ed579f1a10b/tasks/b5vq934lf.output; Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-archivist-20261031T020508-71ea3f/242f4087-605f-47dd-8dd5-0ed579f1a10b/tasks/b5vq934lf.output; Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-archivist-20261031T020508-71ea3f/242f4087-605f-47dd-8dd5-0ed579f1a10b/tasks/b5vq934lf.output; Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-archivist-20261031T020508-71ea3f/242f4087-605f-47dd-8dd5-0ed579f1a10b/tasks/b5vq934lf.output; Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-archivist-20261031T020508-71ea3f/242f4087-605f-47dd-8dd5-0ed579f1a10b/tasks/b5vq934lf.output; Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-archivist-20261031T020508-71ea3f/242f4087-605f-47dd-8dd5-0ed579f1a10b/tasks/b5vq934lf.output; Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-archivist-20261031T020508-71ea3f/242f4087-605f-47dd-8dd5-0ed579f1a10b/tasks/b5vq934lf.output; Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-archivist-20261031T020508-71ea3f/242f4087-605f-47dd-8dd5-0ed579f1a10b/tasks/b5vq934lf.output; Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-ar\"}",
+  "schema_version": 1,
+  "idempotency_key": "ead9f1dc58064aab154e845091936f7c3f96acaf426a8752bdc3918a36023c6e",
+  "invocation_id": null,
+  "created_at": "2026-10-31T02:30:09.645086+00:00",
+  "handled_at": null,
+  "handled_by": null,
+  "reacted_at": "2026-10-31T02:30:10.089230+00:00"
+ },
+ {
+  "id": 700,
+  "type": "ALERT",
+  "from_agent": "system",
+  "to_agent": "human",
+  "hypothesis_id": null,
+  "payload_json": "{\"severity\":\"critical\",\"text\":\"archivist run archivist-20261031T023608-92b41e discarded, policy violation: Read outside the workspace: /tmp/claude-1003/-srv-research-lab-workspaces-archivist-20261031T023608-92b41e/a1b22f46-d4e6-4043-96fe-b7e39db75bb0/tasks/bmskdrbvd.output\"}",
+  "schema_version": 1,
+  "idempotency_key": "d1cdfd84c4935064a97d22ba576204e634e5bfd1b07084257839b103d3d8f3f4",
+  "invocation_id": null,
+  "created_at": "2026-10-31T02:54:42.445502+00:00",
+  "handled_at": null,
+  "handled_by": null,
+  "reacted_at": "2026-10-31T02:54:42.842815+00:00"
  }
 ]

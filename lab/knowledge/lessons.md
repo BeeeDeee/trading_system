@@ -757,3 +757,12 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not loosen the imbalance threshold, add a return tolerance band or lower the volume bar to raise the count: dev-selected, a new trial, and the looser set drifts toward generic reversal against taker flow (H-0035). State events per year for the joint conditions.
 - open questions: Absorption is untested. Needs many more events (more instruments, or a continuous rather than extreme cut) and a reportable control: absorbed hours against flow-driven hours, traded the same way, with a one-candle-later fill.
 - related: H-0035, H-0063, H-0040
+
+## H-0090 – Dual-class twin-share gap reversion - LIQ-500, fade a 2-sigma 5-session gap between two share classes of the same company (return correlation >= 0.95), long laggard / short leader, hold 5 days
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: pairs of share classes of one US company in LIQ-500, found by return correlation; long laggard, short leader, 5 days
+- outcome: rejected at G1 (event count): far too few events; average about equal to cost but inside the placebo cloud, cost check also failed
+- lesson: Cannot tell, and barely testable here. Few share-class pairs have both classes in the liquid universe, so the judge counted about an order of magnitude fewer events than forecast, on a few dozen dates. The average was positive but inside the placebo cloud, whose bar lay well above cost, so a tradable effect could be missed; gross only matched cost, not the multiple forecast. Thirds were mixed (middle negative, latest positive and holding most events, likely a few pairs). The horizon shape peaked mid-range, at noise level.
+- avoid: Do not loosen the correlation threshold, z_entry or gap window to raise the count: dev-selected, and a looser threshold admits ordinary correlated peers, the dead peer-lead-lag test (H-0013, H-0066). Do not refile the same pair rule as dual-class or voting premium. Do not read this as evidence that share-class gaps do not revert.
+- open questions: Only a change in power deserves a card: a universe or explicit pair list holding both classes of every dual-class firm (RAM limits LIQ-1000, K-0003), with a pairs-by-year count written first. Untested: per-pair split, and the cost tier of the less liquid class. Gross near cost leaves a thin net even with more events.
+- related: H-0037, H-0077, H-0078, H-0079, H-0080, H-0013, H-0066

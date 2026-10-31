@@ -1354,5 +1354,17 @@
   "actor": "librarian",
   "message_id": 689,
   "ts": "2026-10-29T09:36:44.914176+00:00"
+ },
+ {
+  "id": "K-0114",
+  "kind": "process",
+  "title": "Scout event-count forecasts too high in five cards; rare-instrument definitions worst",
+  "statement": "H-0049, H-0050, H-0077, H-0089 and now H-0090 forecast far more events than the judge counted (K-0069, K-0098, K-0113). H-0090 (share-class pairs found by return correlation in LIQ-500) forecast 600 to 1200 pair events and 3 to 8 pairs at a time; G0 and G1 both counted 66 events on 30 dates (about 3 a year) against a minimum of 200, roughly an order of magnitude off. The card named 'too few pairs' as the likeliest death and wrote a tripwire (under 100 entries), yet nothing let anyone see the count before G1: G0 reports events_in_dev without comparing it to the G1 minimum, and lab try found no pairs in synthetic data (as K-0082, K-0092, K-0106). The Builder also applied the stricter of two contradictory missing-data clauses (all 126 sigma days valid, not 100), which only lowers the count. Scouts should state events per year for each condition and for their intersection, expect a rare-instrument definition (both classes in the universe, extreme correlation, large gap) to be far rarer than the parts suggest, and avoid contradictory clauses. Suggested: G0 flags events_in_dev below the G1 minimum and reports events (and pairs) by year.",
+  "evidence": "[\"H-0090\",\"H-0089\",\"H-0077\",\"H-0049\",\"H-0050\",\"K-0069\",\"K-0098\",\"K-0113\"]",
+  "confidence": "medium",
+  "supersedes": "K-0113",
+  "actor": "librarian",
+  "message_id": 698,
+  "ts": "2026-10-30T03:37:08.501079+00:00"
  }
 ]

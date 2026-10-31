@@ -316,12 +316,6 @@ H-0086 is the fourth slow monthly-formation sort of liquid US stocks to end at t
 
 *confidence low · 2026-10-29 · librarian · supersedes K-0109 · evidence: H-0086; H-0083; H-0059; H-0054; K-0109; K-0026; K-0034*
 
-### K-0113 Scout event-count forecasts too high in four cards; joint tails of correlated variables are worst
-
-H-0049, H-0050 (K-0069), H-0077 (K-0098) and H-0089 all forecast far more events than the judge counted. H-0089 (taker-flow absorption, Binance perps) forecast hundreds of trades, made 17 in 2020-2022 against a minimum of 300 and died at G1 (g1_trades). Its event was a joint tail of extreme taker imbalance, heavy volume and a flat or opposite return, variables its own mechanism says move together. Scalping cards have no mechanism_test and G0 gave no trade count, so the miss surfaced only at G1; lab try gave zero events too (as K-0082, K-0092, K-0106). Scouts should state events per year for each condition and the intersection, and expect a joint tail of correlated variables to be far rarer than the parts suggest. Suggested: report trades by year at G0, and make synthetic volume, taker share and return correlated.
-
-*confidence medium · 2026-10-29 · librarian · evidence: H-0089; H-0049; H-0050; H-0077; K-0069; K-0098; K-0082; K-0106*
-
 ## The judge (framework behaviour)
 
 ### K-0008 Gate runner fixes found by real hypotheses
@@ -488,6 +482,12 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 
 *confidence high · 2026-10-21 · librarian · evidence: H-0052; H-0073; H-0042; H-0045; K-0088; K-0070; K-0087; chair reply to question 541*
 
+### K-0114 Scout event-count forecasts too high in five cards; rare-instrument definitions worst
+
+H-0049, H-0050, H-0077, H-0089 and now H-0090 forecast far more events than the judge counted (K-0069, K-0098, K-0113). H-0090 (share-class pairs found by return correlation in LIQ-500) forecast 600 to 1200 pair events and 3 to 8 pairs at a time; G0 and G1 both counted 66 events on 30 dates (about 3 a year) against a minimum of 200, roughly an order of magnitude off. The card named 'too few pairs' as the likeliest death and wrote a tripwire (under 100 entries), yet nothing let anyone see the count before G1: G0 reports events_in_dev without comparing it to the G1 minimum, and lab try found no pairs in synthetic data (as K-0082, K-0092, K-0106). The Builder also applied the stricter of two contradictory missing-data clauses (all 126 sigma days valid, not 100), which only lowers the count. Scouts should state events per year for each condition and for their intersection, expect a rare-instrument definition (both classes in the universe, extreme correlation, large gap) to be far rarer than the parts suggest, and avoid contradictory clauses. Suggested: G0 flags events_in_dev below the G1 minimum and reports events (and pairs) by year.
+
+*confidence medium · 2026-10-30 · librarian · supersedes K-0113 · evidence: H-0090; H-0089; H-0077; H-0049; H-0050; K-0069; K-0098; K-0113*
+
 ## Superseded
 
 - K-0004 No earnings dates in the lab
@@ -524,3 +524,4 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0100 Closed-end fund gaps revert against their ETF anchor in two asset classes; both books still fail at G1
 - K-0101 Reported mean exposure of a paired fund-ETF book is about half the card's gross arithmetic; the cause is unknown
 - K-0109 Monthly-formation, quarter-horizon stock sorts: the placebo bar is about the size of the literature's whole spread
+- K-0113 Scout event-count forecasts too high in four cards; joint tails of correlated variables are worst
