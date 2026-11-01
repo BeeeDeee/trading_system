@@ -713,6 +713,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - open questions: Wrapper pressure shows only against the basket's own value (premium to NAV), not in daily closes versus factor proxies; that data is not loadable. The first third held few events because most ETFs list late (K-0075).
 - related: H-0043, H-0037, H-0041, H-0070, H-0075, H-0077, H-0078, H-0079
 
+## H-0081 – TradFi-stress-gated liquidity provision in crypto perps - when VIX is high, buy the day's BTC-residual losers and short the winners among the top-30 Binance perps, dollar-neutral, hold 3 days
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: Top thirty Binance perps, dollar-neutral: after high-VIX days long BTC-residual losers, short winners, three-day hold
+- outcome: rejected at G1: average abnormal return inside the placebo cloud, gross a small fraction of cost, predicted sign in one of three blocks
+- lesson: No reversal in this form: the three-day relative move of stress-day losers and winners was about zero, inside the placebo cloud, and the placebo bar lay far below the round-trip cost, so this is not a power problem. A faint bounce at one to two days was gone by three and negative at five and ten, the shape of the large-coin momentum the card named as its likeliest death. Only the latest third had the predicted sign (a bear stretch with few independent dates); the first was flat and the middle wrong-signed. The gate fired on fewer dates than forecast. The VIX channel was never compared with calm days, so 'stress matters' is untested, not refuted.
+- avoid: Do not retune vix_min, hold_days or the quintile cut, or refile the BTC-residual sort as VIX-gated, macro-stress, credit-gated or TradFi-contagion liquidity provision: same sort, same dates, new trials. Do not trade the mirror (continuation at five to ten days) or single out the latest third: the sign is dev-selected and the window holds one boom-and-bust cycle.
+- open questions: Does any idiosyncratic reversal exist among liquid perps on calm days? The card's own calm-day split was never reported; if the ungated sort is flat, the gate question is moot. Maker-side reversal at the stress moment (K-0049) and smaller pairs are untested.
+- related: H-0006, H-0049, H-0071, H-0035, H-0039, H-0070, H-0041
+
 ## H-0082 – Perp-listing short-constraint relief - short Binance perps of seasoned-spot coins in their first 8 weeks after the perp launch, hedged with the other top-50 perps, weekly
 
 - family: `short-sale-constraint-relief` · mechanism: flow_structural · instruments: Binance perps (top fifty): short coins in the first weeks after the perp launch, seasoned spot pair, hedged with other perps, weekly

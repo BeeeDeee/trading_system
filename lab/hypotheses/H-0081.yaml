@@ -147,7 +147,10 @@ notes: 'Brief fit: short horizon (3 days, grid 2-5) and cross-asset (signal from
   few; residual ranking keeps the leg betas close, and the G1 abnormal return is raw against unmarked peers (K-0074),
   so a remaining beta gap would show as a sign that follows the market across the thirds. The holdout (2023 on)
   is untouched for this rule; crypto has forward data, so the card could reach G5.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-10-28T07:20:18.015971+00:00'
   version: 1
@@ -170,3 +173,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-10-31T21:37:44.342343+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 180, qlab)
+- ts: '2026-10-31T21:37:45.052174+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 181, qlab)

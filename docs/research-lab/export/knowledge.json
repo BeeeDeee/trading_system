@@ -1366,5 +1366,77 @@
   "actor": "librarian",
   "message_id": 698,
   "ts": "2026-10-30T03:37:08.501079+00:00"
+ },
+ {
+  "id": "K-0115",
+  "kind": "framework",
+  "title": "Subscription 'session limit' errors now pause agent runs",
+  "statement": "The Claude subscription window error ('You've hit your session limit, resets 7am UTC') was not in RATE_LIMIT_WORDS, so no pause followed and every 30-minute cycle burnt another agent slot (4 Scout runs on 2026-10-30, 2 Builder runs on 2026-10-27). Since commit dac6ed66 the phrase triggers the same rate_limit_pause_hours pause as a 429.",
+  "evidence": "[\"invocations 2026-10-27, 2026-10-30; commit dac6ed66\"]",
+  "confidence": "high",
+  "supersedes": null,
+  "actor": "human",
+  "message_id": 703,
+  "ts": "2026-10-31T20:47:05.279319+00:00"
+ },
+ {
+  "id": "K-0116",
+  "kind": "framework",
+  "title": "Long Bash commands are waited for, not backgrounded (Archivist lab fetch)",
+  "statement": "Claude Code moves a Bash command that outlives its timeout (2 min default) to the background; the Archivist then polled it with Monitor, sleep and Read of /tmp, each a policy violation, and four runs a night were discarded from 2026-10-27 on, which left every BLOCKED_DATA card stuck. Since commit d980f31c agents run with BASH_DEFAULT_TIMEOUT_MS and BASH_MAX_TIMEOUT_MS of 15 minutes. The cause is inferred from the violation pattern, not from a transcript; if Archivist runs still end in policy violations after 2026-10-31, it is wrong.",
+  "evidence": "[\"alerts 597-600, 623-626, 661-663, 694-696; commit d980f31c\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "human",
+  "message_id": 704,
+  "ts": "2026-10-31T20:47:05.747680+00:00"
+ },
+ {
+  "id": "K-0117",
+  "kind": "framework",
+  "title": "lab try adds instruments named in the strategy to the daily crypto_top_n market",
+  "statement": "A daily crypto_top_n card that reads a named instrument (the BTC factor BTCUSDT.P, a leader) crashed lab try G0 because the synthetic market held only SYNxxUSDT names, although real G0 was unaffected. Since commit 51536516 the daily lab try adds the instrument-like literals of strategy.py and diagnostic.py, as the intraday one already did (K-0057); the .P suffix is accepted.",
+  "evidence": "[\"H-0081 message 641; commit 51536516\"]",
+  "confidence": "high",
+  "supersedes": null,
+  "actor": "human",
+  "message_id": 705,
+  "ts": "2026-10-31T20:47:06.208548+00:00"
+ },
+ {
+  "id": "K-0118",
+  "kind": "framework",
+  "title": "The gate again passed no crypto_top_n universe at G0 on daily perp data (H-0081, after H-0039)",
+  "statement": "H-0081's first G0 run (run 179) crashed because data.universe was None on binance_perp_1d, with the strategy raising 'needs the crypto_top_n point-in-time universe'. H-0039 hit the same crash (K-0054), so it recurred about two weeks later. The card also requested the signal-only fred_macro series VIXCLS; whether that matters is not known. The Builder wrote a fallback that rebuilds the top thirty from 30-day median dollar volume, noting that it may differ from the judge's definition; the Builder's later rewrite after the lab try fix (K-0117) reads data.universe. The summaries do not say which version produced the passing G0 run (run 180), so the event set may or may not be the judge's universe; G0 and G1 counted the same 1802 events, which fits the same definition at both gates but does not prove it. The crash cost one cycle. Suggested: the gate always passes the card's declared crypto_top_n universe on daily perp data; G0 reports which universe the strategy used.",
+  "evidence": "[\"H-0081\",\"H-0039\",\"K-0054\",\"K-0117\",\"run 179\",\"run 180\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 711,
+  "ts": "2026-10-31T22:08:34.381127+00:00"
+ },
+ {
+  "id": "K-0119",
+  "kind": "market",
+  "title": "Daily reversal in liquid crypto perps: four conditioners found none",
+  "statement": "Daily designs on the top perps (2020-2022 dev) conditioned the big moves on funding level (H-0039), funding change (H-0049), perp-versus-spot volume (H-0071) and, new, a US implied-volatility stress gate with both sides marked (H-0081). None gave an average clearly above the placebo cloud with the predicted sign; H-0039 barely cleared, in one episode. In H-0049, H-0071 and H-0081 longer horizons turned negative, the shape of continuation. The placebo bar lay under cost in H-0071 and H-0081, so not a power problem. A positive third was a different third each time: regimes of one boom-and-bust cycle (K-0060). The unconditional daily reversal among these perps was never reported and is the missing control. Open interest and liquidations are not loadable; maker-side reversal (K-0049) and smaller pairs are untested.",
+  "evidence": "[\"H-0081\",\"H-0071\",\"H-0049\",\"H-0039\",\"H-0006\",\"K-0085\",\"K-0084\",\"K-0049\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": "K-0085",
+  "actor": "librarian",
+  "message_id": 713,
+  "ts": "2026-10-31T22:08:34.409288+00:00"
+ },
+ {
+  "id": "K-0120",
+  "kind": "method",
+  "title": "Scout forecasts of events, regime days and cost ran too high in six cards",
+  "statement": "H-0049, H-0050, H-0077, H-0089 and H-0090 forecast far more events than counted (K-0069, K-0098, K-0113); H-0090 forecast 600-1200, counted 66 on 30 dates. H-0081 adds: the VIX gate was expected on 35-45 percent of dev days, 400-500 dates, 4000-6000 events; G0 and G1 counted 1802 events on 207 dates, about a fifth of days (inferred). The card put the liquid-perp round trip at 25-35 bps; G1 used about 91 bps (cost model not read). Gross per event was about 3 bps, so it died on either cost. Scouts should count regime days from the actual series inside the usable period, state events per year per condition and intersection, and take the round trip from the catalog cost tier of the weakest instrument. Suggested: G0 flags events below the G1 minimum and reports events by year.",
+  "evidence": "[\"H-0081\",\"H-0090\",\"H-0089\",\"H-0077\",\"H-0049\",\"H-0050\",\"K-0069\",\"K-0098\",\"K-0113\",\"K-0114\"]",
+  "confidence": "medium",
+  "supersedes": "K-0114",
+  "actor": "librarian",
+  "message_id": 714,
+  "ts": "2026-10-31T22:08:34.415256+00:00"
  }
 ]
