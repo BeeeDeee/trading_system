@@ -63,6 +63,7 @@ def _parser() -> argparse.ArgumentParser:
     bt.add_argument("--to", dest="date_to", required=True, help="YYYY-MM-DD (včetně)")
     bt.add_argument("--label", help="id běhu (default FROM_TO)")
     bt.add_argument("--symbols", help="čárkou oddělené symboly (default celé universe)")
+    bt.add_argument("--families", help="jen tyto rodiny, např. obi (kontrola ctl.obi se přibere)")
     bt.add_argument("--workers", type=int, default=3)
     bt.add_argument("--no-fetch", action="store_true", help="nestahovat, použít data na disku")
     bt.add_argument("--fetch-only", action="store_true", help="jen stáhnout data")

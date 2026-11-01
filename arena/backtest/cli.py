@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import logging
 import sqlite3
 import time
@@ -40,6 +41,12 @@ def _exchange_info(db_path: str) -> str:
 
 def backtest(cfg: Config, args: argparse.Namespace) -> int:
     start, end = args.date_from, args.date_to
+    if args.families:
+        fams = {f.strip().lower() for f in args.families.split(",")}
+        keep = {vid: v for vid, v in cfg.variants.items() if vid.split(".")[0] in fams or vid.split(".")[-1] in fams}
+        if not keep:
+            raise SystemExit(f"žádná varianta pro rodiny {sorted(fams)}")
+        cfg = dataclasses.replace(cfg, variants=keep)
     root = Path(cfg.paths.db).parent / "bt"
     store = Store(root / "data")
     symbols = [s.upper() for s in args.symbols.split(",")] if args.symbols else list(cfg.universe)
