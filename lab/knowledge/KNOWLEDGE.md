@@ -102,12 +102,6 @@ A rebound after forced selling shows as a positive pooled average in four settin
 
 *confidence low · 2026-10-20 · librarian · supersedes K-0056 · evidence: H-0070; H-0041; H-0035; H-0006; H-0049; K-0049; K-0060; K-0074; prior_studies 6-7*
 
-### K-0085 Perp funding and the perp-versus-spot volume split both fail to separate forced from informational big moves
-
-Three daily designs in liquid Binance perps over the 2020-2022 dev window tried to tell forced selling or buying from informational moves. A cross-section on the funding level (H-0039) gave a small multi-day effect that barely cleared the placebo bar and sat in one episode. A crash-day split on the change in funding (H-0049) gave nothing at the first day and the wrong sign at multi-day horizons, worst in the bear-market third. A big-move split on the perp-versus-spot volume ratio, both directions and both classes marked so generic reversal and beta mostly cancel (H-0071), was slightly wrong-signed and inside the placebo cloud, more negative at longer horizons, and positive only in the boom third. The placebo bar lay under cost, so this is not a power problem. Neither observable, what leveraged traders pay or where the volume traded, marks forced flow; a perp-led surge may mark informed trading, and moves that look forced seem to persist rather than reverse. Open interest and liquidation data would observe forced flow directly but are not loadable, and intraday or maker-side versions are untested. The dev window holds one boom-and-bust cycle.
-
-*confidence low · 2026-10-21 · librarian · supersedes K-0066 · evidence: H-0071; H-0049; H-0039; K-0060*
-
 ### K-0088 Short VIXY timing: the unconditional roll-down is the effect
 
 Two cards short the VIX-futures ETP VIXY on a timing rule: over scheduled macro-release steps (H-0052) and in steep contango of the implied-volatility curve measured directly from index options (H-0073). Both had positive averages with gross many times cost, and in both time-shifted placebos of the same instrument earned most of the average, so the rule added little beyond holding the short. Both effects grew roughly evenly with the horizon, the shape of carry, not of an event. K-0070 left implied volatility measured directly as an untested control; the slope is now that control for the carry reading and it does not rescue the idea. In H-0073 the effect was clearly weaker in the later thirds of dev (K-0060), so the roll-down itself may have shrunk. Untested: tail days and drawdown of a timed versus an untimed short, borrow cost, and the actual futures curve. A further short-VIXY timing card has a low prior unless it argues a tail-risk gain, not an average one.
@@ -161,6 +155,12 @@ The same repurchaser-versus-issuer sort was tested at three anchors in LIQ-500. 
 Country equity ETFs sorted on their own past return showed no reversal (H-0060). A five-year-average value score in G10 currency trusts passed the mechanism test (H-0062). The same score, measured only in FX and applied to unhedged country equity ETFs, also passed it (H-0088): above the placebo cloud, gross several times cost, positive in every third, so the local equity leg did not offset the currency recovery over a quarter. This answers the question K-0073 left open. The two currency cards share the signal, so this is one piece of evidence seen twice, on a short sample with few value cycles and a nominal score mixed with carry. Neither book became a strategy: the trust book missed the absolute Sharpe floor, and the equity book earned about T-bill returns, gross near zero, the long leg's gain mirrored by the short leg's loss. Study and book disagree for reasons not separated: G1 sees only the first quarter of a year-long hold, leg betas were not reported, and the book is in cash until the first signal. A further currency-value card has a low prior unless it reconciles study and book, hedges equity beta, or separates value from carry.
 
 *confidence low · 2026-10-29 · librarian · supersedes K-0073 · evidence: H-0088; H-0062; H-0060; K-0073; K-0074; K-0076; K-0097*
+
+### K-0119 Daily reversal in liquid crypto perps: four conditioners found none
+
+Daily designs on the top perps (2020-2022 dev) conditioned the big moves on funding level (H-0039), funding change (H-0049), perp-versus-spot volume (H-0071) and, new, a US implied-volatility stress gate with both sides marked (H-0081). None gave an average clearly above the placebo cloud with the predicted sign; H-0039 barely cleared, in one episode. In H-0049, H-0071 and H-0081 longer horizons turned negative, the shape of continuation. The placebo bar lay under cost in H-0071 and H-0081, so not a power problem. A positive third was a different third each time: regimes of one boom-and-bust cycle (K-0060). The unconditional daily reversal among these perps was never reported and is the missing control. Open interest and liquidations are not loadable; maker-side reversal (K-0049) and smaller pairs are untested.
+
+*confidence low · 2026-10-31 · librarian · supersedes K-0085 · evidence: H-0081; H-0071; H-0049; H-0039; H-0006; K-0085; K-0084; K-0049; K-0060*
 
 ## Data
 
@@ -316,6 +316,12 @@ H-0086 is the fourth slow monthly-formation sort of liquid US stocks to end at t
 
 *confidence low · 2026-10-29 · librarian · supersedes K-0109 · evidence: H-0086; H-0083; H-0059; H-0054; K-0109; K-0026; K-0034*
 
+### K-0120 Scout forecasts of events, regime days and cost ran too high in six cards
+
+H-0049, H-0050, H-0077, H-0089 and H-0090 forecast far more events than counted (K-0069, K-0098, K-0113); H-0090 forecast 600-1200, counted 66 on 30 dates. H-0081 adds: the VIX gate was expected on 35-45 percent of dev days, 400-500 dates, 4000-6000 events; G0 and G1 counted 1802 events on 207 dates, about a fifth of days (inferred). The card put the liquid-perp round trip at 25-35 bps; G1 used about 91 bps (cost model not read). Gross per event was about 3 bps, so it died on either cost. Scouts should count regime days from the actual series inside the usable period, state events per year per condition and intersection, and take the round trip from the catalog cost tier of the weakest instrument. Suggested: G0 flags events below the G1 minimum and reports events by year.
+
+*confidence medium · 2026-10-31 · librarian · supersedes K-0114 · evidence: H-0081; H-0090; H-0089; H-0077; H-0049; H-0050; K-0069; K-0098; K-0113; K-0114*
+
 ## The judge (framework behaviour)
 
 ### K-0008 Gate runner fixes found by real hypotheses
@@ -426,6 +432,30 @@ The Builder of H-0082 reports that the synthetic market in lab try has no spot i
 
 *confidence medium · 2026-10-28 · librarian · evidence: H-0082; K-0082; K-0092; K-0075*
 
+### K-0115 Subscription 'session limit' errors now pause agent runs
+
+The Claude subscription window error ('You've hit your session limit, resets 7am UTC') was not in RATE_LIMIT_WORDS, so no pause followed and every 30-minute cycle burnt another agent slot (4 Scout runs on 2026-10-30, 2 Builder runs on 2026-10-27). Since commit dac6ed66 the phrase triggers the same rate_limit_pause_hours pause as a 429.
+
+*confidence high · 2026-10-31 · human · evidence: invocations 2026-10-27, 2026-10-30; commit dac6ed66*
+
+### K-0116 Long Bash commands are waited for, not backgrounded (Archivist lab fetch)
+
+Claude Code moves a Bash command that outlives its timeout (2 min default) to the background; the Archivist then polled it with Monitor, sleep and Read of /tmp, each a policy violation, and four runs a night were discarded from 2026-10-27 on, which left every BLOCKED_DATA card stuck. Since commit d980f31c agents run with BASH_DEFAULT_TIMEOUT_MS and BASH_MAX_TIMEOUT_MS of 15 minutes. The cause is inferred from the violation pattern, not from a transcript; if Archivist runs still end in policy violations after 2026-10-31, it is wrong.
+
+*confidence medium · 2026-10-31 · human · evidence: alerts 597-600, 623-626, 661-663, 694-696; commit d980f31c*
+
+### K-0117 lab try adds instruments named in the strategy to the daily crypto_top_n market
+
+A daily crypto_top_n card that reads a named instrument (the BTC factor BTCUSDT.P, a leader) crashed lab try G0 because the synthetic market held only SYNxxUSDT names, although real G0 was unaffected. Since commit 51536516 the daily lab try adds the instrument-like literals of strategy.py and diagnostic.py, as the intraday one already did (K-0057); the .P suffix is accepted.
+
+*confidence high · 2026-10-31 · human · evidence: H-0081 message 641; commit 51536516*
+
+### K-0118 The gate again passed no crypto_top_n universe at G0 on daily perp data (H-0081, after H-0039)
+
+H-0081's first G0 run (run 179) crashed because data.universe was None on binance_perp_1d, with the strategy raising 'needs the crypto_top_n point-in-time universe'. H-0039 hit the same crash (K-0054), so it recurred about two weeks later. The card also requested the signal-only fred_macro series VIXCLS; whether that matters is not known. The Builder wrote a fallback that rebuilds the top thirty from 30-day median dollar volume, noting that it may differ from the judge's definition; the Builder's later rewrite after the lab try fix (K-0117) reads data.universe. The summaries do not say which version produced the passing G0 run (run 180), so the event set may or may not be the judge's universe; G0 and G1 counted the same 1802 events, which fits the same definition at both gates but does not prove it. The crash cost one cycle. Suggested: the gate always passes the card's declared crypto_top_n universe on daily perp data; G0 reports which universe the strategy used.
+
+*confidence low · 2026-10-31 · librarian · evidence: H-0081; H-0039; K-0054; K-0117; run 179; run 180*
+
 ## How the lab works
 
 ### K-0010 Fail loudly on missing inputs
@@ -482,12 +512,6 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 
 *confidence high · 2026-10-21 · librarian · evidence: H-0052; H-0073; H-0042; H-0045; K-0088; K-0070; K-0087; chair reply to question 541*
 
-### K-0114 Scout event-count forecasts too high in five cards; rare-instrument definitions worst
-
-H-0049, H-0050, H-0077, H-0089 and now H-0090 forecast far more events than the judge counted (K-0069, K-0098, K-0113). H-0090 (share-class pairs found by return correlation in LIQ-500) forecast 600 to 1200 pair events and 3 to 8 pairs at a time; G0 and G1 both counted 66 events on 30 dates (about 3 a year) against a minimum of 200, roughly an order of magnitude off. The card named 'too few pairs' as the likeliest death and wrote a tripwire (under 100 entries), yet nothing let anyone see the count before G1: G0 reports events_in_dev without comparing it to the G1 minimum, and lab try found no pairs in synthetic data (as K-0082, K-0092, K-0106). The Builder also applied the stricter of two contradictory missing-data clauses (all 126 sigma days valid, not 100), which only lowers the count. Scouts should state events per year for each condition and for their intersection, expect a rare-instrument definition (both classes in the universe, extreme correlation, large gap) to be far rarer than the parts suggest, and avoid contradictory clauses. Suggested: G0 flags events_in_dev below the G1 minimum and reports events (and pairs) by year.
-
-*confidence medium · 2026-10-30 · librarian · supersedes K-0113 · evidence: H-0090; H-0089; H-0077; H-0049; H-0050; K-0069; K-0098; K-0113*
-
 ## Superseded
 
 - K-0004 No earnings dates in the lab
@@ -520,8 +544,10 @@ H-0049, H-0050, H-0077, H-0089 and now H-0090 forecast far more events than the 
 - K-0073 Multi-year reversal: absent in country equity ETFs, present for currency value in a short sample
 - K-0075 Signal history before the dev start or the ETFs' first date seems not to warm up the first signals
 - K-0081 On real earnings dates the events that cleared the placebo test sort on the stock's own price move
+- K-0085 Perp funding and the perp-versus-spot volume split both fail to separate forced from informational big moves
 - K-0099 Wrapper gaps revert where no arbitrage link exists: closed-end funds cleared the placebo test, twin ETFs did not
 - K-0100 Closed-end fund gaps revert against their ETF anchor in two asset classes; both books still fail at G1
 - K-0101 Reported mean exposure of a paired fund-ETF book is about half the card's gross arithmetic; the cause is unknown
 - K-0109 Monthly-formation, quarter-horizon stock sorts: the placebo bar is about the size of the literature's whole spread
 - K-0113 Scout event-count forecasts too high in four cards; joint tails of correlated variables are worst
+- K-0114 Scout event-count forecasts too high in five cards; rare-instrument definitions worst
