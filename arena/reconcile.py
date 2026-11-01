@@ -9,7 +9,9 @@
 
 Snímek burzy (pozice, příkazy) se bere dřív, než se rozhoduje. Symbol, u kterého mezitím běží nebo proběhl vstup či
 výstup (zámek symbolu drží, nebo se změnil uložený stav), se v tomto kole přeskočí: snímek je zastaralý a rozhodnutí
-by se opíralo o burzu, která tu operaci ještě nevidí (2026-10-27: vstup uzavřený jako „reconciled“ a symbol zmrazený)."""
+by se opíralo o burzu, která tu operaci ještě nevidí (2026-10-27: vstup uzavřený jako „reconciled“ a symbol zmrazený).
+Stejně se 30 s po odeslání výstupu (EXITING/EMERGENCY_CLOSE) počká na fill z WS (2026-11-01: time-exit uzavřený jako
+„reconciled“ s přibližnou cenou)."""
 
 from __future__ import annotations
 
@@ -25,6 +27,8 @@ from arena.execution.live import LiveExecutor, LivePosition
 from arena.risk import RiskGuard
 
 log = logging.getLogger(__name__)
+
+EXIT_GRACE_MS = 30_000   # po odeslání výstupu dostane WS čas doručit fill, než ho rekonciliace začne dohledávat
 
 
 @dataclass
@@ -50,7 +54,12 @@ class Reconciler:
     _alerted: dict[str, int] = field(default_factory=dict)
 
     def _stale(self, sym: str, rev0: dict[str, int]) -> bool:
-        return self.executor.lock(sym).locked() or self.executor.rev.get(sym, 0) != rev0.get(sym, 0)
+        if self.executor.lock(sym).locked() or self.executor.rev.get(sym, 0) != rev0.get(sym, 0):
+            return True
+        # výstup odeslán, ale fill z private WS ještě nezapsán: burza už je prázdná, DB ještě ne (2026-11-01 04:45)
+        pos = self.executor.positions.get(sym)
+        return (pos is not None and pos.state in ("EXITING", "EMERGENCY_CLOSE") and pos.exit_acked_ts is not None
+                and self.executor.now_ms() - pos.exit_acked_ts < EXIT_GRACE_MS)
 
     async def run(self, fix: bool = True) -> list[Diff]:
         diffs: list[Diff] = []

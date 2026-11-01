@@ -454,3 +454,16 @@ async def test_reconcile_alert_not_repeated_every_cycle():
     for _ in range(5):
         await rec.run(fix=True)
     assert [a[0] for a in alerts].count("FOREIGN_POSITION") == 1
+
+
+async def test_reconcile_waits_for_ws_fill_after_exit_sent():
+    """2026-11-01 04:45: burza po TX už nemá pozici, fill z WS ještě nedorazil → nesmí se uzavřít jako reconciled."""
+    ex, fx, db, alerts, closed = make()
+    pos = await open_(ex)
+    pos.state, pos.exit_kind, pos.exit_acked_ts = "EXITING", "TX", ex.now_ms()
+    fx.positions[SYM] = Decimal("0")
+    rec = Reconciler(fx, ex, RiskGuard(load_config(), db, False), (SYM,), alert=lambda t, m: alerts.append((t, m)))
+    assert await rec.run(fix=True) == [] and SYM in ex.positions
+    pos.exit_acked_ts = ex.now_ms() - 31_000      # fill po 30 s pořád nikde → dohledat
+    diffs = await rec.run(fix=True)
+    assert "POSITION_GONE" in [d.kind for d in diffs]

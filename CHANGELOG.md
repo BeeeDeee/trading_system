@@ -86,6 +86,19 @@ signály `brk` přepočtené z barů v DB, ukazatele paper pozic. Opraveno:
   s DB verzí včetně díry v datech). `arena replay` sdílí `book_bar_rows` a `build_executor`.
 - Explorativní: mimo experiment a rozhodnutí na dni 45/90. Omezení (fill bez knihy, dnešní filtry) jsou i v záložce.
 
+## Oprava: rekonciliace vs. výstup čekající na fill z WS, 2026-11-01
+
+Kontrola 24 h po nasazení opravy ze 2026-10-31: `frozen_symbols` prázdné, 115 live xp obchodů, 0× FOREIGN_POSITION /
+ENTRY_NOT_FOUND / POSITION_GONE / QTY_MISMATCH v logu, `arena reconcile` bez rozdílů. Původní race se nevrátil.
+Dva obchody mimo čistý průběh:
+- DOGE `l-xp.v00.DOGEUSDT-35`, 04:45: time-exit TX se na burze vyplnil 04:45:04, reconcile běžel těsně potom (burza prázdná,
+  v DB EXITING, zámek volný, rev beze změny) a uzavřel obchod jako `reconciled` s přibližnou cenou. Oprava: výstup přijatý
+  burzou (`exit_acked_ts`) se 30 s nerekonciluje, fill dorazí přes WS. Test `test_reconcile_waits_for_ws_fill_after_exit_sent`
+  padá na starém kódu.
+- SOL `l-xp.v00.SOLUSDT-82`, 06:15: `emergency` (alert „selhání ochrany“, HS po vstupu zrušen), −9 bps. Příčina zatím
+  nevyšetřena (nesouvisí s reconcile).
+Ověření oprav proto zůstává otevřené: potřeba den provozu po této opravě bez `reconciled`.
+
 ## Exec probe (rodina xp), 2026-10-25
 
 - Důvod: strategie dávají ~7 live vstupů denně na 5 slotů, takže 200 round tripů z P5 by trvalo týdny. `xp.v00` vstupuje

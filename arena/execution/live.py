@@ -65,6 +65,7 @@ class LivePosition:
     exit_kind: str | None = None
     exit_trigger_px: float | None = None
     exit_trigger_ts: int | None = None
+    exit_acked_ts: int | None = None   # burza přijala výstupní MARKET; fill ještě nemusí být zapsán
     trigger_src: str = ""                  # "algo" (ALGO_UPDATE) | "fill" (odhad z fillu, ALGO_UPDATE nedorazil)
     exit_qty: float = 0.0
     exit_notional: float = 0.0
@@ -481,6 +482,8 @@ class LiveExecutor:
             if resp and Decimal(str(resp.get("executedQty", "0"))) > 0 and pos.exit_qty == 0:
                 # fill z RESULT; ORDER_TRADE_UPDATE ho doplní poplatkem (idempotentně podle trade id)
                 pos.exit_time = int(resp.get("updateTime") or self.now_ms())
+            pos.exit_acked_ts = self.now_ms()
+            self.save(pos)
             return True
         return False
 
