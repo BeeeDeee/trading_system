@@ -76,7 +76,7 @@ def _summary(msg_type: str, p: dict) -> str:
 
 
 def invocations(lab: Lab, limit: int = 50) -> list[dict]:
-    rows = lab.con.execute("SELECT id, agent, model, hypothesis_id, started_at, ended_at, outcome, error "
+    rows = lab.con.execute("SELECT id, agent, model, hypothesis_id, started_at, ended_at, outcome, error, n_turns "
                            "FROM agent_invocations ORDER BY started_at DESC LIMIT ?", (limit,))
     return [dict(r) for r in rows]
 

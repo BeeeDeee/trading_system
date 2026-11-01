@@ -13,6 +13,7 @@ import os
 import shlex
 import sys
 import tempfile
+from datetime import datetime
 from pathlib import Path
 
 import yaml
@@ -262,8 +263,10 @@ def _direct(args) -> int:
             return 0 if ok else 1
         case "invocations":
             for r in report.invocations(lab, args.limit):
+                wall = (f"{(datetime.fromisoformat(r['ended_at']) - datetime.fromisoformat(r['started_at'])).total_seconds():.0f}s"
+                        if r["ended_at"] else "-")
                 print(f"{r['started_at'][:19]}  {r['agent']:<10} {r['hypothesis_id'] or '-':<7} "
-                      f"{r['outcome'] or 'running':<16} {r['error'] or ''}")
+                      f"{r['outcome'] or 'running':<16} {wall:>6} {r['n_turns'] or '-':>4}t  {r['error'] or ''}")
         case "catalog":
             for d in catalog.load(lab.paths.catalog).values():
                 print(f"{d['id']:<22} {d['asset_class']:<12} {d['frequency']:<6} {d['range'][0]}..{d['range'][1]}"

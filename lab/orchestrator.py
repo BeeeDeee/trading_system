@@ -12,6 +12,7 @@ a quiet window, a pause after a rate-limit error, a PAUSE file the owner can cre
 import fcntl
 import json
 import os
+import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -180,6 +181,21 @@ def infrastructure_broken(lab: Lab, n: int = 3) -> bool:
 # "session limit": the Claude subscription window ("You've hit your session limit · resets 7am (UTC)"); without it
 # four Scout runs were burnt in a row before the reset (2026-10-30)
 RATE_LIMIT_WORDS = ("rate limit", "rate_limit", "usage limit", "session limit", "429", "overloaded", "quota")
+RESETS_AT = re.compile(r"resets (\d{1,2})(?::(\d\d))? ?([ap]m) \(utc\)", re.I)
+
+
+def pause_until(error: str, at: datetime, hours: float) -> datetime:
+    """End of a rate-limit pause: the reset time the message names ("resets 7am (UTC)"), never later than
+    `hours` from now; `hours` from now when the message names none."""
+    default = at + timedelta(hours=hours)
+    m = RESETS_AT.search(error or "")
+    if not m:
+        return default
+    reset = at.astimezone(timezone.utc).replace(hour=int(m[1]) % 12 + (12 if m[3].lower() == "pm" else 0),
+                                                minute=int(m[2] or 0), second=0, microsecond=0)
+    if reset <= at:
+        reset += timedelta(days=1)
+    return min(reset, default)
 
 
 def production_cycle(lab: Lab, policy_path: Path, *, agents: bool = True, dry_run: bool = False,
@@ -249,7 +265,7 @@ def production_cycle(lab: Lab, policy_path: Path, *, agents: bool = True, dry_ru
                              f"agent runs paused (PAUSE file): {reason}. Fix it, then delete the PAUSE file."})
                     break
                 if row["outcome"] == "failed" and any(w in (row["error"] or "").lower() for w in RATE_LIMIT_WORDS):
-                    until = at + timedelta(hours=policy.rate_limit_pause_hours)
+                    until = pause_until(row["error"], at, policy.rate_limit_pause_hours)
                     (home / "RATE_LIMITED_UNTIL").write_text(until.isoformat(timespec="seconds"))
                     lab.send("ALERT", "system", "human", None, {"severity": "warning",
                              "text": f"rate limit hit by {task.agent}; agent runs paused until {until:%Y-%m-%d %H:%M} UTC"})

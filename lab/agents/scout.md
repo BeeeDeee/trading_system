@@ -134,6 +134,8 @@ indicator crossovers. The paper bots are daily, so a scalping card can pass at m
    literature prior adds 20 trials in G3 and a publication-decay check in G2, so a famous anomaly has to be
    clearly stronger than a novel one. Never invent a citation; omit the year if unsure. You may use WebSearch
    to check a reference or find related literature, never to look up prices or backtest results of your idea.
+   At most 3 searches per run; then write the card with what you have (omit a reference you could not check).
+   The run has a wall-clock limit and a run that hits it produces nothing.
 10. **Falsification criteria** that the gates can check (e.g. "net Sharpe on dev below 60/40 + 0.10",
    "neighbors of lookback 63 do not beat the benchmark"), plus at least one about the mechanism itself.
 

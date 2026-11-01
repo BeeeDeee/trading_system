@@ -2,13 +2,13 @@
 
 import fcntl
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import yaml
 
 from lab import stubs
 from lab.framework.headless import RunResult
-from lab.orchestrator import Policy, gate, production_cycle
+from lab.orchestrator import Policy, gate, pause_until, production_cycle
 
 from .conftest import Evaluator, submit
 
@@ -60,6 +60,15 @@ def test_subscription_session_limit_pauses_agents(lab, card, tmp_path):
                            runners={"builder": lambda lab, inv: RunResult(1, note=msg)})
     assert rec["agents"][0]["outcome"] == "failed"
     assert (lab.paths.home / "RATE_LIMITED_UNTIL").exists()
+
+
+def test_pause_ends_at_the_reset_time_the_message_names():
+    msg = "success: You've hit your session limit · resets 7am (UTC)"
+    at = NOON.replace(hour=6, minute=35)
+    assert pause_until(msg, at, 5) == NOON.replace(hour=7)
+    assert pause_until(msg, NOON, 5) == NOON + timedelta(hours=5)          # next 7am is 19 h away: capped
+    assert pause_until("resets 9:30pm (UTC)", NOON.replace(hour=19), 5) == NOON.replace(hour=21, minute=30)
+    assert pause_until("429 rate limit", at, 5) == at + timedelta(hours=5)
 
 
 def test_scout_proposes_when_the_pipeline_is_empty(lab, tmp_path):
