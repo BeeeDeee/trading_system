@@ -24,7 +24,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from types import ModuleType
 
-ALLOWED_IMPORTS = {"numpy", "math", "statistics", "lab.framework.api", "lab.framework.data", "__future__", "typing",
+ALLOWED_IMPORTS = {"numpy", "math", "statistics", "lab.framework.api", "lab.framework.data", "lab.framework.ml", "__future__", "typing",
                    "dataclasses", "functools", "itertools"}
 FORBIDDEN_NAMES = {"open", "eval", "exec", "compile", "__import__", "globals", "locals", "vars", "getattr",
                    "setattr", "delattr", "input", "breakpoint", "memoryview"}

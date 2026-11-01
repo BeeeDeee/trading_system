@@ -106,7 +106,7 @@ def _spec_and_data(lab: Lab, hid: str, m) -> str:
         lab.send("QUESTION", "system", ask_to, hid,
                  {"question": f"{hid} stays in IDEA: missing {', '.join(missing)}", "in_reply_to": m["id"]})
         return "stays IDEA (incomplete)"
-    grid = validate.grid_problems(card)
+    grid = validate.grid_problems(card) + validate.ml_problems(card)
     if grid:
         lab.send("QUESTION", "system", ask_to, hid,
                  {"question": f"{hid} stays in IDEA: " + "; ".join(grid), "in_reply_to": m["id"]})

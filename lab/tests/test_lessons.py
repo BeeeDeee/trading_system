@@ -78,7 +78,7 @@ def test_librarian_definition_and_workspace(lab, card):
 def test_scout_brief_targets_the_least_explored_cell(lab, card):
     from lab.framework import briefs
     first = briefs.choose(lab)
-    assert first == {"horizon": "scalp", "group": "crypto", "multi_timeframe": False}
+    assert first == {"horizon": "scalp", "group": "crypto", "multi_timeframe": False, "ml": False}
     assert "SCALPING" in briefs.text(first) and "binance_perp_15m" in briefs.text(first)
     crypto = dict(card, asset_classes=["crypto_spot"], holding_period={"typical_days": 0.2, "rebalance": "daily"})
     submit(lab, crypto)

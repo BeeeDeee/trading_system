@@ -20,7 +20,7 @@ agents:
     prompt: scout.md
     tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch]   # literature search; no WebFetch (data-blind)
     timeout_s: 1500   # 16 of 107 runs hit the default 900 s (2026-10-05..11-01), in clusters
-    context: [factsheets, prior_studies, lessons, knowledge, card_schema, card_example, gates]
+    context: [factsheets, prior_studies, lessons, knowledge, card_schema, card_example, card_example_ml, gates]
 
   builder:
     model: claude-opus-5-5

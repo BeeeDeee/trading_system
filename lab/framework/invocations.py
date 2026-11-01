@@ -140,6 +140,7 @@ def check_card(ws: Path, rel: str) -> tuple[list[str], list[str]]:
         return errors, []
     errors += [f"missing or empty for SPECIFIED: {f}" for f in validate.specified_missing(card)]
     errors += validate.grid_problems(card)
+    errors += validate.ml_problems(card)
     warnings = [w for w in validate.grid_problems(card, both_sides=True) if w not in errors]
     if card.get("data_requirements"):
         errors += attached.requirement_problems(card, catalog.load(ws / "catalog.yaml"))
@@ -147,6 +148,13 @@ def check_card(ws: Path, rel: str) -> tuple[list[str], list[str]]:
         errors += [f"dataset {r['dataset']} is not in the catalog (the card would go to BLOCKED_DATA)"
                    for r in res.missing]
         errors += res.problems
+    if card.get("ml"):
+        grid = 1
+        for p in (card.get("signal") or {}).get("params", {}).values():
+            grid *= 3 if len(p.get("grid", [])) > 1 else 1
+        if card["ml"]["model"] in ("lstm", "tcn") and grid > 9:
+            warnings.append(f"ml: G2 refits the {card['ml']['model']} for up to {grid} neighbor configurations (minutes each); "
+                            "keep the grid to one or two parameters")
     registry = json.loads((ws / "registry.json").read_text())
     title = card["title"].strip().lower()
     warnings += [f"same title as {h['id']} ({h['status']})" for h in registry

@@ -71,7 +71,7 @@ $BRANCH into $APP." || return 0
 
 step_venv() {
   ask "Python environment" "uv sync in $APP (Python 3.12, as $CORE), then the lab test suite." || return 0
-  as_core "cd $APP && UV_PYTHON_INSTALL_DIR=/srv/research-lab/app/.python uv sync -q && uv run pytest lab/tests -q -x 2>&1 | tail -3"
+  as_core "cd $APP && UV_PYTHON_INSTALL_DIR=/srv/research-lab/app/.python uv sync -q --extra deep && uv run --extra deep pytest lab/tests -q -x 2>&1 | tail -3"
   sudo chmod -R a+rX "$APP"
 }
 
@@ -141,7 +141,7 @@ step_update() {
   ask "Update the app" "As $CORE: git pull in $APP, uv sync, canaries; then reinstall the systemd units and the sudoers
 file from the new checkout. The cycle timer is stopped meanwhile and restarted at the end." || return 0
   sudo systemctl stop research-lab-cycle.timer
-  as_core "cd $APP && git pull --no-rebase -q && UV_PYTHON_INSTALL_DIR=$APP/.python uv sync -q && LAB_HOME=$HOME_DIR .venv/bin/lab canaries | tail -1"
+  as_core "cd $APP && git pull --no-rebase -q && UV_PYTHON_INSTALL_DIR=$APP/.python uv sync -q --extra deep && LAB_HOME=$HOME_DIR .venv/bin/lab canaries | tail -1"
   sudo chmod -R a+rX "$APP"
   sudo install -m 644 "$APP"/deploy/research-lab/research-lab-{cycle,nightly}.{service,timer} /etc/systemd/system/
   sudo visudo -cf "$APP/deploy/research-lab/sudoers" && sudo install -m 440 -o root -g root "$APP/deploy/research-lab/sudoers" /etc/sudoers.d/research-lab

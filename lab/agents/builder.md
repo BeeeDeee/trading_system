@@ -154,6 +154,49 @@ and the engine fills at the open of row t + 1. The engine charges fees, slippage
 - `lab try` runs G0 on a 60-day synthetic market and prints trades and turnover (no returns). Your tests go in
   `strategy/test_strategy.py` as before, using `lab.framework.intraday.synthetic_view()` for data.
 
+## Learned-model cards (`ml` block in the card)
+
+Never import or write training code. The static scan allows only `lab.framework.ml`, which provides:
+
+- `stack(*features)` -> (T, N, F) float32; `cs_zscore(x, universe)`, `cs_rank(x, universe)` per-date cross-sectional
+  scaling over the universe members (use them on every feature: models see no raw scales);
+- `forward_return(data, horizon)` -> the label (next open to the open `horizon` rows later; NaN where incomplete);
+  it looks ahead by construction, **only** pass it to `walk_forward`, never use it in a feature or a weight;
+- `walk_forward(X, y, horizon=, model=, params=, retrain_every=, universe=, train_days=None, seed=0)` -> (T, N)
+  scores, point-in-time. `horizon` must equal the horizon used in `forward_return` (it is the purge). `model` is the
+  card's `ml.model`; `params` holds only that model's hyperparameters (unknown names raise), taken from `params`;
+  `retrain_every` is the card's `ml.retrain_every_days`;
+- `score_weights(score, universe, top=0.2, bottom=0.0, min_names=10)` -> equal-weight book (long the top fraction;
+  `bottom > 0` also shorts the bottom fraction, 0.5 / 0.5; fewer than `min_names` scored members = flat).
+
+```python
+import numpy as np
+from lab.framework.api import only_on, period_starts, total_return_index, trailing_return, rolling_std
+from lab.framework.ml import cs_zscore, forward_return, score_weights, stack, walk_forward
+
+PARAMS = {"horizon": 5, "n_estimators": 100, "top": 0.2}
+
+def target_weights(data, params):
+    uni = data.universe                                    # None for an explicit instrument list
+    idx = total_return_index(data)
+    X = stack(*[cs_zscore(trailing_return(idx, k), uni) for k in (5, 21, 63)])   # the card's features, point-in-time
+    h = int(params["horizon"])
+    score = walk_forward(X, forward_return(data, h), horizon=h, model="gbm",
+                         params={"n_estimators": int(params["n_estimators"])}, retrain_every=126, universe=uni)
+    return only_on(period_starts(data.dates, "W"), score_weights(score, uni, top=params["top"]))
+```
+
+Rules specific to these cards: build every feature exactly as the card lists it and nothing else (no extra feature
+because it looks useful); take the model name, horizon and schedule from the card; do not tune the seed; features
+must use only rows <= t (`lab try` runs the same truncation / perturbation test on the model scores, with fewer cuts);
+use `data.universe` for the universe argument and never score or hold non-members; NaN features stay NaN (the
+framework skips incomplete vectors). `lab try` on the synthetic market takes longer for these cards (a model is
+fitted for every refit date; lstm / tcn take minutes) and shows no performance: random data teaches no model anything.
+Tests: check feature shapes and NaN handling on small inputs, the weights' gross <= 1 and that the first
+weights appear only after the first refit (`min_train_days` of history), not that the model "works".
+The diagnostic (`mechanism_test`) marks the top-score event with the same pipeline: call the same feature and
+`walk_forward` code (copy it; `diagnostic.py` is a separate file) and mark members entering the long (short) leg.
+
 ## The diagnostic (only when the card has `mechanism_test`)
 
 Also write `strategy/diagnostic.py` and list it in IMPL_DONE `files`:

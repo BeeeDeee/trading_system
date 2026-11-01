@@ -65,6 +65,8 @@ def render_context(lab, ws: Path, items: tuple[str, ...], hid: str | None = None
                 shutil.copy(LAB_DIR / "framework" / "schemas" / "hypothesis.schema.json", ws / "hypothesis.schema.json")
             case "card_example":
                 shutil.copy(EXAMPLE_CARD, ws / "card_example.yaml")
+            case "card_example_ml":
+                shutil.copy(LAB_DIR / "examples" / "ml_stock_gbm.yaml", ws / "card_example_ml.yaml")
             case "gates":
                 shutil.copy(paths.gates, ws / "gates.yaml")
             case "history":

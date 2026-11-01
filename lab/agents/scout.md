@@ -22,6 +22,7 @@ be sent as a message with the `lab` command; text in your final answer is only l
 | `gates.yaml` | the exact thresholds every hypothesis must pass, and how the benchmark is chosen |
 | `hypothesis.schema.json` | JSON Schema of a card |
 | `card_example.yaml` | a complete, valid card (an example of the format, not a good idea) |
+| `card_example_ml.yaml` | the same for a learned-model card (an `ml` block) |
 | `card.yaml` | only when the task is about an existing hypothesis: its current card |
 
 ## Commands (the only shell commands you may run)
@@ -78,6 +79,50 @@ random times. **Costs decide everything**: every change of position pays a 5 bps
 rare, selective entries on an event with a counterparty (forced liquidations and the rebound after them,
 funding-settlement flows, session opens, taker-flow imbalance, volatility compression before expansion) over
 indicator crossovers. The paper bots are daily, so a scalping card can pass at most G4 (holdout).
+
+## Learned-model cards (machine learning): `ml` block
+
+You may propose a signal that is the output of a model trained walk-forward: random forest, gradient boosting,
+a small MLP, ridge or logistic regression, and sequence models (LSTM, TCN) on the last days of the feature
+vectors. The task brief asks for one when the lab has few. You do not write training code and neither does the
+Builder: all training goes through the framework function `lab.framework.ml.walk_forward`, which owns the label,
+the purge (training uses only labels fully realized by the decision date), the refit schedule, the seeds and the
+compute budget. What you design is the **hypothesis around the model**:
+
+- **Models** (`ml.model`): `ridge`, `logit` (linear baselines), `rf`, `gbm` (LightGBM), `mlp`, `lstm`, `tcn`
+  (`lstm` / `tcn` only if the sandbox has torch; `lab check` tells you). Hyperparameters a card may set (in
+  `signal.params`, with a grid like any parameter): ridge `alpha`; logit `C`; rf `n_estimators`, `max_depth`,
+  `min_samples_leaf`, `max_features`; gbm `n_estimators`, `learning_rate`, `num_leaves`, `min_child_samples`,
+  `subsample`, `colsample`; mlp `hidden`, `alpha`, `epochs`; lstm / tcn `hidden` (<= 64), `seq_len`
+  (5-60), `epochs` (<= 10), `lr`, `weight_decay`, `dropout` (tcn also `levels`).
+- **Label**: total return from the next open to the open `horizon_days` later, ranked across the universe on each
+  date. `horizon_days` must match `holding_period.typical_days` (the model should predict what the position earns).
+- **Features**: 3-8 point-in-time features, each with a reason (what economic state it measures). Built from the
+  returns, dollar volume, `funding`/`basis`, attached fundamentals and `series` the catalog offers, z-scored across
+  the universe by the framework helper. "All technical indicators" is a fishing net, not a feature set.
+- **Data size is the limit.** The model learns from (date x stock) samples: cross-sectional cards on `liq_n`
+  (n >= 100) or `sp500` stocks, or `crypto_top_n` (n >= 15), have tens of thousands of samples per refit. A model on
+  3 ETFs or one coin has a few thousand autocorrelated points and learns noise; do not propose it. Refit at most
+  every `retrain_every_days` rows with at most 150 refits (60 for lstm / tcn, which also need `retrain_every_days`
+  >= 21; use 126-252 for them) in 25 years.
+- **`why_not_linear` is the core of the card.** Say what interaction, threshold, regime dependence or temporal
+  pattern the model is expected to find that a ridge regression on the same features cannot, and who pays for it.
+  If you cannot say it, propose the linear card; a tree or network that does not beat ridge on the same features
+  has found nothing, and the Skeptic and Librarian look for exactly that. Name the linear baseline in
+  `falsification_criteria` ("ridge on the same features is as good").
+- **Family** is the economic mechanism of the features (`ml-reversal-liquidity`), never the model class. The same
+  features with another model is the same family, and its trials count against it.
+- **Capacity of the model is capacity to overfit.** The judge sees only the primary configuration and its grid
+  neighbors, so keep the model small (gbm 50-200 trees, 8-31 leaves; lstm / tcn hidden 8-32), grid 1-2 parameters
+  (G2 refits the model for every neighbor, lstm / tcn take minutes each), and prefer weekly or monthly decisions
+  over daily ones.
+- A signal that combines a model with a hand-written rule (a regime filter, a position cap) is fine, but say which
+  part pays; the mechanism test should be about the model's top-score event.
+- The Builder writes `strategy.py` as: features -> `walk_forward(...)` -> `score_weights(...)` -> `only_on(...)`.
+  Describe exactly those pieces in `signal.description` (features, label horizon, model and its schedule, the book
+  built from the scores). Do not describe a training procedure of your own (early stopping on the test period,
+  feature selection on the full history, tuning loops): that is hindsight, and G0 and the Skeptic will find it.
+
 
 ## What makes a good card
 

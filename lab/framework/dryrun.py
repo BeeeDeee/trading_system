@@ -191,6 +191,11 @@ def run(ws: Path) -> tuple[bool, list[str]]:
     lines, ok = [f"synthetic market: {len(cols)} instruments, {view.dates[0]} .. {view.dates[-1]} "
                  f"({len(view.dates)} rows; random returns, a late listing, missing opens)"], True
 
+    from lab.framework import ml
+    ml.set_dry_run(bool(card.get("ml")))
+    if card.get("ml"):
+        lines.append("ml card: models are shrunk in lab try (few trees, one epoch, 3000 samples): it checks mechanics and "
+                     "point-in-time behavior, not learning; the judge fits the real models")
     out = integrity(card, path, view, cols, params, len(view.dates), th, th["max_runtime_min"] * 60.0,
                     events_path=path.parent / "diagnostic.py")
     if out.passed:
@@ -228,6 +233,7 @@ def run(ws: Path) -> tuple[bool, list[str]]:
                 ok = False
                 lines.append(f"grid neighbor {cfg}: FAILED {type(e).__name__}: {e}")
         lines.append(f"grid neighbors: {len(QlabEvaluator().neighbors(card))} configurations run")
+    ml.set_dry_run(False)
     ok_tests, test_lines = run_tests(ws, card, cat)
     return ok and ok_tests, lines + test_lines
 

@@ -21,6 +21,7 @@ benchmarks:
 
 G0:   # integrity, precondition of IMPLEMENTED; a failure is not a trial
   leakage_cut_days: 12             # qlab.validation.leakage truncation + perturbation
+  ml_leakage_cuts: 5               # cards with an `ml` block: the perturbed copy refits every model after the cut, so fewer cuts (the walk-forward itself is framework code)
   determinism_runs: 2
   max_gross: 1.0                   # decision Q8: shorts allowed, no leverage
   forbid_date_literals: true

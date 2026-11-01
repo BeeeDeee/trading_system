@@ -1,0 +1,56 @@
+# Example of a LEARNED-MODEL card (an `ml` block), shown to the Scout. A format example, not a good idea.
+title: Gradient-boosted cross-sectional ranking of liquid US stocks on volatility, reversal and liquidity features
+family: ml-reversal-liquidity
+asset_classes: [us_equity]
+universe: {kind: liq_n, n: 300}
+mechanism:
+  why: >-
+    Short-term reversal is stronger in stocks with low recent liquidity and high idiosyncratic volatility, where
+    liquidity providers demand a larger concession for absorbing order imbalances (Nagel 2012). The strength of
+    the concession depends on the interaction of these state variables, which a gradient-boosted tree can pick up
+    and a linear model cannot.
+  counterparty: Investors who sell into a drop with market orders and pay the liquidity providers' concession.
+  why_not_arbitraged: Capital of liquidity providers is scarce exactly when volatility is high; the trade is small per stock and costly to run daily.
+signal:
+  description: >-
+    Features per stock and date (all from the stock's own returns and dollar volume up to the close of t, each
+    z-scored across the point-in-time universe members of that date): 5-day and 21-day total return, 63-day
+    realized volatility of daily returns, 21-day mean dollar volume divided by its 252-day mean. Label: total return
+    from the next open to the open 5 trading days later. Model: LightGBM (framework `gbm`), refit every 126 rows on an
+    expanding window, trained on the cross-sectional rank of the label. Every Monday-ish (first trading day of the
+    week) hold the 20 % of members with the highest score, equal weight; stocks without a complete feature vector are
+    not scored; fewer than 10 scored members means flat.
+  params:
+    horizon: {value: 5, grid: [3, 5, 10]}
+    n_estimators: {value: 100, grid: [50, 100, 200]}
+    top: {value: 0.2, grid: [0.1, 0.2, 0.3]}
+  timeframes: [1d]
+ml:
+  model: gbm
+  features:
+    - 5-day and 21-day total return (reversal state)
+    - 63-day realized volatility of daily total returns
+    - ratio of 21-day to 252-day mean dollar volume (liquidity shock)
+  horizon_days: 5
+  retrain_every_days: 126
+  why_not_linear: >-
+    The reversal concession is expected to be convex in volatility and to switch on only when volume is also
+    depressed; a ridge on the same four features can only add the effects, a tree can condition one on the other.
+data_requirements:
+  - {dataset: sharadar_sep, frequency: 1d}
+holding_period: {typical_days: 5, rebalance: weekly}
+market_exposure: long_only
+references:
+  - {cite: "Nagel (2012) Evaporating Liquidity", year: 2012}
+falsification_criteria:
+  - Net Sharpe on dev below SPY_TR + 0.10.
+  - Neighbors of horizon 5 or n_estimators 100 do not beat the benchmark.
+  - A ridge regression on the same features (framework `ridge`) gives the same or a better result than the gbm, so the nonlinearity is not what pays.
+  - The mechanism event (a stock enters the top fifth with 5-day return below the cross-sectional median) has no abnormal return against placebos.
+notes: >-
+  Expected linear baseline: ridge on the same features, with the same schedule. If the card passes only with gbm and not with
+  ridge, the interaction claim is supported; if both pass equally the mechanism is the plain reversal.
+mechanism_test:
+  event: "A stock enters the top fifth of the model score at a weekly decision date while its 5-day return is below the cross-sectional median."
+  primary_horizon_days: 5
+  horizons: [1, 5, 10]

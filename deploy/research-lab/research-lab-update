@@ -5,7 +5,7 @@
 set -eu
 cd /srv/research-lab/app
 git pull --no-rebase -q
-UV_PYTHON_INSTALL_DIR=/srv/research-lab/app/.python /usr/local/bin/uv sync -q
+UV_PYTHON_INSTALL_DIR=/srv/research-lab/app/.python /usr/local/bin/uv sync -q --extra deep
 chmod -R a+rX /srv/research-lab/app
 LAB_HOME=/srv/research-lab/home .venv/bin/lab canaries | tail -1
 git log --oneline -1

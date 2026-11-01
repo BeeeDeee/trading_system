@@ -455,6 +455,8 @@ def message_html(m, md) -> str:
                 + (f", revision: {esc(p.get('reason'))}" if p.get("reason") else "") + ")</span></p>"
                 f"<p><b>Mechanism.</b> {esc(mech.get('why'))}</p><p><b>Counterparty.</b> {esc(mech.get('counterparty'))}</p>"
                 f"<p><b>Signal.</b> {esc((c.get('signal') or {}).get('description'))}</p>"
+                + (f"<p><b>Model.</b> {esc(c['ml'].get('model'))}, label {esc(c['ml'].get('horizon_days'))} d, refit every "
+                   f"{esc(c['ml'].get('retrain_every_days'))} d. {esc(c['ml'].get('why_not_linear'))}</p>" if c.get("ml") else "")
                 + (f"<p><b>Mechanism test.</b> {esc(c['mechanism_test'].get('event'))} (horizon "
                    f"{esc(c['mechanism_test'].get('primary_horizon_days'))} d)</p>" if c.get("mechanism_test") else "")
                 + (f"<p><b>References.</b> {esc(refs)}</p>" if refs else "")

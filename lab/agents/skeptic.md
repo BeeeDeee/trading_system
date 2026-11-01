@@ -74,6 +74,21 @@ object only on what matters, all items in one message.
    check show decay? Is there a reason it should hold in the holdout years (see `G4` and the holdout start in
    the catalog), and what in the holdout period could break it?
 
+**Learned-model cards** (the card has an `ml` block; training is done by `lab.framework.ml.walk_forward`, so the
+purge, schedule and seeds are framework code and not yours to re-derive). Add to the checklist: `look_ahead`: the
+horizon passed to `walk_forward` equals the horizon used in `forward_return` and the card's `ml.horizon_days`; no
+feature uses `forward_return` or anything after t; features are scaled per date (`cs_zscore` / `cs_rank`), not over
+the whole sample. `data_snooping`: the model class is not a mechanism, so the family must be the feature
+mechanism; check `registry.json` for earlier cards with the same features and another model (a new model on old
+features is one more trial of the old family); count the knobs: model, features, horizon, schedule, window,
+hyperparameters, top fraction, all chosen by a person who has seen the literature, not by the data. `mechanism`:
+read `why_not_linear`. Does the result need the nonlinearity? A card whose neighbors pass but whose
+claimed interaction is not testable is a linear effect in disguise; ask for the ridge comparison in the falsification
+criteria if it is missing. `regime`: a model refit on an expanding window is dominated by its own early years, check
+the sub-period blocks and ask what the model could be learning that is a property of the sample (a single crisis, one
+volatility regime, the survivorship of the universe). `costs_capacity`: score-based books churn, compare the turnover
+with the cost stress result. Do not accept "the network found it" as a mechanism.
+
 If the card has `mechanism_test`, `gate_results.json` G1 carries the event-study result (`mechanism`: events,
 mean abnormal return, placebo percentile, sub-period signs, cost ratio, other horizons). Use it under `mechanism`
 and `hindsight`: does the effect live in the horizon the strategy trades, in all sub-periods, and is `diagnostic.py`

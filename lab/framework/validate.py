@@ -62,3 +62,33 @@ def payload_errors(msg_type: str, payload: dict) -> list[str]:
 
 def outbox_errors(outbox: dict) -> list[str]:
     return _errors(_schema("outbox"), outbox)
+
+
+def ml_problems(card: dict) -> list[str]:
+    """Checks of the `ml` block that need code, not schema: the model can run here, the refit schedule fits the
+    compute budget, daily horizon only, and the hyperparameters in signal.params exist for the model."""
+    ml = card.get("ml")
+    if not ml:
+        return []
+    from lab.framework import ml as mlmod
+    out = []
+    model = ml["model"]
+    if not mlmod.available().get(model, False):
+        out.append(f"ml.model {model}: torch is not installed here (extra `deep`); choose ridge, logit, rf, gbm or mlp")
+    if {"5m", "15m"} & set((card.get("signal") or {}).get("timeframes") or []):
+        out.append("ml cards are daily: the intraday branch has no ml contract")
+    every = int(ml["retrain_every_days"])
+    if model in mlmod.DEEP and every < 21:
+        out.append("ml.retrain_every_days >= 21 for lstm / tcn")
+    n = len(mlmod.fit_schedule(6500, every, 504, int(ml["horizon_days"])))
+    limit = mlmod.MAX_FITS[mlmod.kind(model)]
+    if n > limit:
+        out.append(f"ml: refit every {every} rows means about {n} fits over 25 years; the limit for {model} is {limit} "
+                   f"(raise retrain_every_days to at least {int(6500 / limit) + 1})")
+    if int(ml["horizon_days"]) > 60:
+        out.append("ml.horizon_days <= 60")
+    hh = (card.get("holding_period") or {}).get("typical_days")
+    if hh and ml["horizon_days"] > 3 * float(hh) + 5:
+        out.append(f"ml.horizon_days {ml['horizon_days']} is far longer than holding_period.typical_days {hh}: the label "
+                   "should match what the position earns")
+    return out

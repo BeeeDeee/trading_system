@@ -300,6 +300,61 @@
           "description": "descriptive only"
         }
       }
+    },
+    "ml": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model",
+        "features",
+        "horizon_days",
+        "retrain_every_days",
+        "why_not_linear"
+      ],
+      "description": "Declare when the signal is a learned model (walk-forward, point-in-time, lab.framework.ml). The strategy trains nothing outside lab.framework.ml.walk_forward. Hyperparameters that deserve a G2 grid go into signal.params.",
+      "properties": {
+        "model": {
+          "enum": [
+            "ridge",
+            "logit",
+            "rf",
+            "gbm",
+            "mlp",
+            "lstm",
+            "tcn"
+          ]
+        },
+        "features": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 5
+          },
+          "description": "one line per feature: what it is, window, point-in-time source"
+        },
+        "horizon_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60,
+          "description": "label horizon: return from the next open to the open horizon_days later; also the purge"
+        },
+        "retrain_every_days": {
+          "type": "integer",
+          "minimum": 5,
+          "description": "refit schedule in trading rows (lstm/tcn >= 21)"
+        },
+        "train_days": {
+          "type": "integer",
+          "minimum": 126,
+          "description": "rolling training window in rows; omit for an expanding window"
+        },
+        "why_not_linear": {
+          "type": "string",
+          "minLength": 40,
+          "description": "why this model class and not a ridge regression on the same features: which interaction, nonlinearity or temporal pattern is expected, and who pays for it"
+        }
+      }
     }
   }
 }

@@ -34,6 +34,22 @@ def multi_timeframe(card: dict) -> bool:
     return len(set((card.get("signal") or {}).get("timeframes") or [])) >= 2
 
 
+def is_ml(card: dict) -> bool:
+    return bool(card.get("ml"))
+
+
+ML_SHARE = 0.25     # the Scout is asked for a learned-model card while fewer than this share of the cards have one
+ML_TEXT = (
+    " Make it a LEARNED-MODEL card (`ml` block): the signal is the output of a walk-forward model trained inside "
+    "`lab.framework.ml.walk_forward` (ridge, logit, rf = random forest, gbm = LightGBM, mlp, or lstm / tcn on the last "
+    "seq_len days of the feature vectors), not a hand-written rule. Cross-sectional scoring of US stocks or crypto pairs "
+    "is where there is enough data; a model with 2-3 instruments learns nothing. The card needs a feature list with "
+    "a reason for each feature, a label horizon that matches the holding period, a refit schedule, and `why_not_linear`: "
+    "the interaction, nonlinearity or temporal pattern a ridge on the same features would miss, and who pays for it. "
+    "Small models and few features beat large ones here; the judge's default for 'the network found something' is "
+    "overfitting. Read the ML section of the instructions before writing the card.")
+
+
 def choose(lab: Lab) -> dict:
     import json
     cards = [json.loads(h["card_json"]) for h in lab.hypotheses()]
@@ -43,7 +59,8 @@ def choose(lab: Lab) -> dict:
     # the scalping cell counts double (owner, 2026-10-13): it is proposed about twice as often as any other cell
     (h, g), _ = min(counts.items(), key=lambda kv: kv[1] / (SCALP_WEIGHT if kv[0][0] == "scalp" else 1.0))   # dict order breaks ties
     mtf = sum(map(multi_timeframe, cards)) < len(cards) / 2
-    return {"horizon": h, "group": g, "multi_timeframe": mtf}
+    ml = h != "scalp" and sum(map(is_ml, cards)) < ML_SHARE * max(len(cards), 1)   # scalping has no ml contract
+    return {"horizon": h, "group": g, "multi_timeframe": mtf, "ml": ml}
 
 
 SCALP_WEIGHT = 2.0
@@ -70,6 +87,8 @@ def text(brief: dict) -> str:
         out += (" Combine timeframes: a signal on one timeframe confirmed or filtered by another (e.g. a slow "
                 "weekly/monthly regime confirming a faster daily entry, or hourly-derived features gating a "
                 "daily signal); list them in signal.timeframes.")
+    if brief.get("ml"):
+        out += ML_TEXT
     out += " Declare a mechanism_test (event + primary horizon) so the judge tests the mechanism before the strategy."
     return out + (" The brief is a direction, not a waiver: if no idea with a real mechanism fits it, take the "
                   "closest fit and say why in notes.")

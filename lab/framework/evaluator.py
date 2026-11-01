@@ -739,7 +739,7 @@ def integrity(card: dict, path, view: DataView, strat_cols: list[str], params: d
                                                  f"{sv.dates[t]}"}, "g0_outside_universe")
     if not np.array_equal(w, targets(sv), equal_nan=True):
         return Outcome(False, m, "g0_nondeterministic")
-    bad = _lookahead(targets, sv, w, th.get("leakage_cut_days", 12))
+    bad = _lookahead(targets, sv, w, min(th.get("leakage_cut_days", 12), th.get("ml_leakage_cuts", 5)) if card.get("ml") else th.get("leakage_cut_days", 12))
     m["lookahead_failures"] = bad
     if bad["truncation"] or bad["perturbation"]:
         return Outcome(False, m, "g0_lookahead")
