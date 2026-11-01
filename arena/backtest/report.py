@@ -21,6 +21,8 @@ LIMITS = [
     "Fill bez knihy: první obchod po latenci + extra slippage, bez dopadu na cenu. Náklady jsou proto spíš optimistické; "
     "sloupce net při 1,5× a 2× nákladech ukazují citlivost.",
     "obi: bookDepth (30s snímky z data.binance.vision), živě lokální kniha. Filtry (tick, step, minNotional) jsou dnešní.",
+    "bookDepth má pásmo ±0,2 % až od 2026-01-15 (dřív jen ±1 až ±5 %): obi.v04 (p=0,2) před tímto datem nemá signály, "
+    "jeho výsledky za dřívější období jsou neúplné nebo prázdné.",
     "Explorativní: stejné zmrazené parametry jako živě, žádné ladění. Holm a DSR jsou jen v rámci backtestu a do "
     "rozhodnutí na dni 45/90 nevstupují.",
     "Období před 2026-07-22 je mimo vzorek priorů (research/obi_prior); 2026-07-22 až 10-19 je in-sample.",

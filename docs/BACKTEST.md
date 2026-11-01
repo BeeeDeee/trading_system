@@ -19,6 +19,9 @@ sudo systemd-run --unit=arena-backtest-X --uid=arena --gid=arena --nice=10 -p Me
 - Fill bez knihy: první obchod po latenci 250 ms + `extra_slippage_bps`, bez dopadu na cenu. Náklady jsou optimistické.
   Sloupce net při 1,5× a 2× nákladech ukazují citlivost.
 - `obi` z `bookDepth` (30s snímky), živě z lokální knihy. Filtry (tick, step, minNotional) jsou dnešní.
+- `bookDepth` na data.binance.vision má pásmo ±0,2 % až od 2026-01-15, dřív jen ±1 až ±5 %. `obi.v04` (`p: 0.2`) proto
+  před 2026-01-15 nemá signály (2025: 0 obchodů, OOS 2026-01-01…07-21: chybí první dva týdny). Ostatní `obi` varianty
+  používají pásma ≥ 1 % a nejsou dotčené.
 - Funding z `fundingRate` (měsíční soubory), mark ≈ close baru.
 - Prvních 7 dní před `--from` je rozběh (ctl potřebuje týden signálů cílové strategie); jejich obchody se zahodí.
 - Obchody s `tainted` (např. mezera v aggTrades) se ze statistik vynechají a spočítají se.
