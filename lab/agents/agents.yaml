@@ -43,7 +43,7 @@ agents:
     prompt: archivist.md
     tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch]   # WebFetch for API docs (data-blind by rule)
     lab_verbs: [send, fetch, inbox, context]
-    timeout_s: 3000   # 1500 s was not enough either (3 timeouts 2026-11-01), once the Bash backgrounding was fixed
+    timeout_s: 3600   # 1500 s was not enough (3 timeouts 2026-11-01); the first applied run took 2688 s (upbit_krw_1d)
     context: [blocked, knowledge]
 
   librarian:
