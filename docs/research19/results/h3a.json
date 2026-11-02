@@ -1,0 +1,45 @@
+{
+ "metrics": {
+  "tom_diff": 0.00016910500316406196,
+  "tom_lo": -0.00039741463202870575,
+  "tom_hi": 0.0007224174938396794,
+  "diff": -0.0040912417506934196,
+  "diff_lo": -0.22077851807776622,
+  "diff_hi": 0.1975685013505468,
+  "maxdd_overlay": 0.23277166237062963,
+  "maxdd_base": 0.16541373380419977,
+  "sharpe_overlay": 0.5039261387871482,
+  "sharpe_base": 0.5080173805378416
+ },
+ "criteria": {
+  "i TOM - other CI lower > 0": [
+   -0.00039741463202870575,
+   0.0,
+   false
+  ],
+  "ii paired Sharpe diff CI lower > 0": [
+   -0.22077851807776622,
+   0.0,
+   false
+  ],
+  "ii maxDD overlay <= base": [
+   0.06735792856642986,
+   0.0,
+   false
+  ]
+ },
+ "tom_days_share": 0.19074401414108952,
+ "tom_mean_daily": 0.000586617287600009,
+ "other_mean_daily": 0.00041751228443594705,
+ "provenance": {
+  "commit": "d65d61dc3",
+  "rule_hash": "51ff7d8c6eed01887261a5a9528694b3d0e36c596134d09e8fa2505ad48c5827",
+  "snapshots": {
+   "sharadar": "sharadar_2026-09-25",
+   "binance": "binance_2026-10-03"
+  },
+  "created_at": "2026-11-02T21:46:16.640171+00:00",
+  "seconds": 972.9,
+  "lock_commit": "546f30652"
+ }
+}
