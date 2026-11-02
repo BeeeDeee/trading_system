@@ -365,3 +365,17 @@ def test_criteria_are_mechanical():
     h4 = dict(sharpe=1.0, best_sleeve=0.9, diff_lo=-0.1, maxdd=0.2, maxdd_6040=0.3, sharpe_cost2x=0.9, sharpe_6040=0.8)
     c = EV.criteria_h4(h4)
     assert not EV.passed(c) and not c["2 paired diff vs 60/40 CI lower > 0"][2] and c["3 maxDD < 60/40"][2]
+
+
+def test_registration_plan():
+    from qlab.research19 import pipeline as PL
+    from qlab.validation.registry import config_hash
+    plan = PL.plan()
+    ids = [e["id"] for e in plan]
+    assert len(ids) == len(set(ids))
+    count = lambda role: sum(e["role"] == role for e in plan)  # noqa: E731
+    assert (count("primary"), count("secondary"), count("robustness"), count("control")) == (7, 2, 25, 13)
+    assert sum(e["counted"] for e in plan) == 34
+    hashes = [config_hash({"id": e["id"], "role": e["role"], **e["config"]}) for e in plan]
+    assert len(hashes) == len(set(hashes))
+    assert {e["id"] for e in plan if e["role"] == "primary"} == {"H1a", "H1b", "H2", "H3a", "H3b", "H3c", "H4"}

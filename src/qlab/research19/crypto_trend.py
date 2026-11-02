@@ -121,21 +121,31 @@ def decisions(w: np.ndarray, first: int, delay: int = 0) -> Decisions:
 
 def run_panel(p: Panel, qv: np.ndarray, symbols: list[str], cfg: Config, first: int,
               tbill: np.ndarray | None = None, E_override: np.ndarray | None = None,
-              scale: np.ndarray | None = None, signal_cache: tuple | None = None) -> SimResult:
-    """Simulate H1a (or BTC-only) from the close of day `first`. `E_override` replaces the ensemble (null runs)."""
+              scale: np.ndarray | None = None, signal_cache: tuple | None = None,
+              members: np.ndarray | None = None, cost: np.ndarray | None = None) -> SimResult:
+    """Simulate H1a (or BTC-only) from the close of day `first`. `E_override` replaces the ensemble (null runs);
+    `members` / `signal_cache` reuse precomputed universes and signals (they must come from the same cfg)."""
     excl = excluded_mask(symbols)
     if cfg.btc_only:
         btc = symbols.index("BTCUSDT")
         E, sig = signal_cache or signals(p, cfg, np.array([btc]))
         w = btc_weights(E if E_override is None else E_override, sig, btc, cfg, scale)
     else:
-        members = monthly_members(p, qv, cfg.universe_n, cfg.min_age, excl)
+        members = monthly_members(p, qv, cfg.universe_n, cfg.min_age, excl) if members is None else members
         cols = np.flatnonzero(members.any(axis=0))
         E, sig = signal_cache or signals(p, cfg, cols)
         w = target_weights(E if E_override is None else E_override, sig, members, cfg, scale)
-    cost = (np.full(p.shape, cfg.cost_const) if cfg.cost_const is not None
-            else cost_rate(qv, cfg.cost_mult))
+    if cost is None:
+        cost = (np.full(p.shape, cfg.cost_const) if cfg.cost_const is not None else cost_rate(qv, cfg.cost_mult))
     return simulate(p, decisions(w, first, cfg.delay), cost, tbill if cfg.tbill_cash else None, cfg.band)
+
+
+def ew_members_decisions(p: Panel, members: np.ndarray, first: int) -> Decisions:
+    """Control: equal weights over the universe in force, rebalanced after each Sunday close (research 9 style)."""
+    wd = (p.dates.astype("datetime64[D]").view("int64") - 4) % 7
+    days = [t for t in np.flatnonzero(wd == 6) if first <= t < len(p.dates)]
+    rows = np.array([members[t] / max(members[t].sum(), 1) for t in days]).reshape(len(days), p.shape[1])
+    return Decisions(np.array(days, dtype=int), rows)
 
 
 def run(cfg: Config, tbill: np.ndarray | None = None, scale: np.ndarray | None = None) -> SimResult:

@@ -33,7 +33,8 @@ def donchian_state(P: np.ndarray, valid: np.ndarray, L: int) -> tuple[np.ndarray
     mx, mn = _roll(hi_in, valid, L, np.max), _roll(lo_in, valid, L, np.min)       # windows ending at t
     U = np.full(P.shape, np.nan)
     U[1:] = mx[:-1]                                                 # max(P[t-L .. t-1]), without day t
-    M = (mx + mn) / 2.0                                             # midpoint of P[t-L+1 .. t], with day t
+    with np.errstate(invalid="ignore"):
+        M = (mx + mn) / 2.0                                             # midpoint of P[t-L+1 .. t], with day t
     state, stop = np.zeros((T, N)), np.full((T, N), np.nan)
     s, st = np.zeros(N, dtype=bool), np.full(N, np.nan)
     for t in range(T):
