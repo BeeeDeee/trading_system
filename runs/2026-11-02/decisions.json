@@ -1,0 +1,389 @@
+{
+ "date": "2026-11-02",
+ "llm_ok": true,
+ "locked_at": "2026-11-02T05:03:11.193Z",
+ "locked_ms": 1793595791193,
+ "portfolios": {
+  "b_btc": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_btc_eth": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_cash": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_ew20": {
+   "exits": {},
+   "info": {
+    "rebalance": true
+   },
+   "kind": "benchmark",
+   "targets": {
+    "AVAX": 0.0714285714,
+    "BNB": 0.0714285714,
+    "BTC": 0.0714285714,
+    "ETH": 0.0714285714,
+    "HYPE": 0.0714285714,
+    "LINK": 0.0714285714,
+    "NEAR": 0.0714285714,
+    "PEPE": 0.0714285714,
+    "SOL": 0.0714285714,
+    "SUI": 0.0714285714,
+    "TRX": 0.0714285714,
+    "UNI": 0.0714285714,
+    "XRP": 0.0714285714,
+    "ZEC": 0.0714285714
+   }
+  },
+  "b_mcap10": {
+   "exits": {},
+   "info": {
+    "rebalance": true
+   },
+   "kind": "benchmark",
+   "targets": {
+    "BNB": 0.0430595882,
+    "BTC": 0.725636796,
+    "ETH": 0.1289400612,
+    "HYPE": 0.0096828561,
+    "LINK": 0.0040059499,
+    "NEAR": 0.0025745535,
+    "SOL": 0.0257852275,
+    "TRX": 0.0137349887,
+    "XRP": 0.0365651644,
+    "ZEC": 0.0100148145
+   }
+  },
+  "bez_brany": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HYPE",
+     "ZEC",
+     "BNB",
+     "PEPE",
+     "UNI",
+     "BTC",
+     "LINK",
+     "XRP",
+     "NEAR",
+     "TRX"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.1029411765,
+    "BTC": 0.0882352941,
+    "HYPE": 0.1764705882,
+    "LINK": 0.0735294118,
+    "NEAR": 0.0735294118,
+    "PEPE": 0.1470588235,
+    "TRX": 0.0294117647,
+    "UNI": 0.0882352941,
+    "XRP": 0.0882352941,
+    "ZEC": 0.1323529412
+   }
+  },
+  "btc_filtr": {
+   "exits": {},
+   "info": {
+    "overlay": "BTC pod SMA50 → hotovost",
+    "selected": [
+     "HYPE",
+     "ZEC",
+     "PEPE"
+    ]
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "claude_volne": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "BTC",
+     "HYPE",
+     "UNI",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BTC": 0.15,
+    "HYPE": 0.1,
+    "UNI": 0.08,
+    "ZEC": 0.1
+   }
+  },
+  "inv_vol": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HYPE",
+     "ZEC",
+     "PEPE"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "HYPE": 0.25,
+    "PEPE": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "jen_mr": {
+   "exits": {
+    "BNB": "max_hold",
+    "BTC": "max_hold",
+    "XRP": "max_hold"
+   },
+   "info": {
+    "selected": [
+     "ETH",
+     "SOL",
+     "TRX"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "ETH": 0.25,
+    "SOL": 0.25,
+    "TRX": 0.25
+   }
+  },
+  "jen_trend": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HYPE",
+     "PEPE",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "HYPE": 0.25,
+    "PEPE": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "jen_zpravy": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "kontrarian": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "SUI",
+     "AVAX",
+     "ETH",
+     "SOL",
+     "TRX",
+     "NEAR",
+     "LINK",
+     "UNI",
+     "XRP",
+     "BTC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "AVAX": 0.1,
+    "BTC": 0.1,
+    "ETH": 0.1,
+    "LINK": 0.1,
+    "NEAR": 0.1,
+    "SOL": 0.1,
+    "SUI": 0.1,
+    "TRX": 0.1,
+    "UNI": 0.1,
+    "XRP": 0.1
+   }
+  },
+  "mech_momentum": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "PEPE",
+     "HYPE",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "HYPE": 0.25,
+    "PEPE": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "nahodny": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "AVAX",
+     "BTC",
+     "HYPE",
+     "LINK",
+     "PEPE",
+     "SOL",
+     "TRX",
+     "UNI",
+     "XRP",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "AVAX": 0.1,
+    "BTC": 0.1,
+    "HYPE": 0.1,
+    "LINK": 0.1,
+    "PEPE": 0.1,
+    "SOL": 0.1,
+    "TRX": 0.1,
+    "UNI": 0.1,
+    "XRP": 0.1,
+    "ZEC": 0.1
+   }
+  },
+  "pravdepodobnost": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HYPE"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "HYPE": 0.25
+   }
+  },
+  "rovne": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HYPE",
+     "ZEC",
+     "PEPE"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "HYPE": 0.25,
+    "PEPE": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "skore_vol": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HYPE",
+     "ZEC",
+     "PEPE"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "HYPE": 0.25,
+    "PEPE": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "stop": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HYPE",
+     "ZEC",
+     "PEPE"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "HYPE": 0.25,
+    "PEPE": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "top3": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HYPE",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "HYPE": 0.4,
+    "ZEC": 0.4
+   }
+  },
+  "tydenni": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HYPE",
+     "ZEC",
+     "PEPE"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "HYPE": 0.25,
+    "PEPE": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "vol_target": {
+   "exits": {},
+   "info": {
+    "overlay": "vol portfolia 50 % → expozice ×0.99",
+    "selected": [
+     "HYPE",
+     "ZEC",
+     "PEPE"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "HYPE": 0.2482346224,
+    "PEPE": 0.2482346224,
+    "ZEC": 0.2482346224
+   }
+  },
+  "zaklad": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "HYPE",
+     "ZEC",
+     "PEPE"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "HYPE": 0.25,
+    "PEPE": 0.25,
+    "ZEC": 0.25
+   }
+  }
+ },
+ "scores_sha256": "3eda5c99e254f3139a16e20456ca32d424820395ffddd90a9024afec5ad9283a"
+}
