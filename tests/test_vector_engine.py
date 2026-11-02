@@ -156,3 +156,54 @@ def test_repeated_full_investment_stays_finite():
     targets[::5] = 1.0
     r = simulate(p, targets, 0.0025, np.full(400, 1e-4))
     assert np.isfinite(r.nav).all()
+
+
+# --- rebalance band (research 19) -----------------------------------------------------------------
+
+def _drift_panel(a_oc: float) -> Panel:
+    """Two assets, no costs; day 1 intraday moves A by +a_oc and B by -a_oc (weights 0.5/0.5 drift)."""
+    ret_oc = np.zeros((4, 2))
+    ret_oc[1] = [a_oc, -a_oc]
+    return make_panel(np.zeros((4, 2)), ret_oc)
+
+
+def _targets(*rows):
+    t = hold(4, 2)
+    for day, w in rows:
+        t[day] = w
+    return t
+
+
+def test_band_none_and_zero_equal_legacy_on_synthetic_market():
+    m = generate_market(n_assets=15, seed=3, start="2015-01-01", end="2015-12-31")
+    from qlab.data.schema import DELISTINGS_SCHEMA
+    p = panel_from_bars(normalize_prices(m.prices, m.delistings if m.delistings is not None
+                                         else pl.DataFrame(schema=DELISTINGS_SCHEMA), m.calendar), m.calendar)
+    rng = np.random.default_rng(0)
+    t = np.full(p.shape, np.nan)
+    for d in range(0, p.shape[0] - 1, 5):
+        w = rng.random(p.shape[1]) * (rng.random(p.shape[1]) < 0.5)
+        t[d] = w / max(w.sum(), 1.0) * 0.95
+    base = simulate(p, t, 0.001)
+    for band in (None, 0.0):
+        r = simulate(p, t, 0.001, band=band)
+        np.testing.assert_allclose(r.nav, base.nav, rtol=1e-12)
+    assert np.array_equal(simulate(p, t, 0.001, band=None).nav, base.nav)
+
+
+def test_band_small_drift_no_trade_large_drift_trades_both():
+    small = simulate(_drift_panel(0.10), _targets((0, [0.5, 0.5]), (1, [0.5, 0.5])), 0.0, band=0.2)
+    assert small.turnover[2] == 0.0           # weights 0.55/0.45, both within 20 % of 0.5
+    large = simulate(_drift_panel(0.30), _targets((0, [0.5, 0.5]), (1, [0.5, 0.5])), 0.0, band=0.2)
+    assert large.turnover[2] == pytest.approx(0.30)   # 0.65/0.35 -> buy 0.15 and sell 0.15
+    full = simulate(_drift_panel(0.10), _targets((0, [0.5, 0.5]), (1, [0.5, 0.5])), 0.0)
+    assert full.turnover[2] == pytest.approx(0.10)    # without a band the small drift is traded
+
+
+def test_band_target_zero_always_sells_and_entry_always_buys():
+    p = _drift_panel(0.01)
+    r = simulate(p, _targets((0, [1.0, 0.0]), (1, [0.0, 1.0])), 0.0, band=10.0)
+    assert r.exposure[1] == pytest.approx(1.0)
+    # day 2 open: A fully sold and B (not held, target > 0) entered despite the huge band
+    assert r.turnover[2] == pytest.approx(2.0, rel=1e-9)
+    assert r.n_positions[2] == 1

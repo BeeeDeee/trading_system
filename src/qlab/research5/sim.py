@@ -11,6 +11,9 @@ first day = 1):
   tradable; optional per-candidate price levels (`stop_px`, `target_px`, compared with the close)
   are checked first, in the order stop -> target (`stop_px_fill_at_level`: the stop fills at its
   price on that close, an upper bound for a resting stop order),
+- `exit_at_close` (research 19): the exit signal and the time stop are filled at the close of t at the
+  close price (Connors rules) if the asset is tradable that day; the freed slot may be refilled at that
+  close (entry_delay 0), but not with the asset that just exited,
 - a delisting row pays the terminal value into cash at that open without costs,
 - positions still open on the last day are marked at the close (reason "end").
 """
@@ -37,6 +40,7 @@ class SimSpec:
     vol_window: int = 63
     reentry_same_open: bool = True   # False: an asset sold at an open is not bought back at that open
     stop_px_fill_at_level: bool = False  # upper bound: a stop_px exit fills at the stop price on that close
+    exit_at_close: bool = False   # exit_signal / time_stop fill at the close of the signal day
 
 
 @dataclass(frozen=True)
@@ -101,6 +105,7 @@ def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, 
     pending_exit: dict[int, str] = {}
     pending_buy: dict[int, int] = {}   # execution day -> decision day
     sold_today: set[int] = set()
+    closed_today: set[int] = set()   # assets exited at today's close (exit_at_close)
     cash = 1.0
     nav = np.empty(n)
     exposure = np.empty(n)
@@ -133,7 +138,8 @@ def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, 
             if free <= 0 or done >= cap:
                 break
             a = int(cands.a[k])
-            if a in pos or not tradable[a] or (not spec.reentry_same_open and a in sold_today):
+            if (a in pos or not tradable[a] or a in closed_today
+                    or (not spec.reentry_same_open and a in sold_today)):
                 continue
             adv = float(adv20[sig, a])
             v = min(size, spec.adv_cap * adv / spec.capital) if np.isfinite(adv) else size
@@ -220,6 +226,21 @@ def simulate(panel: Panel, cands: Candidates, spec: SimSpec, adv20: np.ndarray, 
                 costs[i] += c / nav_close
                 turnover[i] += p.value / nav_close
                 close_trade(a, p, t, "stop", c)
+
+        closed_today.clear()
+        if spec.exit_at_close and pending_exit:
+            at_close = [a for a, r in pending_exit.items()
+                        if r in ("exit_signal", "time_stop") and panel.tradable[t, a]]
+            nav_close = cash + sum(p.value for p in pos.values())
+            for a in at_close:
+                p = pos.pop(a)
+                reason = pending_exit.pop(a)
+                c = p.value * exit_cost(t, a)
+                cash += p.value - c
+                costs[i] += c / nav_close
+                turnover[i] += p.value / nav_close
+                close_trade(a, p, t, reason, c)
+                closed_today.add(a)
 
         if allow_entry is None or allow_entry[t]:
             if spec.entry_delay == 0:

@@ -4,7 +4,9 @@ Scale-invariant (NAV starts at 1), costs proportional to traded value. Timing co
 - `targets[t]` is decided after the close of day t (NaN row = no decision that day); targets can
   be a dense (T, N) matrix or `Decisions` (only the decision days, for large grids),
 - it is executed at the open of day t+1: sells first, then buys scaled down if cash is short,
-- positions carry the overnight return with the old holdings and the intraday return with the new.
+- positions carry the overnight return with the old holdings and the intraday return with the new,
+- optional `band` (research 19): at the decision, weights after the close of t are compared with the
+  target and only assets that enter, fully exit or drift outside `band * target` are traded.
 """
 
 from dataclasses import dataclass
@@ -61,8 +63,13 @@ def as_decisions(targets: "np.ndarray | Decisions", shape: tuple[int, int]) -> D
 
 
 def simulate(panel: Panel, targets: "np.ndarray | Decisions", cost_rate: np.ndarray | float,
-             cash_ret: np.ndarray | None = None) -> SimResult:
-    """Simulate a long-only portfolio following `targets` (T x N weights, NaN rows = hold)."""
+             cash_ret: np.ndarray | None = None, band: float | None = None) -> SimResult:
+    """Simulate a long-only portfolio following `targets` (T x N weights, NaN rows = hold).
+
+    `band=None`: every asset is rebalanced to the target at each decision. Otherwise an asset is traded
+    only if it enters or fully exits (`target > 0` differs from `w_close > WEIGHT_TOL`) or if
+    `target > 0` and `|w_close - target| > band * target`, with `w_close` the weight after the close
+    of the decision day (point in time); the other assets keep their value."""
     n_days, n_assets = panel.shape
     decisions = as_decisions(targets, panel.shape)
     row_of = decisions.row()
@@ -77,6 +84,7 @@ def simulate(panel: Panel, targets: "np.ndarray | Decisions", cost_rate: np.ndar
     exposure = np.empty(n_days)
     n_pos = np.empty(n_days, dtype=int)
     pending = None
+    trade = None
 
     for t in range(n_days):
         v *= 1.0 + panel.ret_co[t]
@@ -87,7 +95,7 @@ def simulate(panel: Panel, targets: "np.ndarray | Decisions", cost_rate: np.ndar
 
         if pending is not None:
             nav_open = cash + v.sum()
-            delta = np.where(panel.tradable[t], pending * nav_open - v, 0.0)
+            delta = np.where(panel.tradable[t] & trade, pending * nav_open - v, 0.0)
             sells = np.minimum(delta, 0.0)
             sell_cost = (-sells * cost_rate[t]).sum()
             v += sells
@@ -109,6 +117,12 @@ def simulate(panel: Panel, targets: "np.ndarray | Decisions", cost_rate: np.ndar
         n_pos[t] = int((v > 0).sum())
         if t in row_of:
             pending = decisions.weights[row_of[t]]
+            if band is None:
+                trade = np.ones(n_assets, dtype=bool)
+            else:
+                w_close = v / nav[t]
+                held = w_close > WEIGHT_TOL
+                trade = ((pending > 0) != held) | ((pending > 0) & (np.abs(w_close - pending) > band * pending))
 
     returns = np.diff(nav, prepend=1.0) / np.concatenate(([1.0], nav[:-1]))
     return SimResult(panel.dates, nav, returns, turnover, costs, exposure, n_pos)

@@ -306,3 +306,50 @@ def test_cash_core_follows_spy_and_trades_swap_out_of_it(panel):
     expected = (half * open_(35, a) / open_(31, a) * idx[-1, core] / open_(35, core)
                 + half * idx[-1, core] / open_(31, core))
     assert one.nav[-1] == pytest.approx(expected, rel=1e-12)
+
+
+# --- exit_at_close (research 19) ---------------------------------------------------------------------
+
+def _live_asset(panel) -> int:
+    return int(np.flatnonzero(panel.listed[0] & ~panel.delisting.any(axis=0))[0])
+
+
+def test_exit_at_close_manual_trade(panel):
+    a, c = _live_asset(panel), 0.001
+    sig = np.zeros(panel.shape)
+    sig[32, a] = 1.0
+    spec = SimSpec(1, 50, entry_delay=0, exit_at_close=True)
+    out = simulate(panel, forced([(30, a)]), spec, np.full(panel.shape, np.inf), 0, 60,
+                   lambda t, x: c, lambda t, x: c, exit_signal=sig)
+    idx = tr_index(panel)
+    tr = out.trades
+    assert tr["entry_day"][0] == 30 and tr["exit_day"][0] == 32 and tr["reason"][0] == "exit_signal"
+    assert tr["gross_ret"][0] == pytest.approx(idx[32, a] / idx[30, a] - 1.0)
+    assert tr["net_ret"][0] == pytest.approx((1 - c) * idx[32, a] / idx[30, a] / (1 + c) - 1.0)
+    legacy = simulate(panel, forced([(30, a)]), SimSpec(1, 50, entry_delay=0), np.full(panel.shape, np.inf),
+                      0, 60, lambda t, x: c, lambda t, x: c, exit_signal=sig)
+    assert legacy.trades["exit_day"][0] == 33   # default: open of the next day
+
+
+def test_exit_at_close_time_stop_holds_exactly_ten_segments(panel):
+    a = _live_asset(panel)
+    out = simulate(panel, forced([(30, a)]), SimSpec(1, 10, entry_delay=0, exit_at_close=True),
+                   np.full(panel.shape, np.inf), 0, 80, ZERO, ZERO)
+    tr = out.trades
+    assert tr["exit_day"][0] - tr["entry_day"][0] == 10 and tr["held"][0] == 10
+    assert tr["reason"][0] == "time_stop"
+    idx = tr_index(panel)
+    assert tr["gross_ret"][0] == pytest.approx(idx[40, a] / idx[30, a] - 1.0)
+
+
+def test_exit_at_close_slot_refilled_same_close_but_not_by_same_asset(panel):
+    live = np.flatnonzero(panel.listed[0] & ~panel.delisting.any(axis=0) & panel.tradable[30:33].all(axis=0))[:2]
+    a, b = int(live[0]), int(live[1])
+    sig = np.zeros(panel.shape)
+    sig[32, a] = 1.0
+    cands = Candidates(np.array([30, 32, 32]), np.array([a, a, b]), np.array([0.0, 0.0, 1.0]))
+    out = simulate(panel, cands, SimSpec(1, 50, entry_delay=0, exit_at_close=True),
+                   np.full(panel.shape, np.inf), 0, 60, ZERO, ZERO, exit_signal=sig)
+    tr = out.trades.sort("entry_day")
+    assert tr.filter(pl.col("asset") == a).height == 1            # no re-entry of the asset that exited
+    assert tr.filter(pl.col("asset") == b)["entry_day"][0] == 32  # the slot is refilled at the same close
