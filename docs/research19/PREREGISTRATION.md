@@ -1,6 +1,6 @@
 # Výzkum 19 – trend ensemble, RSI(2) a overlaye jako portfolio streamy (pre-registrace)
 
-Verze 1.0 · 2026-11-02 · Stav: **návrh ke schválení vlastníkem** (necommitnuto).
+Verze 1.1 · 2026-11-02 · Stav: v1.0 schválena a commitnuta (045c7bcfe); v1.1 přidává vyloučení nekryptoaktiv z univerza (§9).
 Vychází z `docs/research19/PLAN.md` v1.0 (2026-11-01). Pravidla v §4–§7 jsou z plánu převzata **doslova**.
 Po commitu verze 1.0 platí: změny = řádek v §9 s důvodem, **před** dalším vyhodnocením.
 
@@ -101,6 +101,11 @@ platná, jen pokud je všech 90 výnosů platných, jinak se aktivum nesmí drž
   `research9.strategy.universe(p, qv, t, 20)` **s dodatečnou podmínkou** stáří: aktivum má ≥ 365 dní `listed` před *t*
   (kandidáti se filtrují před výběrem top 20, ne po něm, tj. napiš vlastní funkci `universe_aged` v `crypto_trend.py`,
   která aplikuje stejnou logiku jako `universe` plus stáří).
+- **Vyloučení (v1.1):** ze všech kandidátů na univerzum (H1a, kontrola rovných vah v §4.6 i všechny varianty
+  top 10 / top 40 / bez stáří) se **před** výběrem top N vyřadí pevný seznam
+  `EXCLUDED_NONCRYPTO = {PAXGUSDT, XAUTUSDT, BULLUSDT, BEARUSDT, UUSDT}` (tokenizované zlato, pákové tokeny,
+  stablecoin; `research19.setup`). Uvolněné místo obsadí další symbol v pořadí. Seznam vznikl z auditu
+  `results/audit.json` (stop-bod F3) před jakýmkoli výpočtem strategií. Jen PAXGUSDT byl v primárním univerzu (7 měsíců).
 - Stav signálů se počítá pro **všechna** aktiva nezávisle na členství (stavový automat běží celou historii).
   Člen s `E_t > 0` v den vstupu do univerza se tedy koupí hned.
 - Velikost **[R]**: `s_i = E_i · min(2, 0.25 / σ_i)` (vol cíl 25 %, páka aktiva ≤ 200 %, jak uvádí zdroj).
@@ -184,7 +189,7 @@ zjednodušeně, jak je uvedeno. To je vědomé zjednodušení, zapsat do pre-reg
 
 ### 4.6 Kontroly (nulové modely) a benchmarky
 - **H1a:** BTC HOLD, 50/50 BTC/ETH měsíčně (`research9.strategy.monthly_5050`), rovné váhy stejného top 20
-  (`ew_universe_decisions` se stejným univerzem). **Náhodné načasování:** pro každé aktivum se řada `E_i` cyklicky
+  (`ew_universe_decisions` se stejným univerzem, tj. i s vyloučením z §4.1 v1.1). **Náhodné načasování:** pro každé aktivum se řada `E_i` cyklicky
   posune o náhodný offset v rámci jeho listovaného úseku (σ zůstává skutečná), 500 replik, seed 19.
 - **H1b:** rovné váhy 16 ETF (měsíčně), 60/40, SPY. Stejný cyklický posun `E_i`, 500 replik.
 - **H2:**
@@ -296,3 +301,4 @@ Popisně: korelační matice sleevů (celkem, v dnech, kdy SPY < −2 %, v roce 
 | Datum | Změna |
 |---|---|
 | 2026-11-02 | v1.0 vytvořena podle PLAN.md v1.0. Před commitem se na reálných datech nic nepočítalo. |
+| 2026-11-02 | v1.1: do §4.1 přidáno vyloučení `EXCLUDED_NONCRYPTO` (PAXGUSDT, XAUTUSDT, BULLUSDT, BEARUSDT, UUSDT) před výběrem top N. Důvod: audit F3 našel v top 20 tokenizované zlato (PAXG, 7 měsíců 2025-10 až 2026-05) a ve variantě bez stáří další tokenizované zlato, pákové tokeny a stablecoin; stop-bod §3.3 plánu. Schváleno vlastníkem. Na reálných datech se spočítal jen audit, žádná strategie. |
