@@ -41,3 +41,15 @@ def test_gate_stats_counts_missing_dates_and_basis_points():
     s = D.gate_stats(d1, np.array([0.01, 0.02, 0.03]), d2, np.array([0.01, 0.0201]))
     assert s["n_common"] == 2 and s["n_only_yahoo"] == 1 and s["n_only_sharadar"] == 0
     assert s["max_abs_bps"] == pytest.approx(1.0)
+
+
+def test_gate_two_day_statistic_cancels_dividend_timing_but_not_isolated_errors():
+    d = np.array(["2026-01-02", "2026-01-05", "2026-01-06", "2026-01-07", "2026-01-08"], dtype="datetime64[D]")
+    base = np.array([0.001, 0.002, -0.001, 0.0005, 0.001])
+    a = base.copy(); b = base.copy()
+    a[1] += 0.006                                      # source A books the dividend on day 1, B on day 2
+    b[2] += 0.006
+    s = D.gate_stats(d, a, d, b)
+    assert s["max_abs_bps"] > 50 and s["max_abs2_bps"] < 0.5
+    c = base.copy(); c[3] += 0.006                     # an isolated error is not cancelled
+    assert D.gate_stats(d, base, d, c)["max_abs2_bps"] > 50

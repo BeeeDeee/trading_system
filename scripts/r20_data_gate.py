@@ -28,7 +28,7 @@ for tk in S19.ALL_ETF:
     st = D.gate_stats(y["dates"][m], y["tr"][m], p.dates[win][live], tr_s[live])
     st["pass"] = bool(st["n_common"] > 0 and st["n_only_yahoo"] == 0 and st["n_only_sharadar"] == 0
                       and st["median_abs_bps"] <= S.GATE_MEDIAN_BPS and st["p99_abs_bps"] <= S.GATE_P99_BPS
-                      and st["max_abs_bps"] <= S.GATE_MAX_BPS and abs(st["cum_diff_pct"]) <= S.GATE_CUM_PCT)
+                      and st["max_abs2_bps"] <= S.GATE_MAX_BPS and abs(st["cum_diff_pct"]) <= S.GATE_CUM_PCT)
     out[tk] = st
     time.sleep(0.5)
 res = {"window": [str(lo), str(hi)], "thresholds": {"median_bps": S.GATE_MEDIAN_BPS, "p99_bps": S.GATE_P99_BPS,
@@ -36,8 +36,8 @@ res = {"window": [str(lo), str(hi)], "thresholds": {"median_bps": S.GATE_MEDIAN_
        "passed": all(v["pass"] for v in out.values()), "created_at": datetime.now(timezone.utc).isoformat()}
 S.RESULTS.mkdir(parents=True, exist_ok=True)
 (S.RESULTS / "data_gate.json").write_text(json.dumps(res, indent=1))
-print(f"{'tk':5} {'n':>4} {'onlyY':>5} {'onlyS':>5} {'med':>6} {'p99':>7} {'max':>7} {'cum%':>7}  pass  worst")
+print(f"{'tk':5} {'n':>4} {'onlyY':>5} {'onlyS':>5} {'med':>6} {'p99':>7} {'max':>7} {'max2':>7} {'cum%':>7}  pass  worst")
 for tk, v in out.items():
     print(f"{tk:5} {v['n_common']:4d} {v['n_only_yahoo']:5d} {v['n_only_sharadar']:5d} {v['median_abs_bps']:6.2f} "
-          f"{v['p99_abs_bps']:7.2f} {v['max_abs_bps']:7.2f} {v['cum_diff_pct']:7.3f}  {v['pass']!s:5} {v['worst_dates']}")
+          f"{v['p99_abs_bps']:7.2f} {v['max_abs_bps']:7.2f} {v['max_abs2_bps']:7.2f} {v['cum_diff_pct']:7.3f}  {v['pass']!s:5} {v['worst_dates']}")
 print("GATE PASSED" if res["passed"] else "GATE FAILED")

@@ -100,12 +100,20 @@ def nasdaq_closes(ticker: str, start: datetime.date, limit: int = 300, asset: st
 
 
 def gate_stats(dates_y: np.ndarray, tr_y: np.ndarray, dates_s: np.ndarray, tr_s: np.ndarray) -> dict:
-    """Compare two daily TR series on the common dates (basis points); also count the dates only one has."""
+    """Compare two daily TR series on the common dates (basis points); also count the dates only one has.
+    `max_abs_bps` (daily) is descriptive, the gate uses `max_abs2_bps` (largest difference not cancelled by an adjacent day)."""
     common, iy, is_ = np.intersect1d(dates_y, dates_s, return_indices=True)
     d = (tr_y[iy] - tr_s[is_]) * 1e4
     a = np.abs(d)
     cum = (np.prod(1 + tr_y[iy]) / np.prod(1 + tr_s[is_]) - 1.0) * 100.0
+    # A dividend booked on adjacent days by the two sources shows as +x, -x on those days. A day counts only if no
+    # two-day window containing it cancels the difference: m_t = min(|d_t|, |w_{t-1,t}|, |w_{t,t+1}|), w = compounded
+    # two-day difference (prereg v1.0, §3.3). An isolated error stays m_t = |d_t|.
+    two = np.abs(((1 + tr_y[iy][1:]) * (1 + tr_y[iy][:-1]) - (1 + tr_s[is_][1:]) * (1 + tr_s[is_][:-1])) * 1e4)
+    inf = np.full(1, np.inf)
+    m2 = np.minimum(a, np.minimum(np.r_[inf, two], np.r_[two, inf])) if len(a) else a
     return {"n_common": int(len(common)), "n_only_yahoo": int(len(dates_y) - len(common)),
             "n_only_sharadar": int(len(dates_s) - len(common)), "median_abs_bps": float(np.median(a)) if len(a) else None,
             "p99_abs_bps": float(np.percentile(a, 99)) if len(a) else None, "max_abs_bps": float(a.max()) if len(a) else None,
+            "max_abs2_bps": float(m2.max()) if len(m2) else None,
             "cum_diff_pct": float(cum), "worst_dates": [str(common[k]) for k in np.argsort(-a)[:3]]}
