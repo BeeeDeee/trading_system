@@ -1438,5 +1438,89 @@
   "actor": "librarian",
   "message_id": 714,
   "ts": "2026-10-31T22:08:34.415256+00:00"
+ },
+ {
+  "id": "K-0121",
+  "kind": "market",
+  "title": "Holders' capital-gain overhang does not predict a short-horizon edge in liquid US stocks: two designs, both wrong-signed",
+  "statement": "Two designs gated the news response of liquid US stocks by holders' unrealized gain. H-0009 followed volume-shock moves that agreed with the 12-month gain and lost money. H-0091 used real earnings-release reactions and long gain-overhang, short loss-overhang stocks, a contrast built to cancel generic reaction drift; its average was wrong-signed, below every time-shifted placebo, negative in every third of dev and at every horizon, and absent in the first session. The shape is slow drift, not an announcement effect, and fits the winner give-back of H-0068 (K-0083) because overhang is mostly a past-winner marker. A beta gap between legs (K-0074) was not neutralized; no split by news sign or no-release control sort was run. So a disposition channel is not supported in large caps over days, and the opposite sign is not shown to be an effect either. A new overhang card should separate good-news and bad-news cells and match legs on beta and past return.",
+  "evidence": "[\"H-0091\",\"H-0009\",\"H-0068\",\"K-0083\",\"K-0074\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 720,
+  "ts": "2026-11-01T05:06:36.518889+00:00"
+ },
+ {
+  "id": "K-0122",
+  "kind": "framework",
+  "title": "Scout wall-clock timeouts: 15 % of runs hit 900 s; a normal run takes ~430 s",
+  "statement": "Between 2026-10-05 and 2026-11-01, 16 of 107 completed Scout runs ended in a wall-clock timeout at the default 900 s (Builder, Librarian: none), clustered by day (10-27: 5, 10-30/31: 2 each), and on 10-30/31 timeouts were followed by session-limit failures. The first Scout run after the fix took 431 s and 22 turns, so 900 s left only ~2x headroom. Scout now has timeout_s 1500 and is told to do at most 3 WebSearch calls; the cause of the clusters (slow API vs a stuck search) is not verified. lab invocations now shows wall time and turns.",
+  "evidence": "[\"lab-prod invocations 2026-11-01\",\"commit e6c24ced\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "human",
+  "message_id": 729,
+  "ts": "2026-11-01T13:27:20.367094+00:00"
+ },
+ {
+  "id": "K-0123",
+  "kind": "framework",
+  "title": "Rate-limit pause ends at the reset time named in the error, not after a fixed 5 h",
+  "statement": "A session-limit failure ('resets 7am (UTC)') now pauses agent runs until that reset time (orchestrator.pause_until), capped at rate_limit_pause_hours; a message without a reset time still pauses for the full 5 h. Before, a limit at 06:35 blocked runs until 11:35 although the quota returned at 07:00. Untested in production until the next session limit.",
+  "evidence": "[\"commit e6c24ced\",\"K-0115\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "human",
+  "message_id": 730,
+  "ts": "2026-11-01T13:27:20.903763+00:00"
+ },
+ {
+  "id": "K-0124",
+  "kind": "data",
+  "title": "lab fetch takes seconds for single-endpoint sources, minutes for paginated ones",
+  "statement": "Existing fetchers run in 0.4-7 s (FRED, Treasury, DefiLlama, CFTC: 1-4 requests). Upbit answers in ~1.4 s per request, so a paginated multi-coin source (~300 requests, estimated, not run) needs ~7 min; the framework caps a fetch at 900 s and 500 requests. Archivist timeout_s was raised 1500 -> 3000 on 2026-11-01 because 3 Archivist runs timed out at 1500 s after the Bash backgrounding fix (K-0116); whether 3000 s is enough is not yet known.",
+  "evidence": "[\"lab/framework/ingest.py FETCH_LIMIT_S, MAX_REQUESTS\",\"commit 51dd2563\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "human",
+  "message_id": 731,
+  "ts": "2026-11-01T13:27:21.590265+00:00"
+ },
+ {
+  "id": "K-0125",
+  "kind": "method",
+  "title": "Mean exposure of a filing-season event book came out well below entries x hold x weight / sessions",
+  "statement": "K-0104 found that mean exposure of slot books fits entries x hold / sessions x slot weight (H-0078, H-0079). H-0092 does not fit: 16204 entries, hold 5, slot weight 0.04, 5437 decision dates (5787 observations) give an arithmetic gross of 0.56-0.60, while G1 reported a mean exposure of 0.36, and the card forecast 0.4-0.55. Two readings, not separated: the card's gross cap of 1.0 scaled down all entries of peak filing-season sessions (events cluster in a few weeks per quarter), or the reported exposure nets long against short positions. Either way, a clustered event book is invested less than the arithmetic says, and the scaled slots are smaller than the card's weight. Cards with clustered events should forecast exposure from the busiest weeks, not from the annual average, and state which exposure definition they use. The same card forecast events (about 14000-16000, counted 16330) and the round trip (12-15 bps forecast against about 12 bps modelled) correctly, which fits the advice of K-0098 and K-0120. The exposure definition question of K-0101 stays open.",
+  "evidence": "[\"H-0092\",\"H-0078\",\"H-0079\",\"K-0104\",\"K-0101\",\"K-0098\",\"K-0120\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 732,
+  "ts": "2026-11-01T13:38:10.087431+00:00"
+ },
+ {
+  "id": "K-0126",
+  "kind": "market",
+  "title": "Filing-anchored fundamentals sorts clear the placebo test in LIQ-500 twice, and both books stay near cash",
+  "statement": "Two sorts with different content, net repurchasers against issuers (H-0019) and low against high quarterly accruals (H-0092), were both timed to the quarterly filing and held for a week in LIQ-500. Both cleared the same-stock placebo bar with gross above round-trip cost, and both books ended near T-bills (K-0064). They share filing dates, universe and seasons, so this is one piece of evidence seen twice. H-0019 faded era by era, while H-0092 was positive in every third, so the early-era reading in K-0110 is weaker. H-0092 effect was present in the first session and kept building, a slow reaction to filed information, neither flat nor front-loaded. The release-anchored sort (H-0027) and the slow style (H-0086) failed, so the anchor matters. In H-0092 the unbalanced short leg lost (K-0074). A further market-neutral filing sort in LIQ-500 has a low prior; a long-only tilt, beta-matched legs or less covered stocks are untested.",
+  "evidence": "[\"H-0092\",\"H-0019\",\"H-0027\",\"H-0086\",\"K-0110\",\"K-0064\",\"K-0074\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 734,
+  "ts": "2026-11-01T13:38:10.110412+00:00"
+ },
+ {
+  "id": "K-0127",
+  "kind": "market",
+  "title": "A predicted-release fundamentals sort cleared the placebo bar but not cost, and grew rather than decayed",
+  "statement": "K-0083 found that on real 8-K dates only sorts on the stock's own price move cleared the placebo test. Earnings seasonality (H-0093) sorts on a second variable and cleared the percentile narrowly, with a placebo mean near zero and a bar below cost; the composite sort H-0032 did not. Its shape fit the claim (small early, larger by the end of the week, flat beyond) but gross stayed below round-trip cost. The latest block was the strongest, the reverse of K-0060, yet the first block had almost no events, so only two blocks are usable. This weakens K-0083 without refuting it. The date hit rate was never measured. A further predicted-window fundamentals sort in LIQ-500 has a low prior unless gross is argued clearly above cost.",
+  "evidence": "[\"H-0093\",\"H-0032\",\"H-0092\",\"K-0083\",\"K-0126\",\"K-0060\",\"K-0064\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 740,
+  "ts": "2026-11-01T15:07:02.053162+00:00"
  }
 ]

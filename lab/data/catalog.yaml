@@ -789,3 +789,479 @@ datasets:
     - 'The EDGAR item list is as filed, never revised. The flag is a daily indicator
       with no information on the news itself: several unrelated 8-Ks on one session
       count once.'
+
+  - id: cboe_etf_vol_1d
+    loader: generic
+    asset_class: macro
+    instruments: 'CBOE 30-day implied-volatility indices on ETFs/indices as served by
+      FRED, daily close in index points: RVXCLS (Russell 2000 RVX), VXEEMCLS (EM ETF),
+      VXEWZCLS (Brazil ETF), VXFXICLS (China ETF), VXXLECLS (Energy Sector ETF), VXGDXCLS
+      (Gold Miners ETF), VXSLVCLS (Silver ETF), EVZCLS (EuroCurrency ETF); signal only,
+      not tradable'
+    frequency: 1d
+    range:
+    - '2004-01-02'
+    - '2026-10-29'
+    clock: next_morning
+    source: FRED (St. Louis Fed) fredgraph.csv, https://fred.stlouisfed.org/graph/fredgraph.csv?id=<SERIES>,
+      originally CBOE; free, public, no key, used under FRED terms for research use
+    quality: 'lab ingest 2026-11-02: 28953 rows, 8 series, see LAB_HOME/data/cboe_etf_vol_1d/report.json'
+    holdout_from: '2021-01-01'
+    known_biases:
+    - FRED serves only the latest vintage and no publication timestamps; the close of
+      day d is assumed known the next morning (clock next_morning), conservative. CBOE
+      index values are computed from option prices and are not revised in the ordinary
+      sense.
+    - 'First and last valid date per key as fetched 2026-11-02 (framework report): RVXCLS
+      2004-01-02..2026-10-29 (5741 values); VXEEMCLS 2011-03-16..2026-10-29 (3930);
+      VXEWZCLS 2011-03-16..2026-10-29 (3930); VXFXICLS 2011-03-16..2022-02-11 (2748,
+      discontinued); VXXLECLS 2011-03-16..2022-02-11 (2748, discontinued); VXGDXCLS
+      2011-03-16..2022-02-11 (2748, discontinued); VXSLVCLS 2011-03-16..2022-02-11 (2748,
+      discontinued); EVZCLS 2007-11-01..2025-03-11 (4360, discontinued). Discontinued
+      series simply stop and are not extended or filled: a strategy needing them has
+      no value after the last date (survivorship toward ETFs whose index continued),
+      and these five keys have no forward data.'
+    - Holdout from 2021-01-01 means the four series discontinued in 2022-02 (VXFXICLS,
+      VXXLECLS, VXGDXCLS, VXSLVCLS) have only about 13 months of holdout data and EVZCLS
+      about 4 years; pairs depending on them cannot be fully evaluated out of sample
+      or paper traded.
+    - Series start dates differ; there is no history before each start. Per-series daily
+      counts are consistent with the XNYS calendar, no gap above 5 days; the framework
+      flagged 10-27 large day-to-day jumps per series (volatility spikes, kept as published).
+    - Missing values (FRED '.', mostly US market holidays) are dropped, not filled;
+      a few XNYS sessions may have no value. Index points are not a tradable instrument.
+    - CBOE methodology of these ETF volatility indices can change and licensing of CBOE
+      series on FRED can change; if FRED truncates the history it serves, the fetch
+      returns what it serves.
+    forward_source: same FRED endpoint (https://fred.stlouisfed.org/graph/fredgraph.csv?id=<SERIES>),
+      refetched daily; only for RVXCLS, VXEEMCLS and VXEWZCLS (still published); the
+      other five are discontinued and have no forward data
+    calendar: XNYS
+    fields:
+    - EVZCLS
+    - RVXCLS
+    - VXEEMCLS
+    - VXEWZCLS
+    - VXFXICLS
+    - VXGDXCLS
+    - VXSLVCLS
+    - VXXLECLS
+    location: LAB_HOME/data/cboe_etf_vol_1d
+    cost_model: null
+
+  - id: fred_oecd_10y_yields_1d
+    loader: generic
+    asset_class: macro
+    instruments: OECD Main Economic Indicators long-term (10-year, benchmark) government
+      bond yields, monthly average, percent, not seasonally adjusted, via FRED IRLTLT01<CC>M156N
+      for 15 countries (keys US, JP, GB, CA, AU, CH, SE, DE, KR, MX, ZA, CL, IL, PL,
+      NZ); each monthly value is stamped on the first XNYS session of month m+2; signal
+      only, not tradable
+    frequency: 1d
+    range:
+    - '1998-03-02'
+    - '2026-11-02'
+    clock: next_morning
+    source: FRED (St. Louis Fed) fredgraph.csv, https://fred.stlouisfed.org/graph/fredgraph.csv?id=IRLTLT01<CC>M156N,
+      originally OECD Main Economic Indicators; free, public, no key, used under FRED
+      terms for research use
+    quality: 'lab ingest 2026-11-02: 4920 rows, 15 series, see LAB_HOME/data/fred_oecd_10y_yields_1d/report.json'
+    holdout_from: '2021-01-01'
+    known_biases:
+    - 'Monthly data on a daily calendar: the value of month m is stamped on the first
+      XNYS session of month m+2 by rule (conservative for OECD/FRED publication lag,
+      normally the OECD publishes in the first weeks of m+1). The XNYS first session
+      is computed in the fetcher (weekends, New Year, Good Friday, Labor Day, July 4
+      and special closures); an error shifts a stamp by one session. Between stamps
+      the value is a step (the framework or the strategy carries the last value).'
+    - FRED serves only the latest vintage of the OECD series; past months may have been
+      revised by the OECD or the national source after first release, and FRED has no
+      vintages for most of these series. The stamping rule only protects against publication
+      lag, not against revisions.
+    - 'Monthly averages of daily yields, not end-of-month levels: the value of month
+      m already contains data of the whole month; it is a smoothed series, so changes
+      mix two months.'
+    - Definition and benchmark bond change by country and over time (OECD 'Main including
+      benchmark'); some countries have yields from other sources (central bank or national
+      statistics); coverage, start dates and gaps differ per key. Missing months are
+      dropped, not filled.
+    - 'First valid month per key (stamp = first XNYS session of month+2), from the framework
+      fetch 2026-11-02: US, JP, GB, CA, AU, CH, SE, DE, ZA, IL, NZ 1998-01 (stamp 1998-03-02,
+      345 values each, requested from 1998-01 onwards); KR 2000-10 (stamp 2000-12-01,
+      312 values); PL 2001-01 (stamp 2001-03-01, 309); MX 2001-07 (stamp 2001-09-04,
+      237 values, months missing at the source, largest gap 152 days between stamps,
+      not filled); CL 2004-07 (stamp 2004-09-01, 267). Latest stamp 2026-11-02 carries
+      the 2026-09 value. The Archivist did not look at values.'
+    - OECD/FRED may stop or restructure these series (OECD MEI series on FRED have had
+      updates lagging by months for some countries); the last values can be stale for
+      some keys.
+    forward_source: same FRED endpoint (fredgraph.csv id=IRLTLT01<CC>M156N), refetched
+      daily or monthly; new months appear with the OECD release lag (the m+2 stamp rule
+      stays conservative)
+    calendar: XNYS
+    fields:
+    - AU
+    - CA
+    - CH
+    - CL
+    - DE
+    - GB
+    - IL
+    - JP
+    - KR
+    - MX
+    - NZ
+    - PL
+    - SE
+    - US
+    - ZA
+    location: LAB_HOME/data/fred_oecd_10y_yields_1d
+    cost_model: null
+
+  - id: coinmetrics_supply_1d
+    loader: generic
+    asset_class: crypto_spot
+    instruments: Coin Metrics SplyCur (current supply, native units) at 1d for the roughly
+      90 assets the community tier serves; key = Coin Metrics asset id upper-cased +
+      USDT.P (Binance USD-M perp id convention, e.g. ADAUSDT.P). Ticker map = identity
+      on the Coin Metrics id, so only keys that exist as Binance perps (e.g. BTC, ETH,
+      LTC, BCH, XRP, ADA, DOGE, LINK, UNI, AAVE, ALGO, ETC, MANA, SNX, SUSHI, YFI, ZEC,
+      XMR, DASH, XLM, NEO, BAT, ZRX, MKR, COMP, CRV, LDO, 1INCH, ICP, DOT to 2022-06)
+      are usable; the rest (stablecoins, wrapped, delisted tokens) are harmless extras.
+      Signal only, not tradable
+    frequency: 1d
+    range:
+    - '2009-01-03'
+    - '2026-11-01'
+    clock: crypto
+    source: Coin Metrics Community API v4, https://community-api.coinmetrics.io/v4/timeseries/asset-metrics
+      (metrics=SplyCur, frequency=1d, asset list from /v4/catalog/asset-metrics); free,
+      no key, Coin Metrics community data license (attribution)
+    quality: 'lab ingest 2026-11-02: 279858 rows, 90 series, see LAB_HOME/data/coinmetrics_supply_1d/report.json'
+    holdout_from: '2023-01-01'
+    known_biases:
+    - 'Revised: Coin Metrics documents historical corrections and backfills of network
+      data (newly identified addresses added to supply and flow metrics, bug fixes,
+      recomputation of aggregated assets, a human quality-control review with status
+      labels); the API serves the current vintage only, so a value as served today is
+      not what was visible on that day. Supply series are mostly smooth, but a retroactive
+      correction would be look-ahead in level and in growth.'
+    - 'Coverage is the community tier only: the community catalog serves about 90 assets
+      for SplyCur 1d and NOT many large Binance perps (no SOL, TRX, AVAX, ATOM, NEAR,
+      APT, ARB, OP, BNB, FIL, SUI, TON and similar; the explicit probes returned nothing).
+      So the dataset covers only part of a top-40 perp universe, skewed to older coins
+      (survivorship toward early listed assets); a strategy must treat a missing supply
+      series as ineligible.'
+    - 'DOT is served only 2020-05-26..2022-06-03, XTZ to 2022-04-28, BSV to 2023-08-07,
+      KCS to 2021-02-10, NEO and GAS to 2025-10-30, FLOW from 2024-06-13 (one 35-day
+      gap): the community tier truncates or restarts some series. These keys have no
+      forward data or no early history.'
+    - 'Ambiguous or reused tickers dropped and not guessed: LUNA, LUNA2, LUNC, UST,
+      USTC, REP, REPV2, BCC, ANT, MIR, BNB (Coin Metrics bnb is the ERC-20 token until
+      the 2019 mainnet swap), and the AVAX chain-specific assets AVAXC/AVAXP/AVAXX.
+      Binance 1000-multiplier ids (1000SHIB etc.) are emitted from the same Coin Metrics
+      asset only if it is served (shib, pepe, floki, bonk, xec: none was in the community
+      tier at fetch time, so none was emitted).'
+    - 'Tickers can differ from the Binance asset: the map is by ticker identity, not
+      by contract; Binance renamings (MATIC to POL, FTM to S, RNDR to RENDER) are not
+      bridged, and Coin Metrics assets for tokens such as LEND (pre-migration Aave),
+      GNT, SAI, BCH vs BSV are separate history lines with their own keys.'
+    - 'SplyCur for tokens is the contract total supply (includes locked, vesting and
+      unissued-but-minted units) and for UTXO chains the sum of unspent outputs; it
+      is not circulating supply. Fixed-supply tokens give a constant series (framework
+      flagged CONSTANT: AAVE, ALPHA, COMP, CRO, CVC, DRGN, GNO, HT, LINK, NEO, PERP,
+      POLY, POWR, PPT, QASH, UNI, WTC, XEM, ZRX), so unlock dilution is invisible. Asset-specific
+      rules: XRP counts escrow, Solana-style inflation and burns, XLM fee pool and burns,
+      Zcash shielded pools.'
+    - 'Large one-day supply jumps (framework ''big_jumps'', its threshold is not the
+      lab''s 20 %; the fetcher cannot count the 20 % days itself): XLM 1904, XMR 625,
+      TUSD 599, DOGE 444, SUSHI 488, NXM 283, WNXM 227, PAX 1255, BUSD 1210, GUSD 382,
+      XVG 251, DASH 178, BSV 157, XTZ 148, ICP 112, BAL 94, UMA 81, XRP 72, GAS 66,
+      DOT 65, ADA 38, BCH 13, DAI 45, USDC 39, WETH 44, SAI 16, BTC 5, GRIN 5, DGB 4,
+      BTG 2, VTC 2, LTC 1, ZEC 1, USDT 0, ETH 0 and 0 for the rest. The strategy''s
+      own filter (no |log change| above 0.20 in the window) should handle them; they
+      are kept as published.'
+    - First date per key is the first day Coin Metrics has a supply value (e.g. BTC
+      2009-01-03, LTC 2011-10-07, XRP 2013-01-01, ETH 2015-07-30, ADA 2017-09-23, LINK
+      2017-09-16, AAVE 2020-10-02, UNI 2020-09-14, ICP 2021-05-06); keys before the
+      Binance perp start (2019-12) give the lookback history. Daily values are end of
+      UTC day; the newest rows (fetch day minus 1) may be provisional and can still
+      be revised.
+    - Community API is rate limited and its terms and metric list can change (Coin Metrics
+      has cut community metrics before); if the tier shrinks, the fetch returns what
+      it serves.
+    forward_source: same endpoint (https://community-api.coinmetrics.io/v4/timeseries/asset-metrics,
+      metrics=SplyCur, frequency=1d), refetched daily; only for assets still served
+      by the community tier
+    calendar: 24/7
+    fields:
+    - 1INCHUSDT.P
+    - AAVEUSDT.P
+    - ADAUSDT.P
+    - ALGOUSDT.P
+    - ALPHAUSDT.P
+    - BALUSDT.P
+    - BATUSDT.P
+    - BCHUSDT.P
+    - BSVUSDT.P
+    - BTCUSDT.P
+    - BTGUSDT.P
+    - BUSDUSDT.P
+    - COMPUSDT.P
+    - CROUSDT.P
+    - CRVUSDT.P
+    - CVCUSDT.P
+    - DAIUSDT.P
+    - DASHUSDT.P
+    - DCRUSDT.P
+    - DGBUSDT.P
+    - DOGEUSDT.P
+    - DOTUSDT.P
+    - DRGNUSDT.P
+    - ELFUSDT.P
+    - ETCUSDT.P
+    - ETHUSDT.P
+    - FLOWUSDT.P
+    - FTTUSDT.P
+    - FUNUSDT.P
+    - GASUSDT.P
+    - GNOUSDT.P
+    - GNTUSDT.P
+    - GRINUSDT.P
+    - GUSDUSDT.P
+    - HBTCUSDT.P
+    - HEDGUSDT.P
+    - HTUSDT.P
+    - HUSDUSDT.P
+    - ICPUSDT.P
+    - KCSUSDT.P
+    - KNCUSDT.P
+    - LDOUSDT.P
+    - LENDUSDT.P
+    - LINKUSDT.P
+    - LPTUSDT.P
+    - LTCUSDT.P
+    - MAIDUSDT.P
+    - MANAUSDT.P
+    - MKRUSDT.P
+    - NEOUSDT.P
+    - NXMUSDT.P
+    - OMGUSDT.P
+    - PAXGUSDT.P
+    - PAXUSDT.P
+    - PAYUSDT.P
+    - PERPUSDT.P
+    - POLYUSDT.P
+    - POWRUSDT.P
+    - PPTUSDT.P
+    - QASHUSDT.P
+    - QNTUSDT.P
+    - RENBTCUSDT.P
+    - RENUSDT.P
+    - SAIUSDT.P
+    - SNTUSDT.P
+    - SNXUSDT.P
+    - SRMUSDT.P
+    - SUSHIUSDT.P
+    - SWRVUSDT.P
+    - TUSDUSDT.P
+    - UMAUSDT.P
+    - UNIUSDT.P
+    - USDCUSDT.P
+    - USDKUSDT.P
+    - USDTUSDT.P
+    - VTCUSDT.P
+    - WBTCUSDT.P
+    - WETHUSDT.P
+    - WNXMUSDT.P
+    - WTCUSDT.P
+    - XAUTUSDT.P
+    - XEMUSDT.P
+    - XLMUSDT.P
+    - XMRUSDT.P
+    - XRPUSDT.P
+    - XTZUSDT.P
+    - XVGUSDT.P
+    - YFIUSDT.P
+    - ZECUSDT.P
+    - ZRXUSDT.P
+    location: LAB_HOME/data/coinmetrics_supply_1d
+    cost_model: null
+
+  - id: upbit_krw_1d
+    loader: generic
+    asset_class: crypto_spot
+    instruments: 'Upbit (South Korea) KRW-market daily candles, UTC day 00:00-24:00
+      (09:00-09:00 KST), 50 base assets of the 2026-11-02 market list; per base: <BASE>.close
+      = trade_price (last trade of the UTC day, KRW) and <BASE>.value_krw = candle_acc_trade_price
+      (KRW traded value of the day). Bases delivered: 1INCH, AAVE, ADA, ALGO, APT, ARB,
+      ATOM, AVAX, AXS, BCH, BTC, COMP, CRV, DOGE, DOT, EGLD, ENS, ETC, ETH, FIL, GRT,
+      ICP, IMX, INJ, IOTA, LINK, MANA, MINA, NEAR, NEO, ONT, OP, PEPE, POL, QTUM, SAND,
+      SEI, SHIB, SOL, STX, SUI, THETA, TIA, TRX, UNI, VET, WLD, XLM, XRP, XTZ (a base
+      appears from its first Upbit KRW candle at or after 2019-09-01). Signal only,
+      not tradable'
+    frequency: 1d
+    range:
+    - '2019-09-01'
+    - '2026-11-01'
+    clock: crypto
+    source: Upbit public REST API, https://api.upbit.com/v1/market/all and https://api.upbit.com/v1/candles/days?market=KRW-<BASE>&count=200&to=<UTC
+      time> (newest-first pagination); free, no key, public quotation endpoints
+    quality: 'lab ingest 2026-11-02: 173598 rows, 100 series, see LAB_HOME/data/upbit_krw_1d/report.json'
+    holdout_from: '2023-01-01'
+    known_biases:
+    - 'PARTIAL COVERAGE (request budget): the framework caps a fetch at 500 requests
+      and a market needs about 14 pages of 200 candles for 2019-2026, so not all KRW
+      markets fit. Fetch order was liquid Binance-perp bases first, then cheaper newer
+      listings, then older markets as far as the budget went (480 requests). Delivered:
+      the 50 bases listed in instruments; markets of the 2026-11-02 list that were NOT
+      fetched because the budget ran out include at least BAT, ZRX, ZIL, WAVES, HBAR,
+      KAVA, CHZ, ANKR and every other KRW market outside my priority lists; a coin missing
+      from this dataset means ''not fetched'', not ''not on Upbit''. In dev (2019-12..2022-12)
+      about 15 delivered coins exist in 2019-12 (ADA, ATOM, BCH, BTC, ETC, ETH, IOTA,
+      MANA, NEO, ONT, QTUM, THETA, TRX, XLM, XRP), about 19 by late 2020 (adding VET,
+      DOT, LINK, XTZ) and about 31 by end of 2022 (DOGE, SAND, AXS, STX, SOL, POL, AVAX,
+      NEAR, ALGO, AAVE, 1INCH, APT), and only some of them pass a KRW traded-value floor,
+      so a card that needs at least 10 eligible coins per day has thin dev coverage
+      in 2019-2020; missing older coins that were liquid then (e.g. EOS, LTC, BAT, ZRX,
+      DASH, ZEC, ZIL, WAVES, HBAR, CHZ) are absent.'
+    - 'History is cut at 2019-09-01 (not the first Upbit candle of late 2017): older
+      rows were not requested to save requests, so the first date of a base listed before
+      then is 2019-09-01, not its listing date; listing-age rules cannot use it. Later
+      listings start at their true first candle (e.g. DOGE 2021-02-24, SOL and POL 2021-10-15,
+      AVAX 2022-02-08, APT 2022-10-19, SUI 2023-05-04). Some re-listed markets start
+      late (ICP 2026-03-11, CRV 2026-08-21, FIL 2025-04-04, COMP 2025-04-01): the API
+      serves only the current listing segment.'
+    - 'Delisted markets: market/all lists only current markets. Probes of six delisted
+      KRW markets (BCHA, EMC2, GAME, MEDX, QKC, VIB) returned no candles and are not
+      in the data; I could not fetch any delisted KRW market, so the dataset is survivorship-biased
+      toward coins still listed on Upbit (Korean exchange delistings are often after
+      crashes). Other delisted markets were not probed.'
+    - 'Gaps: Upbit publishes no candle for a day without a trade; none was filled (framework
+      reports max gap 1 day and no gap above 7 days for every delivered series, so this
+      is mostly not an issue for liquid coins).'
+    - The newest UTC day seen in any market is dropped as a still-forming candle, so
+      the last row is the last complete day (2026-11-01 at this fetch); a fetch just
+      after 00:00 UTC may drop one extra complete day (conservative). Values of past
+      candles are not revised by Upbit as far as known, but there is no vintage history.
+    - 'Ticker identity: Upbit codes are by ticker; renamings (MATIC to POL in 2024)
+      keep history under the new code, Binance perps switched at a different date (MATICUSDT
+      to POLUSDT.P), so matching by base asset breaks around the rename. Terra tickers
+      (LUNA, LUNC, UST) are deliberately excluded. SHIB, PEPE (Upbit quotes the unit
+      price, Binance quotes per 1000) have no matching Binance id without a multiplier.
+      KRW prices include the Korean premium over USD prices; there is no KRW/USD series
+      in this dataset.'
+    - 'Thin KRW liquidity and Korean market structure: small coins have low KRW value
+      and trading halts or wallet maintenance can freeze arbitrage; value_krw is the
+      exchange''s own accumulated trade value (wash trading is not excluded).'
+    - Rate limit about 10 requests/s on the quotation API; the framework fetch took
+      about 480 requests; forward refetching of recent pages is cheap (one page per
+      market holds 200 days), but the same fetcher re-downloads full history each time
+      within the same budget.
+    forward_source: same endpoints (https://api.upbit.com/v1/candles/days, market list
+      https://api.upbit.com/v1/market/all), refetched daily; one page of 200 candles
+      per market covers recent days
+    calendar: 24/7
+    fields:
+    - 1INCH.close
+    - 1INCH.value_krw
+    - AAVE.close
+    - AAVE.value_krw
+    - ADA.close
+    - ADA.value_krw
+    - ALGO.close
+    - ALGO.value_krw
+    - APT.close
+    - APT.value_krw
+    - ARB.close
+    - ARB.value_krw
+    - ATOM.close
+    - ATOM.value_krw
+    - AVAX.close
+    - AVAX.value_krw
+    - AXS.close
+    - AXS.value_krw
+    - BCH.close
+    - BCH.value_krw
+    - BTC.close
+    - BTC.value_krw
+    - COMP.close
+    - COMP.value_krw
+    - CRV.close
+    - CRV.value_krw
+    - DOGE.close
+    - DOGE.value_krw
+    - DOT.close
+    - DOT.value_krw
+    - EGLD.close
+    - EGLD.value_krw
+    - ENS.close
+    - ENS.value_krw
+    - ETC.close
+    - ETC.value_krw
+    - ETH.close
+    - ETH.value_krw
+    - FIL.close
+    - FIL.value_krw
+    - GRT.close
+    - GRT.value_krw
+    - ICP.close
+    - ICP.value_krw
+    - IMX.close
+    - IMX.value_krw
+    - INJ.close
+    - INJ.value_krw
+    - IOTA.close
+    - IOTA.value_krw
+    - LINK.close
+    - LINK.value_krw
+    - MANA.close
+    - MANA.value_krw
+    - MINA.close
+    - MINA.value_krw
+    - NEAR.close
+    - NEAR.value_krw
+    - NEO.close
+    - NEO.value_krw
+    - ONT.close
+    - ONT.value_krw
+    - OP.close
+    - OP.value_krw
+    - PEPE.close
+    - PEPE.value_krw
+    - POL.close
+    - POL.value_krw
+    - QTUM.close
+    - QTUM.value_krw
+    - SAND.close
+    - SAND.value_krw
+    - SEI.close
+    - SEI.value_krw
+    - SHIB.close
+    - SHIB.value_krw
+    - SOL.close
+    - SOL.value_krw
+    - STX.close
+    - STX.value_krw
+    - SUI.close
+    - SUI.value_krw
+    - THETA.close
+    - THETA.value_krw
+    - TIA.close
+    - TIA.value_krw
+    - TRX.close
+    - TRX.value_krw
+    - UNI.close
+    - UNI.value_krw
+    - VET.close
+    - VET.value_krw
+    - WLD.close
+    - WLD.value_krw
+    - XLM.close
+    - XLM.value_krw
+    - XRP.close
+    - XRP.value_krw
+    - XTZ.close
+    - XTZ.value_krw
+    location: LAB_HOME/data/upbit_krw_1d
+    cost_model: null

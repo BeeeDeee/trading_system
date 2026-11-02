@@ -775,3 +775,30 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not loosen the correlation threshold, z_entry or gap window to raise the count: dev-selected, and a looser threshold admits ordinary correlated peers, the dead peer-lead-lag test (H-0013, H-0066). Do not refile the same pair rule as dual-class or voting premium. Do not read this as evidence that share-class gaps do not revert.
 - open questions: Only a change in power deserves a card: a universe or explicit pair list holding both classes of every dual-class firm (RAM limits LIQ-1000, K-0003), with a pairs-by-year count written first. Untested: per-pair split, and the cost tier of the less liquid class. Gross near cost leaves a thin net even with more events.
 - related: H-0037, H-0077, H-0078, H-0079, H-0080, H-0013, H-0066
+
+## H-0091 – Disposition-gated earnings-news drift on real 8-K dates - LIQ-500 dollar-neutral, among large release reactions long stocks whose holders sit on gains, short those sitting on losses, hold 5 days
+
+- family: `disposition-news-drift` · mechanism: behavioral · instruments: US liquid stocks, dollar-neutral: after large earnings-release reactions, long gain-overhang, short loss-overhang
+- outcome: rejected at G1 mechanism test: wrong-signed, below every placebo, negative in every third of dev; strategy not run
+- lesson: The contrast went the wrong way: among large release reactions, stocks whose holders sat on gains lagged those sitting on losses, below every time-shifted placebo, so this is not a power problem. The gap was near zero in the first session, grew with the horizon (slow drift, not an announcement effect), and was negative in every third, shrinking toward zero lately. Overhang mostly marks past winners, so the likeliest reading is the H-0068 winner give-back extended to large reactions, with a beta gap between the legs (K-0074) as a rival. No split by news sign was reported, so the disposition channel itself was not isolated.
+- avoid: Do not refile the overhang sort with another reference window, reaction threshold, tercile cut or hold: neighbours are the same trial. Do not trade the mirror (long past losers): the sign is dev-selected and it would be a winner-give-back or beta bet, not a disposition claim. Do not rename it capital-gains overhang or reference-price drift.
+- open questions: Does any disposition channel exist beyond past-winner give-back? That needs the gain-minus-loss spread inside good-news and inside bad-news cells, a control sort at dates without a release, and legs matched on beta and past return. Less-covered names are untested and not loadable. With H-0009 this is the second wrong-signed disposition card in LIQ-500.
+- related: H-0009, H-0068, H-0028, H-0033, H-0034
+
+## H-0092 – Accrual information at the 10-Q/10-K filing - LIQ-500 long/short, long low-accrual and short high-accrual filers from the second session after the SEC filing, hold 5 days
+
+- family: `anomalies-at-earnings-news` · mechanism: behavioral · instruments: LIQ-500 US stocks, unbalanced long low-accrual / short high-accrual filers after the filing, 1998 to 2020
+- outcome: mechanism test passed; rejected at G1 on the strategy: net Sharpe near T-bills, bootstrap bound below zero, gross also under the floor
+- lesson: The filing-news claim survived its mechanism test: events beat same-stock placebos, were positive in every third and already in the first session, and kept building over later sessions (not flat, not front-loaded). The book still ended near cash: gross was only just above round-trip cost, only the middle third cleared cost, costs took most of the rest, and the unbalanced short leg lost while the long leg earned a little. Costs and event counts matched the forecast, so no sign of a bug. A mechanism pass with gross near cost is not a strategy (K-0064).
+- avoid: Do not retune leg_quantile or hold_days, or refile the accrual sort as earnings quality or cash-flow quality at the filing: same events, new trials. Do not repeat an unhedged high-accrual short leg. The registry code hides that the bootstrap bound and the absolute floor failed too.
+- open questions: Long versus short side in the event study was not reported; the unbalanced book carries market exposure (K-0074). The ARQ cash-flow field was assumed to be the quarter's own value, never verified. A long-only tilt on an always-invested core (as H-0033) is the natural form.
+- related: H-0019, H-0032, H-0027, H-0086, H-0033
+
+## H-0093 – Earnings-seasonality surprise - LIQ-500 market-neutral, long seasonally strong / short seasonally weak upcoming quarters, 5 sessions around the predicted 8-K release
+
+- family: `anomalies-at-earnings-news` · mechanism: behavioral · instruments: LIQ-500 US stocks, market-neutral, one week around the predicted 8-K release
+- outcome: rejected at G1: beat the placebos just over the percentile bar, but gross per event stayed below round-trip cost; strategy not run
+- lesson: Near cost, not a power failure: many events and dates, placebo bar below cost, so a tradable effect would have shown. The shape fits the claim (small early, larger by the end of the week, not larger beyond) and the latest block was strongest, unlike K-0060. But the first block held almost no events, so 'every third positive' is not shown. Gross sat at the low end of the card's own forecast, about equal to cost; its arithmetic said the book needs far more, so a pass would likely have died at the Sharpe floor (K-0064). Date hit rate and side split were not reported.
+- avoid: Do not retune threshold, years_back or the window, or refile the score as earnings seasonality or seasonal surprise: same events, new trials. Do not trust the latest block's size: dev-selected.
+- open questions: Untested: which side carries it, whether it lives in the cheapest-to-trade names, and whether late strength is real or a history-rule artefact. A new card needs gross clearly above cost argued in advance.
+- related: H-0032, H-0092, H-0023, H-0026, H-0053, H-0028

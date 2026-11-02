@@ -209,7 +209,7 @@ notes: 'Brief fit: horizon medium (cohorts held three months, primary horizon 60
   new series were discontinued around 2020-2022, so in the 2021-2026 holdout fewer than nine instruments may be
   eligible and the book may form few or no cohorts; G4 would then have little to judge. ETFs have no forward source,
   so G4 is the ceiling in any case. No date literals or instruments outside the list are used by the rule.'
-status: BLOCKED_DATA
+status: DATA_READY
 history:
 - ts: '2026-10-28T12:17:27.859938+00:00'
   version: 1
@@ -232,3 +232,10 @@ history:
   agent: system
   invocation_id: null
   reason: missing dataset cboe_etf_vol_1d
+- ts: '2026-11-02T02:50:00.036248+00:00'
+  version: 1
+  from: BLOCKED_DATA
+  to: DATA_READY
+  agent: system
+  invocation_id: null
+  reason: dataset cboe_etf_vol_1d ingested

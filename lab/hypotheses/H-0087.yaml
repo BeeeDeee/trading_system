@@ -201,7 +201,7 @@ notes: 'Brief: long horizon (6-24 months), cross-asset (signal from one market, 
   rate cycles). ETFs and OECD yields have no forward source here, so G4 is the ceiling. Publication: the reference
   year is the end of dev, so there is no post-publication part in dev; the holdout is the only post-publication
   check.'
-status: BLOCKED_DATA
+status: DATA_READY
 history:
 - ts: '2026-10-29T06:44:12.546980+00:00'
   version: 1
@@ -224,3 +224,10 @@ history:
   agent: system
   invocation_id: null
   reason: missing dataset fred_oecd_10y_yields_1d
+- ts: '2026-11-02T02:50:06.634347+00:00'
+  version: 1
+  from: BLOCKED_DATA
+  to: DATA_READY
+  agent: system
+  invocation_id: null
+  reason: dataset fred_oecd_10y_yields_1d ingested

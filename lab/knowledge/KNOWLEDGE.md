@@ -162,6 +162,24 @@ Daily designs on the top perps (2020-2022 dev) conditioned the big moves on fund
 
 *confidence low · 2026-10-31 · librarian · supersedes K-0085 · evidence: H-0081; H-0071; H-0049; H-0039; H-0006; K-0085; K-0084; K-0049; K-0060*
 
+### K-0121 Holders' capital-gain overhang does not predict a short-horizon edge in liquid US stocks: two designs, both wrong-signed
+
+Two designs gated the news response of liquid US stocks by holders' unrealized gain. H-0009 followed volume-shock moves that agreed with the 12-month gain and lost money. H-0091 used real earnings-release reactions and long gain-overhang, short loss-overhang stocks, a contrast built to cancel generic reaction drift; its average was wrong-signed, below every time-shifted placebo, negative in every third of dev and at every horizon, and absent in the first session. The shape is slow drift, not an announcement effect, and fits the winner give-back of H-0068 (K-0083) because overhang is mostly a past-winner marker. A beta gap between legs (K-0074) was not neutralized; no split by news sign or no-release control sort was run. So a disposition channel is not supported in large caps over days, and the opposite sign is not shown to be an effect either. A new overhang card should separate good-news and bad-news cells and match legs on beta and past return.
+
+*confidence low · 2026-11-01 · librarian · evidence: H-0091; H-0009; H-0068; K-0083; K-0074; K-0060*
+
+### K-0126 Filing-anchored fundamentals sorts clear the placebo test in LIQ-500 twice, and both books stay near cash
+
+Two sorts with different content, net repurchasers against issuers (H-0019) and low against high quarterly accruals (H-0092), were both timed to the quarterly filing and held for a week in LIQ-500. Both cleared the same-stock placebo bar with gross above round-trip cost, and both books ended near T-bills (K-0064). They share filing dates, universe and seasons, so this is one piece of evidence seen twice. H-0019 faded era by era, while H-0092 was positive in every third, so the early-era reading in K-0110 is weaker. H-0092 effect was present in the first session and kept building, a slow reaction to filed information, neither flat nor front-loaded. The release-anchored sort (H-0027) and the slow style (H-0086) failed, so the anchor matters. In H-0092 the unbalanced short leg lost (K-0074). A further market-neutral filing sort in LIQ-500 has a low prior; a long-only tilt, beta-matched legs or less covered stocks are untested.
+
+*confidence low · 2026-11-01 · librarian · evidence: H-0092; H-0019; H-0027; H-0086; K-0110; K-0064; K-0074*
+
+### K-0127 A predicted-release fundamentals sort cleared the placebo bar but not cost, and grew rather than decayed
+
+K-0083 found that on real 8-K dates only sorts on the stock's own price move cleared the placebo test. Earnings seasonality (H-0093) sorts on a second variable and cleared the percentile narrowly, with a placebo mean near zero and a bar below cost; the composite sort H-0032 did not. Its shape fit the claim (small early, larger by the end of the week, flat beyond) but gross stayed below round-trip cost. The latest block was the strongest, the reverse of K-0060, yet the first block had almost no events, so only two blocks are usable. This weakens K-0083 without refuting it. The date hit rate was never measured. A further predicted-window fundamentals sort in LIQ-500 has a low prior unless gross is argued clearly above cost.
+
+*confidence low · 2026-11-01 · librarian · evidence: H-0093; H-0032; H-0092; K-0083; K-0126; K-0060; K-0064*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -223,6 +241,12 @@ H-0078 listed 24 fund-ETF pairs on purpose to include delisted funds and reduce 
 H-0082 requested Binance spot bars from 2017 as a signal-only dataset to verify that each coin's spot pair was seasoned before its perp launch. Its first G0 run crashed with 'view starts too late for the spot seasoning rule'. The Builder reports that the view starts at the perp panel's first date, so the spot history before it is not delivered although the catalog holds it. This is the direct confirmation of the cause K-0075 inferred from event counts (H-0061, H-0062). Consequences: any rule on a first-bar date, listing age or long look-back taken from a signal-only dataset is left-censored at the view start. The Builder had to count seasoning only when provable, so perp launches in roughly the first half year of dev were excluded for a data reason (longer for a stricter age rule), and G2 neighbors with a longer age lose early events too. The G1 event count came out well under the card's forecast, which fits but does not prove this cause. Scouts should compute first valid dates from the view start, not from the dataset range; the owner should either deliver signal-only history before the dev start or state in the catalog that it is not delivered.
 
 *confidence medium · 2026-10-28 · librarian · supersedes K-0075 · evidence: H-0082; H-0061; H-0062; K-0075; K-0020*
+
+### K-0124 lab fetch takes seconds for single-endpoint sources, minutes for paginated ones
+
+Existing fetchers run in 0.4-7 s (FRED, Treasury, DefiLlama, CFTC: 1-4 requests). Upbit answers in ~1.4 s per request, so a paginated multi-coin source (~300 requests, estimated, not run) needs ~7 min; the framework caps a fetch at 900 s and 500 requests. Archivist timeout_s was raised 1500 -> 3000 on 2026-11-01 because 3 Archivist runs timed out at 1500 s after the Bash backgrounding fix (K-0116); whether 3000 s is enough is not yet known.
+
+*confidence low · 2026-11-01 · human · evidence: lab/framework/ingest.py FETCH_LIMIT_S, MAX_REQUESTS; commit 51dd2563*
 
 ## Methodology
 
@@ -321,6 +345,12 @@ H-0086 is the fourth slow monthly-formation sort of liquid US stocks to end at t
 H-0049, H-0050, H-0077, H-0089 and H-0090 forecast far more events than counted (K-0069, K-0098, K-0113); H-0090 forecast 600-1200, counted 66 on 30 dates. H-0081 adds: the VIX gate was expected on 35-45 percent of dev days, 400-500 dates, 4000-6000 events; G0 and G1 counted 1802 events on 207 dates, about a fifth of days (inferred). The card put the liquid-perp round trip at 25-35 bps; G1 used about 91 bps (cost model not read). Gross per event was about 3 bps, so it died on either cost. Scouts should count regime days from the actual series inside the usable period, state events per year per condition and intersection, and take the round trip from the catalog cost tier of the weakest instrument. Suggested: G0 flags events below the G1 minimum and reports events by year.
 
 *confidence medium · 2026-10-31 · librarian · supersedes K-0114 · evidence: H-0081; H-0090; H-0089; H-0077; H-0049; H-0050; K-0069; K-0098; K-0113; K-0114*
+
+### K-0125 Mean exposure of a filing-season event book came out well below entries x hold x weight / sessions
+
+K-0104 found that mean exposure of slot books fits entries x hold / sessions x slot weight (H-0078, H-0079). H-0092 does not fit: 16204 entries, hold 5, slot weight 0.04, 5437 decision dates (5787 observations) give an arithmetic gross of 0.56-0.60, while G1 reported a mean exposure of 0.36, and the card forecast 0.4-0.55. Two readings, not separated: the card's gross cap of 1.0 scaled down all entries of peak filing-season sessions (events cluster in a few weeks per quarter), or the reported exposure nets long against short positions. Either way, a clustered event book is invested less than the arithmetic says, and the scaled slots are smaller than the card's weight. Cards with clustered events should forecast exposure from the busiest weeks, not from the annual average, and state which exposure definition they use. The same card forecast events (about 14000-16000, counted 16330) and the round trip (12-15 bps forecast against about 12 bps modelled) correctly, which fits the advice of K-0098 and K-0120. The exposure definition question of K-0101 stays open.
+
+*confidence low · 2026-11-01 · librarian · evidence: H-0092; H-0078; H-0079; K-0104; K-0101; K-0098; K-0120*
 
 ## The judge (framework behaviour)
 
@@ -455,6 +485,18 @@ A daily crypto_top_n card that reads a named instrument (the BTC factor BTCUSDT.
 H-0081's first G0 run (run 179) crashed because data.universe was None on binance_perp_1d, with the strategy raising 'needs the crypto_top_n point-in-time universe'. H-0039 hit the same crash (K-0054), so it recurred about two weeks later. The card also requested the signal-only fred_macro series VIXCLS; whether that matters is not known. The Builder wrote a fallback that rebuilds the top thirty from 30-day median dollar volume, noting that it may differ from the judge's definition; the Builder's later rewrite after the lab try fix (K-0117) reads data.universe. The summaries do not say which version produced the passing G0 run (run 180), so the event set may or may not be the judge's universe; G0 and G1 counted the same 1802 events, which fits the same definition at both gates but does not prove it. The crash cost one cycle. Suggested: the gate always passes the card's declared crypto_top_n universe on daily perp data; G0 reports which universe the strategy used.
 
 *confidence low · 2026-10-31 · librarian · evidence: H-0081; H-0039; K-0054; K-0117; run 179; run 180*
+
+### K-0122 Scout wall-clock timeouts: 15 % of runs hit 900 s; a normal run takes ~430 s
+
+Between 2026-10-05 and 2026-11-01, 16 of 107 completed Scout runs ended in a wall-clock timeout at the default 900 s (Builder, Librarian: none), clustered by day (10-27: 5, 10-30/31: 2 each), and on 10-30/31 timeouts were followed by session-limit failures. The first Scout run after the fix took 431 s and 22 turns, so 900 s left only ~2x headroom. Scout now has timeout_s 1500 and is told to do at most 3 WebSearch calls; the cause of the clusters (slow API vs a stuck search) is not verified. lab invocations now shows wall time and turns.
+
+*confidence medium · 2026-11-01 · human · evidence: lab-prod invocations 2026-11-01; commit e6c24ced*
+
+### K-0123 Rate-limit pause ends at the reset time named in the error, not after a fixed 5 h
+
+A session-limit failure ('resets 7am (UTC)') now pauses agent runs until that reset time (orchestrator.pause_until), capped at rate_limit_pause_hours; a message without a reset time still pauses for the full 5 h. Before, a limit at 06:35 blocked runs until 11:35 although the quota returned at 07:00. Untested in production until the next session limit.
+
+*confidence medium · 2026-11-01 · human · evidence: commit e6c24ced; K-0115*
 
 ## How the lab works
 

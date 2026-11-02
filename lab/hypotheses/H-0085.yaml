@@ -179,7 +179,7 @@ notes: 'Brief fit: a long holding horizon in crypto. Each cohort is held 26 week
 
   Benchmark: market-neutral, so T-bills with the absolute 0.5 Sharpe bar. Mean exposure is about 0.6-0.7 after the
   ramp and universe exits, and the rebalancing dates count as bets (exposure >= 0.5).'
-status: BLOCKED_DATA
+status: DATA_READY
 history:
 - ts: '2026-10-29T04:13:46.751170+00:00'
   version: 1
@@ -202,3 +202,10 @@ history:
   agent: system
   invocation_id: null
   reason: missing dataset coinmetrics_supply_1d
+- ts: '2026-11-02T02:50:22.687963+00:00'
+  version: 1
+  from: BLOCKED_DATA
+  to: DATA_READY
+  agent: system
+  invocation_id: null
+  reason: dataset coinmetrics_supply_1d ingested
