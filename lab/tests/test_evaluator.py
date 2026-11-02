@@ -157,6 +157,22 @@ def test_signal_only_instruments_may_be_named_but_not_traded(tmp_path):
     assert run(bad).reason_code == "g0_outside_universe"                    # but a weight on B is not
 
 
+def test_strategy_crash_on_a_truncated_view_is_a_g0_result_with_the_error_text(tmp_path):
+    from lab.framework import data
+    from lab.framework.evaluator import integrity
+    v = data.synthetic()
+    a = v.instruments[0]
+    card = {"universe": {"kind": "instruments", "instruments": [a]},
+            "data_requirements": [{"dataset": "synthetic_market", "instruments": [a]}]}
+    (tmp_path / "strategy.py").write_text(
+        "import numpy as np\n\n\ndef target_weights(data, params):\n"
+        f"    if data.shape[0] < {len(v.dates)}:\n        raise ValueError('needs the full history')\n"
+        f"    w = np.zeros(data.shape)\n    w[:, data.col({a!r})] = 0.5\n    return w\n")
+    out = integrity(card, tmp_path / "strategy.py", v.columns([a]), [a], {}, len(v.dates), {}, 60.0)
+    assert out.reason_code == "g0_crash"                                   # not an exception out of the gate runner
+    assert "truncated" in out.metrics["error"] and "needs the full history" in out.metrics["error"]
+
+
 def test_warm_up_rows_are_not_scored_and_the_benchmark_starts_with_the_scored_rows():
     import numpy as np
 

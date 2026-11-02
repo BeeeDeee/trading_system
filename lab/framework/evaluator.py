@@ -739,7 +739,11 @@ def integrity(card: dict, path, view: DataView, strat_cols: list[str], params: d
                                                  f"{sv.dates[t]}"}, "g0_outside_universe")
     if not np.array_equal(w, targets(sv), equal_nan=True):
         return Outcome(False, m, "g0_nondeterministic")
-    bad = _lookahead(targets, sv, w, min(th.get("leakage_cut_days", 12), th.get("ml_leakage_cuts", 5)) if card.get("ml") else th.get("leakage_cut_days", 12))
+    try:
+        bad = _lookahead(targets, sv, w, min(th.get("leakage_cut_days", 12), th.get("ml_leakage_cuts", 5)) if card.get("ml") else th.get("leakage_cut_days", 12))
+    except Exception as e:  # noqa: BLE001 - the strategy must also run on a truncated or perturbed view (H-0076)
+        return Outcome(False, m | {"error": f"crash on a truncated or perturbed view (look-ahead test): "
+                                             f"{type(e).__name__}: {e}"}, "g0_crash")
     m["lookahead_failures"] = bad
     if bad["truncation"] or bad["perturbation"]:
         return Outcome(False, m, "g0_lookahead")
@@ -785,7 +789,11 @@ def _integrity_events(path, sv: DataView, params: dict, th: dict, m: dict, limit
         return Outcome(False, m, "g0_event_peer_set")
     if not np.array_equal(full, flat(sv)):
         return Outcome(False, m, "g0_nondeterministic")
-    bad = _lookahead(flat, sv, full, th.get("leakage_cut_days", 12))
+    try:
+        bad = _lookahead(flat, sv, full, th.get("leakage_cut_days", 12))
+    except Exception as e:  # noqa: BLE001 - as above, for the diagnostic
+        return Outcome(False, m | {"error": f"crash on a truncated or perturbed view (look-ahead test): "
+                                             f"{type(e).__name__}: {e}"}, "g0_crash")
     m["events_lookahead_failures"] = bad
     if bad["truncation"] or bad["perturbation"]:
         return Outcome(False, m, "g0_lookahead")
