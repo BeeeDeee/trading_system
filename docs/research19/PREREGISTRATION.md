@@ -302,3 +302,4 @@ Popisně: korelační matice sleevů (celkem, v dnech, kdy SPY < −2 %, v roce 
 |---|---|
 | 2026-11-02 | v1.0 vytvořena podle PLAN.md v1.0. Před commitem se na reálných datech nic nepočítalo. |
 | 2026-11-02 | v1.1: do §4.1 přidáno vyloučení `EXCLUDED_NONCRYPTO` (PAXGUSDT, XAUTUSDT, BULLUSDT, BEARUSDT, UUSDT) před výběrem top N. Důvod: audit F3 našel v top 20 tokenizované zlato (PAXG, 7 měsíců 2025-10 až 2026-05) a ve variantě bez stáří další tokenizované zlato, pákové tokeny a stablecoin; stop-bod §3.3 plánu. Schváleno vlastníkem. Na reálných datech se spočítal jen audit, žádná strategie. |
+| 2026-11-02 | Verdikt (jeden plný běh `r19_run.py full`, commit kódu `546f30652`, zámek `d65d61dc3`, 973 s, bez rerunu): H1b a H2 splnily všechna kritéria (kandidáti na forward test, výzkum 20); H1a (6 z 8), H3a, H3b, H3c a H4 neprošly. Podrobnosti v `REPORT.md`. |
