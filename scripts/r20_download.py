@@ -22,10 +22,16 @@ from qlab.research20 import setup as S
 
 today = datetime.now(timezone.utc).date()
 dest = S.RAW / today.isoformat()
+dest.mkdir(parents=True, exist_ok=True)
+if not (dest / "fred_DTB3.csv").exists():                 # T-bill for the cash leg (prereg §3.1)
+    try:
+        csv = D._get_text("https://fred.stlouisfed.org/graph/fredgraph.csv?id=DTB3")
+        (dest / "fred_DTB3.csv").write_text(csv)
+    except D.FetchError as e:
+        print(f"FRED failed: {e}")
 if (dest / "manifest.json").exists():
     print(f"{dest} exists: nothing to do")
     sys.exit(0)
-dest.mkdir(parents=True, exist_ok=True)
 files, errors, mismatches, nasdaq_errors = {}, {}, {}, {}
 for tk in S19.ALL_ETF:
     try:

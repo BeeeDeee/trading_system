@@ -40,6 +40,19 @@ def _get(url: str, timeout: int = 25, retries: int = 2) -> dict:
     raise FetchError(last)
 
 
+def _get_text(url: str, timeout: int = 30, retries: int = 2) -> str:
+    last = None
+    for i in range(retries + 1):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "curl/8.5.0"})   # FRED stalls on a browser UA
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read().decode()
+        except Exception as e:
+            last = f"{type(e).__name__}: {e} ({url})"
+            time.sleep(2 * (i + 1))
+    raise FetchError(last)
+
+
 def fetch_yahoo(ticker: str, rng: str = "2y") -> dict:
     """Raw chart JSON with dividends and splits."""
     return _get("https://query1.finance.yahoo.com/v8/finance/chart/"
