@@ -100,6 +100,6 @@ ended 2026-09-27, so a new snapshot needs renewal (`scripts/download_sharadar.sh
 
 ## Environment constraints
 
-The machine has ~3 GB RAM, 3 cores and limited disk (panels are 1–3 GB each). Load panels with
+The machine has ~8 GB RAM, 4 cores and limited disk (panels are 1–3 GB each). Load panels with
 `mmap_mode="r"`, compute features by column chunks, and never materialize several float64
 (T×N) matrices at once. DuckDB queries set `memory_limit='1200MB'`.

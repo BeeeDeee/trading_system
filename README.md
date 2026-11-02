@@ -52,7 +52,7 @@ Podrobně: [výzkum 1](docs/FINAL_REPORT.md) · [výzkum 2](docs/research2/REPOR
 
 ## Framework
 
-Znovupoužitelný, otestovaný (`uv run pytest`, 124 testů), běží na stroji s 3 GB RAM.
+Znovupoužitelný, otestovaný (`uv run pytest`, 124 testů), běží na stroji s 8 GB RAM.
 
 | Oblast | Modul | Co umí |
 |---|---|---|
