@@ -158,7 +158,10 @@ notes: 'Brief fit: the brief asks for cross-asset signals with a 1-5 day hold. T
   manias. The dev window holds one boom and bust (K-0006), so a near miss means ''cannot tell''. The asymmetry of
   the mechanism (premiums are harder to arbitrage than discounts) predicts a stronger long leg. A by-side report,
   if the gate offers one, would test that.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_abnormal_return
 history:
 - ts: '2026-10-26T23:47:05.818568+00:00'
   version: 1
@@ -188,3 +191,17 @@ history:
   agent: system
   invocation_id: null
   reason: dataset upbit_krw_1d ingested
+- ts: '2026-11-03T02:07:07.708605+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 264, qlab)
+- ts: '2026-11-03T02:07:10.020667+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 265, qlab)

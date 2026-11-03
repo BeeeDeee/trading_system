@@ -21,7 +21,7 @@ def top_n_universe(data, n=UNIVERSE_N, days=VOLUME_DAYS):
     T, N = dv.shape
     dv0 = np.where(np.isfinite(dv) & (dv > 0), dv, 0.0)
     vol = np.zeros((T, N))
-    for lag in range(days):
+    for lag in range(min(days, T)):               # lags >= T add nothing (short truncated views)
         vol[lag:] += dv0[: T - lag]
     cand = listed & np.isfinite(P) & (P > 0) & (vol > 0)
     key = np.where(cand, vol, -np.inf)

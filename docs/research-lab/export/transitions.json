@@ -5830,5 +5830,53 @@
   "message_id": 744,
   "reason": "dataset upbit_krw_1d ingested",
   "ts": "2026-11-02T03:02:53.341830+00:00"
+ },
+ {
+  "id": 487,
+  "hypothesis_id": "H-0076",
+  "version": 1,
+  "from_status": "DATA_READY",
+  "to_status": "IMPLEMENTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G0 passed (run 264, qlab)",
+  "ts": "2026-11-03T02:07:07.708605+00:00"
+ },
+ {
+  "id": 488,
+  "hypothesis_id": "H-0076",
+  "version": 1,
+  "from_status": "IMPLEMENTED",
+  "to_status": "REJECTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G1 failed (run 265, qlab)",
+  "ts": "2026-11-03T02:07:10.020667+00:00"
+ },
+ {
+  "id": 489,
+  "hypothesis_id": "H-0084",
+  "version": 1,
+  "from_status": "DATA_READY",
+  "to_status": "IMPLEMENTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G0 passed (run 266, qlab)",
+  "ts": "2026-11-03T02:42:19.988949+00:00"
+ },
+ {
+  "id": 490,
+  "hypothesis_id": "H-0084",
+  "version": 1,
+  "from_status": "IMPLEMENTED",
+  "to_status": "REJECTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G1 failed (run 267, qlab)",
+  "ts": "2026-11-03T02:42:20.318282+00:00"
  }
 ]
