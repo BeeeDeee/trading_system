@@ -1,0 +1,135 @@
+{
+ "date": "2026-11-03",
+ "regime": {
+  "label": "Risk-off, zvýšená volatilita",
+  "summary": "BTC pod SMA20/50 těsně nad 30denním minimem (RSI 35), tlak z odlivů ze spot ETF (−643 mil. USD v pátek), dozvuků hacku Binance za 6,3 mld. USD a korekce Nasdaqu. Dnešní americké volby do Kongresu a páteční NFP zvyšují riziko výkyvů na obě strany."
+ },
+ "events_7d": [
+  {"date": "2026-11-03", "title": "Volby do Kongresu v USA (midterms), výsledky v noci na 4. 11.", "type": "makro"},
+  {"date": "2026-11-05", "title": "Zcash NU7 upgrade (blok 3 543 405, bloky 25 s, pálení poplatků)", "type": "upgrade"},
+  {"date": "2026-11-06", "title": "Odemčení 180 tis. HYPE pro core contributors", "type": "unlock"},
+  {"date": "2026-11-06", "title": "US NFP za říjen", "type": "makro"},
+  {"date": "2026-11-10", "title": "US CPI za říjen", "type": "makro"},
+  {"date": "2026-11-03", "title": "Hacker Binance drží ~420 tis. ETH a BTC, průběžné prodeje (převis nabídky)", "type": "jine"}
+ ],
+ "coins": {
+  "BTC": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.45, "expected_move_7d_pct": -1.0,
+   "event": true, "event_type": "jine", "risk_flag": false,
+   "note": "Pod SMA20/50 u 30denního minima, odlivy z ETF a midterms; zprávy už jsou v ceně, krátkodobě mírně přeprodaný.",
+   "sources": ["https://www.coindesk.com/markets/2026/11/03/bitcoin-drops-below-usd77-000-as-chip-rout-deepens-ahead-of-u-s-midterm-vote", "https://www.coindesk.com/markets/2026/11/02/bitcoin-etfs-lost-usd643-million-in-outflows-friday-and-2026-is-barely-green-now"]
+  },
+  "ETH": {
+   "trend": -1, "mr": 1, "news": -1, "conviction": 2,
+   "p_outperform_btc_7d": 0.44, "p_up_7d": 0.42, "expected_move_7d_pct": -2.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Hacker Binance drží ~420 tis. ETH a ETHA ztratil za měsíc 1,3 mld. USD, převis nabídky trvá při beta 1,18.",
+   "sources": ["https://247wallst.com/investing/cryptocurrency/2026/11/02/ethereum-news-blackrocks-etf-has-shed-1-3-billion-of-eth-in-a-month-can-ethereum-hold-its-2170-low/", "https://ambcrypto.com/ethereum-faces-420k-eth-supply-overhang-yet-bulls-remain-hopeful-why/"]
+  },
+  "BNB": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.44, "expected_move_7d_pct": -1.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Binance obnovil výběry a kryje ~95 % ukradeného, čistý odliv jen ~3 % aktiv; šok z hacku je v ceně, ale nálada zůstává křehká.",
+   "sources": ["https://www.cnbc.com/2026/10/31/binance-hack-asset-coverage-withdrawals.html", "https://finance.yahoo.com/markets/article/binance-sees-more-than-46-billion-in-withdrawals-after-largest-crypto-hack-in-history-135117773.html"]
+  },
+  "XRP": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.46, "p_up_7d": 0.43, "expected_move_7d_pct": -1.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Drží podporu 1,24 bez katalyzátoru, ale beta 1,37 v risk-off prostředí je nevýhoda.",
+   "sources": ["https://thecryptobasic.com/2026/11/02/xrp-sees-three-buying-waves-at-1-24-in-two-days-what-comes-next/"]
+  },
+  "SOL": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.43, "p_up_7d": 0.42, "expected_move_7d_pct": -2.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Pět týdnů poklesu, rekordní odliv ze SOL ETF (−71 mil. USD), RSI 26 dává jen šanci na krátký odraz.",
+   "sources": ["https://invezz.com/pk/news/2026/11/02/solana-risks-further-dip-amid-dollar71m-etf-outflows/"]
+  },
+  "TRX": {
+   "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.54, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Záporná korelace k BTC a rel30 +4,6 z něj dělají defenzivu; nákupy Tron Inc. jsou malé a útočník drží ~475 mil. TRX.",
+   "sources": ["https://www.tokenpost.com/news/business/47095", "https://cryptoticker.io/de/tron-trx-unter-vorhack-marke/"]
+  },
+  "ZEC": {
+   "trend": -1, "mr": 1, "news": -1, "conviction": 2,
+   "p_outperform_btc_7d": 0.42, "p_up_7d": 0.4, "expected_move_7d_pct": -3.0,
+   "event": true, "event_type": "upgrade", "risk_flag": false,
+   "note": "Velrybí výprodej „big z“ a spor o granty tlačí cenu před NU7 (5. 11.), hrozí sell-the-news při beta 2,6.",
+   "sources": ["https://en.coinotag.com/zcash-zec-nears-1100-after-big-z-exit-over-grant-dispute", "https://crypto.news/zcash-nu7-activation-november-5-25-second-blocks/"]
+  },
+  "HYPE": {
+   "trend": 1, "mr": 0, "news": -1, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.45, "expected_move_7d_pct": -1.0,
+   "event": true, "event_type": "unlock", "risk_flag": false,
+   "note": "Dohoda s ICE je v ceně, nově Paradigm odstakoval 224 mil. USD a velryby vybírají zisk; nízká beta drží relativní sílu.",
+   "sources": ["https://decrypt.co/382149/hyperliquid-hype-jumps-nyse-owner-ice-perpetual-futures-us", "https://cryptonews.net/news/altcoins/33687727/", "https://247wallst.com/investing/cryptocurrency/2026/11/02/hyperliquid-has-612-million-of-leveraged-longs-below-its-price-how-far-could-hype-fall/"]
+  },
+  "LINK": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.45, "p_up_7d": 0.42, "expected_move_7d_pct": -2.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Spuštění Chainlink 24/7 je pozitivní, ale cenově zanedbatelné; trend slabý a beta 1,67.",
+   "sources": ["https://cryptoticker.io/en/chainlink-24-7-tokenized-stocks-weekend"]
+  },
+  "NEAR": {
+   "trend": -2, "mr": 1, "news": -1, "conviction": 2,
+   "p_outperform_btc_7d": 0.42, "p_up_7d": 0.4, "expected_move_7d_pct": -3.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Specifické odbourávání longů a pohyb ukradených NEAR po hacku; u 30d minima, ale trend je rozbitý.",
+   "sources": ["https://247wallst.com/investing/cryptocurrency/2026/11/02/near-fell-18-in-two-weeks-about-3-times-bitcoins-drop-how-low-could-it-go/", "https://www.tokenpost.com/news/investing/47047"]
+  },
+  "UNI": {
+   "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.42, "expected_move_7d_pct": -1.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Bez nových zpráv, relativně stabilní za 7 dní, ale beta 2,4 je v risk-off zátěž.",
+   "sources": []
+  },
+  "AVAX": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.44, "p_up_7d": 0.42, "expected_move_7d_pct": -2.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Hluboký sestupný trend (rel30 −15) a slábnoucí objem, jen mírná přeprodanost.",
+   "sources": ["https://coinmarketcap.com/cmc-ai/avalanche/latest-updates/"]
+  },
+  "SUI": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.43, "p_up_7d": 0.41, "expected_move_7d_pct": -2.5,
+   "event": true, "event_type": "unlock", "risk_flag": false,
+   "note": "Slabý trend (−31 % od 30d max), malý unlock (<0,6 % kapitalizace) bez většího dopadu.",
+   "sources": ["https://cryptoticker.io/en/sui-token-unlock-lockup-november/"]
+  },
+  "PEPE": {
+   "trend": 2, "mr": -1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.45, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Silné momentum (rel30 +20) přes prodeje hackera, ale po +31 % od minima a s beta 2,4 je rally křehká.",
+   "sources": ["https://cryptonews.net/news/altcoins/33685393/"]
+  }
+ },
+ "top10": [
+  {"coin": "TRX", "reason": "Defenzivní, záporná korelace k BTC v risk-off týdnu."},
+  {"coin": "HYPE", "reason": "Relativní síla a nízká beta, ale převis prodejů velryb."},
+  {"coin": "PEPE", "reason": "Nejsilnější momentum v universu, vysoké riziko obratu."},
+  {"coin": "BNB", "reason": "Šok z hacku odezněl, výběry obnoveny."},
+  {"coin": "UNI", "reason": "Stabilizace kolem SMA20, bez negativních zpráv."},
+  {"coin": "XRP", "reason": "Drží podporu 1,24, ale bez katalyzátoru."},
+  {"coin": "LINK", "reason": "Nový produkt 24/7, trend slabý."},
+  {"coin": "ETH", "reason": "Přeprodaný, ale převis ETH od hackera."},
+  {"coin": "AVAX", "reason": "Přeprodaný v rozbitém trendu."},
+  {"coin": "SOL", "reason": "RSI 26 pro odraz, ale odlivy z ETF."}
+ ],
+ "claude_volne": {
+  "comment": "Defenzivně ~28 % v trhu kvůli risk-off, midterms a NFP; ZEC a UNI prodávám kvůli vysoké betě, zbytek v hotovosti.",
+  "positions": [
+   {"coin": "BTC", "weight_pct": 12, "reason": "Jádrová pozice, krátkodobě přeprodaný u 30d minima.", "invalidation": "Denní uzávěr pod 74 000 USD nebo další den odlivů z ETF nad 500 mil. USD."},
+   {"coin": "HYPE", "weight_pct": 8, "reason": "Nízká beta a relativní síla po dohodě s ICE.", "invalidation": "Pokles pod 78 USD nebo další velké odstakování/prodeje velryb."},
+   {"coin": "TRX", "weight_pct": 8, "reason": "Defenziva se zápornou korelací k BTC.", "invalidation": "Uzávěr pod 0,30 USD nebo prodej ~475 mil. TRX od útočníka na trh."}
+  ]
+ }
+}
