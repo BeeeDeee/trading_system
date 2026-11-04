@@ -11,6 +11,8 @@ BETA_DAYS = 91
 MIN_RETURNS = 91
 JUMP_LIMIT = 0.20
 MIN_ELIGIBLE = 12
+TOP_N = 40
+VOL_DAYS = 30
 
 
 def _supply_matrix(data, lookback_days):
@@ -49,15 +51,42 @@ def _weekday(dates):
     return (d + 3) % 7
 
 
+def _id_rank(instruments):
+    order_id = np.argsort(np.array([str(x) for x in instruments]), kind="stable")
+    id_rank = np.empty(len(instruments), dtype=np.int64)
+    id_rank[order_id] = np.arange(len(instruments))
+    return id_rank
+
+
+def _fallback_top_n(data, has_bar, n=TOP_N, days=VOL_DAYS):
+    """Same as strategy.fallback_top_n: PIT top-n by trailing 30-row dollar volume, used only
+    when data.universe is None."""
+    T, N = has_bar.shape
+    dv = np.asarray(data.dollar_volume, dtype=float)
+    dv = np.where(np.isfinite(dv) & (dv > 0), dv, 0.0)
+    c = np.cumsum(np.vstack([np.zeros((1, N)), dv]), axis=0)
+    lo = np.maximum(np.arange(T) + 1 - days, 0)
+    vol = c[1:] - c[lo]
+    ok = has_bar & (vol > 0)
+    key = np.where(ok, vol, -np.inf)
+    perm = np.argsort(_id_rank(data.instruments), kind="stable")
+    order = np.argsort(-key[:, perm], axis=1, kind="stable")
+    rank = np.empty((T, N), dtype=np.int64)
+    np.put_along_axis(rank, order, np.broadcast_to(np.arange(N), (T, N)), axis=1)
+    uni = np.zeros((T, N), dtype=bool)
+    uni[:, perm] = rank < n
+    return uni & ok
+
+
 def _prepare(data, params):
     L = int(params["lookback_days"])
     T, N = len(data.dates), len(data.instruments)
-    uni = data.universe
-    if uni is None:
-        raise ValueError("H-0085 needs the crypto_top_n point-in-time universe (data.universe is None)")
-    uni = np.asarray(uni, dtype=bool)
     close = np.asarray(data.close, dtype=float)
     has_bar = np.isfinite(close) & (close > 0)
+    uni = data.universe
+    if uni is None:
+        uni = _fallback_top_n(data, has_bar)
+    uni = np.asarray(uni, dtype=bool)
     tri = total_return_index(data)
     ltri = np.log(np.where(np.isfinite(tri) & (tri > 0), tri, np.nan))
     r = np.full((T, N), np.nan)
@@ -73,9 +102,7 @@ def _prepare(data, params):
     d[1:] = lnS_ff[1:] - lnS_ff[:-1]
     jump = (np.abs(np.nan_to_num(d, nan=0.0)) > JUMP_LIMIT).astype(float)
     jcum = np.cumsum(np.vstack([np.zeros((1, N)), jump]), axis=0)
-    order_id = np.argsort(np.array([str(x) for x in data.instruments]), kind="stable")
-    id_rank = np.empty(N, dtype=np.int64)
-    id_rank[order_id] = np.arange(N)
+    id_rank = _id_rank(data.instruments)
     return dict(L=L, T=T, N=N, uni=uni, has_bar=has_bar, r=r, cnt=cnt, lnS=lnS,
                 jcum=jcum, id_rank=id_rank)
 

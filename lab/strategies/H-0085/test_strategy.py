@@ -14,8 +14,10 @@ EXP_LONG = [1, 4, 7, 9]
 EXP_SHORT = [2, 6, 8, 11]
 
 
-def make_view(T=400, betas=BETAS, growth=GROWTH, seed=1, n_names=None):
+def make_view(T=400, betas=BETAS, growth=GROWTH, seed=1, n_names=None, universe=True, dv=None):
     N = len(betas)
+    uni = np.ones((T, N), dtype=bool) if universe else None
+    dvol = np.ones((T, N)) if dv is None else dv
     rng = np.random.default_rng(seed)
     m = rng.normal(0.0, 0.03, T)
     r = betas[None, :] * m[:, None] + rng.normal(0.0, 0.002, (T, N))
@@ -35,8 +37,8 @@ def make_view(T=400, betas=BETAS, growth=GROWTH, seed=1, n_names=None):
         listed=np.ones((T, N), dtype=bool),
         delisting=np.zeros((T, N), dtype=bool),
         close=close,
-        dollar_volume=np.ones((T, N)),
-        universe=np.ones((T, N), dtype=bool),
+        dollar_volume=dvol,
+        universe=uni,
         extras={},
         series=series,
         cash_ret=np.zeros(T),
@@ -167,6 +169,43 @@ def test_params_change_output():
     assert not np.allclose(np.nan_to_num(a), np.nan_to_num(c))
     # first formation with lookback 182: first Sunday row >= 183
     assert np.all(np.nan_to_num(b[:189]) == 0.0) and np.abs(b[189]).sum() > 0
+
+
+def test_no_universe_uses_volume_top_n():
+    # 14 coins < 40: with no universe every coin with a bar and volume is a member,
+    # so the book equals the all-member book
+    v = make_view()
+    full = target_weights(v, P(lookback_days=91, hold_weeks=3))
+    v = make_view(universe=False)
+    W = target_weights(v, P(lookback_days=91, hold_weeks=3))
+    assert np.array_equal(np.isnan(W), np.isnan(full))
+    assert np.allclose(np.nan_to_num(W), np.nan_to_num(full))
+    # a coin with zero volume over the last 30 rows is not a member
+    v.dollar_volume[FIRST - 29:FIRST + 1, 1] = 0.0
+    W = target_weights(v, P(lookback_days=91, hold_weeks=1))
+    assert W[FIRST, 1] == 0.0
+
+
+def test_fallback_top_n_by_hand():
+    from strategy import fallback_top_n
+    dv = np.array([[1, 2, 3, 4],
+                   [1, 2, 3, 4],
+                   [9, 2, 3, 4],
+                   [9, 2, 3, np.nan],
+                   [0, 2, 2, 0],
+                   [0, 5, 5, 0]], dtype=float)
+    v = make_view(T=6, betas=BETAS[:4], growth=GROWTH[:4], dv=dv)
+    hb = np.ones((6, 4), dtype=bool)
+    hb[5, 2] = False
+    u = fallback_top_n(v, hb, n=2, days=3)
+    # 3-row sums: r0 1,2,3,4  r1 2,4,6,8  r2 11,6,9,12  r3 19,6,9,8  r4 18,6,8,4  r5 9,9,10,4
+    exp = np.array([[0, 0, 1, 1], [0, 0, 1, 1], [1, 0, 0, 1], [1, 0, 1, 0],
+                    [1, 0, 1, 0], [1, 1, 0, 0]], dtype=bool)   # r5: coin 2 has no bar, 0/1 tie -> ids
+    assert np.array_equal(u, exp)
+    # truncation invariance
+    v4 = make_view(T=4, betas=BETAS[:4], growth=GROWTH[:4], dv=dv[:4].copy())
+    u4 = fallback_top_n(v4, hb[:4], n=2, days=3)
+    assert np.array_equal(u4, u[:4])
 
 
 def test_missing_or_empty_dataset_raises():

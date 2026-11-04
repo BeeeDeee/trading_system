@@ -677,6 +677,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - open questions: The control the card did not run: the same sector spreads after large days without a rate shock, to see whether the sort adds anything over generic sector reversal. Rate sensitivity is slow and sector spreads are noisy, so a monthly or slower tilt on rate-sensitive sectors is a different claim with its own trial. Concession after the shock would show only in intraday data, which is not loadable.
 - related: H-0041, H-0047, H-0070, H-0072, H-0043
 
+## H-0076 – Korean-exchange premium transmission - Binance perps dollar-neutral, long coins whose Upbit KRW price runs abnormally rich versus Binance, short the abnormally cheap, hold 3 days
+
+- family: `segmented-venue-premium-transmission` · mechanism: cross_asset_information · instruments: Binance perps also listed on Upbit KRW: dollar-neutral, long coins with an abnormally rich Korean price, short the cheap, daily, 2020 to 2022
+- outcome: rejected at G1 on the mechanism test: slightly wrong-signed, mid placebo cloud, cost not covered; strategy not run
+- lesson: No catch-up on Binance after a coin-specific Korean premium at daily resolution. Not a power problem: many events, a placebo bar about at round-trip cost, and a wrong-signed average at the one, three and five session horizons. Only the ten-session average leaned positive, the slow-drift shape the card itself named as a refutation. The first block is thin (few Upbit-matched coins early in 2020) and the early and latest blocks were negative. The premium is built from daily last trades on both venues, so arbitrage inside the day may already have absorbed it.
+- avoid: Do not refile the mirror (fade the Korean premium): its sign is dev-selected and far below cost. Do not retune hold_days, n_leg or baseline_days, or refile the same Upbit-Binance gap as a kimchi premium, cross-venue lead or capital-control card; it is the same trial.
+- open questions: Untested: intraday premium dynamics, where arbitrage is fast and a maker may matter; the market-wide premium as a sentiment gauge for crypto direction; delisted Upbit markets and withdrawal-suspension days, never reported. A new card should say why a daily lag would exist.
+- related: H-0037, H-0040, H-0074, H-0080, H-0013, H-0066
+
 ## H-0077 – Muni closed-end fund discount-shock reversal - buy national muni CEFs whose 5-session return fell far below what the open-end muni bond ETF (MUB) implies, MUB-hedged, hold 5 sessions
 
 - family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: national municipal closed-end funds, long after a relative discount shock, hedged with a short in the muni ETF MUB, daily decisions, week-long slots, 2007 to 2020
@@ -740,6 +749,24 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - open questions: Both trials of this family are dead at the mechanism test, so only a different claim merits a card: nearness to the high as a conditioner on a dated own-price event (K-0083), less covered stocks, or another asset class. Compare the expected effect with this design's placebo bar (K-0034), not only with cost.
 - related: H-0011, H-0054, H-0029, H-0059
 
+## H-0084 – Cross-asset fear premium - 12 ETFs, monthly long the 3 with the richest implied-over-realized vol vs own year, short the 3 cheapest, hold 3 months
+
+- family: `variance-risk-premium-timing` · mechanism: volatility · instruments: twelve ETFs across equity, emerging markets, energy, metals, oil and euro: monthly long the three richest implied-over-realized, short the three cheapest, 2012 to 2020
+- outcome: rejected at G1 on the mechanism test: wrong-signed at every horizon, placebo percentile far below the bar; strategy not run
+- lesson: The relative fear premium is absent and the sign is wrong, not just short of the bar. Underperformance grew with the horizon, so it is no bounce. Only the earliest third was positive; the latest was worst (K-0060). Inferred, not tested: the rich-ratio leg holds assets in a stress episode that kept going, a beta and trend confound (K-0074) since G1 compares raw returns. Asset-specific rankings did not carry what H-0055's right-signed near miss showed in a time-series equity tilt.
+- avoid: Do not retune rv_days or n_per_leg, add indices, or refile as implied-volatility spread, fear gauge or volatility risk premium by asset; it is the same trial in this family. Do not trade the mirror (long cheap fear): its sign is dev-selected.
+- open questions: A time-series design over many markets with an always-invested control (the global premium may carry the information, as the card feared); a beta-matched control for the legs. Several of the new indices were discontinued, so a holdout would be thin anyway.
+- related: H-0055, H-0073, H-0052, H-0060
+
+## H-0085 – Token supply dilution, beta-matched - top-40 Binance perps, short the fastest-growing token supply and long the slowest within beta halves, 26-week overlapping cohorts
+
+- family: `new-listing-overhang` · mechanism: flow_structural · instruments: Binance perps with Coin Metrics supply: short fastest supply growth, long slowest within beta halves, dollar-neutral, half-year cohorts, 2020 to 2022
+- outcome: rejected at G1 on the mechanism test: negative average equal to the same-coin placebo, percentile far under the bar; strategy not run
+- lesson: Supply dilution did not separate coins in the expected direction. The placebo carried nearly all of the negative average: the sort picks persistent coin identity (old slow-issuance coins against emission-heavy ones), and in this window the slow side lagged, as the card's own risk warned. Timing within coin added nothing. The sign flipped by third (positive early, strongly negative in the middle), one boom-and-bust cycle (K-0006); beta halves did not rescue it. Only protocol issuance is visible, not vesting unlocks. G1 sees only the first quarter of a half-year hold.
+- avoid: Do not refile supply growth with another lookback or hold, or as emission, inflation or staking-yield, since it is the same sort and data. Do not read the negative sign as support for the mirror (long high-issuance coins): it is cycle-dependent and mostly coin identity.
+- open questions: A control matched on prior return or size inside the legs; changes in issuance (halvings, emission cuts) as within-coin timing events; unlock schedules from a source that shows vesting, not loadable today; a multi-cycle history.
+- related: H-0058, H-0004, H-0082, H-0021
+
 ## H-0086 – Net share repurchasers held for a year - LIQ-500 long-only, monthly overlapping 12-month cohorts of the top quintile of trailing net repurchase yield
 
 - family: `trading-window-flows` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), long-only, year-long monthly cohorts of top net-repurchase quintile; event study on entries to both extreme quintiles
@@ -748,6 +775,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile the same sort as share-count change, net issuance, buyback yield or equity financing, or with another quantile, hold or horizon: the stocks and the score are those of H-0019 and H-0027, and across three anchors the evidence is now filing-linked or decayed. Do not argue that the quarter cap hides a year-long effect unless the design can show it.
 - open questions: The report gave no split by side, so an issuer-only effect (needs shorting and borrow) is untested. A persistent style premium in the level of repurchase, not in the entry, needs a control that the same-stock placebo does not absorb, ideally matched on size and beta, plus an era split; the judge has no beta-adjusted abnormal return (K-0074). Less covered stocks are not loadable.
 - related: H-0019, H-0027, H-0059, H-0083, H-0054
+
+## H-0087 – Bond-to-equity cross-asset momentum - 15 country ETFs, long where the local 10y bond rallied most over 12 months, short where it sold off most, 6-month cohorts
+
+- family: `cross-asset-momentum` · mechanism: cross_asset_information · instruments: fifteen country equity ETFs: monthly long where the local ten-year bond rallied most over a year, short where it sold off most, 2000 to 2020
+- outcome: rejected at G1 on the mechanism test: right sign, but percentile well under the bar and the bar above cost; strategy not run
+- lesson: A small right-signed average, far below the Scout's forecast and close to the same ETFs' placebo windows: more 'cannot tell' than refuted, since the bar lies above cost. But a declared kill condition fired: the latest third was negative, the earlier two positive (K-0060). The horizon profile was flat, not the slow build the card called for. Unhedged dollar ETFs mix in currency moves that likely work against the long leg (falling local yields often come with a weaker currency); not separated. Yields stamped with a two-month lag blunt an already slow signal.
+- avoid: Do not retune lookback_months, hold_months or the country list to lift the percentile, nor refile as bond-equity, yield-change or rates-to-equity momentum on the same ETFs: one trial. Do not trade the mirror.
+- open questions: Local-currency or currency-hedged equity returns would test the paper as written; fresher yields are not loadable for most countries. G1 sees only the first quarter of a half-year hold, so a simulated book was never run.
+- related: H-0060, H-0088, H-0062, H-0061, H-0047
 
 ## H-0088 – Currency value into country equity ETFs - long the 2 cheapest, short the 2 richest of 10 developed currencies vs 5-year average spot, 12-month cohorts
 
@@ -802,3 +838,12 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not retune threshold, years_back or the window, or refile the score as earnings seasonality or seasonal surprise: same events, new trials. Do not trust the latest block's size: dev-selected.
 - open questions: Untested: which side carries it, whether it lives in the cheapest-to-trade names, and whether late strength is real or a history-rule artefact. A new card needs gross clearly above cost argued in advance.
 - related: H-0032, H-0092, H-0023, H-0026, H-0053, H-0028
+
+## H-0094 – News-conditioned drift vs reversal, learned - LIQ-500 dollar-neutral, LightGBM on own-move, earnings-release, volume and volatility features, daily 5-day cohorts
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: LIQ-500 stocks, dollar-neutral daily cohorts on a walk-forward gradient-boosted score, five-session hold
+- outcome: rejected at G1 on costs: beat the placebos, but gross per entry stayed under round-trip cost; no strategy, G2 or ridge control
+- lesson: First learned-score card. Not a power problem: a huge entry set, placebo bar below cost, right sign in every third. The combined score came closer to cost than the one-variable sorts it merges (H-0030, H-0069) but did not clear it, so combining sub-cost effects lifted the average without making it tradable. It faded from the earliest to the latest third (still right-signed), so the latest third sits furthest under cost (K-0060). The ridge baseline, the only test of whether nonlinearity pays, never ran: 'learned beats linear' is untested, not refuted.
+- avoid: Do not refile the same six features with another learner, depth, leg fraction, estimator count or extra feature to push gross over cost: same events, new trials. Do not credit nonlinearity without the ridge control. Do not refile the entries as an attention or earnings-drift variant.
+- open questions: The cost check prices each daily entry as a full round trip, but the book trades only net changes and names may persist in a leg; persistence was not reported, so the verdict may be harsher than a book would face. A slower, lower-turnover score argued above cost in advance is a different claim.
+- related: H-0030, H-0069, H-0028, H-0031, H-0033, H-0064, H-0093

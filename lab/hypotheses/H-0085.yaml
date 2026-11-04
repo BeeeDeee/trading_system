@@ -179,7 +179,10 @@ notes: 'Brief fit: a long holding horizon in crypto. Each cohort is held 26 week
 
   Benchmark: market-neutral, so T-bills with the absolute 0.5 Sharpe bar. Mean exposure is about 0.6-0.7 after the
   ramp and universe exits, and the rebalancing dates count as bets (exposure >= 0.5).'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_abnormal_return
 history:
 - ts: '2026-10-29T04:13:46.751170+00:00'
   version: 1
@@ -209,3 +212,17 @@ history:
   agent: system
   invocation_id: null
   reason: dataset coinmetrics_supply_1d ingested
+- ts: '2026-11-03T03:37:30.563960+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 269, qlab)
+- ts: '2026-11-03T03:37:32.776908+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 270, qlab)

@@ -1522,5 +1522,77 @@
   "actor": "librarian",
   "message_id": 740,
   "ts": "2026-11-01T15:07:02.053162+00:00"
+ },
+ {
+  "id": "K-0128",
+  "kind": "market",
+  "title": "Supply-side crypto sorts did not find the expected laggard in four designs; persistent coin identity carries the average",
+  "statement": "Four cards tried to short coins on a supply-side characteristic: young spot listings (H-0004, could not tell), perps aged between one month and one year (H-0058, wrong-signed), the first weeks after a perp launch (H-0082, wrong-signed) and, new, the fastest token supply growth within beta halves (H-0085). In H-0085 the time-shifted placebo of the same coins was about as negative as the marked average, so the sort picks persistent coin identity (old slow-issuance coins against emission-heavy ones) and says nothing about timing. In the dev window the slow-issuance side lagged, and the sign swung with the cycle across thirds, as in H-0058, so beta-matching legs by halves did not cure the confound that K-0074 names. Only protocol issuance was visible, not vesting unlocks. All of it sits in one boom-and-bust window (K-0006). A further overhang or dilution card has a low prior unless it uses within-coin timing (changes in issuance), matches on prior return, or sees unlock schedules.",
+  "evidence": "[\"H-0085\",\"H-0058\",\"H-0082\",\"H-0004\",\"K-0107\",\"K-0074\",\"K-0006\",\"K-0025\"]",
+  "confidence": "low",
+  "supersedes": "K-0107",
+  "actor": "librarian",
+  "message_id": 849,
+  "ts": "2026-11-03T04:38:33.853333+00:00"
+ },
+ {
+  "id": "K-0129",
+  "kind": "market",
+  "title": "Implied-over-realized volatility gives no usable relative signal across assets",
+  "statement": "Three designs on the options-implied fear of assets have ended at the mechanism gate. A time-series equity tilt on the implied-over-realized ratio was right-signed but a near miss with too few episodes (H-0055). Short volatility timed by the implied curve was mostly the unconditional roll-down (H-0073, K-0088). New: ranking twelve ETFs across asset classes on the ratio against each asset's own year (H-0084) gave a wrong-signed average at every horizon from a week to a quarter, widening with horizon, positive only in the earliest third and worst in the latest. The reading is inferred, not tested: raw returns of the rich-ratio leg carry stress continuation and beta (K-0074), and any premium that exists is probably global and common to assets rather than asset-specific, which a relative ranking cancels. A further volatility-premium card on this family has a heavy trial count and a low prior unless it is a time-series design with many markets and an always-invested control.",
+  "evidence": "[\"H-0084\",\"H-0055\",\"H-0073\",\"H-0052\",\"K-0088\",\"K-0070\",\"K-0074\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 850,
+  "ts": "2026-11-03T04:38:33.867930+00:00"
+ },
+ {
+  "id": "K-0130",
+  "kind": "method",
+  "title": "Scout effect-size forecasts for slow cross-sectional cards ran far above what G1 measured in three cards",
+  "statement": "H-0084, H-0085 and H-0087, all slow cross-sectional cards with a primary horizon of a quarter, forecast a side-adjusted gross of roughly one to a few percent per event, converted from published long-short spreads. G1 measured a wrong-signed average in two (H-0084, H-0085) and in the third (H-0087) a right-signed average at a small fraction of the low end of the forecast. The forecasts of event counts, dates and round-trip cost were close (events within a few percent of the forecast in H-0084 and H-0087; the cost of the liquid ETFs and perps as forecast), so K-0098 and K-0120 held; only the effect size was off. Related to K-0111: the forecast of the bar was reasonable, the forecast of the effect was not. A Scout who turns a literature spread into a per-event number should treat it as an upper bound (publication decay, long-short in a single vehicle, vol-scaling, unhedged currency and ETF tracking) and state what the card concludes if the effect is only a fraction of it.",
+  "evidence": "[\"H-0084\",\"H-0085\",\"H-0087\",\"K-0098\",\"K-0111\",\"K-0120\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 851,
+  "ts": "2026-11-03T04:38:33.872574+00:00"
+ },
+ {
+  "id": "K-0131",
+  "kind": "framework",
+  "title": "G0 still passes no crypto_top_n universe on daily perp data (four cards)",
+  "statement": "H-0076 and H-0085 both crashed their first G0 with data.universe None on binance_perp_1d, as H-0039 and H-0081 did earlier, so the gap has recurred in four cards over about three weeks. Each Builder wrote the same fallback (top n by trailing 30-day dollar volume), which may differ from the judge's definition, so the event sets may not be the judge's. In H-0076 the fallback then failed G0 seven more times on truncated look-ahead views of only 18 rows: a loop over the volume window assumed at least as many rows as the window, and the cohort shift had the same pattern. The Builder cites run numbers 188 to 263 for the crash and fixed it with min(window, rows). The card was DATA_READY on 2026-11-02 and IMPLEMENTED on 2026-11-03, so about a day was lost on top of the data wait. Rolling-window code must accept views shorter than its window, because G0 cuts can be that short. Suggested: the gate passes the card's declared crypto_top_n universe on daily perp data, and G0 reports which universe the strategy used. Question sent to the owner.",
+  "evidence": "[\"H-0076\",\"H-0085\",\"H-0039\",\"H-0081\",\"K-0054\",\"K-0118\",\"run 188\",\"run 263\",\"run 264\"]",
+  "confidence": "medium",
+  "supersedes": "K-0118",
+  "actor": "librarian",
+  "message_id": 852,
+  "ts": "2026-11-03T04:38:33.877334+00:00"
+ },
+ {
+  "id": "K-0132",
+  "kind": "framework",
+  "title": "lab try cannot exercise a LIQ-500 card with a minimum-names floor: the synthetic universe has fewer than 50 members",
+  "statement": "The Builder of H-0094 (first learned-model card, a book that needs at least 50 scored members a day) reports that the synthetic universe in lab try has fewer than 50 members per day, so the book is flat and the diagnostic has zero events. With the floor temporarily set to 5 the book reached full gross (mean exposure about 0.7) and the diagnostic gave 26,759 events, then the floor was restored to 50. On real data G0 counted 351,176 events and G1 measured 350,685 with no look-ahead failures in 25 and 11 cuts, so G0 on real data was again the first meaningful check. This is the fourth family of cards that lab try cannot exercise, after the 8-K flag (K-0082), weekly CFTC reports (K-0092) and spot-perp pairs (K-0106). Suggested: give the synthetic LIQ-500 market at least 60 members, or let lab try scale a minimum-names floor to the synthetic universe. Not tested here: whether the walk-forward model fit runs on synthetic data at all.",
+  "evidence": "[\"H-0094\",\"K-0082\",\"K-0092\",\"K-0106\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 860,
+  "ts": "2026-11-03T08:09:04.713640+00:00"
+ },
+ {
+  "id": "K-0133",
+  "kind": "market",
+  "title": "Return-sort effects in liquid US stocks stay below cost, also as a learned composite of three sub-cost effects",
+  "statement": "Past-return sorts in liquid US stocks, with reversal and continuation signs and many conditioners, almost all gave effects far below round-trip cost or nothing (H-0007, H-0029, H-0030, H-0065, H-0069). The exception, the reversal before a predicted earnings release (H-0064), cleared cost but was wrong-signed in the latest third and its book was far weaker than its event study. New: H-0094 merged no-news reversal, attention give-back and earnings-reaction drift into one learned score. Entries beat same-stock placebos in every third, but gross stayed under cost and faded across thirds. Combining sub-cost effects came closer than single sorts without clearing cost; whether nonlinearity matters is untested because the linear baseline never ran. A new return-sort card should argue gross above cost for its own entries, name the latest-third sign as a kill condition and include the linear control.",
+  "evidence": "[\"H-0094\",\"H-0064\",\"H-0065\",\"H-0007\",\"H-0029\",\"H-0030\",\"H-0069\",\"K-0060\",\"K-0079\"]",
+  "confidence": "low",
+  "supersedes": "K-0079",
+  "actor": "librarian",
+  "message_id": 862,
+  "ts": "2026-11-03T08:09:04.731764+00:00"
  }
 ]

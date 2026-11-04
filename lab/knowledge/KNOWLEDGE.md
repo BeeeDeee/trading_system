@@ -78,12 +78,6 @@ Two cards on taker-dominated, high-volume fast moves in liquid Binance perps too
 
 *confidence low · 2026-10-19 · librarian · evidence: H-0035; H-0063; H-0040; K-0049; K-0060; prior_studies mrel-1h*
 
-### K-0079 Return-sort effects in liquid US stocks stay below cost, except a pre-release reversal that faded
-
-Past-return sorts in liquid US stocks have been tried with reversal and continuation signs and many conditioners (news, turnover, intraday split, peers, earnings sessions removed, quarter-end window). Almost all gave effects far below round-trip cost or nothing (H-0007, H-0029, H-0030, H-0065). The exception is the reversal of the last few sessions just before a predicted earnings release (H-0064): the first conditioner whose event gross sat clearly above cost with a placebo mean near zero. It was strongest in the earliest third, wrong-signed in the latest, and the unhedged book earned far less than the event study implies. So K-0044 holds for slow and calendar conditioners, not for an event-window conditioner tied to inventory risk. A new conditioner should be argued from that risk, state the latest-third sign as a kill condition, and include a control sort at dates away from the event.
-
-*confidence low · 2026-10-20 · librarian · supersedes K-0044 · evidence: H-0064; H-0065; H-0007; H-0029; H-0030; K-0012; K-0060*
-
 ### K-0080 Information-diffusion claims in liquid assets come out flat or wrong-signed, also with a dated news event
 
 Claims that news in one liquid market is priced late in another have not shown a delayed positive response from daily to monthly horizons. Statistical peer catch-up in US stocks (H-0013) was slightly negative, macro-release continuation across ETFs (H-0047) and the oil shock against Treasuries (H-0056) were wrong-signed in every third. New: H-0066 replaced the undated peer move by a verified event (a large real earnings-release reaction) and looked only at peers that had not reported; the average was still inside the placebo cloud with a bar below cost, and longer horizons turned negative. So undated noise in the trigger was not the only reason for H-0013's failure. These are not power failures. Do not trade the mirror: the sign is dev-selected and episodes are few. A new card should say why information would travel slowly through this particular channel; explicit economic links are untested and not loadable.
@@ -138,12 +132,6 @@ In the etf-premium-arbitrage family the gaps that reverted were closed-end fund 
 
 *confidence low · 2026-10-28 · librarian · evidence: H-0080; H-0037; H-0043; H-0077; H-0078; H-0079; K-0103; K-0084; K-0074*
 
-### K-0107 Newly available crypto coins did not underperform liquid peers in the dev window, in three designs
-
-Three cards shorted newly available Binance coins in different forms: young spot listings against seasoned ones (H-0004, decided on the strategy, could not tell), perps aged between one month and one year (H-0058, wrong-signed) and the first weeks after a perp launch of a coin with a seasoned spot pair (H-0082, wrong-signed). In both event studies the marked coins did not lag the other liquid perps on average; the sign followed the market cycle or alternated across thirds, and the wrong-signed effect grew with the horizon, the shape of trend or beta and not of a listing pump or a relief of short-sale constraints. Both used raw returns against unmarked peers (K-0074), so beta and attention are the leading readings, but no beta-matched control was run. All of it sits in one boom-and-bust window (K-0006). A further short-the-new-coin card has a low prior unless it neutralizes beta and prior run-up or changes the window.
-
-*confidence low · 2026-10-28 · librarian · evidence: H-0004; H-0058; H-0082; K-0074; K-0006; K-0060*
-
 ### K-0110 Net repurchasers versus issuers: filing-anchored pass, no release flow, no slow drift
 
 The same repurchaser-versus-issuer sort was tested at three anchors in LIQ-500. Anchored to the quarterly filing, a five-session spread cleared the placebo bar clearly (H-0019). Anchored to the real release it did not, built slowly and reversed lately (H-0027). As a slow style premium, the route K-0041 left open, new entries to the extreme quintiles over a quarter (H-0086) averaged below same-stock placebos, were slightly negative in the first weeks, and faded from clearly positive in the earliest third to clearly negative in the latest. Reading: the filing-anchored pass was filing-linked news or an early-era effect, not a trading-window flow and not a drift visible in large caps. Caveats: the placebo bar lay well above cost, repurchasers have lower beta than issuers so late bull years bias the raw comparison (K-0074), no split by side was reported, and the year-long hold was never simulated. Treat the family as closed for event-study cards in LIQ-500 unless beta-neutral, side-split or in less covered stocks.
@@ -179,6 +167,24 @@ Two sorts with different content, net repurchasers against issuers (H-0019) and 
 K-0083 found that on real 8-K dates only sorts on the stock's own price move cleared the placebo test. Earnings seasonality (H-0093) sorts on a second variable and cleared the percentile narrowly, with a placebo mean near zero and a bar below cost; the composite sort H-0032 did not. Its shape fit the claim (small early, larger by the end of the week, flat beyond) but gross stayed below round-trip cost. The latest block was the strongest, the reverse of K-0060, yet the first block had almost no events, so only two blocks are usable. This weakens K-0083 without refuting it. The date hit rate was never measured. A further predicted-window fundamentals sort in LIQ-500 has a low prior unless gross is argued clearly above cost.
 
 *confidence low · 2026-11-01 · librarian · evidence: H-0093; H-0032; H-0092; K-0083; K-0126; K-0060; K-0064*
+
+### K-0128 Supply-side crypto sorts did not find the expected laggard in four designs; persistent coin identity carries the average
+
+Four cards tried to short coins on a supply-side characteristic: young spot listings (H-0004, could not tell), perps aged between one month and one year (H-0058, wrong-signed), the first weeks after a perp launch (H-0082, wrong-signed) and, new, the fastest token supply growth within beta halves (H-0085). In H-0085 the time-shifted placebo of the same coins was about as negative as the marked average, so the sort picks persistent coin identity (old slow-issuance coins against emission-heavy ones) and says nothing about timing. In the dev window the slow-issuance side lagged, and the sign swung with the cycle across thirds, as in H-0058, so beta-matching legs by halves did not cure the confound that K-0074 names. Only protocol issuance was visible, not vesting unlocks. All of it sits in one boom-and-bust window (K-0006). A further overhang or dilution card has a low prior unless it uses within-coin timing (changes in issuance), matches on prior return, or sees unlock schedules.
+
+*confidence low · 2026-11-03 · librarian · supersedes K-0107 · evidence: H-0085; H-0058; H-0082; H-0004; K-0107; K-0074; K-0006; K-0025*
+
+### K-0129 Implied-over-realized volatility gives no usable relative signal across assets
+
+Three designs on the options-implied fear of assets have ended at the mechanism gate. A time-series equity tilt on the implied-over-realized ratio was right-signed but a near miss with too few episodes (H-0055). Short volatility timed by the implied curve was mostly the unconditional roll-down (H-0073, K-0088). New: ranking twelve ETFs across asset classes on the ratio against each asset's own year (H-0084) gave a wrong-signed average at every horizon from a week to a quarter, widening with horizon, positive only in the earliest third and worst in the latest. The reading is inferred, not tested: raw returns of the rich-ratio leg carry stress continuation and beta (K-0074), and any premium that exists is probably global and common to assets rather than asset-specific, which a relative ranking cancels. A further volatility-premium card on this family has a heavy trial count and a low prior unless it is a time-series design with many markets and an always-invested control.
+
+*confidence low · 2026-11-03 · librarian · evidence: H-0084; H-0055; H-0073; H-0052; K-0088; K-0070; K-0074; K-0060*
+
+### K-0133 Return-sort effects in liquid US stocks stay below cost, also as a learned composite of three sub-cost effects
+
+Past-return sorts in liquid US stocks, with reversal and continuation signs and many conditioners, almost all gave effects far below round-trip cost or nothing (H-0007, H-0029, H-0030, H-0065, H-0069). The exception, the reversal before a predicted earnings release (H-0064), cleared cost but was wrong-signed in the latest third and its book was far weaker than its event study. New: H-0094 merged no-news reversal, attention give-back and earnings-reaction drift into one learned score. Entries beat same-stock placebos in every third, but gross stayed under cost and faded across thirds. Combining sub-cost effects came closer than single sorts without clearing cost; whether nonlinearity matters is untested because the linear baseline never ran. A new return-sort card should argue gross above cost for its own entries, name the latest-third sign as a kill condition and include the linear control.
+
+*confidence low · 2026-11-03 · librarian · supersedes K-0079 · evidence: H-0094; H-0064; H-0065; H-0007; H-0029; H-0030; H-0069; K-0060; K-0079*
 
 ## Data
 
@@ -352,6 +358,12 @@ K-0104 found that mean exposure of slot books fits entries x hold / sessions x s
 
 *confidence low · 2026-11-01 · librarian · evidence: H-0092; H-0078; H-0079; K-0104; K-0101; K-0098; K-0120*
 
+### K-0130 Scout effect-size forecasts for slow cross-sectional cards ran far above what G1 measured in three cards
+
+H-0084, H-0085 and H-0087, all slow cross-sectional cards with a primary horizon of a quarter, forecast a side-adjusted gross of roughly one to a few percent per event, converted from published long-short spreads. G1 measured a wrong-signed average in two (H-0084, H-0085) and in the third (H-0087) a right-signed average at a small fraction of the low end of the forecast. The forecasts of event counts, dates and round-trip cost were close (events within a few percent of the forecast in H-0084 and H-0087; the cost of the liquid ETFs and perps as forecast), so K-0098 and K-0120 held; only the effect size was off. Related to K-0111: the forecast of the bar was reasonable, the forecast of the effect was not. A Scout who turns a literature spread into a per-event number should treat it as an upper bound (publication decay, long-short in a single vehicle, vol-scaling, unhedged currency and ETF tracking) and state what the card concludes if the effect is only a fraction of it.
+
+*confidence low · 2026-11-03 · librarian · evidence: H-0084; H-0085; H-0087; K-0098; K-0111; K-0120*
+
 ## The judge (framework behaviour)
 
 ### K-0008 Gate runner fixes found by real hypotheses
@@ -480,12 +492,6 @@ A daily crypto_top_n card that reads a named instrument (the BTC factor BTCUSDT.
 
 *confidence high · 2026-10-31 · human · evidence: H-0081 message 641; commit 51536516*
 
-### K-0118 The gate again passed no crypto_top_n universe at G0 on daily perp data (H-0081, after H-0039)
-
-H-0081's first G0 run (run 179) crashed because data.universe was None on binance_perp_1d, with the strategy raising 'needs the crypto_top_n point-in-time universe'. H-0039 hit the same crash (K-0054), so it recurred about two weeks later. The card also requested the signal-only fred_macro series VIXCLS; whether that matters is not known. The Builder wrote a fallback that rebuilds the top thirty from 30-day median dollar volume, noting that it may differ from the judge's definition; the Builder's later rewrite after the lab try fix (K-0117) reads data.universe. The summaries do not say which version produced the passing G0 run (run 180), so the event set may or may not be the judge's universe; G0 and G1 counted the same 1802 events, which fits the same definition at both gates but does not prove it. The crash cost one cycle. Suggested: the gate always passes the card's declared crypto_top_n universe on daily perp data; G0 reports which universe the strategy used.
-
-*confidence low · 2026-10-31 · librarian · evidence: H-0081; H-0039; K-0054; K-0117; run 179; run 180*
-
 ### K-0122 Scout wall-clock timeouts: 15 % of runs hit 900 s; a normal run takes ~430 s
 
 Between 2026-10-05 and 2026-11-01, 16 of 107 completed Scout runs ended in a wall-clock timeout at the default 900 s (Builder, Librarian: none), clustered by day (10-27: 5, 10-30/31: 2 each), and on 10-30/31 timeouts were followed by session-limit failures. The first Scout run after the fix took 431 s and 22 turns, so 900 s left only ~2x headroom. Scout now has timeout_s 1500 and is told to do at most 3 WebSearch calls; the cause of the clusters (slow API vs a stuck search) is not verified. lab invocations now shows wall time and turns.
@@ -497,6 +503,18 @@ Between 2026-10-05 and 2026-11-01, 16 of 107 completed Scout runs ended in a wal
 A session-limit failure ('resets 7am (UTC)') now pauses agent runs until that reset time (orchestrator.pause_until), capped at rate_limit_pause_hours; a message without a reset time still pauses for the full 5 h. Before, a limit at 06:35 blocked runs until 11:35 although the quota returned at 07:00. Untested in production until the next session limit.
 
 *confidence medium · 2026-11-01 · human · evidence: commit e6c24ced; K-0115*
+
+### K-0131 G0 still passes no crypto_top_n universe on daily perp data (four cards)
+
+H-0076 and H-0085 both crashed their first G0 with data.universe None on binance_perp_1d, as H-0039 and H-0081 did earlier, so the gap has recurred in four cards over about three weeks. Each Builder wrote the same fallback (top n by trailing 30-day dollar volume), which may differ from the judge's definition, so the event sets may not be the judge's. In H-0076 the fallback then failed G0 seven more times on truncated look-ahead views of only 18 rows: a loop over the volume window assumed at least as many rows as the window, and the cohort shift had the same pattern. The Builder cites run numbers 188 to 263 for the crash and fixed it with min(window, rows). The card was DATA_READY on 2026-11-02 and IMPLEMENTED on 2026-11-03, so about a day was lost on top of the data wait. Rolling-window code must accept views shorter than its window, because G0 cuts can be that short. Suggested: the gate passes the card's declared crypto_top_n universe on daily perp data, and G0 reports which universe the strategy used. Question sent to the owner.
+
+*confidence medium · 2026-11-03 · librarian · supersedes K-0118 · evidence: H-0076; H-0085; H-0039; H-0081; K-0054; K-0118; run 188; run 263; run 264*
+
+### K-0132 lab try cannot exercise a LIQ-500 card with a minimum-names floor: the synthetic universe has fewer than 50 members
+
+The Builder of H-0094 (first learned-model card, a book that needs at least 50 scored members a day) reports that the synthetic universe in lab try has fewer than 50 members per day, so the book is flat and the diagnostic has zero events. With the floor temporarily set to 5 the book reached full gross (mean exposure about 0.7) and the diagnostic gave 26,759 events, then the floor was restored to 50. On real data G0 counted 351,176 events and G1 measured 350,685 with no look-ahead failures in 25 and 11 cuts, so G0 on real data was again the first meaningful check. This is the fourth family of cards that lab try cannot exercise, after the 8-K flag (K-0082), weekly CFTC reports (K-0092) and spot-perp pairs (K-0106). Suggested: give the synthetic LIQ-500 market at least 60 members, or let lab try scale a minimum-names floor to the synthetic universe. Not tested here: whether the walk-forward model fit runs on synthetic data at all.
+
+*confidence medium · 2026-11-03 · librarian · evidence: H-0094; K-0082; K-0092; K-0106*
 
 ## How the lab works
 
@@ -585,11 +603,14 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0072 Cross-market information-diffusion claims in liquid assets come out flat or wrong-signed from daily to monthly horizons
 - K-0073 Multi-year reversal: absent in country equity ETFs, present for currency value in a short sample
 - K-0075 Signal history before the dev start or the ETFs' first date seems not to warm up the first signals
+- K-0079 Return-sort effects in liquid US stocks stay below cost, except a pre-release reversal that faded
 - K-0081 On real earnings dates the events that cleared the placebo test sort on the stock's own price move
 - K-0085 Perp funding and the perp-versus-spot volume split both fail to separate forced from informational big moves
 - K-0099 Wrapper gaps revert where no arbitrage link exists: closed-end funds cleared the placebo test, twin ETFs did not
 - K-0100 Closed-end fund gaps revert against their ETF anchor in two asset classes; both books still fail at G1
 - K-0101 Reported mean exposure of a paired fund-ETF book is about half the card's gross arithmetic; the cause is unknown
+- K-0107 Newly available crypto coins did not underperform liquid peers in the dev window, in three designs
 - K-0109 Monthly-formation, quarter-horizon stock sorts: the placebo bar is about the size of the literature's whole spread
 - K-0113 Scout event-count forecasts too high in four cards; joint tails of correlated variables are worst
 - K-0114 Scout event-count forecasts too high in five cards; rare-instrument definitions worst
+- K-0118 The gate again passed no crypto_top_n universe at G0 on daily perp data (H-0081, after H-0039)

@@ -201,7 +201,10 @@ notes: 'Brief: long horizon (6-24 months), cross-asset (signal from one market, 
   rate cycles). ETFs and OECD yields have no forward source here, so G4 is the ceiling. Publication: the reference
   year is the end of dev, so there is no post-publication part in dev; the holdout is the only post-publication
   check.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-10-29T06:44:12.546980+00:00'
   version: 1
@@ -231,3 +234,17 @@ history:
   agent: system
   invocation_id: null
   reason: dataset fred_oecd_10y_yields_1d ingested
+- ts: '2026-11-03T04:16:35.823317+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 271, qlab)
+- ts: '2026-11-03T04:16:36.802988+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 272, qlab)
