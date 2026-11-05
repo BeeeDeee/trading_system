@@ -1,0 +1,343 @@
+{
+ "date": "2026-11-05",
+ "llm_ok": true,
+ "locked_at": "2026-11-05T05:02:47.685Z",
+ "locked_ms": 1793854967685,
+ "portfolios": {
+  "b_btc": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_btc_eth": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_cash": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_ew20": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_mcap10": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "bez_brany": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "PEPE",
+     "UNI",
+     "ZEC",
+     "TRX",
+     "ETH",
+     "HYPE",
+     "XRP",
+     "BNB",
+     "SUI",
+     "LINK"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.0555555556,
+    "ETH": 0.0833333333,
+    "HYPE": 0.1111111111,
+    "LINK": 0.0555555556,
+    "PEPE": 0.1944444444,
+    "SUI": 0.0555555556,
+    "TRX": 0.0555555556,
+    "UNI": 0.1666666667,
+    "XRP": 0.0555555556,
+    "ZEC": 0.1666666667
+   }
+  },
+  "btc_filtr": {
+   "exits": {},
+   "info": {
+    "overlay": "BTC pod SMA50 → hotovost",
+    "selected": [
+     "PEPE",
+     "UNI",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "claude_volne": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "BTC",
+     "PEPE",
+     "TRX",
+     "UNI"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BTC": 0.15,
+    "PEPE": 0.06,
+    "TRX": 0.1,
+    "UNI": 0.07
+   }
+  },
+  "inv_vol": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "PEPE",
+     "UNI",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "PEPE": 0.25,
+    "UNI": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "jen_mr": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "NEAR",
+     "SOL",
+     "AVAX"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "AVAX": 0.25,
+    "NEAR": 0.25,
+    "SOL": 0.25
+   }
+  },
+  "jen_trend": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "PEPE",
+     "ZEC",
+     "UNI"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "PEPE": 0.25,
+    "UNI": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "jen_zpravy": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "kontrarian": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "NEAR",
+     "SOL",
+     "AVAX",
+     "LINK",
+     "SUI",
+     "XRP",
+     "BNB",
+     "TRX",
+     "ETH",
+     "BTC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "AVAX": 0.1,
+    "BNB": 0.1,
+    "BTC": 0.1,
+    "ETH": 0.1,
+    "LINK": 0.1,
+    "NEAR": 0.1,
+    "SOL": 0.1,
+    "SUI": 0.1,
+    "TRX": 0.1,
+    "XRP": 0.1
+   }
+  },
+  "mech_momentum": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "PEPE",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "PEPE": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "nahodny": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "AVAX",
+     "BTC",
+     "ETH",
+     "HYPE",
+     "NEAR",
+     "PEPE",
+     "TRX",
+     "UNI",
+     "XRP",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "AVAX": 0.1,
+    "BTC": 0.1,
+    "ETH": 0.1,
+    "HYPE": 0.1,
+    "NEAR": 0.1,
+    "PEPE": 0.1,
+    "TRX": 0.1,
+    "UNI": 0.1,
+    "XRP": 0.1,
+    "ZEC": 0.1
+   }
+  },
+  "pravdepodobnost": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "rovne": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "PEPE",
+     "UNI",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "PEPE": 0.25,
+    "UNI": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "skore_vol": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "PEPE",
+     "UNI",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "PEPE": 0.25,
+    "UNI": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "stop": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "PEPE",
+     "UNI",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "PEPE": 0.25,
+    "UNI": 0.25,
+    "ZEC": 0.25
+   }
+  },
+  "top3": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "PEPE",
+     "UNI",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "PEPE": 0.4,
+    "UNI": 0.3,
+    "ZEC": 0.3
+   }
+  },
+  "tydenni": {
+   "exits": {},
+   "info": {
+    "hold": "rebalanc jen v pondělí"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "vol_target": {
+   "exits": {},
+   "info": {
+    "overlay": "vol portfolia 67 % → expozice ×0.75",
+    "selected": [
+     "PEPE",
+     "UNI",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "PEPE": 0.1862618554,
+    "UNI": 0.1862618554,
+    "ZEC": 0.1862618554
+   }
+  },
+  "zaklad": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "PEPE",
+     "UNI",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "PEPE": 0.25,
+    "UNI": 0.25,
+    "ZEC": 0.25
+   }
+  }
+ },
+ "scores_sha256": "365f3dcd1010089f67207ffa5f2f0ee2c9622561de037d89a68eecabbb85bf88"
+}
