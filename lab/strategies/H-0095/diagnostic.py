@@ -157,31 +157,24 @@ def first_fit_row(ea_full):
 def event_scores(data, params):
     if data.universe is None:
         raise ValueError("H-0095 needs the liq_n universe")
-    uni_full = np.asarray(data.universe, dtype=bool)
-    ea_full = data.extras["ea_reaction_day"]
-    T, N = uni_full.shape
-    cols = np.flatnonzero(uni_full.any(axis=0))
-    score_full = np.full((T, N), np.nan)
-    if cols.size == 0:
-        return score_full
-    uni = uni_full[:, cols]
-    ea = np.asarray(ea_full, dtype=np.float64)[:, cols]
-    f1, f2, f3, f4, f5, mdv = raw_features(np.asarray(data.ret_co)[:, cols], np.asarray(data.ret_oc)[:, cols],
-                                           np.asarray(data.listed)[:, cols],
-                                           np.asarray(data.dollar_volume)[:, cols], uni, ea)
+    # all columns (no "ever a member" subset: that subset depends on future membership)
+    uni = np.asarray(data.universe, dtype=bool)
+    ea = np.asarray(data.extras["ea_reaction_day"], dtype=np.float64)
+    T, N = uni.shape
+    f1, f2, f3, f4, f5, mdv = raw_features(np.asarray(data.ret_co), np.asarray(data.ret_oc),
+                                           np.asarray(data.listed), np.asarray(data.dollar_volume), uni, ea)
     f6 = cs_rank(mdv, uni)
     X = stack(cs_zscore(f1, uni), cs_zscore(f2, uni), cs_zscore(f3, uni), cs_zscore(f4, uni),
               cs_zscore(f5, uni), cs_zscore(f6, uni))
     ev = event_mask(ea, uni)
     X[~ev] = np.nan
-    y = np.array(cs_rank(np.asarray(forward_return(data, HORIZON))[:, cols], uni), dtype=np.float64)
+    y = np.array(cs_rank(np.asarray(forward_return(data, HORIZON)), uni), dtype=np.float64)
     y[~ev] = np.nan
     score = np.array(walk_forward(X, y, horizon=HORIZON, model="gbm", params=gbm_params(params),
                                   retrain_every=RETRAIN, universe=uni), dtype=np.float64)
     score[~ev] = np.nan
-    score[:min(first_fit_row(ea_full), T)] = np.nan
-    score_full[:, cols] = score
-    return score_full
+    score[:min(first_fit_row(ea), T)] = np.nan
+    return score
 
 
 def entry_flags(score, q):

@@ -176,7 +176,10 @@ notes: 'Why this is not a near copy. H-0093 (same family) used the same predicte
   400 days are NaN. Runtime: rolling 1260-row window on about 500 members is about 600k training rows, about 70
   refits from 2003 on, 100 trees of at most 16 leaves: a few minutes per run on the lab machine. RAM: three attached
   fields. The 1q timeframe refers to the quarterly fundamentals and the yearly release anchor; decisions are daily.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_abnormal_return
 history:
 - ts: '2026-11-03T10:11:06.040279+00:00'
   version: 1
@@ -199,3 +202,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-04T06:00:42.860284+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 278, qlab)
+- ts: '2026-11-04T06:02:49.158221+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 279, qlab)

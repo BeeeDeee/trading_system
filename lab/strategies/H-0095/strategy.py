@@ -179,36 +179,30 @@ def first_fit_row(ea_full):
 
 def event_scores(data, params):
     """Walk-forward model scores on event rows (T, N), NaN elsewhere, and the 63-session mean
-    dollar volume (T, N) of the stocks that are ever members (NaN for the others)."""
+    dollar volume (T, N).
+
+    All columns of the view are used. (A column subset chosen by "ever a member" over the whole
+    view is look-ahead: it depends on future membership, and the model's training sample depends
+    on the column layout, so it failed G0 truncation / perturbation.)"""
     if data.universe is None:
         raise ValueError("H-0095 needs the liq_n universe")
-    uni_full = np.asarray(data.universe, dtype=bool)
-    ea_full = data.extras["ea_reaction_day"]
-    T, N = uni_full.shape
-    cols = np.flatnonzero(uni_full.any(axis=0))
-    score_full = np.full((T, N), np.nan)
-    mdv_full = np.full((T, N), np.nan)
-    if cols.size == 0:
-        return score_full, mdv_full
-    uni = uni_full[:, cols]
-    ea = np.asarray(ea_full, dtype=np.float64)[:, cols]
-    f1, f2, f3, f4, f5, mdv = raw_features(np.asarray(data.ret_co)[:, cols], np.asarray(data.ret_oc)[:, cols],
-                                           np.asarray(data.listed)[:, cols],
-                                           np.asarray(data.dollar_volume)[:, cols], uni, ea)
+    uni = np.asarray(data.universe, dtype=bool)
+    ea = np.asarray(data.extras["ea_reaction_day"], dtype=np.float64)
+    T, N = uni.shape
+    f1, f2, f3, f4, f5, mdv = raw_features(np.asarray(data.ret_co), np.asarray(data.ret_oc),
+                                           np.asarray(data.listed), np.asarray(data.dollar_volume), uni, ea)
     f6 = cs_rank(mdv, uni)
     X = stack(cs_zscore(f1, uni), cs_zscore(f2, uni), cs_zscore(f3, uni), cs_zscore(f4, uni),
               cs_zscore(f5, uni), cs_zscore(f6, uni))
     ev = event_mask(ea, uni)
     X[~ev] = np.nan                                        # the model never sees non-event rows
-    y = np.array(cs_rank(np.asarray(forward_return(data, HORIZON))[:, cols], uni), dtype=np.float64)
+    y = np.array(cs_rank(np.asarray(forward_return(data, HORIZON)), uni), dtype=np.float64)
     y[~ev] = np.nan                                        # label ranked over all members, kept on events
     score = np.array(walk_forward(X, y, horizon=HORIZON, model="gbm", params=gbm_params(params),
                                   retrain_every=RETRAIN, universe=uni), dtype=np.float64)
     score[~ev] = np.nan
-    score[:min(first_fit_row(ea_full), T)] = np.nan
-    score_full[:, cols] = score
-    mdv_full[:, cols] = mdv
-    return score_full, mdv_full
+    score[:min(first_fit_row(ea), T)] = np.nan
+    return score, mdv
 
 
 # ----------------------------------------------------------------------------- entries and book

@@ -189,7 +189,10 @@ notes: 'Brief: short horizon (5 sessions), US single stocks cross-sectional, lea
   fit and tens of thousands by 2020, with 6 features and 8-leaf trees with min_child_samples 200, so the model capacity
   is small on purpose. 8-K coverage leans toward survivors (K-0035). No date literals, no named stocks. G4 is the
   ceiling (no forward stock data).'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-03T09:41:42.401789+00:00'
   version: 1
@@ -212,3 +215,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-04T05:12:46.722561+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 276, qlab)
+- ts: '2026-11-04T05:15:09.046277+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 277, qlab)

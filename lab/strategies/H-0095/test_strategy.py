@@ -1,6 +1,9 @@
+import dataclasses
+
 import numpy as np
 import pytest
 
+from lab.framework.data import DataView, synthetic
 from strategy import PARAMS, target_weights
 from strategy import (build_book, core_weights, entry_flags, event_mask, first_fit_row, gbm_params,
                       lagged_median, lagged_std, member_mean, raw_features, trailing_mean)
@@ -243,6 +246,90 @@ def test_book_tilt_cap_scales_new_slots_only():
     W2 = build_book(entry2, uni, mcap, mdv, reb)
     assert W2[2, 30] == pytest.approx(core)
     assert np.allclose(W2.sum(axis=1), 1.0)
+
+
+# ----------------------------------------------------------------------------- point-in-time regression
+# G0 failed on real data because the scored columns were "ever a member" over the whole view: a stock
+# that joins the universe after the cut changed the column set, and with it the model's fits.
+
+def _pit_view():
+    d = synthetic()
+    f = dataclasses.asdict(d)
+    rng = np.random.default_rng(5)
+    T0 = 2200
+    out = {}
+    for k, v in f.items():
+        out[k] = v[:T0].copy() if isinstance(v, np.ndarray) and v.shape[:1] == d.dates.shape else v
+    T, N = out["ret_co"].shape
+    uni = np.zeros((T, N), dtype=bool)
+    for j in range(N):
+        a = int(rng.integers(0, T // 2))
+        b = int(rng.integers(T // 2, T + 400))
+        uni[a:b, j] = True                                # late entries (some after row 900) and exits
+    uni[:1500, N - 1] = False
+    uni[1500:, N - 1] = True
+    ea = np.where(rng.uniform(size=(T, N)) < 0.3, 1.0, 0.0)
+    ea[:150] = np.nan                                     # event data starts late
+    out["dollar_volume"] = out["dollar_volume"] * rng.lognormal(0, 0.5, size=(T, N))
+    out["universe"] = uni
+    out["extras"] = {"ea_reaction_day": ea.astype(np.float32),
+                     "sf1_arq_marketcap": rng.uniform(1e9, 1e10, size=(T, N)).astype(np.float32)}
+    out["series"] = {}
+    return out
+
+
+def _cut(f, c):
+    g = {}
+    for k, v in f.items():
+        if isinstance(v, np.ndarray) and v.shape[:1] == f["dates"].shape:
+            g[k] = v[:c + 1].copy()
+        elif isinstance(v, dict):
+            g[k] = {kk: vv[:c + 1].copy() for kk, vv in v.items()}
+        else:
+            g[k] = v
+    return g
+
+
+def _perturb(f, c, seed):
+    rng = np.random.default_rng(seed)
+    g = dict(f)
+    for k in ("ret_co", "ret_oc"):
+        w = f[k].copy()
+        w[c + 1:] = rng.normal(0, 0.05, size=w[c + 1:].shape)
+        g[k] = w
+    w = f["dollar_volume"].copy()
+    w[c + 1:] = rng.uniform(1, 1e9, size=w[c + 1:].shape)
+    g["dollar_volume"] = w
+    w = f["universe"].copy()
+    w[c + 1:] = rng.uniform(size=w[c + 1:].shape) < 0.5
+    g["universe"] = w
+    g["extras"] = {}
+    for kk, vv in f["extras"].items():
+        w = vv.copy()
+        w[c + 1:] = (rng.uniform(size=w[c + 1:].shape) < 0.3).astype(w.dtype)
+        g["extras"][kk] = w
+    return g
+
+
+def _equal(a, b):
+    a = np.asarray(a, dtype=np.float64)
+    b = np.asarray(b, dtype=np.float64)
+    return bool(np.all((np.isnan(a) & np.isnan(b)) | (np.abs(np.nan_to_num(a) - np.nan_to_num(b)) <= 1e-12)))
+
+
+def test_point_in_time_with_events_and_late_members():
+    f = _pit_view()
+    p = {"entry_quantile": 0.7, "n_estimators": 10}
+    full = DataView(**f)
+    sc_full, _ = S.event_scores(full, p)
+    w_full = target_weights(full, p)
+    assert np.isfinite(sc_full).any() and S.entry_flags(sc_full, 0.7).any()   # the model path is exercised
+    for c in (900, 1500):
+        for g in (_cut(f, c), _perturb(f, c, c)):
+            v = DataView(**g)
+            sc, _ = S.event_scores(v, p)
+            assert _equal(sc[:c + 1], sc_full[:c + 1])
+            assert _equal(target_weights(v, p)[:c + 1], w_full[:c + 1])
 
 
 def test_constants_match_card():

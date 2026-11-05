@@ -186,6 +186,12 @@ Past-return sorts in liquid US stocks, with reversal and continuation signs and 
 
 *confidence low · 2026-11-03 · librarian · supersedes K-0079 · evidence: H-0094; H-0064; H-0065; H-0007; H-0029; H-0030; H-0069; K-0060; K-0079*
 
+### K-0136 Learned models on earnings-release events: near miss, wrong sign, no nonlinearity shown
+
+Three learned cards used the same real 8-K release events and overlapping features. A model trained on all days with news, volume and volatility features (H-0094) stayed under cost. A model trained only on release reactions to pick the drifting ones (H-0095) cleared everything except the placebo percentile, with a right sign in every third, but did not visibly improve on the plain positive-reaction cut of H-0033, which cleared the bar with room (different event sets, so indicative). A model with a release-window flag and earnings-information features (H-0096) was wrong-signed against same-stock placebos in every third. None has a ridge comparison, so the failures may be the features, not the learner. This fits K-0083: at the release only the stock's own price move carried, and adding second variables (earnings change, volume, run-up, last reaction) did not add on top. Drift effects again looked weakest in the latest third (K-0060). A further learned card on the same release events has a low prior unless it brings a new information source, not a new learner; a gross per entry argued clearly above cost is needed in advance.
+
+*confidence low · 2026-11-04 · librarian · evidence: H-0095; H-0096; H-0094; H-0033; H-0028; K-0083; K-0133; K-0060*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -364,6 +370,12 @@ H-0084, H-0085 and H-0087, all slow cross-sectional cards with a primary horizon
 
 *confidence low · 2026-11-03 · librarian · evidence: H-0084; H-0085; H-0087; K-0098; K-0111; K-0120*
 
+### K-0134 Learned-model cards: a column set defined by the whole-view universe makes walk-forward scores depend on the future
+
+H-0095 failed G0 look-ahead on its first run (truncation at 4 of 11 cuts, perturbation at 8). Cause per the Builder: features, labels and walk_forward were restricted to columns that are ever a universe member over the whole view. That set depends on future membership, and gbm fits depend on the column layout, so scores on earlier rows changed when a stock joined later. Fix: run on all columns and mask non-members per row; a regression test with late entrants and late-starting event data now covers it. Rule for learned cards: no column, row or training-sample subset may be chosen with information from the end of the view (ever-member lists, full-period filters, survivors). The synthetic lab try market could not show this, only G0 on real data did. H-0096 passed G0 on its first run.
+
+*confidence medium · 2026-11-04 · librarian · evidence: H-0095; H-0096; run 275; run 276; K-0009*
+
 ## The judge (framework behaviour)
 
 ### K-0008 Gate runner fixes found by real hypotheses
@@ -510,11 +522,11 @@ H-0076 and H-0085 both crashed their first G0 with data.universe None on binance
 
 *confidence medium · 2026-11-03 · librarian · supersedes K-0118 · evidence: H-0076; H-0085; H-0039; H-0081; K-0054; K-0118; run 188; run 263; run 264*
 
-### K-0132 lab try cannot exercise a LIQ-500 card with a minimum-names floor: the synthetic universe has fewer than 50 members
+### K-0135 Learned-model cards: lab try cannot run them and the ridge control never runs
 
-The Builder of H-0094 (first learned-model card, a book that needs at least 50 scored members a day) reports that the synthetic universe in lab try has fewer than 50 members per day, so the book is flat and the diagnostic has zero events. With the floor temporarily set to 5 the book reached full gross (mean exposure about 0.7) and the diagnostic gave 26,759 events, then the floor was restored to 50. On real data G0 counted 351,176 events and G1 measured 350,685 with no look-ahead failures in 25 and 11 cuts, so G0 on real data was again the first meaningful check. This is the fourth family of cards that lab try cannot exercise, after the 8-K flag (K-0082), weekly CFTC reports (K-0092) and spot-perp pairs (K-0106). Suggested: give the synthetic LIQ-500 market at least 60 members, or let lab try scale a minimum-names floor to the synthetic universe. Not tested here: whether the walk-forward model fit runs on synthetic data at all.
+Two gaps, now seen in three learned cards (H-0094, H-0095, H-0096). (1) lab try: besides the universe of fewer than 50 members (K-0132), H-0095 shows that the synthetic 8-K flag is too sparse to reach walk_forward's minimum training sample (zero events) and that synthetic dollar volume has no cross-sectional dispersion, so a volume z-score is NaN. The Builder exercised the model path only by temporarily densifying events and by a regression test. On real data G0 was again the first meaningful check (event counts at G0 and G1 agreed within a handful: 8587 vs 8587 for H-0095, 15582 vs 15577 for H-0096). (2) Each of the three cards names a linear ridge baseline as a falsification criterion, and each ended at the G1 mechanism test before it could run. H-0096 asked the Skeptic or Librarian to have it run; neither has a command for it. So whether nonlinearity pays is untested in all three, and a Scout cannot tell a wrong learner from wrong features. Suggested: G1 reports the ridge event gross and percentile next to the model's whenever the card names a ridge baseline; the synthetic market gets a dense 0/1 8-K flag and volume dispersion.
 
-*confidence medium · 2026-11-03 · librarian · evidence: H-0094; K-0082; K-0092; K-0106*
+*confidence medium · 2026-11-04 · librarian · supersedes K-0132 · evidence: H-0095; H-0096; H-0094; K-0132; K-0082*
 
 ## How the lab works
 
@@ -614,3 +626,4 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0113 Scout event-count forecasts too high in four cards; joint tails of correlated variables are worst
 - K-0114 Scout event-count forecasts too high in five cards; rare-instrument definitions worst
 - K-0118 The gate again passed no crypto_top_n universe at G0 on daily perp data (H-0081, after H-0039)
+- K-0132 lab try cannot exercise a LIQ-500 card with a minimum-names floor: the synthetic universe has fewer than 50 members

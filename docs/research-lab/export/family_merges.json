@@ -86,5 +86,13 @@
   "reason": "H-0069 trades the give-back of attention-driven price pressure after extreme LIQ-500 own moves (liquidity provision to retail flow), the same events and counterparty that H-0030, H-0064 and the learned composite H-0094 sort on in short-term-reversal. Counting its trial apart would hide it from the penalty on H-0094-style composites. Merging only makes the penalty stricter. Not merged with post-earnings-announcement-drift: opposite sign, different mechanism.",
   "message_id": 864,
   "ts": "2026-11-03T08:36:40.042047+00:00"
+ },
+ {
+  "from_family": "anomalies-at-earnings-news",
+  "into_family": "post-earnings-announcement-drift",
+  "actor": "chair",
+  "reason": "Same counterparty and reason for the effect: investors under-react to earnings information that is resolved at the real or predicted 8-K release / filing, traded on the same LIQ-500 release events. H-0093 (earnings seasonality) is a seasonal-earnings-change surprise like H-0024; H-0096 and H-0097 are learned models on earnings-change, last-reaction and accrual features, and H-0095 (PEAD) is a learned model on the same release events with overlapping features. K-0083 and K-0136 already read them as one body of evidence. The live H-0097 and any future learned earnings card should carry the combined 14-trial penalty. Merging only makes the penalty stricter.",
+  "message_id": 885,
+  "ts": "2026-11-04T06:06:31.669319+00:00"
  }
 ]

@@ -198,7 +198,10 @@ notes: 'Lineage and family: this is the fourth-plus card of anomalies-at-earning
   so there is no pre-publication window for this card; the Chair should read the decay check as not applicable rather
   than as a pass. No forward data for US stocks: G4 is the ceiling. Kill conditions are pre-registered above; do
   not rescue by retuning top, num_leaves, the 126-session windows or the hold.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-03T10:40:48.086294+00:00'
   version: 1
@@ -221,3 +224,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-05T02:54:26.988868+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 280, qlab)
+- ts: '2026-11-05T02:56:37.903168+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 281, qlab)
