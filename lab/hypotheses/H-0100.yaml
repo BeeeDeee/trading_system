@@ -171,7 +171,10 @@ notes: 'Relation to earlier cards. Same family as H-0024, H-0028, H-0031, H-0033
   Koch, Tuttle and Zhang (2012, JFQA, overnight returns and the cost of buying at the open) and Lou, Polk and Skouras
   (2019, JFE, tug of war between overnight and intraday returns) motivate the split but are not listed, to keep
   the publication-decay check on the drift itself. No new dataset is needed.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-04T07:42:56.802688+00:00'
   version: 1
@@ -194,3 +197,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-05T06:34:49.341932+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 286, qlab)
+- ts: '2026-11-05T06:37:22.780655+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 287, qlab)

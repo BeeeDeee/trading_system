@@ -181,7 +181,10 @@ notes: 'BRIEF FIT. Short horizon (5-session label = holding), US single stocks c
   accept and flag. Please report, if possible, events by year and the mean beta z of the top fifth inside vs outside
   the windows (criterion 5). Publication decay: Savor and Wilson (2014) falls inside dev, so the G2 post/pre check
   applies; Ogden (1990) predates dev.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_abnormal_return
 history:
 - ts: '2026-11-03T11:18:24.044079+00:00'
   version: 1
@@ -204,3 +207,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-05T04:52:57.609417+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 282, qlab)
+- ts: '2026-11-05T04:55:55.149858+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 283, qlab)

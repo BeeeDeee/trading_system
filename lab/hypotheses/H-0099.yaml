@@ -177,7 +177,10 @@ notes: 'Why this is not a refile of earlier reversal cards. Studies 6 and 7 test
   a pass without it should be read as reversal skill, not as evidence of nonlinearity. Cost regime: dev starts 1998
   with fractional quotes (cost x2.5 until 2001-04); the card keeps the full dev period rather than choosing a start,
   and the first refit needs a year of labels anyway, so only about a year of trading falls in the x2.5 era.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-04T07:16:17.245908+00:00'
   version: 1
@@ -200,3 +203,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-05T05:35:46.864121+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 284, qlab)
+- ts: '2026-11-05T05:37:00.826329+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 285, qlab)
