@@ -1,0 +1,325 @@
+{
+ "claude_volne": {
+  "comment": "Defenzivně, ~32 % investováno a zbytek v hotovosti, dokud trh nepotvrdí dno po výprodeji kvůli AI akciím a nevyjde CPI.",
+  "positions": [
+   {
+    "coin": "BTC",
+    "invalidation": "Denní uzavření pod 72 tis. USD nebo pokračující odlivy z ETF nad 500 mil. USD denně.",
+    "reason": "Jádro portfolia u 30d minima po vyčištění longů.",
+    "weight_pct": 14.0
+   },
+   {
+    "coin": "PEPE",
+    "invalidation": "Uzavření pod SMA20 a rel7 vůči BTC pod nulou.",
+    "reason": "Nejsilnější relativní trend, malá pozice kvůli betě.",
+    "weight_pct": 6.0
+   },
+   {
+    "coin": "TRX",
+    "invalidation": "Pokles pod 30d minimum a ztráta 5 % vůči BTC za týden.",
+    "reason": "Záporná korelace s BTC, diverzifikace v risk-off.",
+    "weight_pct": 12.0
+   }
+  ]
+ },
+ "coins": {
+  "AVAX": {
+   "conviction": 2,
+   "event": true,
+   "event_type": "unlock",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Za 30 dní −18,5 b. vůči BTC a objem −27 %; unlock 8. 11. je malý (<0,4 %).",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinranking.com/news/avalanche-token-unlock-releases-1-67-million-avax-november-8"
+   ],
+   "trend": -2
+  },
+  "BNB": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Hýbe se v podstatě jako BTC (rel30 −0,5) při nižší denní ztrátě, bez nových zpráv.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -1
+  },
+  "BTC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Pod SMA20/50 a těsně nad 30d minimem po výprodeji kvůli AI akciím, odlivy z ETF trvají; vyprané longy dávají šanci na odraz.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/markets/2026/11/05/bitcoin-crypto-stocks-caught-in-ai-trade-meltdown-but-wintermute-trader-sees-glass-half-full",
+    "https://www.thecoinrepublic.com/2026/11/05/crypto-market-crash-sends-btc-below-76k-as-liquidations-top-1b/"
+   ],
+   "trend": -1
+  },
+  "ETH": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Za 30 dní o 6 b. horší než BTC, ETF na ETH mají odlivy a beta 1,34 v risk-off prostředí škodí.",
+   "p_outperform_btc_7d": 0.46,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.cryptotimes.io/2026/11/06/crypto-market-falls-5-to-2-64t-as-btc-and-eth-erase-post-election-gains/"
+   ],
+   "trend": -1
+  },
+  "HYPE": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "unlock",
+   "expected_move_7d_pct": 0.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Za týden −13,9 % po odeznění rally kolem US služby, distribuce 180 tis. HYPE týmu 6. 11. je malá a známá a velký unlock přijde až 29. 11.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.cryptotimes.io/2026/11/05/hype-drops-7-7-in-24-hours-pushing-price-below-80/",
+    "https://cryptoticker.io/en/hyperliquid-team-unlock-180000-hype/"
+   ],
+   "trend": -1
+  },
+  "LINK": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Za 30 dní −12,5 b. vůči BTC a −15 % pod SMA50, zprávy jsou jen rutinní integrace.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "NEAR": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "−39 % od 30d maxima a beta 2,45 v risk-off, objem padá o 29 %.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "PEPE": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Nejsilnější relativní trend (rel30 +23, nad všemi SMA), ale meme s betou 1,72 je v risk-off zranitelný.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 2
+  },
+  "SOL": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 2,
+   "news": 0,
+   "note": "Silně přeprodaná (RSI 28,8, −26 % od 30d maxima, u minima), ale trend vůči BTC je jasně slabý.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "SUI": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Slabý trend (rel30 −17,5) po listopadovém unlocku, záporný funding a kniha s převahou prodejců.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.kucoin.com/news/insight/SUI/6ae79a7dbbcb5200074574b6"
+   ],
+   "trend": -2
+  },
+  "TRX": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Záporná korelace s BTC, takže v risk-off funguje jako diverzifikace; rel30 +6, ale za týden −7 b.",
+   "p_outperform_btc_7d": 0.52,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 0
+  },
+  "UNI": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Narativ rekordních burnů už cena zohlednila, po −10,6 % za den je to vysoká beta (2,24) bez nového impulsu.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.kucoin.com/news/flash/uniswap-s-unification-burns-record-134-000-uni-in-24-hours-as-fees-surge"
+   ],
+   "trend": 0
+  },
+  "XRP": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Pod všemi SMA, za 30 dní −8 b. vůči BTC a objem klesá; chybí katalyzátor.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/markets/2026/11/05/bitcoin-crypto-stocks-caught-in-ai-trade-meltdown-but-wintermute-trader-sees-glass-half-full"
+   ],
+   "trend": -2
+  },
+  "ZEC": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "upgrade",
+   "expected_move_7d_pct": 0.0,
+   "mr": -1,
+   "news": 0,
+   "note": "Stažení návrhu ZCG na 98 tis. ZEC a NU7 už cena promítla (+12,9 % za 3 dny), hrozí „sell the news“, shorty ale převažují (L/S 0,75).",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://247wallst.com/investing/cryptocurrency/2026/11/04/zec-jumped-10-5-after-zcash-community-grants-dropped-a-plan-to-redirect-98000-zec-why-did-holders-object/",
+    "https://coincentral.com/zcash-zec-price-rallies-9-as-nu7-switches-on-zcashs-fastest-blocks-yet"
+   ],
+   "trend": 1
+  }
+ },
+ "date": "2026-11-06",
+ "events_7d": [
+  {
+   "date": "2026-11-06",
+   "title": "Hyperliquid Labs rozděluje 180 tis. HYPE týmu (~14 mil. USD)",
+   "type": "unlock"
+  },
+  {
+   "date": "2026-11-08",
+   "title": "Odemčení 1,67 mil. AVAX (Avalanche Foundation, <0,4 % oběhu)",
+   "type": "unlock"
+  },
+  {
+   "date": "2026-11-10",
+   "title": "US CPI za říjen (8:30 ET)",
+   "type": "makro"
+  },
+  {
+   "date": "2026-11-05",
+   "title": "Zcash NU7 (bloky 25 s), dozvuky aktivace",
+   "type": "upgrade"
+  }
+ ],
+ "regime": {
+  "label": "Risk-off, zvýšená volatilita",
+  "summary": "BTC spadl 5. 11. o 5,5 % na ~76 tis. USD spolu s výprodejem AI akcií (polovodiče −12 %), likvidace přes 1 mld. USD převážně longů a ETF mají šestý den odlivů. Cena je těsně nad 30denním minimem, funding je nízký, takže je možný krátký odraz, ale trend zůstává sestupný."
+ },
+ "top10": [
+  {
+   "coin": "TRX",
+   "reason": "Záporná korelace s BTC chrání v risk-off."
+  },
+  {
+   "coin": "PEPE",
+   "reason": "Nejsilnější relativní trend v universu."
+  },
+  {
+   "coin": "BNB",
+   "reason": "Nízké riziko, drží se v řadě s BTC."
+  },
+  {
+   "coin": "ZEC",
+   "reason": "Kladný relativní trend, shorty převažují."
+  },
+  {
+   "coin": "BTC",
+   "reason": "Neutrální benchmark."
+  },
+  {
+   "coin": "SOL",
+   "reason": "Nejvíc přeprodaná, prostor na odraz."
+  },
+  {
+   "coin": "HYPE",
+   "reason": "Nízká beta, po týdenním propadu možný odraz."
+  },
+  {
+   "coin": "ETH",
+   "reason": "Přeprodaná, ale slabší než BTC."
+  },
+  {
+   "coin": "UNI",
+   "reason": "Fundament (burn) dobrý, ale vysoká beta."
+  },
+  {
+   "coin": "XRP",
+   "reason": "Přeprodaná, bez katalyzátoru."
+  }
+ ]
+}
