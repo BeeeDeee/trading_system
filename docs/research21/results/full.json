@@ -1,0 +1,1067 @@
+{
+ "s0": {
+  "sharpe": 0.3761222155872436,
+  "sharpe_per_period": 0.02369347250024925,
+  "cagr": 0.08528746801771514,
+  "max_dd": -0.6117676794746859,
+  "exposure": 0.8955047068900606,
+  "turnover_per_year": 116.66785943967908,
+  "n_trades": 16141,
+  "mean_net_trade": 0.001763555639883128,
+  "win_rate": 0.6134068521157301,
+  "mean_hold": 3.9191499907068956,
+  "first": "1999-01-04",
+  "last": "2026-09-25",
+  "mean_net_trade_ci": [
+   0.001763555639883128,
+   0.000776611503736736,
+   0.0029234574764470814
+  ],
+  "since_2005": {
+   "sharpe": 0.2856578822933067,
+   "sharpe_per_period": 0.01799475515698692,
+   "cagr": 0.05797072076281973,
+   "max_dd": -0.6117676794746859,
+   "exposure": 0.9048305597652126,
+   "turnover_per_year": 117.22538441853455,
+   "n_trades": 12711,
+   "mean_net_trade": 0.0013161569939599757,
+   "win_rate": 0.6163165761938478,
+   "mean_hold": 3.933207458107151,
+   "first": "2005-01-03",
+   "last": "2026-09-25"
+  }
+ },
+ "spy": {
+  "sharpe": 0.5315348832549419,
+  "sharpe_per_period": 0.03348355033924587,
+  "cagr": 0.08722791874884916,
+  "max_dd": -0.552011798449192,
+  "exposure": 1.0,
+  "turnover_per_year": 0.0,
+  "n_trades": 0,
+  "mean_net_trade": NaN,
+  "win_rate": NaN,
+  "mean_hold": NaN,
+  "first": "1999-01-04",
+  "last": "2026-09-25"
+ },
+ "filters": {
+  "E": {
+   "n_trades": 12711,
+   "n_allowed": 10920,
+   "n_blocked": 1791,
+   "share_blocked": 0.14090158130752892,
+   "mean_allowed": 0.001457203573848631,
+   "mean_blocked": 0.00045617449681641765,
+   "spread": 0.0010010290770322131,
+   "spread_ci": [
+    -0.0013147648353987258,
+    0.0034439441830553864
+   ],
+   "c2_p95": 0.0008045826450860897,
+   "mean_allowed_cost_x2": -0.0003855635566597491,
+   "thirds": [
+    {
+     "years": [
+      2005,
+      2011
+     ],
+     "n_allowed": 3448,
+     "n_blocked": 471,
+     "mean_allowed": 0.0018944006981467703,
+     "mean_blocked": 0.0008567586732562667,
+     "spread": 0.0010376420248905036
+    },
+    {
+     "years": [
+      2012,
+      2018
+     ],
+     "n_allowed": 3478,
+     "n_blocked": 674,
+     "mean_allowed": -6.0320869029024745e-05,
+     "mean_blocked": 0.0010559336481586964,
+     "spread": -0.0011162545171877212
+    },
+    {
+     "years": [
+      2019,
+      2026
+     ],
+     "n_allowed": 3994,
+     "n_blocked": 646,
+     "mean_allowed": 0.002401243215247855,
+     "mean_blocked": -0.0004616471983969954,
+     "spread": 0.0028628904136448505
+    }
+   ],
+   "criteria": {
+    "c1_spread_ci_lo_gt0": false,
+    "c2_allowed_gt0_and_gt_c2_p95": true,
+    "c3_spread_gt0_in_every_third": false,
+    "c4_cost_x2_allowed_gt0": false,
+    "c5_share_ge_15pct_each": false
+   },
+   "criteria_passed": 1,
+   "verdict": "nelze posoudit",
+   "c2_median": 0.00014043449776032226,
+   "book": {
+    "sharpe": 0.2255843427670253,
+    "sharpe_per_period": 0.0142104778721786,
+    "cagr": 0.04642880106551206,
+    "max_dd": -0.667945228896979,
+    "exposure": 0.6958990517083362,
+    "turnover_per_year": 91.68273081818697,
+    "n_trades": 12689,
+    "mean_net_trade": 0.0011744326196693054,
+    "win_rate": 0.6221924501536764,
+    "mean_hold": 3.870360154464497,
+    "first": "1999-01-04",
+    "last": "2026-09-25"
+   }
+  },
+  "V": {
+   "n_trades": 16141,
+   "n_allowed": 14963,
+   "n_blocked": 1178,
+   "share_blocked": 0.07298184746917787,
+   "mean_allowed": 0.001975117049835833,
+   "mean_blocked": -0.0009237052914601043,
+   "spread": 0.0028988223412959374,
+   "spread_ci": [
+    0.000106037865097914,
+    0.005649638230862239
+   ],
+   "c2_p95": -0.00040429052336183257,
+   "mean_allowed_cost_x2": -0.0007699921313886632,
+   "thirds": [
+    {
+     "years": [
+      1999,
+      2007
+     ],
+     "n_allowed": 4937,
+     "n_blocked": 352,
+     "mean_allowed": 0.00325914064470931,
+     "mean_blocked": -0.0024903911381040076,
+     "spread": 0.005749531782813318
+    },
+    {
+     "years": [
+      2008,
+      2016
+     ],
+     "n_allowed": 4586,
+     "n_blocked": 440,
+     "mean_allowed": 0.0009080065947343611,
+     "mean_blocked": -0.00016062050166747342,
+     "spread": 0.0010686270964018346
+    },
+    {
+     "years": [
+      2017,
+      2026
+     ],
+     "n_allowed": 5440,
+     "n_blocked": 386,
+     "mean_allowed": 0.0017094082371896912,
+     "mean_blocked": -0.00036485526423239316,
+     "spread": 0.002074263501422084
+    }
+   ],
+   "criteria": {
+    "c1_spread_ci_lo_gt0": true,
+    "c2_allowed_gt0_and_gt_c2_p95": true,
+    "c3_spread_gt0_in_every_third": true,
+    "c4_cost_x2_allowed_gt0": false,
+    "c5_share_ge_15pct_each": false
+   },
+   "criteria_passed": 3,
+   "verdict": "nelze posoudit",
+   "c2_median": -0.0009798124675145384,
+   "book": {
+    "sharpe": 0.36767821420536,
+    "sharpe_per_period": 0.023161550411517108,
+    "cagr": 0.08300014299441494,
+    "max_dd": -0.659517380296154,
+    "exposure": 0.887245941888788,
+    "turnover_per_year": 117.0561146152533,
+    "n_trades": 16195,
+    "mean_net_trade": 0.0017194788834998785,
+    "win_rate": 0.6147576412472986,
+    "mean_hold": 3.8696511268910156,
+    "first": "1999-01-04",
+    "last": "2026-09-25"
+   }
+  },
+  "G": {
+   "n_trades": 16141,
+   "n_allowed": 14466,
+   "n_blocked": 1675,
+   "share_blocked": 0.10377300043367821,
+   "mean_allowed": 0.0019575709661878576,
+   "mean_blocked": 8.795820088359008e-05,
+   "spread": 0.001869612765304268,
+   "spread_ci": [
+    -0.0004051807052413722,
+    0.003917079311172516
+   ],
+   "c2_p95": -0.00037984050156356986,
+   "mean_allowed_cost_x2": -0.0007831354429949245,
+   "thirds": [
+    {
+     "years": [
+      1999,
+      2007
+     ],
+     "n_allowed": 4747,
+     "n_blocked": 542,
+     "mean_allowed": 0.0034873957298855434,
+     "mean_blocked": -0.0024739997185413633,
+     "spread": 0.005961395448426906
+    },
+    {
+     "years": [
+      2008,
+      2016
+     ],
+     "n_allowed": 4480,
+     "n_blocked": 546,
+     "mean_allowed": 0.00067688372270458,
+     "mean_blocked": 0.0019432346978050796,
+     "spread": -0.0012663509751004998
+    },
+    {
+     "years": [
+      2017,
+      2026
+     ],
+     "n_allowed": 5239,
+     "n_blocked": 587,
+     "mean_allowed": 0.0016665613646479021,
+     "mean_blocked": 0.0007278222980031666,
+     "spread": 0.0009387390666447356
+    }
+   ],
+   "criteria": {
+    "c1_spread_ci_lo_gt0": false,
+    "c2_allowed_gt0_and_gt_c2_p95": true,
+    "c3_spread_gt0_in_every_third": false,
+    "c4_cost_x2_allowed_gt0": false,
+    "c5_share_ge_15pct_each": false
+   },
+   "criteria_passed": 1,
+   "verdict": "nelze posoudit",
+   "c2_median": -0.0009886058720807848,
+   "book": {
+    "sharpe": 0.39795787788819137,
+    "sharpe_per_period": 0.025068989932646776,
+    "cagr": 0.09096794707302336,
+    "max_dd": -0.6197269274140338,
+    "exposure": 0.8854371747799892,
+    "turnover_per_year": 117.42435410911196,
+    "n_trades": 16246,
+    "mean_net_trade": 0.0018402480903808986,
+    "win_rate": 0.6167672042348886,
+    "mean_hold": 3.85042471993106,
+    "first": "1999-01-04",
+    "last": "2026-09-25"
+   }
+  },
+  "I": {
+   "n_trades": 16141,
+   "n_allowed": 12108,
+   "n_blocked": 4033,
+   "share_blocked": 0.24986060343225328,
+   "mean_allowed": 0.002008470567461643,
+   "mean_blocked": 0.001028264307594346,
+   "spread": 0.0009802062598672965,
+   "spread_ci": [
+    -0.0007027393280639627,
+    0.002746464464683518
+   ],
+   "c2_p95": -0.00029756593974150707,
+   "mean_allowed_cost_x2": -0.0006988643187846743,
+   "thirds": [
+    {
+     "years": [
+      1999,
+      2007
+     ],
+     "n_allowed": 3936,
+     "n_blocked": 1353,
+     "mean_allowed": 0.0033562150992238024,
+     "mean_blocked": 0.0014809290848280638,
+     "spread": 0.0018752860143957386
+    },
+    {
+     "years": [
+      2008,
+      2016
+     ],
+     "n_allowed": 3754,
+     "n_blocked": 1272,
+     "mean_allowed": 0.0008031704273478612,
+     "mean_blocked": 0.0008477542755143252,
+     "spread": -4.4583848166463986e-05
+    },
+    {
+     "years": [
+      2017,
+      2026
+     ],
+     "n_allowed": 4418,
+     "n_blocked": 1408,
+     "mean_allowed": 0.0018319142634714376,
+     "mean_blocked": 0.0007563561522027032,
+     "spread": 0.0010755581112687346
+    }
+   ],
+   "criteria": {
+    "c1_spread_ci_lo_gt0": false,
+    "c2_allowed_gt0_and_gt_c2_p95": true,
+    "c3_spread_gt0_in_every_third": false,
+    "c4_cost_x2_allowed_gt0": false,
+    "c5_share_ge_15pct_each": true
+   },
+   "criteria_passed": 2,
+   "verdict": "ne",
+   "c2_median": -0.0009682974609010305,
+   "book": {
+    "sharpe": 0.3623764965792567,
+    "sharpe_per_period": 0.02282757359341813,
+    "cagr": 0.08122935042930446,
+    "max_dd": -0.6456873228001987,
+    "exposure": 0.8616554073689995,
+    "turnover_per_year": 115.796939701908,
+    "n_trades": 16019,
+    "mean_net_trade": 0.0016855809575998745,
+    "win_rate": 0.6183282352206755,
+    "mean_hold": 3.7989887009176604,
+    "first": "1999-01-04",
+    "last": "2026-09-25"
+   }
+  },
+  "C": {
+   "n_trades": 12711,
+   "n_allowed": 8323,
+   "n_blocked": 4388,
+   "share_blocked": 0.345212807804264,
+   "mean_allowed": 0.0014909101728600193,
+   "mean_blocked": 0.0009846914725413199,
+   "spread": 0.0005062187003186999,
+   "spread_ci": [
+    -0.0010351164448336287,
+    0.0019728677790824475
+   ],
+   "c2_p95": 0.0008657968574187911,
+   "mean_allowed_cost_x2": -0.00034843379102887905,
+   "thirds": [
+    {
+     "years": [
+      2005,
+      2011
+     ],
+     "n_allowed": 2635,
+     "n_blocked": 1284,
+     "mean_allowed": 0.0019577936252966792,
+     "mean_blocked": 0.0013836765885179246,
+     "spread": 0.0005741170367787546
+    },
+    {
+     "years": [
+      2012,
+      2018
+     ],
+     "n_allowed": 2593,
+     "n_blocked": 1559,
+     "mean_allowed": 6.433619172437406e-05,
+     "mean_blocked": 0.0002149323612794813,
+     "spread": -0.00015059616955510722
+    },
+    {
+     "years": [
+      2019,
+      2026
+     ],
+     "n_allowed": 3095,
+     "n_blocked": 1545,
+     "mean_allowed": 0.0022886059518306594,
+     "mean_blocked": 0.0014298420004010249,
+     "spread": 0.0008587639514296345
+    }
+   ],
+   "criteria": {
+    "c1_spread_ci_lo_gt0": false,
+    "c2_allowed_gt0_and_gt_c2_p95": true,
+    "c3_spread_gt0_in_every_third": false,
+    "c4_cost_x2_allowed_gt0": false,
+    "c5_share_ge_15pct_each": true
+   },
+   "criteria_passed": 2,
+   "verdict": "ne",
+   "c2_median": 0.00017322641352186187,
+   "book": {
+    "sharpe": 0.24897075247602288,
+    "sharpe_per_period": 0.01568368320905179,
+    "cagr": 0.050979206500520124,
+    "max_dd": -0.6799980329202686,
+    "exposure": 0.6742918248567565,
+    "turnover_per_year": 91.46962170335568,
+    "n_trades": 12659,
+    "mean_net_trade": 0.0012456693516057547,
+    "win_rate": 0.6250098743976618,
+    "mean_hold": 3.7594596729599496,
+    "first": "1999-01-04",
+    "last": "2026-09-25"
+   }
+  }
+ },
+ "dsr": {
+  "S0": {
+   "n6": 0.9299189954572726,
+   "n_cumulative": 0.7660686843347837
+  },
+  "E": {
+   "n6": 0.7529804645355702,
+   "n_cumulative": 0.47457079311562966
+  },
+  "V": {
+   "n6": 0.9237154229101903,
+   "n_cumulative": 0.7522162316487072
+  },
+  "G": {
+   "n6": 0.9440195681222133,
+   "n_cumulative": 0.7996480198299472
+  },
+  "I": {
+   "n6": 0.9198082619105833,
+   "n_cumulative": 0.7434994999237377
+  },
+  "C": {
+   "n6": 0.789849283363266,
+   "n_cumulative": 0.5233799808641437
+  },
+  "sr_variance_per_period": 2.11757933836017e-05
+ },
+ "c0": {
+  "sharpe": -0.0035028998375935447,
+  "sharpe_per_period": -0.00022066194852002528,
+  "cagr": -0.005655574752992942,
+  "max_dd": -0.7916760360279047,
+  "exposure": 0.99544169689516,
+  "turnover_per_year": 50.13404714763711,
+  "n_trades": 6987,
+  "mean_net_trade": 0.0006474221805307855,
+  "win_rate": 0.5106626592242737,
+  "mean_hold": 9.981394017461,
+  "first": "1999-01-04",
+  "last": "2026-09-25"
+ },
+ "robustness": {
+  "r2": {
+   "partition": {
+    "E": {
+     "n_allowed": 11252,
+     "n_blocked": 1459,
+     "mean_allowed": 0.0015451720178673218,
+     "mean_blocked": -0.0004500370080999658,
+     "spread": 0.0019952090259672877
+    },
+    "V": {
+     "n_allowed": 14963,
+     "n_blocked": 1178,
+     "mean_allowed": 0.001975117049835833,
+     "mean_blocked": -0.0009237052914601043,
+     "spread": 0.0028988223412959374
+    },
+    "G": {
+     "n_allowed": 14466,
+     "n_blocked": 1675,
+     "mean_allowed": 0.0019575709661878576,
+     "mean_blocked": 8.795820088359008e-05,
+     "spread": 0.0018696127653042675
+    },
+    "I": {
+     "n_allowed": 12108,
+     "n_blocked": 4033,
+     "mean_allowed": 0.002008470567461643,
+     "mean_blocked": 0.001028264307594346,
+     "spread": 0.000980206259867297
+    },
+    "C": {
+     "n_allowed": 8568,
+     "n_blocked": 4143,
+     "mean_allowed": 0.001570315460994557,
+     "mean_blocked": 0.0007905403525039549,
+     "spread": 0.0007797751084906022
+    }
+   }
+  },
+  "r3a": {
+   "partition": {
+    "E": {
+     "n_allowed": 10920,
+     "n_blocked": 1791,
+     "mean_allowed": 0.001457203573848631,
+     "mean_blocked": 0.00045617449681641765,
+     "spread": 0.0010010290770322134
+    },
+    "V": {
+     "n_allowed": 13626,
+     "n_blocked": 2515,
+     "mean_allowed": 0.0020591196353505607,
+     "mean_blocked": 0.00016222164296891833,
+     "spread": 0.0018968979923816424
+    },
+    "G": {
+     "n_allowed": 14466,
+     "n_blocked": 1675,
+     "mean_allowed": 0.0019575709661878576,
+     "mean_blocked": 8.795820088359008e-05,
+     "spread": 0.0018696127653042675
+    },
+    "I": {
+     "n_allowed": 12108,
+     "n_blocked": 4033,
+     "mean_allowed": 0.002008470567461643,
+     "mean_blocked": 0.001028264307594346,
+     "spread": 0.000980206259867297
+    },
+    "C": {
+     "n_allowed": 8046,
+     "n_blocked": 4665,
+     "mean_allowed": 0.0015754623721462107,
+     "mean_blocked": 0.0008689177500400519,
+     "spread": 0.0007065446221061588
+    }
+   }
+  },
+  "r3b": {
+   "partition": {
+    "E": {
+     "n_allowed": 10920,
+     "n_blocked": 1791,
+     "mean_allowed": 0.001457203573848631,
+     "mean_blocked": 0.00045617449681641765,
+     "spread": 0.0010010290770322134
+    },
+    "V": {
+     "n_allowed": 15472,
+     "n_blocked": 669,
+     "mean_allowed": 0.0019550949117318416,
+     "mean_blocked": -0.0026661836935149316,
+     "spread": 0.004621278605246773
+    },
+    "G": {
+     "n_allowed": 14466,
+     "n_blocked": 1675,
+     "mean_allowed": 0.0019575709661878576,
+     "mean_blocked": 8.795820088359008e-05,
+     "spread": 0.0018696127653042675
+    },
+    "I": {
+     "n_allowed": 12108,
+     "n_blocked": 4033,
+     "mean_allowed": 0.002008470567461643,
+     "mean_blocked": 0.001028264307594346,
+     "spread": 0.000980206259867297
+    },
+    "C": {
+     "n_allowed": 8383,
+     "n_blocked": 4328,
+     "mean_allowed": 0.0014508972899670337,
+     "mean_blocked": 0.0010551755010239391,
+     "spread": 0.0003957217889430946
+    }
+   }
+  },
+  "r3c": {
+   "partition": {
+    "E": {
+     "n_allowed": 10920,
+     "n_blocked": 1791,
+     "mean_allowed": 0.001457203573848631,
+     "mean_blocked": 0.00045617449681641765,
+     "spread": 0.0010010290770322134
+    },
+    "V": {
+     "n_allowed": 14963,
+     "n_blocked": 1178,
+     "mean_allowed": 0.001975117049835833,
+     "mean_blocked": -0.0009237052914601043,
+     "spread": 0.0028988223412959374
+    },
+    "G": {
+     "n_allowed": 13918,
+     "n_blocked": 2223,
+     "mean_allowed": 0.0019167348388181551,
+     "mean_blocked": 0.0008045146633749374,
+     "spread": 0.0011122201754432178
+    },
+    "I": {
+     "n_allowed": 12108,
+     "n_blocked": 4033,
+     "mean_allowed": 0.002008470567461643,
+     "mean_blocked": 0.001028264307594346,
+     "spread": 0.000980206259867297
+    },
+    "C": {
+     "n_allowed": 8090,
+     "n_blocked": 4621,
+     "mean_allowed": 0.0014375048964251906,
+     "mean_blocked": 0.0011037128193346595,
+     "spread": 0.0003337920770905311
+    }
+   }
+  },
+  "r3d": {
+   "partition": {
+    "E": {
+     "n_allowed": 10920,
+     "n_blocked": 1791,
+     "mean_allowed": 0.001457203573848631,
+     "mean_blocked": 0.00045617449681641765,
+     "spread": 0.0010010290770322134
+    },
+    "V": {
+     "n_allowed": 14963,
+     "n_blocked": 1178,
+     "mean_allowed": 0.001975117049835833,
+     "mean_blocked": -0.0009237052914601043,
+     "spread": 0.0028988223412959374
+    },
+    "G": {
+     "n_allowed": 15017,
+     "n_blocked": 1124,
+     "mean_allowed": 0.001963485468648015,
+     "mean_blocked": -0.0009075709068804937,
+     "spread": 0.0028710563755285088
+    },
+    "I": {
+     "n_allowed": 12108,
+     "n_blocked": 4033,
+     "mean_allowed": 0.002008470567461643,
+     "mean_blocked": 0.001028264307594346,
+     "spread": 0.000980206259867297
+    },
+    "C": {
+     "n_allowed": 8475,
+     "n_blocked": 4236,
+     "mean_allowed": 0.001497708127093094,
+     "mean_blocked": 0.0009529261504039856,
+     "spread": 0.0005447819766891084
+    }
+   }
+  },
+  "r3e": {
+   "partition": {
+    "E": {
+     "n_allowed": 10920,
+     "n_blocked": 1791,
+     "mean_allowed": 0.001457203573848631,
+     "mean_blocked": 0.00045617449681641765,
+     "spread": 0.0010010290770322134
+    },
+    "V": {
+     "n_allowed": 14963,
+     "n_blocked": 1178,
+     "mean_allowed": 0.001975117049835833,
+     "mean_blocked": -0.0009237052914601043,
+     "spread": 0.0028988223412959374
+    },
+    "G": {
+     "n_allowed": 14466,
+     "n_blocked": 1675,
+     "mean_allowed": 0.0019575709661878576,
+     "mean_blocked": 8.795820088359008e-05,
+     "spread": 0.0018696127653042675
+    },
+    "I": {
+     "n_allowed": 10410,
+     "n_blocked": 5731,
+     "mean_allowed": 0.002103116350722006,
+     "mean_blocked": 0.0011467650274537575,
+     "spread": 0.0009563513232682486
+    },
+    "C": {
+     "n_allowed": 7226,
+     "n_blocked": 5485,
+     "mean_allowed": 0.0015793332397522797,
+     "mean_blocked": 0.00096944568090707,
+     "spread": 0.0006098875588452097
+    }
+   }
+  },
+  "r3f": {
+   "partition": {
+    "E": {
+     "n_allowed": 10920,
+     "n_blocked": 1791,
+     "mean_allowed": 0.001457203573848631,
+     "mean_blocked": 0.00045617449681641765,
+     "spread": 0.0010010290770322134
+    },
+    "V": {
+     "n_allowed": 14963,
+     "n_blocked": 1178,
+     "mean_allowed": 0.001975117049835833,
+     "mean_blocked": -0.0009237052914601043,
+     "spread": 0.0028988223412959374
+    },
+    "G": {
+     "n_allowed": 14466,
+     "n_blocked": 1675,
+     "mean_allowed": 0.0019575709661878576,
+     "mean_blocked": 8.795820088359008e-05,
+     "spread": 0.0018696127653042675
+    },
+    "I": {
+     "n_allowed": 13692,
+     "n_blocked": 2449,
+     "mean_allowed": 0.001841660697759335,
+     "mean_blocked": 0.0013268817107524498,
+     "spread": 0.0005147789870068853
+    },
+    "C": {
+     "n_allowed": 9119,
+     "n_blocked": 3592,
+     "mean_allowed": 0.0014940291424822608,
+     "mean_blocked": 0.0008645934855037631,
+     "spread": 0.0006294356569784977
+    }
+   }
+  },
+  "r6": {
+   "partition": {
+    "E": {
+     "n_allowed": 10056,
+     "n_blocked": 1675,
+     "mean_allowed": 0.001335702045433664,
+     "mean_blocked": 0.00012075171724758792,
+     "spread": 0.0012149503281860762
+    },
+    "V": {
+     "n_allowed": 12435,
+     "n_blocked": 1031,
+     "mean_allowed": 0.0018680201543677486,
+     "mean_blocked": -0.000553404015905741,
+     "spread": 0.0024214241702734895
+    },
+    "G": {
+     "n_allowed": 12025,
+     "n_blocked": 1441,
+     "mean_allowed": 0.0018575301633326857,
+     "mean_blocked": 0.00022308873357986653,
+     "spread": 0.0016344414297528192
+    },
+    "I": {
+     "n_allowed": 9931,
+     "n_blocked": 3535,
+     "mean_allowed": 0.0018167030383467685,
+     "mean_blocked": 0.0013059669604928922,
+     "spread": 0.0005107360778538763
+    },
+    "C": {
+     "n_allowed": 7612,
+     "n_blocked": 4119,
+     "mean_allowed": 0.0013009411053741214,
+     "mean_blocked": 0.00090587890292858,
+     "spread": 0.0003950622024455414
+    }
+   }
+  },
+  "r1": {
+   "s0": {
+    "sharpe": 0.6197164279138107,
+    "sharpe_per_period": 0.039038465515267365,
+    "cagr": 0.14205911644006153,
+    "max_dd": -0.5216580013201846,
+    "exposure": 0.9254930309592935,
+    "turnover_per_year": 95.5792322022718,
+    "n_trades": 13233,
+    "mean_net_trade": 0.003172854717314442,
+    "win_rate": 0.6351545378976801,
+    "mean_hold": 3.9338018589888915,
+    "first": "1999-01-04",
+    "last": "2026-09-25"
+   },
+   "partition": {
+    "E": {
+     "n_allowed": 8956,
+     "n_blocked": 1427,
+     "mean_allowed": 0.0023212866102811664,
+     "mean_blocked": 0.0020356855108355767,
+     "spread": 0.0002856010994455897
+    },
+    "V": {
+     "n_allowed": 12347,
+     "n_blocked": 886,
+     "mean_allowed": 0.0033046950408836366,
+     "mean_blocked": 0.0013355720140313192,
+     "spread": 0.0019691230268523174
+    },
+    "G": {
+     "n_allowed": 11946,
+     "n_blocked": 1287,
+     "mean_allowed": 0.0033505361562858093,
+     "mean_blocked": 0.0015236064889135397,
+     "spread": 0.0018269296673722696
+    },
+    "I": {
+     "n_allowed": 10220,
+     "n_blocked": 3013,
+     "mean_allowed": 0.0033564473984770073,
+     "mean_blocked": 0.0025501141924284747,
+     "spread": 0.0008063332060485326
+    },
+    "C": {
+     "n_allowed": 6952,
+     "n_blocked": 3431,
+     "mean_allowed": 0.002633865477104613,
+     "mean_blocked": 0.00156914407135215,
+     "spread": 0.0010647214057524631
+    }
+   }
+  },
+  "r4a": {
+   "s0": {
+    "sharpe": 0.372862551717309,
+    "sharpe_per_period": 0.023488132977451403,
+    "cagr": 0.08558831143760237,
+    "max_dd": -0.6351175006401004,
+    "exposure": 0.9381445028617115,
+    "turnover_per_year": 121.33200037055165,
+    "n_trades": 16788,
+    "mean_net_trade": 0.0017714633538819552,
+    "win_rate": 0.6087681677388611,
+    "mean_hold": 3.952406480819633,
+    "first": "1999-01-04",
+    "last": "2026-09-25"
+   },
+   "partition": {
+    "E": {
+     "n_allowed": 11178,
+     "n_blocked": 1876,
+     "mean_allowed": 0.0008003432926338561,
+     "mean_blocked": 8.92014093775474e-05,
+     "spread": 0.0007111418832563087
+    },
+    "V": {
+     "n_allowed": 15424,
+     "n_blocked": 1364,
+     "mean_allowed": 0.002003397468789854,
+     "mean_blocked": -0.0008512285730531114,
+     "spread": 0.002854626041842965
+    },
+    "G": {
+     "n_allowed": 15130,
+     "n_blocked": 1658,
+     "mean_allowed": 0.0019944591611875838,
+     "mean_blocked": -0.0002634742604329743,
+     "spread": 0.002257933421620558
+    },
+    "I": {
+     "n_allowed": 12585,
+     "n_blocked": 4203,
+     "mean_allowed": 0.0018795092489142793,
+     "mean_blocked": 0.0014479426332105786,
+     "spread": 0.0004315666157037007
+    },
+    "C": {
+     "n_allowed": 8477,
+     "n_blocked": 4577,
+     "mean_allowed": 0.0007310332175557544,
+     "mean_blocked": 0.0006372319387881559,
+     "spread": 9.380127876759854e-05
+    }
+   }
+  },
+  "r4b": {
+   "s0": {
+    "sharpe": 0.3058291063776391,
+    "sharpe_per_period": 0.01926542283715121,
+    "cagr": 0.06642222937005449,
+    "max_dd": -0.5534582006153581,
+    "exposure": 0.824892303617087,
+    "turnover_per_year": 107.60164972851325,
+    "n_trades": 14885,
+    "mean_net_trade": 0.001537942596252353,
+    "win_rate": 0.615317433658045,
+    "mean_hold": 3.911320120927108,
+    "first": "1999-01-04",
+    "last": "2026-09-25"
+   },
+   "partition": {
+    "E": {
+     "n_allowed": 10361,
+     "n_blocked": 1651,
+     "mean_allowed": 0.0013183820690128901,
+     "mean_blocked": 0.0011956276647464628,
+     "spread": 0.00012275440426642728
+    },
+    "V": {
+     "n_allowed": 14000,
+     "n_blocked": 885,
+     "mean_allowed": 0.0016940408534230546,
+     "mean_blocked": -0.0009314083646401042,
+     "spread": 0.002625449218063159
+    },
+    "G": {
+     "n_allowed": 13362,
+     "n_blocked": 1523,
+     "mean_allowed": 0.0017880215546333942,
+     "mean_blocked": -0.0006561184949409955,
+     "spread": 0.0024441400495743898
+    },
+    "I": {
+     "n_allowed": 11175,
+     "n_blocked": 3710,
+     "mean_allowed": 0.001490085729575728,
+     "mean_blocked": 0.0016820936704063372,
+     "spread": -0.00019200794083060906
+    },
+    "C": {
+     "n_allowed": 7873,
+     "n_blocked": 4139,
+     "mean_allowed": 0.0013128278853686776,
+     "mean_blocked": 0.0012799816260041957,
+     "spread": 3.2846259364481935e-05
+    }
+   }
+  },
+  "r5": {
+   "s0": {
+    "sharpe": 0.41142339762661245,
+    "sharpe_per_period": 0.025917237944601386,
+    "cagr": 0.10455881197050676,
+    "max_dd": -0.6390420215631445,
+    "exposure": 0.9638305073826877,
+    "turnover_per_year": 121.4824956700947,
+    "n_trades": 16808,
+    "mean_net_trade": 0.0023078876650436033,
+    "win_rate": 0.6129819133745835,
+    "mean_hold": 4.060328415040457,
+    "first": "1999-01-04",
+    "last": "2026-09-25"
+   },
+   "partition": {
+    "E": {
+     "n_allowed": 10906,
+     "n_blocked": 2201,
+     "mean_allowed": 0.0016981758377516566,
+     "mean_blocked": 0.0032581448291738205,
+     "spread": -0.0015599689914221639
+    },
+    "V": {
+     "n_allowed": 14779,
+     "n_blocked": 2029,
+     "mean_allowed": 0.0026411312250788415,
+     "mean_blocked": -0.0001194196655432823,
+     "spread": 0.002760550890622124
+    },
+    "G": {
+     "n_allowed": 14471,
+     "n_blocked": 2337,
+     "mean_allowed": 0.002763525577525121,
+     "mean_blocked": -0.0005134799992781961,
+     "spread": 0.003277005576803317
+    },
+    "I": {
+     "n_allowed": 11577,
+     "n_blocked": 5231,
+     "mean_allowed": 0.0022168997744351723,
+     "mean_blocked": 0.002509257729959261,
+     "spread": -0.0002923579555240887
+    },
+    "C": {
+     "n_allowed": 7851,
+     "n_blocked": 5256,
+     "mean_allowed": 0.001954944097333362,
+     "mean_blocked": 0.001967887432908471,
+     "spread": -1.2943335575109002e-05
+    }
+   }
+  },
+  "r7": {
+   "s0": {
+    "sharpe": -0.9502876113428494,
+    "sharpe_per_period": -0.0598624927047329,
+    "cagr": -0.21106189512154028,
+    "max_dd": -0.998689670257302,
+    "exposure": 0.8979671827975952,
+    "turnover_per_year": 116.84296832280322,
+    "n_trades": 16141,
+    "mean_net_trade": -0.0036781818092622505,
+    "win_rate": 0.524131094727712,
+    "mean_hold": 3.9191499907068956,
+    "first": "1999-01-04",
+    "last": "2026-09-25"
+   },
+   "partition": {
+    "E": {
+     "n_allowed": 10920,
+     "n_blocked": 1791,
+     "mean_allowed": -0.0022246160008903087,
+     "mean_blocked": -0.003083727512361834,
+     "spread": 0.0008591115114715254
+    },
+    "V": {
+     "n_allowed": 14963,
+     "n_blocked": 1178,
+     "mean_allowed": -0.0035029007720106674,
+     "mean_blocked": -0.005904608091431542,
+     "spread": 0.002401707319420874
+    },
+    "G": {
+     "n_allowed": 14466,
+     "n_blocked": 1675,
+     "mean_allowed": -0.003511674013522773,
+     "mean_blocked": -0.005116212718615841,
+     "spread": 0.0016045387050930677
+    },
+    "I": {
+     "n_allowed": 12108,
+     "n_blocked": 4033,
+     "mean_allowed": -0.003394382031600962,
+     "mean_blocked": -0.0045302144668181304,
+     "spread": 0.0011358324352171685
+    },
+    "C": {
+     "n_allowed": 8323,
+     "n_blocked": 4388,
+     "mean_allowed": -0.002184079293023789,
+     "mean_blocked": -0.0026521583291990018,
+     "spread": 0.0004680790361752127
+    }
+   }
+  }
+ },
+ "verdict": {
+  "filters": {
+   "E": "nelze posoudit",
+   "V": "nelze posoudit",
+   "G": "nelze posoudit",
+   "I": "ne",
+   "C": "ne"
+  },
+  "criteria_passed": {
+   "E": 1,
+   "V": 3,
+   "G": 1,
+   "I": 2,
+   "C": 2
+  },
+  "decision": "(a) zadny filtr neprosel: proxy uroven nepridava informaci, LLM klasifikator se nad timto signalem nestavi",
+  "n_primary": 6
+ },
+ "provenance": {
+  "commit": "3676214f1",
+  "rule_hash": "37e6eebc54e55bd73d9108ebdac59ac0020a61a0620e1dedbf60c35ef97029df",
+  "snapshot": "sharadar_2026-09-25",
+  "created_at": "2026-11-06T12:07:01.976105+00:00",
+  "seconds": 130.8,
+  "lock_commit": "f97776dee"
+ }
+}
