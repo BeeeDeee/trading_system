@@ -32,6 +32,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--pop", type=int, default=setup.POP_SIZE)
     ap.add_argument("--gens", type=int, default=setup.N_GEN)
     ap.add_argument("--n", type=int, default=setup.N_RANDOM)
+    ap.add_argument("--cache-mb", type=int, default=600, help="subtree cache of the evaluator (speed only)")
     ap.add_argument("--smoke", action="store_true")
     args = ap.parse_args(argv)
     if not args.smoke and not setup.LOCK.exists():
@@ -46,7 +47,7 @@ def main(argv: list[str] | None = None) -> None:
     t0 = time.time()
     compact = setup.load_compact(args.run, "dev")
     print(f"[{time.time() - t0:6.1f}s] dev {args.run}: {compact.shape[0]} weeks, K={compact.shape[1]}", flush=True)
-    ev = Evaluator(compact)
+    ev = Evaluator(compact, cache_bytes=args.cache_mb * 1_000_000)
 
     def progress(h: dict) -> None:
         print(f"[{time.time() - t0:6.1f}s] gen {h['gen']:3d} best_q25={h['best_q25']} feasible={h['feasible_share']:.2f} "
