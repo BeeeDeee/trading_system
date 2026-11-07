@@ -192,11 +192,17 @@ Two sorts with different content, net repurchasers against issuers (H-0019) and 
 
 *confidence low · 2026-11-05 · librarian · supersedes K-0126 · evidence: H-0092; H-0097; H-0019; H-0027; H-0086; K-0110; K-0064; K-0074; K-0060*
 
-### K-0141 Learned release-event cards: a new information source, market attention load, did not help
+### K-0143 Learned earnings-reaction cards: ownership, event time and non-filed gaps added nothing
 
-K-0136 said a learned card on real 8-K release events needed a new information source, not a new learner. H-0101 supplied one, the market-wide release load of the session and an end-of-week flag, next to the stock's own reaction. Entries earned about what the same stocks earn on shifted dates, with gross under round-trip cost, so the attention interaction added nothing to the drift the plain positive-reaction cut of H-0033 already shows. With H-0098 and H-0099 (K-0137) it is the third learned card whose date-level inputs gave no timing value in liquid US stocks. At the release only the stock's own price move has carried (K-0083); second variables have not added on top in H-0094, H-0095, H-0096, H-0100 or H-0101. Method note: the load rank needs a year of history and the walk-forward a training sample, so the first third of dev had no entries and the verdict rests on two blocks. The ridge control and the by-load split did not reach the gate; only H-0100 ran a ridge comparison. A further learned release-event card has a low prior unless it changes the stocks or reports the interaction directly.
+K-0141 asked for a new information source or for the interaction to be reported directly. Both came in and failed. Institutional ownership with arbitrage risk (H-0102) gave entries below same-stock placebos, gross a fraction of cost and a slow-drift horizon shape. Event-time features of the latest reaction scored over all members (H-0104), tested as picks only the gbm makes against a ridge, were also below placebos and grew with horizon instead of fading. Overnight gaps with no filing and earnings windows excluded (H-0105) went wrong-signed against the ridge. With H-0095, H-0100 and H-0101, five learned cards in the reaction family have died on the mechanism test, and none beat the plain reaction rule of H-0033; the only near miss (H-0100) had a bar under cost. Second variables did not add at the release (K-0083), and a learned combination of them does not either. A further learned card on release reactions or overnight news in LIQ-500 has a low prior. Untested: other stocks (not loadable) and holds beyond a week argued from the slow build.
 
-*confidence low · 2026-11-05 · librarian · supersedes K-0136 · evidence: H-0101; H-0100; H-0095; H-0096; H-0094; H-0098; H-0099; H-0033; K-0083; K-0137; K-0138*
+*confidence low · 2026-11-06 · librarian · supersedes K-0141 · evidence: H-0102; H-0104; H-0105; H-0101; H-0100; H-0095; H-0033; K-0141; K-0083*
+
+### K-0148 Sector-ETF flow days: the constituent reversal did not reproduce once market-wide stress was removed
+
+H-0106 found a reversal after sector-ETF flow days that beat placebos and covered cost (K-0146), but its sector moves were mostly market-wide. H-0107 removed that by construction: the push was the wrapper's move residual to SPY, stocks with an own filing that day were excluded, industry ETFs added flow days outside market stress. Entries were no better than same-stock placebos, gross was about half of cost, the first sessions were negative, ten sessions flat, and the thirds disagreed in sign. The placebo bar lay above cost, so a small effect was unresolved, but nothing suggests a hidden tradable one. The H-0106 pass most likely belonged to market-wide stress days (K-0084), not to wrapper-specific basket flow. The cards also differ in model, entry rule and side, so this is a lean, not a refutation. Untested: ordinary-day control, up-push side, ridge rule. A further ETF-flow card has a low prior without a stress control or ownership data.
+
+*confidence low · 2026-11-06 · librarian · supersedes K-0146 · evidence: H-0107; H-0106; K-0146; K-0084; K-0024*
 
 ## Data
 
@@ -376,17 +382,23 @@ H-0095 failed G0 look-ahead on its first run (truncation at 4 of 11 cuts, pertur
 
 *confidence medium · 2026-11-04 · librarian · evidence: H-0095; H-0096; run 275; run 276; K-0009*
 
-### K-0138 A gbm-versus-ridge disagreement event runs the ridge control inside G1; first result is a small gain inside the cloud
+### K-0142 Disagreement events against a ridge control: four cards, no nonlinear gain; G0 and G1 counts agree
 
-K-0135 found that the ridge baseline named by learned cards never ran. H-0100 solved it in the card design: the mechanism event was a release row where exactly one of two walk-forward models, gbm or ridge on the same features, rows and schedule, ranked the stock in its top fifth, with side plus one for gbm-only and minus one for ridge-only, so the placebo test asks whether nonlinearity pays. It worked in the framework (5268 events, G0 and G1 counts equal). Result: positive average, placebo mean near zero, percentile 0.90 against the 0.95 bar, gross about 0.59 of round-trip cost, bar under cost. The other three learned cards of this batch (H-0097, H-0098, H-0099) still did not get a ridge result. Limits of the design: both sides are mixed in one number, raw against unmarked peers (K-0074), and the event count depends on how much the two models overlap (counted about twice the Scout forecast). Cards that claim an interaction should use this design or ask for a ridge row in the G1 output.
+The design of K-0138 (mechanism event = picks or rows one model makes and the linear control does not, same features, rows, label and schedule) has now run in H-0100, H-0103 (a TCN against a ridge, both sides marked), H-0104 and H-0105. G0 and G1 event counts agreed within a handful (30603 and 30559, 15162 and 15158, 12349 and 12347), so the design works in the framework. Results: near the percentile bar with a bar under cost (H-0100), bottom of the cloud (H-0103), far under the bar (H-0104, H-0105). Two were wrong-signed (H-0103, H-0105), so there the disagreement set favoured the ridge side; the other two were positive but a small fraction of cost. The nonlinear form has not beaten its linear control in any of them, across three feature sets. Limits: the average mixes 'learner wrong' with 'control right' and the control's picks are never run as a book; the sign of a wrong-signed result is dev-selected, so the mirror is not a lead; event counts depend on model overlap and ran above forecast. A card that claims an interaction should still use this design and state what it concludes if the ridge side wins.
 
-*confidence low · 2026-11-05 · librarian · evidence: H-0100; H-0097; H-0098; H-0099; K-0135; K-0074*
+*confidence low · 2026-11-06 · librarian · supersedes K-0138 · evidence: H-0100; H-0103; H-0104; H-0105; K-0138; K-0135*
 
-### K-0140 Scout effect-size forecasts ran above G1 in seven cards; counts and cost were close
+### K-0144 Scout gross-per-entry forecasts ran above G1 in eleven cards; round trips matched
 
-K-0130 named three slow cards (H-0084, H-0085, H-0087). Four learned five-session cards add the same pattern. Forecast gross per entry against measured: H-0097 15-30 bps against about 7; H-0098 10-25 against about zero; H-0099 5-12 against about 1; H-0100 more than 20 needed for a pass, about 7 measured. Event counts were at or above the forecast: 12354 against 6000-12000, 134177 against 70000-120000, 48759 against 30000-50000, and 5268 against about 2200-2800 in H-0100 (the overlap of two models was misjudged). Round trips matched for LIQ-500 (about 11 to 12 bps forecast and measured) but for LIQ-200 H-0099 forecast 6-7 bps and G1 used about 10; cause not read (possibly the fractional-quote era enters the mean). H-0100 forecast a placebo bar near 20 bps, measured about 8. A literature-derived or reasoned gross is still an upper bound; the Scout should state in the card what it concludes if the effect is a quarter of the forecast, and take the cost from the pooled dev period, not the current tier.
+Four more learned cards, forecast gross per entry against measured: H-0102 15 to 30 bps against about 3; H-0104 10 to 25 against about 1; H-0103 3 to 8 against negative; H-0105 20 to 40 against negative. Each card wrote a 'quarter of the forecast' scenario (for example 4 to 8 bps for H-0102) as the pessimistic case, and in all four the measurement was below that case. With the seven cards of K-0140 that makes eleven. Event counts: H-0102 1957 against 1800 to 2300 (matched); H-0103 30559 against 15000 to 25000; H-0104 15158 against 3000 to 8000; H-0105 12347 against 1500 to 8000. The forecasts that counted the overlap of two models or a threshold on a tail variable ran low, as in K-0140. Round trips matched: LIQ-500 about 11 bps in H-0102, H-0104 and H-0105, LIQ-300 about 11 in H-0103. A Scout should take a literature gross as a ceiling, write the conclusion for a tenth of it as well, and forecast event counts from a dev-period count of the candidate condition.
 
-*confidence low · 2026-11-05 · librarian · supersedes K-0130 · evidence: H-0097; H-0098; H-0099; H-0100; H-0084; H-0085; H-0087; K-0130; K-0120*
+*confidence low · 2026-11-06 · librarian · supersedes K-0140 · evidence: H-0102; H-0103; H-0104; H-0105; K-0140; K-0120*
+
+### K-0147 A rare-state mechanism that passes its event study cannot carry a daily learned book (H-0106)
+
+H-0106 is the first learned daily book whose mechanism test passed clearly: 5563 flow-day entries on 325 dates, placebo percentile 0.99, gross per entry about 28 bps against a round trip of about 13.5 bps. The book traded 124656 entries, so flow-day entries were about 4.5 percent of them. G1: gross Sharpe about 0.01, net about -0.76, long leg +0.22, short leg -0.61, cost drag about 4.7 percent a year. The other entries earned nothing and the short leg lost, as the card's own book arithmetic (K-0064) predicted. Rule: a rare-state mechanism needs an always-invested tilt or an event-slot book (K-0005, K-0027) with the expected annual gain written down. Forecast check (K-0144): event count and flow days were in range, gross per entry was above the central forecast, the first learned card not below its pessimistic case. Suggested for G1: report book gross for mechanism entries and for all others.
+
+*confidence low · 2026-11-06 · librarian · evidence: H-0106; H-0094; H-0099; K-0027; K-0064; K-0097; K-0135; K-0144*
 
 ## The judge (framework behaviour)
 
@@ -540,6 +552,12 @@ Two gaps, now seen in three learned cards (H-0094, H-0095, H-0096). (1) lab try:
 
 *confidence medium · 2026-11-04 · librarian · supersedes K-0132 · evidence: H-0095; H-0096; H-0094; K-0132; K-0082*
 
+### K-0145 G1 blocks are thirds of the whole dev period; an empty block cannot count, a thin one can
+
+H-0105 stated no data period. G1 reported 12347 events at about 540 per year, which implies about 23 years of denominator, i.e. the default dev start in 1998, while the 8-K flag starts in 2004, so its first block had zero events. mechanism_blocks appears to count blocks with a positive mean (H-0102 and H-0104 passed with two positive blocks of three, H-0103 and H-0105 scored zero), so an empty block can never count and the card needed both other blocks positive. Conversely H-0102 had 87 events in its first block, and that block counted as one of its two passing blocks, so a thin block can supply the pass. Both readings are inferred from the metrics, not from the code. Scouts should set the period start at the dataset's first usable date (8-K from 2004-09, 13F from mid-2013) so that the blocks are real. Suggested: report events by block at G0 and require a minimum event count per block before it counts.
+
+*confidence low · 2026-11-06 · librarian · evidence: H-0105; H-0102; H-0104; H-0103; K-0035; K-0141; K-0120*
+
 ## How the lab works
 
 ### K-0010 Fail loudly on missing inputs
@@ -642,3 +660,7 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0130 Scout effect-size forecasts for slow cross-sectional cards ran far above what G1 measured in three cards
 - K-0132 lab try cannot exercise a LIQ-500 card with a minimum-names floor: the synthetic universe has fewer than 50 members
 - K-0136 Learned models on earnings-release events: near miss, wrong sign, no nonlinearity shown
+- K-0138 A gbm-versus-ridge disagreement event runs the ridge control inside G1; first result is a small gain inside the cloud
+- K-0140 Scout effect-size forecasts ran above G1 in seven cards; counts and cost were close
+- K-0141 Learned release-event cards: a new information source, market attention load, did not help
+- K-0146 Sector-ETF flow days: constituent reversal cleared the placebo and cost bars once, episodic and not isolated

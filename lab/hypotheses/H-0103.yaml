@@ -167,7 +167,10 @@ notes: 'Expected numbers, written before any run. Weekly decision dates 2002-202
   may be left; and the network may learn volatility-scaled reversal only. Both make the event fail. If lab check
   says the sandbox has no torch, the card should not be silently moved to gbm: a gbm on session-t features is the
   H-0094 design.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_abnormal_return
 history:
 - ts: '2026-11-05T09:13:33.114350+00:00'
   version: 1
@@ -190,3 +193,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-06T03:41:33.121605+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 292, qlab)
+- ts: '2026-11-06T03:43:01.865203+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 293, qlab)

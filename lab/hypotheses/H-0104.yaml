@@ -178,7 +178,10 @@ notes: 'Brief fit: learned model, US single stocks cross-sectional (LIQ-500), 5-
   inputs; the event needs both top fifths on the same date. Compute features on all columns and mask to members
   per row. Rolling windows must accept views shorter than their window (K-0131). Report in the diagnostic output,
   if possible, the event mean by third and the overlap share between the gbm and ridge top fifths.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-05T09:49:00.264303+00:00'
   version: 1
@@ -201,3 +204,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-06T04:46:39.775985+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 294, qlab)
+- ts: '2026-11-06T04:48:49.085311+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 295, qlab)

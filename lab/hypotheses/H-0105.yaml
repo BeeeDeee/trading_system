@@ -190,7 +190,10 @@ notes: 'FAMILY. The mechanism is underreaction to firm news. The lab''s preceden
   calls is not neutralized in the event study. (d) Per K-0134, no column or row subset may use end-of-view information.
   Run walk_forward on all columns with per-row membership and candidate masks; peers and medians are trailing only.
   (e) Liquid gap names may face a slightly worse cost tier than the average member.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_abnormal_return
 history:
 - ts: '2026-11-05T10:17:10.570978+00:00'
   version: 1
@@ -213,3 +216,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-06T07:19:29.847327+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 296, qlab)
+- ts: '2026-11-06T07:22:46.549493+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 297, qlab)

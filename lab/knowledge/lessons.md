@@ -910,3 +910,57 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile with another learner, depth, top fraction or attention proxy (earnings-day crowding, weekday, holiday) on the same release events: this card brought the new information source K-0136 asked for and still sat at the placebo level. Do not add a core to rescue it.
 - open questions: Untested: the interaction itself, via a gbm-versus-ridge disagreement event (H-0100 design) or a split of entries by high-load and Friday sessions; and release-reaction drift in less covered names, with gross argued above cost in advance. The plain positive-reaction cut (H-0033) remains the only form of this drift that cleared the bar with room.
 - related: H-0033, H-0095, H-0100, H-0098, H-0099, H-0094
+
+## H-0102 – Sophistication-conditioned earnings-reaction drift, learned - LIQ-500 long-only 5-day slots in 8-K reactions ranked by LightGBM on reaction x 13F ownership x idio vol
+
+- family: `post-earnings-announcement-drift` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), long-only five-session slots in release reactions ranked by a gbm on reaction, 13F ownership and volatility, 2012 to 2020
+- outcome: rejected at G1 on the mechanism test: entries earned less than same-stock placebos and gross was a fraction of round-trip cost; strategy not run
+- lesson: Adding who holds the stock (13F ownership) and arbitrage risk did not make release-reaction drift selectable. Top-fifth entries earned less than the same stocks on shifted dates, so the model picked stocks, not timing, and gross was a fraction of round-trip cost. The effect grew with horizon, the slow style-drift shape the card named as a kill. The 13F start left the first third nearly empty, the middle negative and the last positive: two blocks that disagree. The ridge and ownership-tilt checks had no channel, so we cannot tell whether the model used the sophistication channel.
+- avoid: Do not add one more conditioner (ownership, coverage, size, insider holdings) to the same release-reaction rows with the same gbm: five learned cards in this family (H-0095, H-0100, H-0101, H-0102, H-0104) have now died on the mechanism test. Do not retune top or n_estimators.
+- open questions: Plain positive-reaction drift (H-0033) is still the only form near a pass. A ridge or two-cell ownership contrast was never reported, so a linear version of the sophistication claim is untested, but it would count as another trial in this family. Less-covered stocks are not loadable.
+- related: H-0033, H-0095, H-0100, H-0101, H-0104, H-0094
+
+## H-0103 – Metaorder footprint, learned path shape - LIQ-300 dollar-neutral weekly, TCN on 10-day intraday/overnight/volume paths; mechanism = TCN-only vs ridge picks
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: US liquid stocks (LIQ-300), high-volatility half, weekly dollar-neutral, TCN on ten-day price and volume paths, 2002 to 2020
+- outcome: rejected at G1 on the mechanism test: picks only the network made were wrong-signed and below the placebo cloud; strategy not run
+- lesson: The network's own picks, those a ridge on the same features did not make, did worse than the same stocks on shifted dates: wrong-signed in every third and about zero at one session. Not a power problem: very many events, a narrow cloud, a bar under cost. So the order of intraday moves and volume over ten days added no usable information about running versus finished orders, and the extra picks look like noise or overfit. The sequence model ran without trouble, so this is about the idea. Ridge performance alone was never reported, so whether plain reversal exists in this half is unknown.
+- avoid: Do not file another sequence or path-shape model on daily price and volume bars of liquid stocks to infer institutional orders; daily bars cannot show metaorders. Do not trade the mirror: its sign is dev-selected. Do not vary seq_len or top.
+- open questions: Metaorder footprints need intraday or order-flow data, which is not loadable. Before any further learned reversal card, the plain linear reversal in the high-volatility half should be reported as its own baseline.
+- related: H-0007, H-0030, H-0094, H-0099, H-0100
+
+## H-0104 – Event-time decay of earnings-reaction drift, learned - LIQ-500 long-only weekly top fifth of a LightGBM 5-day score; mechanism = gbm-only vs ridge entries
+
+- family: `post-earnings-announcement-drift` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), long-only weekly top fifth of a gbm score on event-time features of the latest earnings reaction, 2004 to 2020
+- outcome: rejected at G1 on the mechanism test: gbm-only entries were below same-stock placebos, gross a small fraction of cost; strategy not run
+- lesson: Event-time nonlinearity added nothing visible. Entries made only by the gbm (not by a ridge on the same features) earned less than the same stocks on shifted dates, were negative in the middle third, and the effect grew with horizon instead of fading after the first sessions, the opposite of the predicted decay. Gross was a small fraction of cost and the placebo bar sat about at cost, so not a power problem. With H-0100 the gbm-versus-ridge test says twice that learned reaction drift is no better than the plain rule of H-0033. Weekly scoring also kept many non-fresh names in the top fifth.
+- avoid: Do not file another learned score on earnings-reaction features (event time, run-up, previous reaction, ownership, load, gap split) in LIQ-500. Do not retune top, num_leaves or the refit schedule on these rows.
+- open questions: Untested: the plain reaction rule held longer than a week (the effect built to ten sessions), argued from the slow build and not tuned; and less-covered stocks, which are not loadable. The equal-weight warm-up years never mattered because no strategy was run.
+- related: H-0033, H-0034, H-0095, H-0100, H-0101, H-0102
+
+## H-0105 – Overnight news without a filing, drift or fade, learned - LIQ-500 market-neutral 5-day slots on peer-residual overnight gaps with no 8-K, LightGBM side; mechanism = gbm-vs-ridge disagreement
+
+- family: `post-earnings-announcement-drift` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), market-neutral five-day slots on overnight gaps with no 8-K, side from a gbm, 8-K data from 2004
+- outcome: rejected at G1 on the mechanism test: where gbm and ridge disagreed, the gbm's side was wrong-signed and below the placebo mean; strategy not run
+- lesson: Where the gbm and the ridge control disagreed, following the gbm's side lost: wrong-signed from the first session and not growing with horizon, so the call was wrong at the next open, not a slow drift. Many events, a narrow cloud, a bar about at cost: not a power problem. Intraday confirmation, volume, coverage and time since the release did not separate continuing from fading gaps better than linear main effects. The first third of the default period has no 8-K data, so only two blocks could count and both were negative. The ridge side is the mirror, chosen on dev and small next to cost: not a lead.
+- avoid: Do not refile overnight-gap drift or fade with another gap threshold, learner, hold or conditioner, and do not trade the ridge side. A card that excludes earnings windows and filings still sits in this family on purpose, so its trials count with H-0034.
+- open questions: Untested: gaps classified by actual news source (press-release timestamps, analyst actions), which are not loadable. A card on 8-K flags should set its data period at the dataset start so that no block is empty.
+- related: H-0030, H-0034, H-0069, H-0094, H-0100
+
+## H-0106 – ETF-arbitrage flow pressure in S&P 500 stocks, learned - dollar-neutral 5-day cohorts, LightGBM on sector-ETF push x ETF volume x own news
+
+- family: `short-term-reversal` · mechanism: flow_structural · instruments: S&P 500 members, dollar-neutral daily cohorts held a week, LightGBM score on sector-ETF push and ETF volume state; sector SPDRs and SPY as signal only, 2004 to 2020
+- outcome: mechanism test passed; rejected at G1 on the strategy: net Sharpe far below T-bills, bound below zero, gross about cash
+- lesson: The mechanism passed, the book lost. New leg entries on sector-ETF flow days beat time-shifted placebos (placebo mean near zero), covered round-trip cost, peaked near the week and faded by the longest horizon, and the latest third stayed positive: a reversal, not slow drift. But flow-day entries are a small slice of a book that trades every day. Before costs the whole book earned about cash: the long leg gained a little, the short leg lost, costs finished it. A rare-state mechanism cannot carry a daily all-names book. Not shown: that the learner or the flow state matters, because the ridge, ordinary-sector-day control, side split and feature importance never reached the gate.
+- avoid: Do not retune top fraction, tree count or hold: the grid reuses the same flow days, and the card itself predicted the book death. Do not run a daily all-names book for an effect on rare stress days. Do not read the pass as proof of ETF arbitrage.
+- open questions: Trade only flow-day entries as a tilt on an always-invested core, with the expected annual gain stated (K-0027). Or an event study with the missing controls: large sector moves at normal volume, side split, gbm versus ridge (K-0142).
+- related: H-0094, H-0099, H-0030, H-0075, H-0013, H-0066
+
+## H-0107 – Wrapper-specific ETF flow-day reversal, learned - S&P 500 core plus 5-day tilt into no-news stocks pushed down by a SPY-residual sector/industry ETF flow day (LightGBM)
+
+- family: `short-term-reversal` · mechanism: flow_structural · instruments: S&P 500 stocks pushed down on a sector or industry ETF flow day; long-only, never simulated
+- outcome: rejected at G1 on the mechanism test: average inside the placebo cloud, gross about half of round-trip cost
+- lesson: With the push made residual to SPY and own-filing days removed, the flow-day reversal was not visible: slightly positive at five sessions, negative at one and three, about zero at ten, so no concession that reverts within the week. Next to H-0106, whose pass sat on mostly market-wide sector moves, the lean (not a proof) is that it was generic stress rebound (K-0084), not wrapper flow. Thirds disagreed in sign, the middle one negative. The placebo bar lay above cost, so a small real effect could not be resolved, but the point estimate was far from tradable. The ridge control never ran.
+- avoid: Do not retune flow_sigma, tree count, the assignment correlation floor or the hold on the same wrapper flow days: same events, new trials. Do not file sector or industry ETF flow days under a new story (basket arbitrage, ETF ownership volatility) without a control that separates wrapper-specific flow from market stress.
+- open questions: H-0106 and H-0107 together leave the stress-rebound reading standing. Untested: large wrapper moves at normal volume as a control, a side split (up-pushes against down-pushes), and whether the model beat a linear rule. A different card would need ETF ownership share or creation-redemption data, which are not loadable.
+- related: H-0106, H-0094, H-0099, H-0075, H-0030
