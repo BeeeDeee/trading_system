@@ -1,0 +1,132 @@
+{
+ "date": "2026-11-07",
+ "regime": {
+  "label": "Risk-off, zvýšená volatilita",
+  "summary": "BTC pátý týden v minusu kolem podpory 75 tis. USD, Nasdaq v korekci a silná data o zaměstnanosti zvedla šance na prosincové zvýšení sazeb; spotové BTC i ETH ETF mají odlivy. Altcoiny s vysokou betou zaostávají, relativně se drží jen TRX, ZEC a PEPE."
+ },
+ "events_7d": [
+  {"date": "2026-11-10", "title": "US CPI za říjen (8:30 ET) – klíčové pro očekávání sazeb Fed v prosinci", "type": "makro"},
+  {"date": "2026-11-12", "title": "Ethereum Institutional Forum v Londýně (účast Chainlink Labs)", "type": "jine"},
+  {"date": "2026-11-15", "title": "Solana Breakpoint 15.–17. 11. (těsně po 7denním okně, možný předběžný hype)", "type": "jine"}
+ ],
+ "coins": {
+  "BTC": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.45, "expected_move_7d_pct": -1.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Pod všemi SMA a u 30d minima, ETF odlivy ~870 mil. USD za týden a jestřábí Fed tlačí, RSI 38 ale nabízí jen mírný odraz.",
+   "sources": ["https://bitcoinmagazine.com/markets/bitcoin-price-holds-near-75800-jobs", "https://cointelegraph.com/markets/bitcoin-price-under-75k-crypto-markets-tech-stock"]
+  },
+  "ETH": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.44, "expected_move_7d_pct": -1.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Odlivy z ETH ETF a likvidace longů jsou už v ceně, ale beta 1,31 v risk-off prostředí a L/S 3,8 drží riziko dalšího pročištění.",
+   "sources": ["https://crypto.news/why-is-ethereum-price-down-today-eth-etf-liquidations/", "https://blockchain.news/news/20261106-price-prediction-eth-ethereum-loses-short-term-trend-support"]
+  },
+  "BNB": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.45, "expected_move_7d_pct": -1.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Po hacku Binance (6,3 mld. USD) jsou výběry obnoveny a 98 % ztrát kryto, BNB se drží v souladu s BTC, zbytkové riziko odlivů z burzy přetrvává.",
+   "sources": ["https://247wallst.com/investing/cryptocurrency/2026/11/05/binance-has-replaced-98-of-the-hacked-coins-will-the-largest-crypto-exchange-survive", "https://www.coingabbar.com/en/binance-security-incident-withdrawals-reopen-bnb-price-reacts"]
+  },
+  "XRP": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.44, "p_up_7d": 0.42, "expected_move_7d_pct": -2.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Prolomená podpora 1,26, nulové přílivy do XRP ETF a velký objem longových likvidací pod cenou; RSI 33 dává jen krátký odraz.",
+   "sources": ["https://thecryptobasic.com/2026/11/06/xrp-price-prediction-is-1-10-the-next-stop-after-losing-1-26-support/", "https://cryptoticker.io/en/xrp-price-drop-etf-standstill/"]
+  },
+  "SOL": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.45, "p_up_7d": 0.43, "expected_move_7d_pct": -2.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "−24 % za 4 týdny, více než dvojnásobek poklesu BTC; ekosystémové zprávy (migrace ZetaChain, Akash) jsou pozitivní, ale trh je ignoruje a Breakpoint je až 15. 11.",
+   "sources": ["https://solana.com/news/solana-changelog-november-5-2026", "https://cryptobriefing.com/solana-validators-urged-to-upgrade-by-nov-6-to-avoid-network-fork/"]
+  },
+  "TRX": {
+   "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.54, "p_up_7d": 0.48, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Záporná korelace s BTC a negativní funding (shorti platí) z něj dělají defenzivní pozici v risk-off; zprávy (Proposal 108, praní peněz KLDR přes TRON) cenu nehýbou.",
+   "sources": ["https://coinmarketcap.com/cmc-ai/tron/latest-updates/"]
+  },
+  "ZEC": {
+   "trend": 1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.47, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Upgrade NU7 (3× rychlejší bloky, spalování poplatků) proběhl 5. 11. a cena na něj už vyskočila o ~9 %, dál hrozí sell-the-news při betě 1,94.",
+   "sources": ["https://theblock.co/news/defi/2026-11-06-zcashs-nu7-goes-live-435807", "https://247wallst.com/investing/cryptocurrency/2026/11/06/zcash-nu7-is-live-where-could-zec-be-by-2030/"]
+  },
+  "HYPE": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.46, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Po −12,7 % za týden (prodeje velryb, unlock pro core contributors 6. 11.) je u podpory 76 USD; nízká korelace s BTC a podání FCM u CFTC dávají šanci na stabilizaci.",
+   "sources": ["https://theblock.co/news/markets/2026-11-05-hyperliquid-strategies-files-become-cftc-registered-fcm-posts-13-3-million-quaterly-revenue-435455", "https://cryptoticker.io/en/hyperliquid-price-assistance-fund-buybacks/"]
+  },
+  "LINK": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.46, "p_up_7d": 0.44, "expected_move_7d_pct": -1.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Adopce CCIP (ApeChain) a nákupy do rezervy jsou drobné pozitivní zprávy, ale beta 1,45 a slabý 30d trend vs BTC převažují.",
+   "sources": ["https://tokenpost.com/news/investing/50573", "https://cryptoticker.io/en/chainlink-price-falls-long-bets-grow-10-26-support"]
+  },
+  "NEAR": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.43, "p_up_7d": 0.42, "expected_move_7d_pct": -3.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Schválené snížení emise o 36 % cenu nezastavilo (−30 % za 30 dní) a beta 2,7 je v risk-off nevýhodou, přestože je blízko 30d minima.",
+   "sources": ["https://cryptonews.net/news/altcoins/33698883/", "https://tokenpost.com/news/investing/49798"]
+  },
+  "UNI": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.46, "p_up_7d": 0.44, "expected_move_7d_pct": -1.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Obnovení výběrů UNI na Binance a RWA pool na v4 jsou neutrální, prodeje velryb a beta 2,2 drží výhled mírně negativní.",
+   "sources": ["https://ambcrypto.com/uniswap-whales-are-selling-why-5-80-could-be-unis-next-stop/", "https://coinmarketcap.com/cmc-ai/uniswap/latest-updates/"]
+  },
+  "AVAX": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.45, "p_up_7d": 0.43, "expected_move_7d_pct": -2.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "−25 % za 30 dní a objem −28 %; partnerství (NEC, zemědělské úvěry v Indii) jsou dlouhodobá a cenu krátkodobě nemění.",
+   "sources": ["https://247wallst.com/investing/cryptocurrency/2026/11/03/japans-nec-is-exploring-stablecoin-payments-on-avalanche-could-that-help-avax-recover-from-a-22-monthly-drop/"]
+  },
+  "SUI": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.44, "p_up_7d": 0.42, "expected_move_7d_pct": -2.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Silný sestupný trend (−23 % za 30 dní, rel30 −14) bez nové zprávy, objem klesá o třetinu a beta 1,8 je v risk-off zátěží.",
+   "sources": []
+  },
+  "PEPE": {
+   "trend": 2, "mr": -1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.46, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Relativní lídr (+30 % vs BTC za 30 dní, nad všemi SMA) i při poklesu memecoinů, ale +37 % od 30d minima a beta 1,7 zvyšují riziko výprodeje.",
+   "sources": ["https://en.coin-turk.com/pepe-climbs-7yuzde-as-bitcoin-falls-below-76000-resistance-at-0-0000052-in-focus/", "https://en.coinotag.com/pepe-holds-above-000005-memecoin-rotation-gains"]
+  }
+ },
+ "top10": [
+  {"coin": "TRX", "reason": "Záporná korelace s BTC a negativní funding – nejlepší obrana v risk-off."},
+  {"coin": "PEPE", "reason": "Nejsilnější relativní trend v univerzu, drží se i při poklesu memecoinů."},
+  {"coin": "ZEC", "reason": "Trend nad SMA a čerstvý upgrade NU7, ale část už v ceně."},
+  {"coin": "HYPE", "reason": "Nízká korelace s BTC, po týdenním propadu u podpory; unlock za námi."},
+  {"coin": "BTC", "reason": "Benchmark; v risk-off obvykle padá méně než altcoiny."},
+  {"coin": "BNB", "reason": "Beta ~1, po hacku Binance se drží lépe než trh."},
+  {"coin": "ETH", "reason": "Přeprodanější, ale ETF odlivy a beta 1,3 brzdí."},
+  {"coin": "LINK", "reason": "Drobné pozitivní zprávy (CCIP, rezerva), jinak slabý trend."},
+  {"coin": "UNI", "reason": "Nad SMA100, ale vysoká beta a prodeje velryb."},
+  {"coin": "SOL", "reason": "Silně přeprodaná (RSI 31), možný odraz před Breakpointem."}
+ ],
+ "claude_volne": {
+  "comment": "Před CPI 10. 11. a v risk-off prostředí držím jen ~29 % v defenzivním mixu (TRX, BTC) a malém relativním lídrovi PEPE, zbytek v hotovosti.",
+  "positions": [
+   {"coin": "TRX", "weight_pct": 12, "reason": "Záporná korelace s BTC a negativní funding, slouží jako zajištění proti dalšímu poklesu trhu.", "invalidation": "Pád TRX pod 0,30 USD nebo jeho zaostání za BTC o více než 4 % během týdne."},
+   {"coin": "BTC", "weight_pct": 11, "reason": "Jádrová pozice u 30d minima s RSI 38; v risk-off padá méně než altcoiny.", "invalidation": "Denní uzavření pod 73 tis. USD nebo horší CPI s dalším zesílením ETF odlivů."},
+   {"coin": "PEPE", "weight_pct": 6, "reason": "Nejsilnější relativní trend v univerzu, drží se nad SMA20 i v poklesu trhu.", "invalidation": "Uzavření pod SMA20 / pod 4,6e-06 USD nebo ztráta relativní síly vůči BTC."}
+  ]
+ }
+}
