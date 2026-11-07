@@ -1,0 +1,962 @@
+{
+ "after": {
+  "funding_kontra": {
+   "base": {
+    "cash": 7.43634615,
+    "equity": 5556.18127649,
+    "exposure": 0.99866161,
+    "fees": 760.39686831,
+    "n_trades": 509,
+    "positions": {
+     "BNB": {
+      "avg_px": 691.46077,
+      "entry_date": "2026-11-06",
+      "price": 696.165,
+      "qty": 1.5818642005,
+      "value": 1101.23849114
+     },
+     "HYPE": {
+      "avg_px": 77.743875,
+      "entry_date": "2026-11-06",
+      "price": 79.195,
+      "qty": 14.1963151038,
+      "value": 1124.27717465
+     },
+     "SUI": {
+      "avg_px": 0.87107225,
+      "entry_date": "2026-11-07",
+      "price": 0.87345,
+      "qty": 1275.8911790601,
+      "value": 1114.42715035
+     },
+     "TRX": {
+      "avg_px": 0.3198915,
+      "entry_date": "2026-11-07",
+      "price": 0.31805,
+      "qty": 3474.2823741771,
+      "value": 1104.99550911
+     },
+     "XRP": {
+      "avg_px": 1.1910899,
+      "entry_date": "2026-11-06",
+      "price": 1.17825,
+      "qty": 936.8186760748,
+      "value": 1103.80660509
+     }
+    },
+    "slippage": 1762.03879359,
+    "turnover": 760396.8681936
+   },
+   "gross": {
+    "cash": 32.70573576,
+    "equity": 7767.56474601,
+    "exposure": 0.99578945,
+    "fees": 0.0,
+    "n_trades": 507,
+    "positions": {
+     "BNB": {
+      "avg_px": 690.765,
+      "entry_date": "2026-11-06",
+      "price": 696.165,
+      "qty": 2.1936664648,
+      "value": 1527.15381447
+     },
+     "HYPE": {
+      "avg_px": 77.545,
+      "entry_date": "2026-11-06",
+      "price": 79.195,
+      "qty": 19.7623564135,
+      "value": 1565.07981617
+     },
+     "SUI": {
+      "avg_px": 0.86885,
+      "entry_date": "2026-11-07",
+      "price": 0.87345,
+      "qty": 1783.3687694337,
+      "value": 1557.68345166
+     },
+     "TRX": {
+      "avg_px": 0.31825,
+      "entry_date": "2026-11-07",
+      "price": 0.31805,
+      "qty": 4868.7508415474,
+      "value": 1548.50620515
+     },
+     "XRP": {
+      "avg_px": 1.18985,
+      "entry_date": "2026-11-06",
+      "price": 1.17825,
+      "qty": 1303.9980673036,
+      "value": 1536.4357228
+     }
+    },
+    "slippage": 0.0,
+    "turnover": 886505.42576552
+   },
+   "stress": {
+    "cash": 0.0,
+    "equity": 3279.27530374,
+    "exposure": 1.0,
+    "fees": 2417.08152157,
+    "n_trades": 514,
+    "positions": {
+     "BNB": {
+      "avg_px": 692.15154,
+      "entry_date": "2026-11-06",
+      "price": 696.165,
+      "qty": 0.9464465564,
+      "value": 658.88296694
+     },
+     "HYPE": {
+      "avg_px": 77.93775,
+      "entry_date": "2026-11-06",
+      "price": 79.195,
+      "qty": 8.4476227841,
+      "value": 669.00948639
+     },
+     "SUI": {
+      "avg_px": 0.8732445,
+      "entry_date": "2026-11-07",
+      "price": 0.87345,
+      "qty": 754.3809717608,
+      "value": 658.91405978
+     },
+     "TRX": {
+      "avg_px": 0.321483,
+      "entry_date": "2026-11-07",
+      "price": 0.31805,
+      "qty": 2038.3524483391,
+      "value": 648.29799619
+     },
+     "XRP": {
+      "avg_px": 1.1922798,
+      "entry_date": "2026-11-06",
+      "price": 1.17825,
+      "qty": 546.7182639013,
+      "value": 644.17079444
+     }
+    },
+    "slippage": 2738.61573941,
+    "turnover": 604270.38041168
+   }
+  },
+  "h_breakout": {
+   "base": {
+    "cash": 8413.7991212,
+    "equity": 8413.7991212,
+    "exposure": 0.0,
+    "fees": 204.30267874,
+    "n_trades": 110,
+    "positions": {},
+    "slippage": 622.84539006,
+    "turnover": 204302.678723
+   },
+   "gross": {
+    "cash": 9196.98611055,
+    "equity": 9196.98611055,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 110,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 213573.99314011
+   },
+   "stress": {
+    "cash": 7370.98041309,
+    "equity": 7370.98041309,
+    "exposure": 0.0,
+    "fees": 766.5816572,
+    "n_trades": 110,
+    "positions": {},
+    "slippage": 1163.31944413,
+    "turnover": 191645.41430013
+   }
+  },
+  "h_kniha": {
+   "base": {
+    "cash": 5130.33301478,
+    "equity": 6416.07832492,
+    "exposure": 0.20039427,
+    "fees": 999.94224935,
+    "n_trades": 613,
+    "positions": {
+     "BTC": {
+      "avg_px": 76005.984,
+      "entry_date": "2026-11-07",
+      "price": 76059.425,
+      "qty": 0.0169044837,
+      "value": 1285.74531014
+     }
+    },
+    "slippage": 2205.32158675,
+    "turnover": 999942.2492091
+   },
+   "gross": {
+    "cash": 7624.68975661,
+    "equity": 9533.15633621,
+    "exposure": 0.20019252,
+    "fees": 0.0,
+    "n_trades": 613,
+    "positions": {
+     "BTC": {
+      "avg_px": 75967.995,
+      "entry_date": "2026-11-07",
+      "price": 76059.425,
+      "qty": 0.0250917829,
+      "value": 1908.4665796
+     }
+    },
+    "slippage": 0.0,
+    "turnover": 1200481.10006607
+   },
+   "stress": {
+    "cash": 2723.19308233,
+    "equity": 3407.19819907,
+    "exposure": 0.20075296,
+    "fees": 3061.57986491,
+    "n_trades": 613,
+    "positions": {
+     "BTC": {
+      "avg_px": 76043.968,
+      "entry_date": "2026-11-07",
+      "price": 76059.425,
+      "qty": 0.0089930356,
+      "value": 684.00511674
+     }
+    },
+    "slippage": 3259.22085689,
+    "turnover": 765394.96624243
+   }
+  },
+  "h_momentum": {
+   "base": {
+    "cash": 0.0,
+    "equity": 2090.70143987,
+    "exposure": 1.0,
+    "fees": 1664.71098867,
+    "n_trades": 1075,
+    "positions": {
+     "HYPE": {
+      "avg_px": 79.37795,
+      "entry_date": "2026-11-07",
+      "price": 79.195,
+      "qty": 8.8411278872,
+      "value": 700.17312303
+     },
+     "NEAR": {
+      "avg_px": 3.7543625,
+      "entry_date": "2026-11-07",
+      "price": 3.7525,
+      "qty": 186.9267039011,
+      "value": 701.44245639
+     },
+     "ZEC": {
+      "avg_px": 1357.14579,
+      "entry_date": "2026-11-07",
+      "price": 1355.785,
+      "qty": 0.5082559996,
+      "value": 689.08586045
+     }
+    },
+    "slippage": 4025.86977054,
+    "turnover": 1664710.98879739
+   },
+   "gross": {
+    "cash": 0.0,
+    "equity": 7077.01001433,
+    "exposure": 1.0,
+    "fees": 0.0,
+    "n_trades": 1075,
+    "positions": {
+     "HYPE": {
+      "avg_px": 79.175,
+      "entry_date": "2026-11-07",
+      "price": 79.195,
+      "qty": 29.771092179,
+      "value": 2357.72164512
+     },
+     "NEAR": {
+      "avg_px": 3.7445,
+      "entry_date": "2026-11-07",
+      "price": 3.7525,
+      "qty": 629.4902452316,
+      "value": 2362.16214523
+     },
+     "ZEC": {
+      "avg_px": 1355.785,
+      "entry_date": "2026-11-07",
+      "price": 1355.785,
+      "qty": 1.7385693336,
+      "value": 2357.12622398
+     }
+    },
+    "slippage": 0.0,
+    "turnover": 2811518.60675588
+   },
+   "stress": {
+    "cash": 0.0,
+    "equity": 313.06145895,
+    "exposure": 1.0,
+    "fees": 3654.32060958,
+    "n_trades": 1075,
+    "positions": {
+     "HYPE": {
+      "avg_px": 79.5759,
+      "entry_date": "2026-11-07",
+      "price": 79.195,
+      "qty": 1.3360527793,
+      "value": 105.80869986
+     },
+     "NEAR": {
+      "avg_px": 3.763725,
+      "entry_date": "2026-11-07",
+      "price": 3.7525,
+      "qty": 27.9822788594,
+      "value": 105.00350142
+     },
+     "ZEC": {
+      "avg_px": 1358.50158,
+      "entry_date": "2026-11-07",
+      "price": 1355.785,
+      "qty": 0.075417015,
+      "value": 102.24925767
+     }
+    },
+    "slippage": 4348.12581846,
+    "turnover": 913580.15240738
+   }
+  },
+  "h_reverze": {
+   "base": {
+    "cash": 9976.97515528,
+    "equity": 9976.97515528,
+    "exposure": 0.0,
+    "fees": 168.37320446,
+    "n_trades": 112,
+    "positions": {},
+    "slippage": 295.90659071,
+    "turnover": 168373.20451442
+   },
+   "gross": {
+    "cash": 10451.00963948,
+    "equity": 10451.00963948,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 112,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 172522.32799479
+   },
+   "stress": {
+    "cash": 9221.70822131,
+    "equity": 9221.70822131,
+    "exposure": 0.0,
+    "fees": 647.4593445,
+    "n_trades": 112,
+    "positions": {},
+    "slippage": 557.11127549,
+    "turnover": 161864.83612587
+   }
+  },
+  "llm_nacasovani": {
+   "base": {
+    "cash": 3784.37606883,
+    "equity": 7699.22508574,
+    "exposure": 0.50847312,
+    "fees": 130.88684579,
+    "n_trades": 113,
+    "positions": {
+     "PEPE": {
+      "avg_px": 4.8721e-06,
+      "entry_date": "2026-11-02",
+      "price": 5.025e-06,
+      "qty": 375581762.00363076,
+      "value": 1887.29835407
+     },
+     "ZEC": {
+      "avg_px": 1257.7565,
+      "entry_date": "2026-11-05",
+      "price": 1355.785,
+      "qty": 1.495480967,
+      "value": 2027.55066284
+     }
+    },
+    "slippage": 285.16043258,
+    "turnover": 130886.84579106
+   },
+   "gross": {
+    "cash": 3968.13077583,
+    "equity": 8062.67323305,
+    "exposure": 0.50783932,
+    "fees": 0.0,
+    "n_trades": 112,
+    "positions": {
+     "PEPE": {
+      "avg_px": 4.855e-06,
+      "entry_date": "2026-11-02",
+      "price": 5.025e-06,
+      "qty": 392412257.4820822,
+      "value": 1971.87159385
+     },
+     "ZEC": {
+      "avg_px": 1256.46,
+      "entry_date": "2026-11-05",
+      "price": 1355.785,
+      "qty": 1.5656397315,
+      "value": 2122.67086337
+     }
+    },
+    "slippage": 0.0,
+    "turnover": 133952.64090123
+   },
+   "stress": {
+    "cash": 3506.36307811,
+    "equity": 7151.65778199,
+    "exposure": 0.50971325,
+    "fees": 505.2458544,
+    "n_trades": 113,
+    "positions": {
+     "PEPE": {
+      "avg_px": 4.8843e-06,
+      "entry_date": "2026-11-02",
+      "price": 5.025e-06,
+      "qty": 350174213.1163107,
+      "value": 1759.62542091
+     },
+     "ZEC": {
+      "avg_px": 1259.013,
+      "entry_date": "2026-11-05",
+      "price": 1355.785,
+      "qty": 1.3908320884,
+      "value": 1885.66928297
+     }
+    },
+    "slippage": 538.90825526,
+    "turnover": 126311.4636002
+   }
+  },
+  "seance_usa": {
+   "base": {
+    "cash": 7409.3742826,
+    "equity": 7409.3742826,
+    "exposure": 0.0,
+    "fees": 647.34203324,
+    "n_trades": 370,
+    "positions": {},
+    "slippage": 802.86090559,
+    "turnover": 647342.03326595
+   },
+   "gross": {
+    "cash": 8747.21445253,
+    "equity": 8747.21445253,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 370,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 701007.22416567
+   },
+   "stress": {
+    "cash": 5421.96037919,
+    "equity": 5421.96037919,
+    "exposure": 0.0,
+    "fees": 2241.08648295,
+    "n_trades": 370,
+    "positions": {},
+    "slippage": 1372.30009804,
+    "turnover": 560271.62073028
+   }
+  }
+ },
+ "close": {
+  "funding_kontra": {
+   "base": {
+    "cash": 7.43634615,
+    "equity": 5555.34596981,
+    "exposure": 0.99866141,
+    "fees": 760.39686831,
+    "n_trades": 509,
+    "positions": {
+     "BNB": {
+      "avg_px": 691.46077,
+      "entry_date": "2026-11-06",
+      "price": 695.81,
+      "qty": 1.5818642005,
+      "value": 1100.67692935
+     },
+     "HYPE": {
+      "avg_px": 77.743875,
+      "entry_date": "2026-11-06",
+      "price": 79.14,
+      "qty": 14.1963151038,
+      "value": 1123.49637731
+     },
+     "SUI": {
+      "avg_px": 0.87107225,
+      "entry_date": "2026-11-07",
+      "price": 0.8738,
+      "qty": 1275.8911790601,
+      "value": 1114.87371226
+     },
+     "TRX": {
+      "avg_px": 0.3198915,
+      "entry_date": "2026-11-07",
+      "price": 0.318,
+      "qty": 3474.2823741771,
+      "value": 1104.82179499
+     },
+     "XRP": {
+      "avg_px": 1.1910899,
+      "entry_date": "2026-11-06",
+      "price": 1.1785,
+      "qty": 936.8186760748,
+      "value": 1104.04080975
+     }
+    },
+    "slippage": 1762.03879359,
+    "turnover": 760396.8681936
+   },
+   "gross": {
+    "cash": 32.70573576,
+    "equity": 7766.40580585,
+    "exposure": 0.99578882,
+    "fees": 0.0,
+    "n_trades": 507,
+    "positions": {
+     "BNB": {
+      "avg_px": 690.765,
+      "entry_date": "2026-11-06",
+      "price": 695.81,
+      "qty": 2.1936664648,
+      "value": 1526.37506287
+     },
+     "HYPE": {
+      "avg_px": 77.545,
+      "entry_date": "2026-11-06",
+      "price": 79.14,
+      "qty": 19.7623564135,
+      "value": 1563.99288656
+     },
+     "SUI": {
+      "avg_px": 0.86885,
+      "entry_date": "2026-11-07",
+      "price": 0.8738,
+      "qty": 1783.3687694337,
+      "value": 1558.30763073
+     },
+     "TRX": {
+      "avg_px": 0.31825,
+      "entry_date": "2026-11-07",
+      "price": 0.318,
+      "qty": 4868.7508415474,
+      "value": 1548.26276761
+     },
+     "XRP": {
+      "avg_px": 1.18985,
+      "entry_date": "2026-11-06",
+      "price": 1.1785,
+      "qty": 1303.9980673036,
+      "value": 1536.76172232
+     }
+    },
+    "slippage": 0.0,
+    "turnover": 886505.42576552
+   },
+   "stress": {
+    "cash": 0.0,
+    "equity": 3278.77349124,
+    "exposure": 1.0,
+    "fees": 2417.08152157,
+    "n_trades": 514,
+    "positions": {
+     "BNB": {
+      "avg_px": 692.15154,
+      "entry_date": "2026-11-06",
+      "price": 695.81,
+      "qty": 0.9464465564,
+      "value": 658.54697841
+     },
+     "HYPE": {
+      "avg_px": 77.93775,
+      "entry_date": "2026-11-06",
+      "price": 79.14,
+      "qty": 8.4476227841,
+      "value": 668.54486713
+     },
+     "SUI": {
+      "avg_px": 0.8732445,
+      "entry_date": "2026-11-07",
+      "price": 0.8738,
+      "qty": 754.3809717608,
+      "value": 659.17809312
+     },
+     "TRX": {
+      "avg_px": 0.321483,
+      "entry_date": "2026-11-07",
+      "price": 0.318,
+      "qty": 2038.3524483391,
+      "value": 648.19607857
+     },
+     "XRP": {
+      "avg_px": 1.1922798,
+      "entry_date": "2026-11-06",
+      "price": 1.1785,
+      "qty": 546.7182639013,
+      "value": 644.30747401
+     }
+    },
+    "slippage": 2738.61573941,
+    "turnover": 604270.38041168
+   }
+  },
+  "h_breakout": {
+   "base": {
+    "cash": 8413.7991212,
+    "equity": 8413.7991212,
+    "exposure": 0.0,
+    "fees": 204.30267874,
+    "n_trades": 110,
+    "positions": {},
+    "slippage": 622.84539006,
+    "turnover": 204302.678723
+   },
+   "gross": {
+    "cash": 9196.98611055,
+    "equity": 9196.98611055,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 110,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 213573.99314011
+   },
+   "stress": {
+    "cash": 7370.98041309,
+    "equity": 7370.98041309,
+    "exposure": 0.0,
+    "fees": 766.5816572,
+    "n_trades": 110,
+    "positions": {},
+    "slippage": 1163.31944413,
+    "turnover": 191645.41430013
+   }
+  },
+  "h_kniha": {
+   "base": {
+    "cash": 3858.10082634,
+    "equity": 6423.23732912,
+    "exposure": 0.3993526,
+    "fees": 998.66874366,
+    "n_trades": 612,
+    "positions": {
+     "AVAX": {
+      "avg_px": 8.388735,
+      "entry_date": "2026-11-07",
+      "price": 8.335,
+      "qty": 153.5394937907,
+      "value": 1279.75168075
+     },
+     "BTC": {
+      "avg_px": 76005.984,
+      "entry_date": "2026-11-07",
+      "price": 76038.1,
+      "qty": 0.0169044837,
+      "value": 1285.38482203
+     }
+    },
+    "slippage": 2198.8452909,
+    "turnover": 998668.74351496
+   },
+   "gross": {
+    "cash": 5720.34479418,
+    "equity": 9532.27860205,
+    "exposure": 0.39989744,
+    "fees": 0.0,
+    "n_trades": 612,
+    "positions": {
+     "AVAX": {
+      "avg_px": 8.3465,
+      "entry_date": "2026-11-07",
+      "price": 8.335,
+      "qty": 228.4345903471,
+      "value": 1904.00231054
+     },
+     "BTC": {
+      "avg_px": 75967.995,
+      "entry_date": "2026-11-07",
+      "price": 76038.1,
+      "qty": 0.0250917829,
+      "value": 1907.93149733
+     }
+    },
+    "slippage": 0.0,
+    "turnover": 1198576.75510364
+   },
+   "stress": {
+    "cash": 2052.52344359,
+    "equity": 3416.41992868,
+    "exposure": 0.39921805,
+    "fees": 3058.88641255,
+    "n_trades": 612,
+    "positions": {
+     "AVAX": {
+      "avg_px": 8.43047,
+      "entry_date": "2026-11-07",
+      "price": 8.335,
+      "qty": 81.5936586482,
+      "value": 680.08314483
+     },
+     "BTC": {
+      "avg_px": 76043.968,
+      "entry_date": "2026-11-07",
+      "price": 76038.1,
+      "qty": 0.0089930356,
+      "value": 683.81334026
+     }
+    },
+    "slippage": 3252.37841268,
+    "turnover": 764721.60315132
+   }
+  },
+  "h_momentum": {
+   "base": {
+    "cash": 2.80444715,
+    "equity": 2095.20859898,
+    "exposure": 0.9986615,
+    "fees": 1663.33286001,
+    "n_trades": 1073,
+    "positions": {
+     "HYPE": {
+      "avg_px": 79.37795,
+      "entry_date": "2026-11-07",
+      "price": 79.14,
+      "qty": 8.8411278872,
+      "value": 699.68686099
+     },
+     "LINK": {
+      "avg_px": 11.00676,
+      "entry_date": "2026-11-06",
+      "price": 10.848,
+      "qty": 63.7495597819,
+      "value": 691.55522451
+     },
+     "NEAR": {
+      "avg_px": 3.7543625,
+      "entry_date": "2026-11-07",
+      "price": 3.751,
+      "qty": 186.9267039011,
+      "value": 701.16206633
+     }
+    },
+    "slippage": 4021.68721497,
+    "turnover": 1663332.86013562
+   },
+   "gross": {
+    "cash": 16.98797161,
+    "equity": 7073.45802822,
+    "exposure": 0.99759835,
+    "fees": 0.0,
+    "n_trades": 1073,
+    "positions": {
+     "HYPE": {
+      "avg_px": 79.175,
+      "entry_date": "2026-11-07",
+      "price": 79.14,
+      "qty": 29.771092179,
+      "value": 2356.08423505
+     },
+     "LINK": {
+      "avg_px": 10.9515,
+      "entry_date": "2026-11-06",
+      "price": 10.848,
+      "qty": 215.6312602968,
+      "value": 2339.1679117
+     },
+     "NEAR": {
+      "avg_px": 3.7445,
+      "entry_date": "2026-11-07",
+      "price": 3.751,
+      "qty": 629.4902452316,
+      "value": 2361.21790986
+     }
+    },
+    "slippage": 0.0,
+    "turnover": 2806821.34227953
+   },
+   "stress": {
+    "cash": 0.0,
+    "equity": 314.97855437,
+    "exposure": 1.0,
+    "fees": 3653.4976848,
+    "n_trades": 1073,
+    "positions": {
+     "HYPE": {
+      "avg_px": 79.5759,
+      "entry_date": "2026-11-07",
+      "price": 79.14,
+      "qty": 1.3360527793,
+      "value": 105.73521695
+     },
+     "LINK": {
+      "avg_px": 11.06152,
+      "entry_date": "2026-11-06",
+      "price": 10.848,
+      "qty": 9.6129986559,
+      "value": 104.28180942
+     },
+     "NEAR": {
+      "avg_px": 3.763725,
+      "entry_date": "2026-11-07",
+      "price": 3.751,
+      "qty": 27.9822788594,
+      "value": 104.961528
+     }
+    },
+    "slippage": 4346.872933,
+    "turnover": 913374.42121456
+   }
+  },
+  "h_reverze": {
+   "base": {
+    "cash": 9976.97515528,
+    "equity": 9976.97515528,
+    "exposure": 0.0,
+    "fees": 168.37320446,
+    "n_trades": 112,
+    "positions": {},
+    "slippage": 295.90659071,
+    "turnover": 168373.20451442
+   },
+   "gross": {
+    "cash": 10451.00963948,
+    "equity": 10451.00963948,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 112,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 172522.32799479
+   },
+   "stress": {
+    "cash": 9221.70822131,
+    "equity": 9221.70822131,
+    "exposure": 0.0,
+    "fees": 647.4593445,
+    "n_trades": 112,
+    "positions": {},
+    "slippage": 557.11127549,
+    "turnover": 161864.83612587
+   }
+  },
+  "llm_nacasovani": {
+   "base": {
+    "cash": 3784.37606883,
+    "equity": 7686.18125112,
+    "exposure": 0.50763898,
+    "fees": 130.88684579,
+    "n_trades": 113,
+    "positions": {
+     "PEPE": {
+      "avg_px": 4.8721e-06,
+      "entry_date": "2026-11-02",
+      "price": 5.01e-06,
+      "qty": 375581762.00363076,
+      "value": 1881.66462764
+     },
+     "ZEC": {
+      "avg_px": 1257.7565,
+      "entry_date": "2026-11-05",
+      "price": 1350.83,
+      "qty": 1.495480967,
+      "value": 2020.14055465
+     }
+    },
+    "slippage": 285.16043258,
+    "turnover": 130886.84579106
+   },
+   "gross": {
+    "cash": 3968.13077583,
+    "equity": 8049.02930432,
+    "exposure": 0.50700505,
+    "fees": 0.0,
+    "n_trades": 112,
+    "positions": {
+     "PEPE": {
+      "avg_px": 4.855e-06,
+      "entry_date": "2026-11-02",
+      "price": 5.01e-06,
+      "qty": 392412257.4820822,
+      "value": 1965.98540999
+     },
+     "ZEC": {
+      "avg_px": 1256.46,
+      "entry_date": "2026-11-05",
+      "price": 1350.83,
+      "qty": 1.5656397315,
+      "value": 2114.9131185
+     }
+    },
+    "slippage": 0.0,
+    "turnover": 133952.64090123
+   },
+   "stress": {
+    "cash": 3506.36307811,
+    "equity": 7139.51359579,
+    "exposure": 0.50887928,
+    "fees": 505.2458544,
+    "n_trades": 113,
+    "positions": {
+     "PEPE": {
+      "avg_px": 4.8843e-06,
+      "entry_date": "2026-11-02",
+      "price": 5.01e-06,
+      "qty": 350174213.1163107,
+      "value": 1754.37280771
+     },
+     "ZEC": {
+      "avg_px": 1259.013,
+      "entry_date": "2026-11-05",
+      "price": 1350.83,
+      "qty": 1.3908320884,
+      "value": 1878.77770997
+     }
+    },
+    "slippage": 538.90825526,
+    "turnover": 126311.4636002
+   }
+  },
+  "seance_usa": {
+   "base": {
+    "cash": 7409.3742826,
+    "equity": 7409.3742826,
+    "exposure": 0.0,
+    "fees": 647.34203324,
+    "n_trades": 370,
+    "positions": {},
+    "slippage": 802.86090559,
+    "turnover": 647342.03326595
+   },
+   "gross": {
+    "cash": 8747.21445253,
+    "equity": 8747.21445253,
+    "exposure": 0.0,
+    "fees": 0.0,
+    "n_trades": 370,
+    "positions": {},
+    "slippage": 0.0,
+    "turnover": 701007.22416567
+   },
+   "stress": {
+    "cash": 5421.96037919,
+    "equity": 5421.96037919,
+    "exposure": 0.0,
+    "fees": 2241.08648295,
+    "n_trades": 370,
+    "positions": {},
+    "slippage": 1372.30009804,
+    "turnover": 560271.62073028
+   }
+  }
+ },
+ "label": "2026-11-07T02"
+}
