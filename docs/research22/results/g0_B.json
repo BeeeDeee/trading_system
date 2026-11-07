@@ -1,0 +1,39 @@
+{
+ "run": "B",
+ "stage": "dev",
+ "parity_tol": 1e-09,
+ "exact_tol": 1e-09,
+ "parity": {
+  "mom_12_1": {
+   "max_rel_nav_diff": 2.55351295663786e-15,
+   "max_turnover_diff": 1.9984014443252818e-15,
+   "positions_equal": true,
+   "weeks_with_stuck_positions": 16
+  },
+  "reversal_1w": {
+   "max_rel_nav_diff": 3.2862601528904634e-14,
+   "max_turnover_diff": 5.551115123125783e-15,
+   "positions_equal": true,
+   "weeks_with_stuck_positions": 12
+  },
+  "lowvol_60d": {
+   "max_rel_nav_diff": 2.6645352591003757e-15,
+   "max_turnover_diff": 1.3322676295501878e-15,
+   "positions_equal": true,
+   "weeks_with_stuck_positions": 0
+  }
+ },
+ "parity_ok": true,
+ "exact_holding_return": {
+  "n_cells": 1995,
+  "max_abs_err": 8.881784197001252e-16
+ },
+ "exact_ok": true,
+ "delisted_in_universe": {
+  "n_assets": 696,
+  "n_flags": 696,
+  "worst_terminal_week_return": -1.0
+ },
+ "delisted_ok": true,
+ "passed": true
+}
