@@ -181,7 +181,10 @@ notes: 'Brief fit: US single stocks (liq_n 500), cross-sectional, 5-session labe
   one year'' throughout 2004-2020. Diagnostics worth reporting if a channel exists: event averages by side (appreciated
   versus depreciated) and the share of the gbm''s long leg with c >= 0 and g < 0 or c < 0 and g > 0. Data size:
   window rows roughly 5000-15000 a year, enough for a 100-tree, 8-leaf model refit quarterly (about 60 refits).'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_abnormal_return
 history:
 - ts: '2026-11-06T13:53:14.390900+00:00'
   version: 1
@@ -204,3 +207,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-07T04:25:08.299232+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 306, qlab)
+- ts: '2026-11-07T04:26:49.712594+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 307, qlab)

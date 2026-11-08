@@ -204,6 +204,12 @@ H-0106 found a reversal after sector-ETF flow days that beat placebos and covere
 
 *confidence low · 2026-11-06 · librarian · supersedes K-0146 · evidence: H-0107; H-0106; K-0146; K-0084; K-0024*
 
+### K-0152 Return-distribution shape joins the learned conditioners that added nothing in liquid US stocks
+
+A fourth learned card on a literature mechanism in liquid US stocks over a week (after H-0108, H-0109, H-0110) used a new source: the shape of the recent return distribution (H-0111, skewness from overnight and intraday half-day returns). Tail entries were no better than the same stocks on shifted dates, gross was a small fraction of cost, the first third of dev was wrong-signed and the effect showed only at the longest horizon. The placebo bar lay below cost, so not a power problem. With K-0133, K-0137 and K-0143, no conditioner tried (fundamentals, ownership, attention, calendar, tax clock, distribution shape) lifted a one-week large-cap sort above cost. The ridge control never ran (K-0135). The half-day split is coarse, so the published intraday-skew effect is not refuted.
+
+*confidence low · 2026-11-07 · librarian · supersedes K-0150 · evidence: H-0111; H-0108; H-0109; H-0110; K-0133; K-0137; K-0143; K-0135*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -388,17 +394,17 @@ The design of K-0138 (mechanism event = picks or rows one model makes and the li
 
 *confidence low · 2026-11-06 · librarian · supersedes K-0138 · evidence: H-0100; H-0103; H-0104; H-0105; K-0138; K-0135*
 
-### K-0144 Scout gross-per-entry forecasts ran above G1 in eleven cards; round trips matched
-
-Four more learned cards, forecast gross per entry against measured: H-0102 15 to 30 bps against about 3; H-0104 10 to 25 against about 1; H-0103 3 to 8 against negative; H-0105 20 to 40 against negative. Each card wrote a 'quarter of the forecast' scenario (for example 4 to 8 bps for H-0102) as the pessimistic case, and in all four the measurement was below that case. With the seven cards of K-0140 that makes eleven. Event counts: H-0102 1957 against 1800 to 2300 (matched); H-0103 30559 against 15000 to 25000; H-0104 15158 against 3000 to 8000; H-0105 12347 against 1500 to 8000. The forecasts that counted the overlap of two models or a threshold on a tail variable ran low, as in K-0140. Round trips matched: LIQ-500 about 11 bps in H-0102, H-0104 and H-0105, LIQ-300 about 11 in H-0103. A Scout should take a literature gross as a ceiling, write the conclusion for a tenth of it as well, and forecast event counts from a dev-period count of the candidate condition.
-
-*confidence low · 2026-11-06 · librarian · supersedes K-0140 · evidence: H-0102; H-0103; H-0104; H-0105; K-0140; K-0120*
-
 ### K-0147 A rare-state mechanism that passes its event study cannot carry a daily learned book (H-0106)
 
 H-0106 is the first learned daily book whose mechanism test passed clearly: 5563 flow-day entries on 325 dates, placebo percentile 0.99, gross per entry about 28 bps against a round trip of about 13.5 bps. The book traded 124656 entries, so flow-day entries were about 4.5 percent of them. G1: gross Sharpe about 0.01, net about -0.76, long leg +0.22, short leg -0.61, cost drag about 4.7 percent a year. The other entries earned nothing and the short leg lost, as the card's own book arithmetic (K-0064) predicted. Rule: a rare-state mechanism needs an always-invested tilt or an event-slot book (K-0005, K-0027) with the expected annual gain written down. Forecast check (K-0144): event count and flow days were in range, gross per entry was above the central forecast, the first learned card not below its pessimistic case. Suggested for G1: report book gross for mechanism entries and for all others.
 
 *confidence low · 2026-11-06 · librarian · evidence: H-0106; H-0094; H-0099; K-0027; K-0064; K-0097; K-0135; K-0144*
+
+### K-0151 Scout gross-per-entry forecasts ran above G1 in fifteen cards; this time the event count also came in below the forecast
+
+H-0111 forecast a central gross of 12-18 bps per entry, about 4 at a quarter of that and 1-2 at a tenth, and a round trip of about 11 bps in LIQ-500. G1 measured about 2.4 bps gross (cost ratio about a fifth of an 11.2 bps round trip), between the quarter and tenth cases, so the pessimistic case was beaten again (fifteen cards with K-0149). The round trip matched. Unlike the three cards in K-0149, the event count missed: forecast 20000-27000 (25-35 entries on about 780 weekly dates), counted 15113 on 703 dates, about 21 per date. The tail-fraction arithmetic overstated entries per date, probably because the middle-range past-return filter and the previous-week entry rule overlap more than the independence arithmetic assumed (inferred, not tested), and fewer scored dates existed than forecast. Rule for Scouts: when an entry rule combines a tail entry with a second filter, count entries per date from a rough simulation of the actual overlap, not from the product of fractions, and keep the K-0149 advice to treat a literature gross as a ceiling and state what the card concludes at a tenth of it.
+
+*confidence low · 2026-11-07 · librarian · supersedes K-0149 · evidence: H-0111; K-0149; K-0144; K-0140; K-0120*
 
 ## The judge (framework behaviour)
 
@@ -663,4 +669,7 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0138 A gbm-versus-ridge disagreement event runs the ridge control inside G1; first result is a small gain inside the cloud
 - K-0140 Scout effect-size forecasts ran above G1 in seven cards; counts and cost were close
 - K-0141 Learned release-event cards: a new information source, market attention load, did not help
+- K-0144 Scout gross-per-entry forecasts ran above G1 in eleven cards; round trips matched
 - K-0146 Sector-ETF flow days: constituent reversal cleared the placebo and cost bars once, episodic and not isolated
+- K-0149 Scout gross-per-entry forecasts ran above G1 in fourteen cards; event counts built from the condition arithmetic matched
+- K-0150 Learned sign-split conditioners from new sources added no timing value in liquid US stocks

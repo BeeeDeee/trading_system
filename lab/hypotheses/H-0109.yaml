@@ -191,7 +191,10 @@ notes: 'Why this is not a near-copy. H-0023 tested the pooled announcement premi
   return is biased against the claim (K-0074); same-stock placebos carry the same bias. Predicted-date hit rate
   (anniversary within the 5-session hold) is unmeasured (K-0035); dilution by missed dates biases toward zero, not
   toward a false pass. Period starts 2004-09 so that every G1 block holds events.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_abnormal_return
 history:
 - ts: '2026-11-06T13:16:24.682274+00:00'
   version: 1
@@ -214,3 +217,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-07T03:50:26.508546+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 304, qlab)
+- ts: '2026-11-07T03:52:12.568661+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 305, qlab)

@@ -1774,5 +1774,53 @@
   "actor": "librarian",
   "message_id": 952,
   "ts": "2026-11-06T11:59:32.350999+00:00"
+ },
+ {
+  "id": "K-0149",
+  "kind": "process",
+  "title": "Scout gross-per-entry forecasts ran above G1 in fourteen cards; event counts built from the condition arithmetic matched",
+  "statement": "Three more learned cards. H-0108 forecast a central gross of about 20 bps per marked event, 5 at a quarter and 2 at a tenth; G1 measured about 3 (cost ratio about a quarter of an 11 bps round trip), below the quarter case. H-0109 forecast about 12 central and 5 pessimistic; measured about minus 4. H-0110 forecast 5 to 15 central and 1 to 3 at a tenth; measured about minus 2. With the eleven of K-0144 that makes fourteen, and the pessimistic case was beaten again in all three. Event counts matched this time: H-0108 forecast 40000 to 50000, counted 39268; H-0109 forecast 8000 to 10000, counted 9592; H-0110 forecast 4000 to 9000, counted 5014. Those counts came from a tail fraction times dates, or from a dated rule, unlike the overlap and threshold counts that ran low in K-0140 and K-0144. Round trips again matched (about 11 bps in LIQ-500). Rule for Scouts: derive counts from the condition arithmetic, treat a literature gross as a ceiling, and state what the card concludes if gross is a tenth of it or the sign is wrong.",
+  "evidence": "[\"H-0108\",\"H-0109\",\"H-0110\",\"K-0144\",\"K-0140\",\"K-0120\"]",
+  "confidence": "low",
+  "supersedes": "K-0144",
+  "actor": "librarian",
+  "message_id": 968,
+  "ts": "2026-11-07T04:29:08.492176+00:00"
+ },
+ {
+  "id": "K-0150",
+  "kind": "market",
+  "title": "Learned sign-split conditioners from new sources added no timing value in liquid US stocks",
+  "statement": "Three more learned cards took a literature mechanism that predicts a sign split inside a set of liquid US stocks: value-anchored rebound after extreme non-earnings drops (H-0108), Miller overpricing before earnings releases (H-0109) and a one-year capital-gains clock after volume spikes (H-0110). None beat time-shifted placebos of the same stocks: two were wrong-signed, one positive but a small fraction of cost. Only for H-0109 did the placebo bar lie under cost, so the others leave a tiny effect unresolved. With K-0133, K-0137 and K-0143, fundamentals, ownership, attention, calendar state, disagreement proxies and tax clocks have each failed to lift a five-session large-cap sort above cost. The ridge control never ran at the gate, so nonlinearity is untested; the conditioners themselves show nothing at this horizon.",
+  "evidence": "[\"H-0108\",\"H-0109\",\"H-0110\",\"K-0133\",\"K-0137\",\"K-0143\",\"K-0142\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 972,
+  "ts": "2026-11-07T04:29:08.545734+00:00"
+ },
+ {
+  "id": "K-0151",
+  "kind": "method",
+  "title": "Scout gross-per-entry forecasts ran above G1 in fifteen cards; this time the event count also came in below the forecast",
+  "statement": "H-0111 forecast a central gross of 12-18 bps per entry, about 4 at a quarter of that and 1-2 at a tenth, and a round trip of about 11 bps in LIQ-500. G1 measured about 2.4 bps gross (cost ratio about a fifth of an 11.2 bps round trip), between the quarter and tenth cases, so the pessimistic case was beaten again (fifteen cards with K-0149). The round trip matched. Unlike the three cards in K-0149, the event count missed: forecast 20000-27000 (25-35 entries on about 780 weekly dates), counted 15113 on 703 dates, about 21 per date. The tail-fraction arithmetic overstated entries per date, probably because the middle-range past-return filter and the previous-week entry rule overlap more than the independence arithmetic assumed (inferred, not tested), and fewer scored dates existed than forecast. Rule for Scouts: when an entry rule combines a tail entry with a second filter, count entries per date from a rough simulation of the actual overlap, not from the product of fractions, and keep the K-0149 advice to treat a literature gross as a ceiling and state what the card concludes at a tenth of it.",
+  "evidence": "[\"H-0111\",\"K-0149\",\"K-0144\",\"K-0140\",\"K-0120\"]",
+  "confidence": "low",
+  "supersedes": "K-0149",
+  "actor": "librarian",
+  "message_id": 978,
+  "ts": "2026-11-07T07:16:21.310594+00:00"
+ },
+ {
+  "id": "K-0152",
+  "kind": "market",
+  "title": "Return-distribution shape joins the learned conditioners that added nothing in liquid US stocks",
+  "statement": "A fourth learned card on a literature mechanism in liquid US stocks over a week (after H-0108, H-0109, H-0110) used a new source: the shape of the recent return distribution (H-0111, skewness from overnight and intraday half-day returns). Tail entries were no better than the same stocks on shifted dates, gross was a small fraction of cost, the first third of dev was wrong-signed and the effect showed only at the longest horizon. The placebo bar lay below cost, so not a power problem. With K-0133, K-0137 and K-0143, no conditioner tried (fundamentals, ownership, attention, calendar, tax clock, distribution shape) lifted a one-week large-cap sort above cost. The ridge control never ran (K-0135). The half-day split is coarse, so the published intraday-skew effect is not refuted.",
+  "evidence": "[\"H-0111\",\"H-0108\",\"H-0109\",\"H-0110\",\"K-0133\",\"K-0137\",\"K-0143\",\"K-0135\"]",
+  "confidence": "low",
+  "supersedes": "K-0150",
+  "actor": "librarian",
+  "message_id": 980,
+  "ts": "2026-11-07T07:16:21.339449+00:00"
  }
 ]
