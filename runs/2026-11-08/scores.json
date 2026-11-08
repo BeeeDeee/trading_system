@@ -1,0 +1,322 @@
+{
+ "claude_volne": {
+  "comment": "Risk-off před CPI: ~40 % investováno do defenzivnějších pozic, zbytek v hotovosti.",
+  "positions": [
+   {
+    "coin": "BNB",
+    "invalidation": "Pokles pod 660 USD nebo rel7 vůči BTC pod −3 %.",
+    "reason": "Nejodolnější z velkých altcoinů, nízké riziko.",
+    "weight_pct": 8.0
+   },
+   {
+    "coin": "BTC",
+    "invalidation": "Denní uzávěr pod 72 000 USD nebo horký CPI s dalším výprodejem.",
+    "reason": "Jádro expozice, přeprodaný u 30d minima.",
+    "weight_pct": 12.0
+   },
+   {
+    "coin": "PEPE",
+    "invalidation": "Uzávěr pod SMA50 nebo pokles o víc než 12 % od vstupu.",
+    "reason": "Malá pozice ve středně silném trendu (rel30 +34).",
+    "weight_pct": 5.0
+   },
+   {
+    "coin": "TRX",
+    "invalidation": "Pokles TRX pod 0,30 nebo rel7 vůči BTC pod nulou.",
+    "reason": "Defenzivní pozice se zápornou korelací k BTC a relativní silou.",
+    "weight_pct": 15.0
+   }
+  ]
+ },
+ "coins": {
+  "AVAX": {
+   "conviction": 2,
+   "event": true,
+   "event_type": "unlock",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Slabý trend (rel30 −11), padající objem a malý unlock 8. 11.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.bittime.com/en/blog/token-unlock-november-2026"
+   ],
+   "trend": -2
+  },
+  "BNB": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Relativně odolný (rel30 +1,8), mělčí propad než trh, bez nových zpráv.",
+   "p_outperform_btc_7d": 0.52,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -1
+  },
+  "BTC": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "jine",
+   "expected_move_7d_pct": 0.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Pod všemi SMA a u 30d minima po likvidacích, krátkodobě přeprodaný, směr určí CPI 10. 11.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.altcoinbuzz.io/bitcoin-erases-post-election-rally-as-liquidations-top-1-billion",
+    "https://www.bankless.com/read/news/crypto-holds-steady-as-democrats-sweep-congress"
+   ],
+   "trend": -1
+  },
+  "ETH": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Vyšší beta k BTC, SMA50 −10 %, bez nové zprávy; v risk-off spíše mírně slabší než BTC.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.49,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.altcoinbuzz.io/bitcoin-erases-post-election-rally-as-liquidations-top-1-billion"
+   ],
+   "trend": -1
+  },
+  "HYPE": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "unlock",
+   "expected_move_7d_pct": 0.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Po unlocku 6. 11. tým rozdělil jen 180 tis. HYPE, tlak odezněl; nízká korelace k BTC, ale měsíční unlocky trvají.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.5,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptoticker.io/de/hyperliquid-team-verteilung-unlock/",
+    "https://www.bittime.com/en/blog/token-unlock-november-2026"
+   ],
+   "trend": -1
+  },
+  "LINK": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Pod SMA50 o 14 %, beta 1,4 a slábnoucí objem; bez katalyzátoru.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -1
+  },
+  "NEAR": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Třetí týden ztrát (−15,8 % za 7 d), schválené snížení inflace trh ignoroval; beta 2,5 je v risk-off nebezpečná.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://crypto.news/why-is-near-protocol-price-down-today-november-6",
+    "https://cointelegraph.com/markets/near-sinks-7-proposal-cut-annual-token-issuance-passes"
+   ],
+   "trend": -2
+  },
+  "PEPE": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Nad všemi SMA a rel30 +34, ale memecoin s beta 1,6 je v risk-off zranitelný.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 1
+  },
+  "SOL": {
+   "conviction": 3,
+   "event": true,
+   "event_type": "jine",
+   "expected_move_7d_pct": 0.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Nejvíce přeprodaný (RSI 30,5) se slabým trendem; konference Breakpoint 15.–17. 11. může dát mírnou podporu.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://solanacompass.com/news/solana-breakpoint-2026-comes-to-london-for-the-first-time-november-15-17-at-olympia"
+   ],
+   "trend": -2
+  },
+  "SUI": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "25 % pod 30d maximem, rel30 −10,5 a beta 1,7; bez nové zprávy.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "TRX": {
+   "conviction": 4,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Defenzivní, záporná korelace k BTC a rel7 +7,6; v risk-off prostředí nejpravděpodobněji drží hodnotu.",
+   "p_outperform_btc_7d": 0.55,
+   "p_up_7d": 0.52,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 1
+  },
+  "UNI": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Relativní síla (rel30 +8,7, nad SMA20/100), záporný funding a nákupní kniha, ale beta 2,1.",
+   "p_outperform_btc_7d": 0.51,
+   "p_up_7d": 0.49,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 1
+  },
+  "XRP": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Silný sestupný trend (SMA50 −15 %, rel30 −8,5) a RSI 32; odraz možný, ale relativní slabost přetrvává.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "ZEC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Střednědobě nejsilnější (rel30 +13,5, nad SMA20/100), ale extrémní volatilita a beta 1,8 v risk-off.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 1
+  }
+ },
+ "date": "2026-11-08",
+ "events_7d": [
+  {
+   "date": "2026-11-08",
+   "title": "AVAX token unlock (~14 mil. USD)",
+   "type": "unlock"
+  },
+  {
+   "date": "2026-11-10",
+   "title": "US CPI za říjen (13:30 UTC)",
+   "type": "makro"
+  },
+  {
+   "date": "2026-11-15",
+   "title": "Solana Breakpoint 2026 Londýn (15.–17. 11.)",
+   "type": "jine"
+  }
+ ],
+ "regime": {
+  "label": "Risk-off, zvýšená volatilita",
+  "summary": "BTC spadl po výprodeji AI akcií a vítězství demokratů v Kongresu (zákon CLARITY odložen na příští rok) z ~81k na ~76k, likvidace přes 1 mld USD převážně longů; RSI ~38 u 30d minima, funding neutrální. Klíčový je CPI 10. 11., možný technický odraz, ale trend zůstává dolů."
+ },
+ "top10": [
+  {
+   "coin": "TRX",
+   "reason": "Defenzivní, záporná korelace k BTC, rel7 +7,6."
+  },
+  {
+   "coin": "BNB",
+   "reason": "Nejmenší drawdown mezi velkými, stabilní relativní síla."
+  },
+  {
+   "coin": "UNI",
+   "reason": "Relativní síla a záporný funding, nad SMA20."
+  },
+  {
+   "coin": "HYPE",
+   "reason": "Unlock proběhl s malým reálným prodejem, nízká korelace k BTC."
+  },
+  {
+   "coin": "ZEC",
+   "reason": "Nejsilnější střednědobý trend, ale vysoká volatilita."
+  },
+  {
+   "coin": "PEPE",
+   "reason": "Trend nad SMA drží, riziko vysoké bety."
+  },
+  {
+   "coin": "SOL",
+   "reason": "Nejvíce přeprodaný, blíží se Breakpoint."
+  },
+  {
+   "coin": "ETH",
+   "reason": "Přeprodaný, při odrazu vyšší beta."
+  },
+  {
+   "coin": "XRP",
+   "reason": "RSI 32 a velký 3d pokles, prostor pro odraz."
+  },
+  {
+   "coin": "NEAR",
+   "reason": "Silně přeprodaný po −16 % týdně, jen spekulativní odraz."
+  }
+ ]
+}
