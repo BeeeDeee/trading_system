@@ -28,7 +28,7 @@ def top_n_universe(data, n=UNIVERSE_N, days=VOLUME_DAYS):
     T, N = dv.shape
     dv0 = np.where(np.isfinite(dv) & (dv > 0), dv, 0.0)
     vol = np.zeros((T, N))
-    for lag in range(days):                       # exact trailing sum (no cumsum drift)
+    for lag in range(min(days, T)):               # exact trailing sum (no cumsum drift); lags >= T add nothing
         vol[lag:] += dv0[: T - lag]
     cand = listed & np.isfinite(P) & (P > 0) & (vol > 0)
     key = np.where(cand, vol, -np.inf)
@@ -159,7 +159,7 @@ def target_weights(data, params):
         prev = np.where(ok[t], prev + 1, 0)
         run[t] = prev
     w = np.zeros((T, N))
-    for lag in range(H):
+    for lag in range(min(H, T)):                   # cohorts older than the view do not exist
         sh = np.zeros((T, N))
         sh[lag:] = c[: T - lag]
         # cohort formed at t-lag is live on row t; a coin that left the universe / lost perp data on any day

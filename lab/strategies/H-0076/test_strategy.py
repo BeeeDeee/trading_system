@@ -304,6 +304,33 @@ def test_fallback_universe_used_by_strategy_and_point_in_time():
         assert np.array_equal(target_weights(vp, PARAMS)[sl], w[sl])
 
 
+def test_short_truncated_views_do_not_crash():
+    # G0 cuts the history at random rows (T can be 18 < 30-day volume window, < baseline_days, < hold_days)
+    v = random_view(N=36, seed=5)
+    rng = np.random.default_rng(11)
+    dv = np.exp(rng.normal(18, 1.0, v.close.shape))
+    dv[~np.isfinite(v.close)] = np.nan
+    listed = np.isfinite(v.close)
+    for uni in (None, v.universe):
+        full = View(v.dates, v.instruments, uni, v.close, v.extras, v.series, v.tradable, dv, listed)
+        for B in (14, 30, 60):
+            for H in (2, 3, 5):
+                for nl in (2, 3, 4):
+                    p = dict(PARAMS, baseline_days=B, hold_days=H, n_leg=nl)
+                    w = target_weights(full, p)
+                    m, s = events(full, p)
+                    for t in (1, 2, 3, 5, 18, 40):
+                        sl = slice(0, t)
+                        vc = View(v.dates[sl], v.instruments, None if uni is None else uni[sl], v.close[sl],
+                                  {"basis": v.extras["basis"][sl]}, {k: x[sl] for k, x in v.series.items()},
+                                  v.tradable[sl], dv[sl], listed[sl])
+                        wt = target_weights(vc, p)
+                        assert wt.shape == (t, 36) and np.array_equal(wt, w[sl])
+                        mt, st = events(vc, p)
+                        assert np.array_equal(mt, m[sl]) and np.array_equal(st, s[sl])
+                        assert top_n_universe(vc).shape == (t, 36)
+
+
 def test_events_match_legs():
     v = make_view(BASE_SHOCKS)
     mask, side = events(v, PARAMS)
