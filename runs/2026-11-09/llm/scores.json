@@ -1,0 +1,127 @@
+{
+ "date": "2026-11-09",
+ "regime": {
+  "label": "Risk-off, sestupný trend",
+  "summary": "BTC kolem 75 tis. USD u 30denního minima, RSI 36, pokračují odlivy ze spotových ETF (−1,28 mld. USD 2.–6. 11.) a doznívá hack Binance za 6,3 mld. USD. Altcoiny jsou přeprodané, ale bez jasného obratu; v úterý vyjde CPI."
+ },
+ "events_7d": [
+  {"date": "2026-11-10", "title": "US CPI za říjen (očekávání m/m 0,3 %, jádro 0,2 %)", "type": "makro"},
+  {"date": "2026-11-13", "title": "US PPI za říjen", "type": "makro"},
+  {"date": "2026-11-09", "title": "Unlock AVAX ~1,67 mil. tokenů; týdně ~144 mil. USD unlocků (APT, W, STRK) mimo universe", "type": "unlock"},
+  {"date": "2026-11-09", "title": "Dohra hacku Binance: útočníci drží ~2,4 mld. USD (vč. >400 tis. ETH a 217 mil. ENA), možný prodejní tlak", "type": "jine"}
+ ],
+ "coins": {
+  "BTC": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": true, "event_type": "jine", "risk_flag": false,
+   "note": "Pod všemi SMA a u 30d minima s odlivy z ETF, ale RSI 36 a vyčištěné longy dávají šanci na krátký odraz; CPI rozhodne směr.",
+   "sources": ["https://crypto.news/bitcoin-price-76000-altcoin-losses-weekend-watch/", "https://news.bitcoin.com/market-updates/bitcoin-price-falls-75k-first-time-august-tech-sell-off-deepens/", "https://vanderbiltreport.com/week-ahead-november-9-15-2026/"]
+  },
+  "ETH": {
+   "trend": -2, "mr": 1, "news": -1, "conviction": 2,
+   "p_outperform_btc_7d": 0.42, "p_up_7d": 0.46, "expected_move_7d_pct": -1.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Slabší než BTC (rel30 −5) a hacker Binance drží přes 400 tis. ETH, jejichž praní/prodej je trvalý převis nabídky.",
+   "sources": ["https://www.cointribune.com/en/crypto-ethereum-faces-massive-420000-eth-sell-off-threat/", "https://www.cnbc.com/2026/10/31/binance-hack-asset-coverage-withdrawals.html"]
+  },
+  "BNB": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.52, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Defenzivní, beta ~1 a mírně lepší než BTC za 30 dní; hack Binance je známý a výběry obnoveny, nová informace chybí.",
+   "sources": ["https://www.cnbc.com/2026/10/31/binance-hack-asset-coverage-withdrawals.html", "https://www.fool.com/investing/2026/11/03/binance-just-got-hacked-for-63-billion-is-its-coin/"]
+  },
+  "XRP": {
+   "trend": -2, "mr": 2, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Silně přeprodané (RSI 27,5, −7,8 % za 3 dny, u 30d minima), ale trend jasně dolů a bez nové zprávy.",
+   "sources": []
+  },
+  "SOL": {
+   "trend": -2, "mr": 2, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejpřeprodanější velký coin (RSI 26,8, −19 % pod SMA50) se záporným fundingem, prostor na odraz, trend ale zůstává slabý.",
+   "sources": []
+  },
+  "ZEC": {
+   "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.48, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Upgrade NU7 proběhl 5. 11. a cena po něm klesá (sell the news); relativní síla za 30 dní drží, ale volatilita je extrémní.",
+   "sources": ["https://cointelegraph.com/news/zcash-nu7-november-mainnet-activation", "https://cryptoticker.io/en/zcash-zcg-drops-98000-zec-plan/"]
+  },
+  "HYPE": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.47, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Po −15 % za týden u 30d minima a s nízkou korelací k BTC, ale tým odstakoval ~316 mil. USD před unlockem 29. 11. a to drží převis.",
+   "sources": ["https://cryptoticker.io/en/hyperliquid-team-unlock-180000-hype/", "https://www.bittime.com/en/blog/token-unlock-november-2026"]
+  },
+  "DOGE": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.45, "p_up_7d": 0.47, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Sestupný trend se slábnoucím objemem (−23 %), RSI 30,6 nabízí jen slabý odraz bez katalyzátoru.",
+   "sources": []
+  },
+  "NEAR": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.43, "p_up_7d": 0.45, "expected_move_7d_pct": -1.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejhorší týden ve velkých coinech (−16 %), schválené snížení inflace trh ignoroval; vysoká beta 2,4 v risk-off škodí.",
+   "sources": ["https://cryptobriefing.com/near-falls-out-of-top-20-crypto/", "https://crypto.news/bitcoin-price-76000-altcoin-losses-weekend-watch/"]
+  },
+  "UNI": {
+   "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.47, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Relativně odolné za 30 dní a nad SMA100, ale vysoká beta 2,1 a žádná nová zpráva; neutrální.",
+   "sources": []
+  },
+  "SUI": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.44, "p_up_7d": 0.46, "expected_move_7d_pct": -1.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Hluboko pod SMA50 (−20 %) s propadajícím objemem; listopadový unlock proběhl, nový impuls chybí.",
+   "sources": ["https://cryptoticker.io/de/sui-token-unlock-sperrfrist/"]
+  },
+  "PEPE": {
+   "trend": 2, "mr": -1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.52, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Jediný coin nad všemi SMA s rel30 +35, momentum drží, ale +32 % od 30d minima a beta 1,6 nese riziko prudké korekce.",
+   "sources": []
+  },
+  "ENA": {
+   "trend": -2, "mr": 1, "news": -1, "conviction": 2,
+   "p_outperform_btc_7d": 0.4, "p_up_7d": 0.42, "expected_move_7d_pct": -3.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejslabší trend (−29 % pod SMA50); útočník z Binance drží ~217 mil. ENA a buyback se nespustí, protože USDe je pod 7,5 mld. USD.",
+   "sources": ["https://coinmarketcap.com/top-stories/6aef4c0f186e1f6fb5ccbe6c/", "https://coinmarketcap.com/cmc-ai/ethena-usde/latest-updates"]
+  }
+ },
+ "top10": [
+  {"coin": "PEPE", "reason": "Jediný s trendem nad všemi SMA a silnou relativní silou."},
+  {"coin": "BNB", "reason": "Defenzivní, nízká beta, hack už v ceně."},
+  {"coin": "BTC", "reason": "Nejbezpečnější expozice v risk-off prostředí."},
+  {"coin": "SOL", "reason": "Nejvíc přeprodané (RSI 26,8), záporný funding, šance na odraz."},
+  {"coin": "XRP", "reason": "Silně přeprodané u 30d minima, šance na odraz."},
+  {"coin": "ZEC", "reason": "Relativní síla za 30 dní, ale po NU7 bez katalyzátoru."},
+  {"coin": "UNI", "reason": "Nad SMA100 a relativně odolné, neutrální."},
+  {"coin": "HYPE", "reason": "Nízká korelace s BTC a odraz od minima, brzdí ho převis unlocku."},
+  {"coin": "DOGE", "reason": "Přeprodané, ale slábne objem a chybí katalyzátor."},
+  {"coin": "SUI", "reason": "Přeprodané, ale trend a objem slabé."}
+ ],
+ "claude_volne": {
+  "comment": "Nízká expozice (~31 %), většina v hotovosti kvůli risk-off a úternímu CPI; TRX není v universe, a proto se prodá.",
+  "positions": [
+   {"coin": "BTC", "weight_pct": 12, "reason": "Jádrová pozice, BTC je v poklesu nejodolnější.", "invalidation": "Denní uzávěr BTC pod 72 tis. USD nebo horší CPI s dalším odlivem z ETF."},
+   {"coin": "BNB", "weight_pct": 8, "reason": "Nízká beta a relativní síla vůči BTC za 30 dní.", "invalidation": "Nové problémy Binance (další únik, blokace výběrů) nebo pokles pod 30d minimum."},
+   {"coin": "PEPE", "weight_pct": 6, "reason": "Momentum a relativní síla, malá váha kvůli volatilitě.", "invalidation": "Uzávěr pod SMA20 nebo propad o více než 12 % od vstupu."},
+   {"coin": "SOL", "weight_pct": 5, "reason": "Taktická sázka na odraz z extrémně přeprodaného stavu se záporným fundingem.", "invalidation": "Nové 30d minimum a RSI pod 25 bez odrazu do 3 dnů."}
+  ]
+ }
+}
