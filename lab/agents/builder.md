@@ -71,6 +71,9 @@ def target_weights(data, params):
   `sf1_art_roe`, `sf1_arq_revenue`, ...; insiders `ins_buy_value_91d` (0 where nobody filed, NaN before the data
   starts), `ins_sell_n_365d`, ...; 13F `f13_io`, ... NaN means unknown: handle it explicitly (e.g. skip the stock),
   never fill it with 0. Fundamentals change only when a company files, so signals built from them change slowly.
+  Share counts (`sf1_*_sharesbas`, `shareswa`) are split-adjusted to the end of the data while `close_u` is not, so
+  never build market cap as shares x `close_u` (it overweights later splitters: look-ahead the gate cannot see);
+  use `sf1_*_marketcap`, anchored at its last change and grown by total return.
   Datasets ingested by the Archivist (catalog
   `loader: generic`) arrive as `data.series["<dataset>.<key>"]` (keys = the requirement's `fields`, else the
   catalog's `fields`), already aligned by their clock: row t holds the last value known after the close of t,
