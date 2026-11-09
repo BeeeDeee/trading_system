@@ -86,6 +86,17 @@ signály `brk` přepočtené z barů v DB, ukazatele paper pozic. Opraveno:
   s DB verzí včetně díry v datech). `arena replay` sdílí `book_bar_rows` a `build_executor`.
 - Explorativní: mimo experiment a rozhodnutí na dni 45/90. Omezení (fill bez knihy, dnešní filtry) jsou i v záložce.
 
+## Projekt zastaven a zakonzervován, 2026-11-09
+
+Na pokyn vlastníka: služba `arena` zastavena, timery `arena-backup` a `arena-book-validate` vypnuty, testnet bez pozic a
+příkazů (`a5-` příkazy zrušeny, pozice zavřeny reduce-only). Mainnet nebyl nikdy použit. Archiv v `/srv/arena/archive`
+(`arena-final.db.gz`, `raw-aggTrades.tar`, `backtest-results.tar.gz`, README; obnova ověřena). Smazáno: denní zálohy,
+`backup/raw`, `arena.db.bak-*`, `bt/data` (13 GB stažených dat pro backtest, znovu ze data.binance.vision), logy.
+Zůstává `arena.db`, `raw/aggTrades`, `bt/runs`, kód v `/opt/arena5m` a v gitu (větev arena5m).
+Nedokončeno: ověření opravy reconcile (den bez `reconciled`), rozhodnutí na dni 45/90, P5 akceptace, mainnet P6/P7.
+Obnovení: `systemctl start arena` a `systemctl enable --now arena-backup.timer arena-book-validate.timer`
+(paper pozice po delší pauze budou tainted, live sloty jsou jen xp.v00 na testnetu).
+
 ## Oprava: rekonciliace vs. výstup čekající na fill z WS, 2026-11-01
 
 Kontrola 24 h po nasazení opravy ze 2026-10-31: `frozen_symbols` prázdné, 115 live xp obchodů, 0× FOREIGN_POSITION /
