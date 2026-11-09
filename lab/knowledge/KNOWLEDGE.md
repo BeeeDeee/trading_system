@@ -78,12 +78,6 @@ Two cards on taker-dominated, high-volume fast moves in liquid Binance perps too
 
 *confidence low · 2026-10-19 · librarian · evidence: H-0035; H-0063; H-0040; K-0049; K-0060; prior_studies mrel-1h*
 
-### K-0080 Information-diffusion claims in liquid assets come out flat or wrong-signed, also with a dated news event
-
-Claims that news in one liquid market is priced late in another have not shown a delayed positive response from daily to monthly horizons. Statistical peer catch-up in US stocks (H-0013) was slightly negative, macro-release continuation across ETFs (H-0047) and the oil shock against Treasuries (H-0056) were wrong-signed in every third. New: H-0066 replaced the undated peer move by a verified event (a large real earnings-release reaction) and looked only at peers that had not reported; the average was still inside the placebo cloud with a bar below cost, and longer horizons turned negative. So undated noise in the trigger was not the only reason for H-0013's failure. These are not power failures. Do not trade the mirror: the sign is dev-selected and episodes are few. A new card should say why information would travel slowly through this particular channel; explicit economic links are untested and not loadable.
-
-*confidence low · 2026-10-20 · librarian · supersedes K-0072 · evidence: H-0066; H-0056; H-0047; H-0013; H-0040; K-0076; prior_studies mrel*
-
 ### K-0083 On real earnings dates only own-price-move events cleared the placebo test; no such book survived
 
 On real 8-K earnings dates the mechanism tests that cleared the placebo bar condition on the stock's own price move at or around the release: reaction drift (H-0028, H-0031, H-0033), the pre-release reversal (H-0064) and, new, the post-release give-back of year-long winners (H-0068). Sorts on a second variable or another stock did not (H-0024, H-0026, H-0027, H-0032, H-0067, H-0066), nor did date-only premia (H-0023). New: H-0068 shows a slow own-price sort can pass, but only at the margin, with the mean in the earliest third and the effect still building beyond the hold: slow drift, not an announcement effect. Its market-neutral book lost to T-bills like those of H-0028, H-0031 and H-0064; only the long-only H-0033 came near. Hindsight pattern, not a tested rule. State the expected annual gain of the book, not the per-event gap.
@@ -174,12 +168,6 @@ Three designs on the options-implied fear of assets have ended at the mechanism 
 
 *confidence low · 2026-11-03 · librarian · evidence: H-0084; H-0055; H-0073; H-0052; K-0088; K-0070; K-0074; K-0060*
 
-### K-0133 Return-sort effects in liquid US stocks stay below cost, also as a learned composite of three sub-cost effects
-
-Past-return sorts in liquid US stocks, with reversal and continuation signs and many conditioners, almost all gave effects far below round-trip cost or nothing (H-0007, H-0029, H-0030, H-0065, H-0069). The exception, the reversal before a predicted earnings release (H-0064), cleared cost but was wrong-signed in the latest third and its book was far weaker than its event study. New: H-0094 merged no-news reversal, attention give-back and earnings-reaction drift into one learned score. Entries beat same-stock placebos in every third, but gross stayed under cost and faded across thirds. Combining sub-cost effects came closer than single sorts without clearing cost; whether nonlinearity matters is untested because the linear baseline never ran. A new return-sort card should argue gross above cost for its own entries, name the latest-third sign as a kill condition and include the linear control.
-
-*confidence low · 2026-11-03 · librarian · supersedes K-0079 · evidence: H-0094; H-0064; H-0065; H-0007; H-0029; H-0030; H-0069; K-0060; K-0079*
-
 ### K-0137 Learned date-level state and calendar interactions in liquid US stocks: no timing value in two designs
 
 Two learned cards gave a gradient-boosted score date-level inputs that are the same for every stock on a date, so that only an interaction could use them: month-turn and macro-release clocks with beta, volatility and liquidity (H-0098), and VIX and market-drawdown state with residual reversal, volatility and beta (H-0099). Both ended at the mechanism test with entries no better than same-stock placebos on shifted dates, in H-0098 clearly worse, and with gross far under round-trip cost. The placebo bars were under cost, so these are not power problems. Neither card could show whether the model split on the date inputs at all, because feature importance and the by-state split did not reach the gate. The reading is that liquid-stock selection does not become profitable by switching a static tilt with the calendar or the volatility state, and the month-turn fade of K-0038 and the weak reversal of K-0133 reappear in the learned form. A further card of this type has a low prior unless it reports how the model used the state.
@@ -209,6 +197,18 @@ H-0106 found a reversal after sector-ETF flow days that beat placebos and covere
 A fourth learned card on a literature mechanism in liquid US stocks over a week (after H-0108, H-0109, H-0110) used a new source: the shape of the recent return distribution (H-0111, skewness from overnight and intraday half-day returns). Tail entries were no better than the same stocks on shifted dates, gross was a small fraction of cost, the first third of dev was wrong-signed and the effect showed only at the longest horizon. The placebo bar lay below cost, so not a power problem. With K-0133, K-0137 and K-0143, no conditioner tried (fundamentals, ownership, attention, calendar, tax clock, distribution shape) lifted a one-week large-cap sort above cost. The ridge control never ran (K-0135). The half-day split is coarse, so the published intraday-skew effect is not refuted.
 
 *confidence low · 2026-11-07 · librarian · supersedes K-0150 · evidence: H-0111; H-0108; H-0109; H-0110; K-0133; K-0137; K-0143; K-0135*
+
+### K-0158 Estimated-exposure diffusion in liquid US stocks: oil passed once, rate, dollar and credit news did not
+
+K-0156 read H-0114 as the first positive delayed-response result, driven by a stock-level link estimated from the stock's own history. H-0116 applied the same construction (estimated exposure times a market-residual shock, a gradient-boosted score, weekly legs, five-day hold) to ten-year Treasury yield, dollar and credit-spread news. Entries on the model's legs with an agreeing implied move earned a slightly negative abnormal return, in the middle of the same-stock placebo cloud and below cost, with only the earliest third positive and the latest the worst. Event and date counts were large, so the sign is informative. So the oil pass was not a general property of estimated macro exposures. Inferred, not tested: macro investors price rate, dollar and credit news quickly in futures, one year of daily regressions gives noisy betas for these factors, and oil has a direct large-cap link. The oil pass rests on few episodes and faded lately, so it may itself be episodic. Per-factor results and the ridge control were not reported. Do not file other macro prices on this construction without an argument for a direct, visible link.
+
+*confidence low · 2026-11-08 · librarian · supersedes K-0156 · evidence: H-0116; H-0114; H-0056; H-0075; K-0156; K-0060; K-0074*
+
+### K-0160 The linear reversal score in the volatile half of liquid stocks did not reproduce when re-specified
+
+K-0155 read H-0115 as a clean liquidity concession: a ridge score in the high-volatility half of a liquid universe beat same-stock placebos, covered cost, kept its sign in every third and eased after the first week. H-0117 re-used the claim with the score rebuilt from the lesson text, new leg entries as the event, and a buffered, beta-neutral book as the change. Its entries stayed under the placebo percentile bar, gross per entry was under round-trip cost, a large share of the average was earned by the same stocks on shifted dates, the latest third was much weaker, and the effect grew toward the longest horizon instead of easing. The two cards differ in inputs, event definition and trial luck, so this is not a refutation of H-0115, and it is not a confirmation either. Reading: the volatile-half concession is, so far, one pass that did not repeat, with a market-exposure reading (K-0074) still open. Treat it as unconfirmed; the nonlinear failures of K-0155 stand. A further card on this score needs the exact H-0115 inputs, a beta-matched or volatile-versus-calm control, or a different information source.
+
+*confidence low · 2026-11-08 · librarian · supersedes K-0155 · evidence: H-0117; H-0115; H-0094; H-0103; H-0112; K-0155; K-0074; K-0060*
 
 ## Data
 
@@ -400,11 +400,11 @@ H-0106 is the first learned daily book whose mechanism test passed clearly: 5563
 
 *confidence low · 2026-11-06 · librarian · evidence: H-0106; H-0094; H-0099; K-0027; K-0064; K-0097; K-0135; K-0144*
 
-### K-0151 Scout gross-per-entry forecasts ran above G1 in fifteen cards; this time the event count also came in below the forecast
+### K-0161 Book-change cards are gated by an entry event study; base score may be a rebuild
 
-H-0111 forecast a central gross of 12-18 bps per entry, about 4 at a quarter of that and 1-2 at a tenth, and a round trip of about 11 bps in LIQ-500. G1 measured about 2.4 bps gross (cost ratio about a fifth of an 11.2 bps round trip), between the quarter and tenth cases, so the pessimistic case was beaten again (fifteen cards with K-0149). The round trip matched. Unlike the three cards in K-0149, the event count missed: forecast 20000-27000 (25-35 entries on about 780 weekly dates), counted 15113 on 703 dates, about 21 per date. The tail-fraction arithmetic overstated entries per date, probably because the middle-range past-return filter and the previous-week entry rule overlap more than the independence arithmetic assumed (inferred, not tested), and fewer scored dates existed than forecast. Rule for Scouts: when an entry rule combines a tail entry with a second filter, count entries per date from a rough simulation of the actual overlap, not from the product of fractions, and keep the K-0149 advice to treat a literature gross as a ceiling and state what the card concludes at a tenth of it.
+H-0117 was filed to test two book changes (a rank buffer and beta-neutral leg sizes) on a score that had passed in H-0115. Two things made that unanswerable. (1) G1 runs the mechanism test first and stops when it fails (strategy_not_run), but the mechanism test sees only new leg entries; continuing holdings, the buffer's purpose, and the leg sizing are visible only in the strategy run. A card whose claim is a book change therefore can die on a test that does not measure the change, and the card's own forecast named the absolute Sharpe floor as the likely death, not the event test. (2) The Scout states it did not see the exact H-0115 feature windows or alpha and rebuilt them from the lesson text, so 'same score, so the mechanism test reproduces a known pass' could not be checked and was not borne out. Suggested: when a card builds on an earlier pass, the Scout gets the earlier spec (features, windows, parameters), and a book-change card may state whether it wants the strategy run even if the entry test misses. Also: the registry code shows only the percentile failure while the cost check failed too (K-0069, K-0098).
 
-*confidence low · 2026-11-07 · librarian · supersedes K-0149 · evidence: H-0111; K-0149; K-0144; K-0140; K-0120*
+*confidence low · 2026-11-08 · librarian · evidence: H-0117; H-0115; K-0007; K-0021; K-0069; K-0098*
 
 ## The judge (framework behaviour)
 
@@ -564,6 +564,18 @@ H-0105 stated no data period. G1 reported 12347 events at about 540 per year, wh
 
 *confidence low · 2026-11-06 · librarian · evidence: H-0105; H-0102; H-0104; H-0103; K-0035; K-0141; K-0120*
 
+### K-0153 Core-plus-tilt books have no core-only control, so a margin over SPY cannot be attributed to the tilt
+
+H-0033 (positive-reaction tilt) and H-0113 (quarterly share-update tilt) are long-only books on a cap-weighted core with a tilt held a small part of the time, benchmarked against SPY total return. G1 reports no core-only run, no return of the tilt-window sleeve and no tracking of the core against SPY. In H-0113 G1 and G2 passed with a Sharpe margin over SPY far larger than its event study could supply: the event average was concentrated in the earliest third and about zero or negative in the middle third, yet the book beat the benchmark in every third; neighbors, an alternative universe and doubled costs all passed with the same Sharpe, and the random-entry null had a median Sharpe near zero for an always-invested book, which is odd (K-0078). The core is built from share counts times unadjusted close, with names leaving the index sent to cash, not from SPY, so the margin may come from core construction, a bug, or a window effect much larger than the events show. None of these is separated by the outputs. Suggested: G1 reports the core-only Sharpe and the window sleeve's return; the Builder reports the core's correlation with SPY. A question went to the owner.
+
+*confidence low · 2026-11-08 · librarian · evidence: H-0113; H-0033; H-0107; K-0097; K-0078; K-0064*
+
+### K-0154 First G3 verdict: DSR failed at the hurdle, and the family trial count seems to include grid points
+
+H-0113 is the first card to reach G3 and the first to fail it. The deflated Sharpe came out just above one half, with the per-period Sharpe about equal to the hurdle (hurdle above the benchmark's own Sharpe) and a probability of backtest overfitting a little above one half. The result lists 12 family trials where the family index-inclusion-price-pressure holds three gated hypotheses (H-0017, H-0022, H-0113) and one parked (H-0018); 12 fits three gated hypotheses plus the nine grid configurations of this card (3 x 3), but this is inferred, the code was not read. If grid points count as trials, a card with a full grid starts with nine and each earlier family member adds to the hurdle. A book whose Sharpe merely clears the hurdle gets a DSR near one half by construction, so G3 is decided by the margin over the hurdle, not by passing G1 and G2. Reusing a family on purpose (as the Scout did) is the honest choice and has this price. Open: how n_family_trials is counted, and whether the benchmark's Sharpe enters the hurdle.
+
+*confidence low · 2026-11-08 · librarian · evidence: H-0113; H-0017; H-0022; H-0018; K-0059; K-0087*
+
 ## How the lab works
 
 ### K-0010 Fail loudly on missing inputs
@@ -620,6 +632,12 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 
 *confidence high · 2026-10-21 · librarian · evidence: H-0052; H-0073; H-0042; H-0045; K-0088; K-0070; K-0087; chair reply to question 541*
 
+### K-0159 Scout gross forecasts: the estimated-exposure card H-0116 came in below its pessimistic case
+
+K-0157 found that H-0112 fell below its pessimistic case, H-0114 matched its central case, and H-0113 and H-0115 exceeded their ranges, and suggested that cards built on a measured statistical regularity can beat forecasts. H-0116 (estimated factor exposure, same construction as H-0114) is a fifth data point and goes the other way: G1 counted 13071 events on 301 dates against a forecast of 14000-22000 events and 280-450 gate-on dates, so the count was slightly below range and the dates inside it; the round trip was about 11 bps against 12-15 forecast; but gross per event was negative against a central forecast of 15 bps and a pessimistic one of 1.5 bps. The Scout wrote the pessimistic case before the result, as asked, and it was still too high. Reading: an exposure-based card that reuses a mechanism that passed once (H-0114) cannot take that pass as the central case for new inputs. Five cards remain too few to retune a rule. Keep stating the forecast at a tenth of the central case and add the case in which the mechanism is absent.
+
+*confidence low · 2026-11-08 · librarian · supersedes K-0157 · evidence: H-0116; H-0114; H-0112; H-0113; H-0115; K-0157; K-0120*
+
 ## Superseded
 
 - K-0004 No earnings dates in the lab
@@ -652,6 +670,7 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0073 Multi-year reversal: absent in country equity ETFs, present for currency value in a short sample
 - K-0075 Signal history before the dev start or the ETFs' first date seems not to warm up the first signals
 - K-0079 Return-sort effects in liquid US stocks stay below cost, except a pre-release reversal that faded
+- K-0080 Information-diffusion claims in liquid assets come out flat or wrong-signed, also with a dated news event
 - K-0081 On real earnings dates the events that cleared the placebo test sort on the stock's own price move
 - K-0085 Perp funding and the perp-versus-spot volume split both fail to separate forced from informational big moves
 - K-0099 Wrapper gaps revert where no arbitrage link exists: closed-end funds cleared the placebo test, twin ETFs did not
@@ -665,6 +684,7 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0126 Filing-anchored fundamentals sorts clear the placebo test in LIQ-500 twice, and both books stay near cash
 - K-0130 Scout effect-size forecasts for slow cross-sectional cards ran far above what G1 measured in three cards
 - K-0132 lab try cannot exercise a LIQ-500 card with a minimum-names floor: the synthetic universe has fewer than 50 members
+- K-0133 Return-sort effects in liquid US stocks stay below cost, also as a learned composite of three sub-cost effects
 - K-0136 Learned models on earnings-release events: near miss, wrong sign, no nonlinearity shown
 - K-0138 A gbm-versus-ridge disagreement event runs the ridge control inside G1; first result is a small gain inside the cloud
 - K-0140 Scout effect-size forecasts ran above G1 in seven cards; counts and cost were close
@@ -673,3 +693,7 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 - K-0146 Sector-ETF flow days: constituent reversal cleared the placebo and cost bars once, episodic and not isolated
 - K-0149 Scout gross-per-entry forecasts ran above G1 in fourteen cards; event counts built from the condition arithmetic matched
 - K-0150 Learned sign-split conditioners from new sources added no timing value in liquid US stocks
+- K-0151 Scout gross-per-entry forecasts ran above G1 in fifteen cards; this time the event count also came in below the forecast
+- K-0155 A linear reversal score in the volatile half of liquid stocks cleared cost; nonlinear ones did not
+- K-0156 An estimated stock-level oil link carried a delayed response, but it faded in the latest third
+- K-0157 Scout gross forecasts split in the latest four cards: below, central and above the range

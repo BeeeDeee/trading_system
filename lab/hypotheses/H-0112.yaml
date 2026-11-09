@@ -170,7 +170,10 @@ notes: 'Why this is not a retry. H-0106 (sector-ETF push x ETF volume x own news
   or it does not. Book arithmetic: cohort gross 0.5 on about 35 flow days a year with a 5-session hold gives mean
   gross exposure about 0.3 (clusters capped at 1.0). Not a learned-calendar card (K-0137): the date-level inputs
   gate the size of a stock-level reversal whose cross-sectional variable is new to the lab.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-07T07:42:35.720598+00:00'
   version: 1
@@ -193,3 +196,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-08T03:36:32.316495+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 310, qlab)
+- ts: '2026-11-08T03:39:31.447902+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 311, qlab)

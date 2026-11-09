@@ -165,7 +165,10 @@ notes: 'Closest fit to the brief. Short horizon (5 sessions), US single stocks, 
   the average, but a market-direction tilt over these 4 weeks a year is not removed. (5) No forward data for US
   stocks, so G4 is the ceiling. No references: practitioner notes describe quarterly rebalance pressure, but I could
   not verify an academic paper on quarterly share updates and cite none.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G3
+  reason_code: g3_dsr
 history:
 - ts: '2026-11-07T08:14:39.475077+00:00'
   version: 1
@@ -188,3 +191,31 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-08T04:38:24.390726+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 312, qlab)
+- ts: '2026-11-08T04:42:36.345177+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: GATE_1
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 passed (run 313, qlab)
+- ts: '2026-11-08T05:04:28.950612+00:00'
+  version: 1
+  from: GATE_1
+  to: GATE_2
+  agent: gatekeeper
+  invocation_id: null
+  reason: G2 passed (run 314, qlab)
+- ts: '2026-11-08T05:04:31.097900+00:00'
+  version: 1
+  from: GATE_2
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G3 failed (run 315, qlab)

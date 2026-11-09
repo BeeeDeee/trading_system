@@ -182,7 +182,10 @@ notes: 'Fit to the brief: the brief asks for a learned US single-stock cross-sec
   missing and daily log changes are clipped at +/-0.20 so one print cannot dominate a beta or a shock. Linear baseline:
   ridge on the same features; if the ridge is as good, the result is a plain oil-exposure-times-shock sort and the
   gbm found nothing.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_sharpe_vs_tbill
 history:
 - ts: '2026-11-07T08:52:06.929025+00:00'
   version: 1
@@ -205,3 +208,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-08T07:13:40.327597+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 316, qlab)
+- ts: '2026-11-08T07:20:00.923100+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 317, qlab)

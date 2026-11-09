@@ -150,7 +150,10 @@ notes: 'Closest fit to the brief, said plainly. The brief asks for a learned 1-5
   starts in 2002 to stay out of the fractional-quote cost regime and to match H-0103 row for row; the first fit
   needs the framework''s minimum training sample, so the earliest weeks are flat. No hand-written rule sits on top
   of the model other than the leg fractions and the flat-if-few rule.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_sharpe_vs_tbill
 history:
 - ts: '2026-11-07T09:23:55.344344+00:00'
   version: 1
@@ -173,3 +176,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-08T07:55:37.633956+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 318, qlab)
+- ts: '2026-11-08T07:57:54.251665+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 319, qlab)
