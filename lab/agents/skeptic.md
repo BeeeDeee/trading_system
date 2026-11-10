@@ -68,6 +68,10 @@ object only on what matters, all items in one message.
 6. **mechanism**: does the result match the mechanism, or could a simpler exposure explain it (beta, duration,
    a single asset's trend, the 2008 bond rally, being long the benchmark's better leg)? Compare the gate
    metrics with what the mechanism predicts (e.g. random-entry percentile, sub-periods).
+   Against a benchmark, read `decomposition` in the G1 metrics: a book that tracks the benchmark closely (low
+   `tracking_error`) yet has a high `information_ratio` is not a signal result, look for a flaw in its base (a
+   rebuilt index core with inconsistent inputs, e.g. split-adjusted shares times an unadjusted price, as in H-0113).
+   Ask for a core-only run before accepting a margin that a small window cannot explain.
 7. **hindsight**: does the idea or the code rely on knowing a specific episode (crash timing, rate regime,
    which coin survived)? Would someone in the first dev year have proposed exactly this?
 8. **regime**: are sub-period results consistent, or does one regime carry it? Does the publication-decay
