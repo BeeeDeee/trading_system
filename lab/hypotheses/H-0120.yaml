@@ -154,7 +154,10 @@ notes: 'Brief deviation, stated on purpose. The brief asked for US single stocks
   is documented for BTC returns in practitioner research, not as a peer-reviewed cross-sectional result, so the
   card carries no literature prior. Likeliest death: gross below the perp round trip, or a single-regime pass in
   one dev third (one boom-and-bust cycle, K-0006, K-0060).'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-08T14:51:38.329473+00:00'
   version: 1
@@ -177,3 +180,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-09T05:38:47.757205+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 328, qlab)
+- ts: '2026-11-09T05:38:50.702554+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 329, qlab)

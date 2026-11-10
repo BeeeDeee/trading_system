@@ -162,7 +162,10 @@ notes: 'Brief: short horizon (5 sessions), US single stocks, learned model. New 
   would become zero). Builder: please report, if a channel exists, the event average by phase (pressure vs release)
   and by deadline (October vs December), and the gbm feature importance of the two clocks, so that a failure can
   be read as ''no tax effect'' versus ''the model never used the clock''.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-08T13:41:19.598769+00:00'
   version: 1
@@ -185,3 +188,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-09T03:50:13.373755+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 324, qlab)
+- ts: '2026-11-09T03:53:46.383920+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 325, qlab)
