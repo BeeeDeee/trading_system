@@ -1,0 +1,304 @@
+{
+ "claude_volne": {
+  "comment": "V risk-off před CPI držím nízkou expozici kolem 30 % a zbytek v hotovosti, bez zbytečného obratu stávajících pozic.",
+  "positions": [
+   {
+    "coin": "BNB",
+    "invalidation": "Pokles rel7 pod −3 % nebo nová bezpečnostní zpráva o Binance.",
+    "reason": "Relativní síla vůči BTC a nízká beta.",
+    "weight_pct": 8.0
+   },
+   {
+    "coin": "BTC",
+    "invalidation": "Denní uzávěr pod 73 tis. USD (200denní průměr).",
+    "reason": "Jádro expozice, v sestupném trhu se drží lépe než altcoiny.",
+    "weight_pct": 11.0
+   },
+   {
+    "coin": "PEPE",
+    "invalidation": "Uzávěr pod SMA20 nebo ztráta více než 10 % od vstupu.",
+    "reason": "Nejsilnější relativní momentum v univerzu.",
+    "weight_pct": 6.0
+   },
+   {
+    "coin": "SOL",
+    "invalidation": "Nové 30d minimum s RSI pod 25 bez odrazu.",
+    "reason": "Přeprodaný se záporným fundingem, malá pozice na odraz.",
+    "weight_pct": 5.0
+   }
+  ]
+ },
+ "coins": {
+  "BNB": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Relativně odolný vůči BTC (rel30 +1,4) s nízkou betou a silnou nabídkovou stranou knihy; říjnový hack Binance je už v ceně.",
+   "p_outperform_btc_7d": 0.52,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 0
+  },
+  "BTC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Pod SMA20/50 a blízko 30d minima, klíčová podpora 73 tis., slabá poptávka v ETF a CPI dnes jako binární makro test.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/markets/2026/11/10/bitcoin-faces-u-s-cpi-test-as-analysts-warn-inflation-relief-may-not-be-enough",
+    "https://www.coindesk.com/tech/2026/11/09/live-news-nvidia-slides-on-ceo-allegations-as-bitcoin-hovers-just-above-its-200-day-average"
+   ],
+   "trend": -1
+  },
+  "DOGE": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Hluboko pod všemi SMA, objem klesá (−21 %) a v risk-off chybí poptávka po memech s vysokou betou.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "ENA": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Za 30 dní −30 % s klesající nabídkou USDe; návrh Wintermute na sdílení poplatků je jen návrh a beta 2,6 v risk-off škodí.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/ethena-usde/latest-updates"
+   ],
+   "trend": -2
+  },
+  "ETH": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Slabší než BTC na všech horizontech, odlivy z ETF a přeplněné longy (L/S 3,85); RSI 34 dává jen mírný prostor k odrazu.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/tech/2026/11/09/live-news-nvidia-slides-on-ceo-allegations-as-bitcoin-hovers-just-above-its-200-day-average"
+   ],
+   "trend": -2
+  },
+  "HYPE": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Týdenní pokles −10,6 % je zčásti vybraný a nízká beta (0,55) pomáhá v risk-off; větší unlock je až 29. 11., mimo 7denní okno.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.47,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptoticker.io/en/hyperliquid-team-unlock-180000-hype/"
+   ],
+   "trend": -1
+  },
+  "NEAR": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Za 30 dní −31 % a objem −40 %; snížení inflace (3. 11.) už je v ceně a beta 2,4 v sestupném trhu škodí.",
+   "p_outperform_btc_7d": 0.42,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cointelegraph.com/news/near-sinks-7-proposal-cut-annual-token-issuance-passes"
+   ],
+   "trend": -2
+  },
+  "PEPE": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": 0.0,
+   "mr": -1,
+   "news": 0,
+   "note": "Nejsilnější relativní momentum v univerzu (rel30 +36, nad všemi SMA), ale je o +36 % nad 30d minimem a s betou 1,6 hrozí návrat.",
+   "p_outperform_btc_7d": 0.52,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 2
+  },
+  "SOL": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Přeprodaný (RSI 27) se záporným fundingem, který může vyvolat short squeeze; spuštění u Schwabu se v ceně neprojevilo a trend zůstává slabý.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/tech/2026/11/09/live-news-nvidia-slides-on-ceo-allegations-as-bitcoin-hovers-just-above-its-200-day-average"
+   ],
+   "trend": -2
+  },
+  "SUI": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Za 30 dní −15 % vůči BTC, objem −22 %; listopadový unlock proběhl a neutrální RSI nedává důvod k odrazu.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "UNI": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 0,
+   "news": 0,
+   "note": "Drží se v souladu s BTC (rel7 +0,3) nad SMA100 se silnou nabídkovou stranou knihy, bez nové zprávy; vysoká beta 2,1 je riziko.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": 0
+  },
+  "XRP": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 2,
+   "news": 0,
+   "note": "Silně přeprodaný (RSI 26,5, −6,8 % za 3 dny, u 30d minima) bez nové fundamentální zprávy, ale trend je výrazně negativní.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/tech/2026/11/09/live-news-nvidia-slides-on-ceo-allegations-as-bitcoin-hovers-just-above-its-200-day-average"
+   ],
+   "trend": -2
+  },
+  "ZEC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Po aktivaci NU7 přišlo „sell the news“ (−12 % za 3 dny); za 30 dní stále lepší než BTC, ale bez dalšího katalyzátoru a s vysokou volatilitou.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.45,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://investinglive.com/cryptocurrency/zcash-resists-crypto-market-selloff-as-network-upgrade-goes-live-what-s-next/"
+   ],
+   "trend": 0
+  }
+ },
+ "date": "2026-11-10",
+ "events_7d": [
+  {
+   "date": "2026-11-10",
+   "title": "US CPI za říjen (13:30 UTC), očekávání +0,3 % m/m, jádro +0,2 %",
+   "type": "makro"
+  },
+  {
+   "date": "2026-11-13",
+   "title": "US PPI (ceny výrobců)",
+   "type": "makro"
+  }
+ ],
+ "regime": {
+  "label": "Risk-off, sestupný trend",
+  "summary": "BTC je od začátku října v sestupném trendu, drží se těsně nad 200denním průměrem (~73 tis. USD) při odlivech ze spotových ETF a víkendových likvidacích přes 1 mld. USD. Dnes vychází CPI; altcoiny s vysokou betou jsou slabší než BTC."
+ },
+ "top10": [
+  {
+   "coin": "BNB",
+   "reason": "Nízká beta a relativní síla vůči BTC, silná nabídková strana knihy."
+  },
+  {
+   "coin": "HYPE",
+   "reason": "Nízká korelace s BTC a částečně vybraný pokles, unlock až mimo okno."
+  },
+  {
+   "coin": "PEPE",
+   "reason": "Nejsilnější relativní trend, riziko návratu ale vysoké."
+  },
+  {
+   "coin": "UNI",
+   "reason": "Drží krok s BTC, nad SMA100, kupci v knize."
+  },
+  {
+   "coin": "BTC",
+   "reason": "Benchmark, v risk-off obvykle lepší než altcoiny."
+  },
+  {
+   "coin": "XRP",
+   "reason": "Silně přeprodaný, šance na technický odraz."
+  },
+  {
+   "coin": "SOL",
+   "reason": "Přeprodaný se záporným fundingem, možný short squeeze."
+  },
+  {
+   "coin": "ZEC",
+   "reason": "Po sell-the-news NU7 přeprodaný, 30d stále nad BTC."
+  },
+  {
+   "coin": "ETH",
+   "reason": "Mírně přeprodaný, ale slabý trend a odlivy z ETF."
+  },
+  {
+   "coin": "SUI",
+   "reason": "Slabý trend, ale menší beta než NEAR/ENA."
+  }
+ ]
+}
