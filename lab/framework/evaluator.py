@@ -293,10 +293,16 @@ class QlabEvaluator:
     def decomposition(self, ctx: Context, run: Run, win: slice, ppy: float, params: dict, end: int) -> dict:
         """Descriptive, never a gate: where the net Sharpe comes from. Gross (no costs) vs net, and for a book with
         shorts the long leg and the short leg on their own (each simulated alone, costs included, cash earns the
-        T-bill as in the book). Answers "real cost effect or a bug?" without a second run by hand."""
+        T-bill as in the book); against a benchmark, the active return, tracking error and information ratio
+        (a passive-looking book with a high ratio points at its base, not at a signal). Answers "real cost effect or a bug?" without a second run by hand."""
         gross = self.run(ctx, params, end, cost_mult=0.0).returns
         out = {"sharpe_net": self.sr(ctx, run.returns, win, ppy), "sharpe_gross": self.sr(ctx, gross, win, ppy),
                "cost_drag_per_year": float((gross[win] - run.returns[win]).mean() * ppy)}
+        if ctx.bench_weights:       # a book that hugs its benchmark with a large margin has a flaw in its base (H-0113)
+            act = (run.returns[win] - self.benchmark(ctx, end)[win])
+            te = float(act.std(ddof=1) * np.sqrt(ppy))
+            out |= {"active_return_per_year": float(act.mean() * ppy), "tracking_error": te,
+                    "information_ratio": float(act.mean() * ppy / te) if te > 0 else float("nan")}
         w = run.targets
         if w is not None and (w < 0).any():
             for name, part in (("long_leg", np.where(np.isnan(w), np.nan, np.maximum(w, 0.0))),
