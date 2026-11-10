@@ -1930,5 +1930,89 @@
   "actor": "librarian",
   "message_id": 1022,
   "ts": "2026-11-08T13:07:45.455434+00:00"
+ },
+ {
+  "id": "K-0162",
+  "kind": "market",
+  "title": "Learned date-level state and calendar interactions in liquid US stocks: two nulls and one near miss at a legal deadline",
+  "statement": "Two learned cards gave a gradient-boosted score date-level inputs that are the same for every stock on a date: month-turn and macro-release clocks (H-0098) and volatility and drawdown state (H-0099). Both ended with entries no better than same-stock placebos and gross far under cost. A third, the October and December tax-deadline clocks interacting with holders' loss state (H-0118), came closer: right-signed, placebo mean near zero, gross just above round-trip cost, percentile just under the bar, and a bar above cost, so a small real effect is not excluded. Unlike the usual decay (K-0060) its earliest third was wrong-signed and the later two positive, and the horizon profile was slow rather than a quick release. So the only date-level conditioner that did not read as null is a clock tied to a dated legal deadline, and that is one near miss on a part-time book. In none of the three could the model's use of the date inputs be seen. The reading of K-0137 stands for month-turn, macro-release and volatility states: switching a static tilt with them adds nothing. A further card of this type should report how the state was used, or be a tilt on an always-invested core.",
+  "evidence": "[\"H-0118\",\"H-0098\",\"H-0099\",\"H-0110\",\"K-0137\",\"K-0152\",\"K-0027\",\"K-0034\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": "K-0137",
+  "actor": "librarian",
+  "message_id": 1036,
+  "ts": "2026-11-09T05:41:20.624680+00:00"
+ },
+ {
+  "id": "K-0163",
+  "kind": "method",
+  "title": "An empty first G1 block also comes from model warm-up on short windows, and the registry hides it",
+  "statement": "K-0145 explained an empty first block by a dataset starting after the default dev start (8-K flag from 2004). H-0120 shows a second cause. It was a crypto learned card on 2020-2022 with a refit every 63 rows: G1 counted 0, 165 and 336 events in the three blocks, mechanism_blocks was 1 against a minimum of 2, with only the latest block positive. The first fit needs a minimum training sample, so the first third of a three-year window holds no scored entries. This fits the reading of K-0145 that an empty block cannot count, so a short-window learned card needs both later blocks positive; the Scout foresaw it in the card. The registry shows only the percentile code, although the block and cost checks also failed (K-0069, K-0098). Scouts of learned cards on windows of about three years should state which block will be empty and expect the block check to bind; suggested: report events per block at G0 and list every failing check in the registry reason.",
+  "evidence": "[\"H-0120\",\"H-0105\",\"H-0102\",\"H-0104\",\"K-0145\",\"K-0069\",\"K-0098\",\"K-0006\"]",
+  "confidence": "low",
+  "supersedes": "K-0145",
+  "actor": "librarian",
+  "message_id": 1037,
+  "ts": "2026-11-09T05:41:20.643645+00:00"
+ },
+ {
+  "id": "K-0164",
+  "kind": "market",
+  "title": "Estimated-exposure diffusion: oil passed once; rates, dollar, credit and non-oil commodities did not",
+  "statement": "K-0158 read the oil pass of H-0114 against the failure of H-0116 on rate, dollar and credit news, and left open whether direct economic links in other commodities would repeat it. H-0119 tested that on gold, natural gas, grains and base metals, taken net of the stock market and of oil, with the same construction (estimated exposure times a residual shock, a gradient-boosted score, weekly legs, five-day hold). Entries earned about zero, below the same-stock placebo mean, gross a small fraction of cost, event and date counts ample. So the oil pass is not a general property of direct producer and user links; it is either specific to oil, where the link to large caps is big and visible, or episodic, as its faded latest third suggested. Inferred, not tested: ETF proxies for gas, grains and metals are noisy shock measures, and one year of daily regressions gives noisy exposures for stocks with weak links. Per-commodity results and the ridge control were not reported. Do not file further prices on this construction without an argument for why the shock series is clean and the link large.",
+  "evidence": "[\"H-0119\",\"H-0116\",\"H-0114\",\"H-0056\",\"H-0075\",\"K-0158\",\"K-0060\",\"K-0074\"]",
+  "confidence": "low",
+  "supersedes": "K-0158",
+  "actor": "librarian",
+  "message_id": 1041,
+  "ts": "2026-11-09T05:41:20.696666+00:00"
+ },
+ {
+  "id": "K-0165",
+  "kind": "process",
+  "title": "Events defined as a subset of a model's own calls ran an order of magnitude below the Scout's count; cost matched",
+  "statement": "H-0121 marked only the gbm's continuation calls (new entries to a leg whose recent move agrees with the leg side). The card forecast about 4000 to 8000 events; G0 and G1 both counted 547 on 280 dates (about 34 a year), so roughly a tenth of the lower bound. The Scout had written that a model that never calls continuation would fail the event count, but still built the forecast from condition arithmetic: a quarter to a half of leg names. The round trip matched (about 11 bps forecast, 11.4 modelled); gross per event came in near 1.6 bps against a central forecast of 15 bps. K-0142 saw model-defined event counts run above forecast, so the direction is not systematic; the point is that such counts cannot be derived from conditions alone. A card with model-defined events should give a count range from a stated call rate, say what the card concludes at a call rate a tenth of that, and note that the G1 minimum of 200 events and 2 positive blocks may bind. The registry again shows only the percentile code while the cost check failed too (K-0069, K-0098).",
+  "evidence": "[\"H-0121\",\"K-0120\",\"K-0142\",\"K-0144\",\"K-0069\",\"K-0098\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1046,
+  "ts": "2026-11-09T09:01:01.259780+00:00"
+ },
+ {
+  "id": "K-0166",
+  "kind": "market",
+  "title": "Information-asymmetry markers add nothing for a learned large-cap sort; continuation calls were rare",
+  "statement": "K-0152 listed fundamentals, ownership, attention, calendar, tax clock and return-distribution shape as learned conditioners that did not lift a one-week large-cap sort above cost. H-0121 adds a fifth source from the literature on informed versus hedging volume: R&D intensity, how much news past releases revealed, and position in the earnings cycle, on non-earnings weeks with a volume-accompanied move. Only the model's continuation calls were marked, because no reversal rule can make them. They were rare relative to the card's expectation (inferred: the model mostly faded moves), averaged about zero against same-stock placebos, and gross was a small fraction of cost. The thirds disagreed in sign and the latest was the best, so this is not the usual decay (K-0060) but not a stable effect either. The placebo bar lay above cost, so a large effect was excluded and a modest one was not. The ridge control and the low-versus-high asymmetry split never ran (K-0135). In large caps the sign flip of the volume-return relation with information asymmetry is not visible with these markers, and a further learned conditioner has a low prior.",
+  "evidence": "[\"H-0121\",\"H-0111\",\"H-0108\",\"H-0109\",\"H-0110\",\"H-0094\",\"K-0152\",\"K-0135\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": "K-0152",
+  "actor": "librarian",
+  "message_id": 1048,
+  "ts": "2026-11-09T09:01:01.290190+00:00"
+ },
+ {
+  "id": "K-0167",
+  "kind": "method",
+  "title": "H-0113 core-only control: the reconstructed S&P 500 core beats SPY_TR by 7.9 %/yr on dev; the model window adds nothing",
+  "statement": "Dev 1998-2020 (holdout unread): full book Sharpe 0.744 / CAGR 16.8 %, core only (same code, empty window, no LightGBM) 0.740 / 16.5 %, SPY_TR 0.390 / 8.0 %. Full minus core +0.24 %/yr (t 0.35); core minus SPY_TR +7.9 %/yr (t 4.4), same sign in all three thirds. The margin over the benchmark in G1-G3 belongs to the core, not to the signal. A cap-weighted S&P 500 rebuilt from members and sharesbas x close_u should track SPY_TR, so the core itself is suspect (membership, delists, share counts, splits); not yet traced. Cards of the form core plus a short model window need a core-only control.",
+  "evidence": "[\"H-0113 g3_dsr 2026-11-08\",\"scratchpad core/core_check.py, out.txt\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "human",
+  "message_id": 1054,
+  "ts": "2026-11-09T20:36:34.081451+00:00"
+ },
+ {
+  "id": "K-0168",
+  "kind": "data",
+  "title": "sharesbas is split-adjusted to today, close_u is not: shares x close_u overweights later splitters (H-0113)",
+  "statement": "H-0113 built its S&P 500 core from sf1_arq_sharesbas x close_u. In 2010 that gives a total cap of 24.9 tn USD (real ~6 tn) and a top-10 weight of 60 % (real ~20 %): Apple 2010 = 25.5 bn shares (after the later 7:1 and 4:1 splits) x 251 USD (before them). Names that split later, the later winners, are overweighted, so the weights carry future information. A split-consistent core (shares x split-adjusted price anchored at the last close) gives 8.2 %/yr vs SPY_TR 7.95 % on dev 1998-2020 (diff -0.3 %/yr, t -0.3); the raw core gives 15.5 % (diff +7.4 %/yr, t 4.2). The whole G1-G3 margin of H-0113 was this mismatch; the model window added +0.24 %/yr (t 0.35). The framework look-ahead test cannot see it: the share counts are in the dataset as stored. Other cards use sf1_*_marketcap (point-in-time at filing), and H-0033 anchors marketcap and grows it by total return; none multiplies sharesbas by close_u. Rule for Builder: never build market cap as sharesbas x close_u; use sf1_*_marketcap anchored at its last change and grown by total return, or an equivalent split-consistent price.",
+  "evidence": "[\"H-0113 g3_dsr 2026-11-08\",\"scratchpad core/core_diag.py (dev rows only, holdout unread)\"]",
+  "confidence": "high",
+  "supersedes": "K-0167",
+  "actor": "human",
+  "message_id": 1055,
+  "ts": "2026-11-09T20:40:54.330765+00:00"
  }
 ]

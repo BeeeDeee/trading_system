@@ -186,7 +186,10 @@ notes: 'Why this is not a retry of H-0114 or H-0116: same construction (estimate
   to the gbm''s (K-0135). If natural gas alone carries the result, the reading is ''energy again'', not ''direct
   links in general''. Brief fit: US single stocks, LIQ-500 cross-section, 5-day hold, walk-forward gbm with a stated
   ridge baseline. No date literals in code; the period start is after the last signal ETF exists.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-08T14:20:33.960412+00:00'
   version: 1
@@ -209,3 +212,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-09T05:25:46.387450+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 326, qlab)
+- ts: '2026-11-09T05:26:58.697742+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 327, qlab)

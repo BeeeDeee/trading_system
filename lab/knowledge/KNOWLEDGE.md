@@ -168,12 +168,6 @@ Three designs on the options-implied fear of assets have ended at the mechanism 
 
 *confidence low · 2026-11-03 · librarian · evidence: H-0084; H-0055; H-0073; H-0052; K-0088; K-0070; K-0074; K-0060*
 
-### K-0137 Learned date-level state and calendar interactions in liquid US stocks: no timing value in two designs
-
-Two learned cards gave a gradient-boosted score date-level inputs that are the same for every stock on a date, so that only an interaction could use them: month-turn and macro-release clocks with beta, volatility and liquidity (H-0098), and VIX and market-drawdown state with residual reversal, volatility and beta (H-0099). Both ended at the mechanism test with entries no better than same-stock placebos on shifted dates, in H-0098 clearly worse, and with gross far under round-trip cost. The placebo bars were under cost, so these are not power problems. Neither card could show whether the model split on the date inputs at all, because feature importance and the by-state split did not reach the gate. The reading is that liquid-stock selection does not become profitable by switching a static tilt with the calendar or the volatility state, and the month-turn fade of K-0038 and the weak reversal of K-0133 reappear in the learned form. A further card of this type has a low prior unless it reports how the model used the state.
-
-*confidence low · 2026-11-05 · librarian · evidence: H-0098; H-0099; K-0038; K-0133; K-0084*
-
 ### K-0139 Filing-anchored sorts pass twice in LIQ-500; a learned conditional form did not
 
 Two sorts with different content, net repurchasers against issuers (H-0019) and low against high quarterly accruals (H-0092), were both timed to the quarterly filing and held for a week in LIQ-500. Both cleared the same-stock placebo bar with gross above round-trip cost, and both books ended near T-bills (K-0064). They share filing dates, universe and seasons, so this is one piece of evidence seen twice. H-0019 faded era by era, H-0092 was positive in every third, and the effect in H-0092 was present in the first session and kept building. New: H-0097 added the release reaction and event time in a learned long-only form. Fresh-filer entries stayed inside the placebo cloud, gross was under cost, and the latest third was wrong-signed, so the claim that filing information is conditional on the headline reaction adds nothing visible over the plain accrual sort. The release-anchored sort (H-0027) and the slow style (H-0086) also failed, so the anchor matters and the pass may be filing-linked or early-era. A further filing card in LIQ-500 has a low prior; untested are the long leg alone, beta-matched legs and less covered stocks.
@@ -192,23 +186,29 @@ H-0106 found a reversal after sector-ETF flow days that beat placebos and covere
 
 *confidence low · 2026-11-06 · librarian · supersedes K-0146 · evidence: H-0107; H-0106; K-0146; K-0084; K-0024*
 
-### K-0152 Return-distribution shape joins the learned conditioners that added nothing in liquid US stocks
-
-A fourth learned card on a literature mechanism in liquid US stocks over a week (after H-0108, H-0109, H-0110) used a new source: the shape of the recent return distribution (H-0111, skewness from overnight and intraday half-day returns). Tail entries were no better than the same stocks on shifted dates, gross was a small fraction of cost, the first third of dev was wrong-signed and the effect showed only at the longest horizon. The placebo bar lay below cost, so not a power problem. With K-0133, K-0137 and K-0143, no conditioner tried (fundamentals, ownership, attention, calendar, tax clock, distribution shape) lifted a one-week large-cap sort above cost. The ridge control never ran (K-0135). The half-day split is coarse, so the published intraday-skew effect is not refuted.
-
-*confidence low · 2026-11-07 · librarian · supersedes K-0150 · evidence: H-0111; H-0108; H-0109; H-0110; K-0133; K-0137; K-0143; K-0135*
-
-### K-0158 Estimated-exposure diffusion in liquid US stocks: oil passed once, rate, dollar and credit news did not
-
-K-0156 read H-0114 as the first positive delayed-response result, driven by a stock-level link estimated from the stock's own history. H-0116 applied the same construction (estimated exposure times a market-residual shock, a gradient-boosted score, weekly legs, five-day hold) to ten-year Treasury yield, dollar and credit-spread news. Entries on the model's legs with an agreeing implied move earned a slightly negative abnormal return, in the middle of the same-stock placebo cloud and below cost, with only the earliest third positive and the latest the worst. Event and date counts were large, so the sign is informative. So the oil pass was not a general property of estimated macro exposures. Inferred, not tested: macro investors price rate, dollar and credit news quickly in futures, one year of daily regressions gives noisy betas for these factors, and oil has a direct large-cap link. The oil pass rests on few episodes and faded lately, so it may itself be episodic. Per-factor results and the ridge control were not reported. Do not file other macro prices on this construction without an argument for a direct, visible link.
-
-*confidence low · 2026-11-08 · librarian · supersedes K-0156 · evidence: H-0116; H-0114; H-0056; H-0075; K-0156; K-0060; K-0074*
-
 ### K-0160 The linear reversal score in the volatile half of liquid stocks did not reproduce when re-specified
 
 K-0155 read H-0115 as a clean liquidity concession: a ridge score in the high-volatility half of a liquid universe beat same-stock placebos, covered cost, kept its sign in every third and eased after the first week. H-0117 re-used the claim with the score rebuilt from the lesson text, new leg entries as the event, and a buffered, beta-neutral book as the change. Its entries stayed under the placebo percentile bar, gross per entry was under round-trip cost, a large share of the average was earned by the same stocks on shifted dates, the latest third was much weaker, and the effect grew toward the longest horizon instead of easing. The two cards differ in inputs, event definition and trial luck, so this is not a refutation of H-0115, and it is not a confirmation either. Reading: the volatile-half concession is, so far, one pass that did not repeat, with a market-exposure reading (K-0074) still open. Treat it as unconfirmed; the nonlinear failures of K-0155 stand. A further card on this score needs the exact H-0115 inputs, a beta-matched or volatile-versus-calm control, or a different information source.
 
 *confidence low · 2026-11-08 · librarian · supersedes K-0155 · evidence: H-0117; H-0115; H-0094; H-0103; H-0112; K-0155; K-0074; K-0060*
+
+### K-0162 Learned date-level state and calendar interactions in liquid US stocks: two nulls and one near miss at a legal deadline
+
+Two learned cards gave a gradient-boosted score date-level inputs that are the same for every stock on a date: month-turn and macro-release clocks (H-0098) and volatility and drawdown state (H-0099). Both ended with entries no better than same-stock placebos and gross far under cost. A third, the October and December tax-deadline clocks interacting with holders' loss state (H-0118), came closer: right-signed, placebo mean near zero, gross just above round-trip cost, percentile just under the bar, and a bar above cost, so a small real effect is not excluded. Unlike the usual decay (K-0060) its earliest third was wrong-signed and the later two positive, and the horizon profile was slow rather than a quick release. So the only date-level conditioner that did not read as null is a clock tied to a dated legal deadline, and that is one near miss on a part-time book. In none of the three could the model's use of the date inputs be seen. The reading of K-0137 stands for month-turn, macro-release and volatility states: switching a static tilt with them adds nothing. A further card of this type should report how the state was used, or be a tilt on an always-invested core.
+
+*confidence low · 2026-11-09 · librarian · supersedes K-0137 · evidence: H-0118; H-0098; H-0099; H-0110; K-0137; K-0152; K-0027; K-0034; K-0060*
+
+### K-0164 Estimated-exposure diffusion: oil passed once; rates, dollar, credit and non-oil commodities did not
+
+K-0158 read the oil pass of H-0114 against the failure of H-0116 on rate, dollar and credit news, and left open whether direct economic links in other commodities would repeat it. H-0119 tested that on gold, natural gas, grains and base metals, taken net of the stock market and of oil, with the same construction (estimated exposure times a residual shock, a gradient-boosted score, weekly legs, five-day hold). Entries earned about zero, below the same-stock placebo mean, gross a small fraction of cost, event and date counts ample. So the oil pass is not a general property of direct producer and user links; it is either specific to oil, where the link to large caps is big and visible, or episodic, as its faded latest third suggested. Inferred, not tested: ETF proxies for gas, grains and metals are noisy shock measures, and one year of daily regressions gives noisy exposures for stocks with weak links. Per-commodity results and the ridge control were not reported. Do not file further prices on this construction without an argument for why the shock series is clean and the link large.
+
+*confidence low · 2026-11-09 · librarian · supersedes K-0158 · evidence: H-0119; H-0116; H-0114; H-0056; H-0075; K-0158; K-0060; K-0074*
+
+### K-0166 Information-asymmetry markers add nothing for a learned large-cap sort; continuation calls were rare
+
+K-0152 listed fundamentals, ownership, attention, calendar, tax clock and return-distribution shape as learned conditioners that did not lift a one-week large-cap sort above cost. H-0121 adds a fifth source from the literature on informed versus hedging volume: R&D intensity, how much news past releases revealed, and position in the earnings cycle, on non-earnings weeks with a volume-accompanied move. Only the model's continuation calls were marked, because no reversal rule can make them. They were rare relative to the card's expectation (inferred: the model mostly faded moves), averaged about zero against same-stock placebos, and gross was a small fraction of cost. The thirds disagreed in sign and the latest was the best, so this is not the usual decay (K-0060) but not a stable effect either. The placebo bar lay above cost, so a large effect was excluded and a modest one was not. The ridge control and the low-versus-high asymmetry split never ran (K-0135). In large caps the sign flip of the volume-return relation with information asymmetry is not visible with these markers, and a further learned conditioner has a low prior.
+
+*confidence low · 2026-11-09 · librarian · supersedes K-0152 · evidence: H-0121; H-0111; H-0108; H-0109; H-0110; H-0094; K-0152; K-0135; K-0060*
 
 ## Data
 
@@ -277,6 +277,12 @@ H-0082 requested Binance spot bars from 2017 as a signal-only dataset to verify 
 Existing fetchers run in 0.4-7 s (FRED, Treasury, DefiLlama, CFTC: 1-4 requests). Upbit answers in ~1.4 s per request, so a paginated multi-coin source (~300 requests, estimated, not run) needs ~7 min; the framework caps a fetch at 900 s and 500 requests. Archivist timeout_s was raised 1500 -> 3000 on 2026-11-01 because 3 Archivist runs timed out at 1500 s after the Bash backgrounding fix (K-0116); whether 3000 s is enough is not yet known.
 
 *confidence low · 2026-11-01 · human · evidence: lab/framework/ingest.py FETCH_LIMIT_S, MAX_REQUESTS; commit 51dd2563*
+
+### K-0168 sharesbas is split-adjusted to today, close_u is not: shares x close_u overweights later splitters (H-0113)
+
+H-0113 built its S&P 500 core from sf1_arq_sharesbas x close_u. In 2010 that gives a total cap of 24.9 tn USD (real ~6 tn) and a top-10 weight of 60 % (real ~20 %): Apple 2010 = 25.5 bn shares (after the later 7:1 and 4:1 splits) x 251 USD (before them). Names that split later, the later winners, are overweighted, so the weights carry future information. A split-consistent core (shares x split-adjusted price anchored at the last close) gives 8.2 %/yr vs SPY_TR 7.95 % on dev 1998-2020 (diff -0.3 %/yr, t -0.3); the raw core gives 15.5 % (diff +7.4 %/yr, t 4.2). The whole G1-G3 margin of H-0113 was this mismatch; the model window added +0.24 %/yr (t 0.35). The framework look-ahead test cannot see it: the share counts are in the dataset as stored. Other cards use sf1_*_marketcap (point-in-time at filing), and H-0033 anchors marketcap and grows it by total return; none multiplies sharesbas by close_u. Rule for Builder: never build market cap as sharesbas x close_u; use sf1_*_marketcap anchored at its last change and grown by total return, or an equivalent split-consistent price.
+
+*confidence high · 2026-11-09 · human · supersedes K-0167 · evidence: H-0113 g3_dsr 2026-11-08; scratchpad core/core_diag.py (dev rows only, holdout unread)*
 
 ## Methodology
 
@@ -405,6 +411,12 @@ H-0106 is the first learned daily book whose mechanism test passed clearly: 5563
 H-0117 was filed to test two book changes (a rank buffer and beta-neutral leg sizes) on a score that had passed in H-0115. Two things made that unanswerable. (1) G1 runs the mechanism test first and stops when it fails (strategy_not_run), but the mechanism test sees only new leg entries; continuing holdings, the buffer's purpose, and the leg sizing are visible only in the strategy run. A card whose claim is a book change therefore can die on a test that does not measure the change, and the card's own forecast named the absolute Sharpe floor as the likely death, not the event test. (2) The Scout states it did not see the exact H-0115 feature windows or alpha and rebuilt them from the lesson text, so 'same score, so the mechanism test reproduces a known pass' could not be checked and was not borne out. Suggested: when a card builds on an earlier pass, the Scout gets the earlier spec (features, windows, parameters), and a book-change card may state whether it wants the strategy run even if the entry test misses. Also: the registry code shows only the percentile failure while the cost check failed too (K-0069, K-0098).
 
 *confidence low · 2026-11-08 · librarian · evidence: H-0117; H-0115; K-0007; K-0021; K-0069; K-0098*
+
+### K-0163 An empty first G1 block also comes from model warm-up on short windows, and the registry hides it
+
+K-0145 explained an empty first block by a dataset starting after the default dev start (8-K flag from 2004). H-0120 shows a second cause. It was a crypto learned card on 2020-2022 with a refit every 63 rows: G1 counted 0, 165 and 336 events in the three blocks, mechanism_blocks was 1 against a minimum of 2, with only the latest block positive. The first fit needs a minimum training sample, so the first third of a three-year window holds no scored entries. This fits the reading of K-0145 that an empty block cannot count, so a short-window learned card needs both later blocks positive; the Scout foresaw it in the card. The registry shows only the percentile code, although the block and cost checks also failed (K-0069, K-0098). Scouts of learned cards on windows of about three years should state which block will be empty and expect the block check to bind; suggested: report events per block at G0 and list every failing check in the registry reason.
+
+*confidence low · 2026-11-09 · librarian · supersedes K-0145 · evidence: H-0120; H-0105; H-0102; H-0104; K-0145; K-0069; K-0098; K-0006*
 
 ## The judge (framework behaviour)
 
@@ -558,12 +570,6 @@ Two gaps, now seen in three learned cards (H-0094, H-0095, H-0096). (1) lab try:
 
 *confidence medium · 2026-11-04 · librarian · supersedes K-0132 · evidence: H-0095; H-0096; H-0094; K-0132; K-0082*
 
-### K-0145 G1 blocks are thirds of the whole dev period; an empty block cannot count, a thin one can
-
-H-0105 stated no data period. G1 reported 12347 events at about 540 per year, which implies about 23 years of denominator, i.e. the default dev start in 1998, while the 8-K flag starts in 2004, so its first block had zero events. mechanism_blocks appears to count blocks with a positive mean (H-0102 and H-0104 passed with two positive blocks of three, H-0103 and H-0105 scored zero), so an empty block can never count and the card needed both other blocks positive. Conversely H-0102 had 87 events in its first block, and that block counted as one of its two passing blocks, so a thin block can supply the pass. Both readings are inferred from the metrics, not from the code. Scouts should set the period start at the dataset's first usable date (8-K from 2004-09, 13F from mid-2013) so that the blocks are real. Suggested: report events by block at G0 and require a minimum event count per block before it counts.
-
-*confidence low · 2026-11-06 · librarian · evidence: H-0105; H-0102; H-0104; H-0103; K-0035; K-0141; K-0120*
-
 ### K-0153 Core-plus-tilt books have no core-only control, so a margin over SPY cannot be attributed to the tilt
 
 H-0033 (positive-reaction tilt) and H-0113 (quarterly share-update tilt) are long-only books on a cap-weighted core with a tilt held a small part of the time, benchmarked against SPY total return. G1 reports no core-only run, no return of the tilt-window sleeve and no tracking of the core against SPY. In H-0113 G1 and G2 passed with a Sharpe margin over SPY far larger than its event study could supply: the event average was concentrated in the earliest third and about zero or negative in the middle third, yet the book beat the benchmark in every third; neighbors, an alternative universe and doubled costs all passed with the same Sharpe, and the random-entry null had a median Sharpe near zero for an always-invested book, which is odd (K-0078). The core is built from share counts times unadjusted close, with names leaving the index sent to cash, not from SPY, so the margin may come from core construction, a bug, or a window effect much larger than the events show. None of these is separated by the outputs. Suggested: G1 reports the core-only Sharpe and the window sleeve's return; the Builder reports the core's correlation with SPY. A question went to the owner.
@@ -638,6 +644,12 @@ K-0157 found that H-0112 fell below its pessimistic case, H-0114 matched its cen
 
 *confidence low · 2026-11-08 · librarian · supersedes K-0157 · evidence: H-0116; H-0114; H-0112; H-0113; H-0115; K-0157; K-0120*
 
+### K-0165 Events defined as a subset of a model's own calls ran an order of magnitude below the Scout's count; cost matched
+
+H-0121 marked only the gbm's continuation calls (new entries to a leg whose recent move agrees with the leg side). The card forecast about 4000 to 8000 events; G0 and G1 both counted 547 on 280 dates (about 34 a year), so roughly a tenth of the lower bound. The Scout had written that a model that never calls continuation would fail the event count, but still built the forecast from condition arithmetic: a quarter to a half of leg names. The round trip matched (about 11 bps forecast, 11.4 modelled); gross per event came in near 1.6 bps against a central forecast of 15 bps. K-0142 saw model-defined event counts run above forecast, so the direction is not systematic; the point is that such counts cannot be derived from conditions alone. A card with model-defined events should give a count range from a stated call rate, say what the card concludes at a call rate a tenth of that, and note that the G1 minimum of 200 events and 2 positive blocks may bind. The registry again shows only the percentile code while the cost check failed too (K-0069, K-0098).
+
+*confidence low · 2026-11-09 · librarian · evidence: H-0121; K-0120; K-0142; K-0144; K-0069; K-0098*
+
 ## Superseded
 
 - K-0004 No earnings dates in the lab
@@ -686,14 +698,19 @@ K-0157 found that H-0112 fell below its pessimistic case, H-0114 matched its cen
 - K-0132 lab try cannot exercise a LIQ-500 card with a minimum-names floor: the synthetic universe has fewer than 50 members
 - K-0133 Return-sort effects in liquid US stocks stay below cost, also as a learned composite of three sub-cost effects
 - K-0136 Learned models on earnings-release events: near miss, wrong sign, no nonlinearity shown
+- K-0137 Learned date-level state and calendar interactions in liquid US stocks: no timing value in two designs
 - K-0138 A gbm-versus-ridge disagreement event runs the ridge control inside G1; first result is a small gain inside the cloud
 - K-0140 Scout effect-size forecasts ran above G1 in seven cards; counts and cost were close
 - K-0141 Learned release-event cards: a new information source, market attention load, did not help
 - K-0144 Scout gross-per-entry forecasts ran above G1 in eleven cards; round trips matched
+- K-0145 G1 blocks are thirds of the whole dev period; an empty block cannot count, a thin one can
 - K-0146 Sector-ETF flow days: constituent reversal cleared the placebo and cost bars once, episodic and not isolated
 - K-0149 Scout gross-per-entry forecasts ran above G1 in fourteen cards; event counts built from the condition arithmetic matched
 - K-0150 Learned sign-split conditioners from new sources added no timing value in liquid US stocks
 - K-0151 Scout gross-per-entry forecasts ran above G1 in fifteen cards; this time the event count also came in below the forecast
+- K-0152 Return-distribution shape joins the learned conditioners that added nothing in liquid US stocks
 - K-0155 A linear reversal score in the volatile half of liquid stocks cleared cost; nonlinear ones did not
 - K-0156 An estimated stock-level oil link carried a delayed response, but it faded in the latest third
 - K-0157 Scout gross forecasts split in the latest four cards: below, central and above the range
+- K-0158 Estimated-exposure diffusion in liquid US stocks: oil passed once, rate, dollar and credit news did not
+- K-0167 H-0113 core-only control: the reconstructed S&P 500 core beats SPY_TR by 7.9 %/yr on dev; the model window adds nothing
