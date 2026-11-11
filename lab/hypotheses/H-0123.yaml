@@ -174,7 +174,10 @@ notes: 'Closest fit to the brief (cross-asset, 1-5 days, learned): the signals f
   Builder diagnostics I ask for (descriptive, if a channel exists): the ridge coefficients per refit; the share
   of leg entries that differ from a plain SPY-only residual sort and their mean 5-day return; event gross by third
   and by side. No date literals; ETF tickers are signal-only inputs declared above.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-09T10:19:11.769066+00:00'
   version: 1
@@ -197,3 +200,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-10T05:54:53.950997+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 334, qlab)
+- ts: '2026-11-10T05:56:58.040981+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 335, qlab)

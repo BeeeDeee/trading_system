@@ -2014,5 +2014,65 @@
   "actor": "human",
   "message_id": 1055,
   "ts": "2026-11-09T20:40:54.330765+00:00"
+ },
+ {
+  "id": "K-0169",
+  "kind": "market",
+  "title": "Learned large-cap sorts: the dollar price grid and macro-cleaned residuals add nothing either",
+  "statement": "K-0166 listed fundamentals, ownership, attention, calendar, tax clock, return-distribution shape and information-asymmetry markers as learned conditioners that did not lift a short-horizon large-cap sort above cost. Two more sources failed. H-0122 used the price level on the dollar grid (next-session hold, picks only a gbm makes against a ridge): entries beat peers slightly, but a sizeable share was earned by the same stocks on shifted dates, gross was a small fraction of cost, and the effect was largest early and grew with the horizon. H-0123 split the weekly move into a cross-asset part and a residual for a ridge: entries matched placebos, gross was near zero, and the thirds disagreed. In both the placebo bar lay below cost, so not a power problem. In the most liquid stocks neither a behavioral microstructure input nor a cross-asset input brings gross near a taker's round trip. Any grid effect probably sits in low-priced names or needs resting orders. A further learned conditioner has a low prior.",
+  "evidence": "[\"H-0122\",\"H-0123\",\"H-0121\",\"H-0117\",\"K-0166\",\"K-0152\",\"K-0142\",\"K-0160\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": "K-0166",
+  "actor": "librarian",
+  "message_id": 1072,
+  "ts": "2026-11-10T07:09:11.190088+00:00"
+ },
+ {
+  "id": "K-0170",
+  "kind": "framework",
+  "title": "Zero events pass G0 and read as a mechanism failure: a learned crypto card that probably never scored",
+  "statement": "K-0062 listed three cards that ended on the event count without a mechanism result (H-0021, H-0038, H-0043). H-0124 is a fourth, and the first learned one: G0 passed with zero events in dev and a runtime of 0.19 s, while learned cards of the same days took 264 s (H-0122) and 85 s (H-0123), so no walk-forward fit seems to have run. G1 then counted zero events and blocks; the registry shows g1_mechanism_events, which reads as sparsity (K-0069). The card forecast about 1500 to 2500 events; H-0120, a learned card on the same kind of universe and window, did produce events, so warm-up alone does not explain it. Candidate causes, none verified: the all-valid sixty-day return rule including BTC, the VIX input with leading NaN, the minimum training sample against a three-year window, the universe the gate hands over (K-0131). Suggested: G0 flags zero events when hundreds are forecast and reports scored rows by year. A question went to the owner.",
+  "evidence": "[\"H-0124\",\"H-0120\",\"H-0043\",\"H-0038\",\"H-0021\",\"K-0062\",\"K-0069\",\"K-0131\",\"K-0163\"]",
+  "confidence": "low",
+  "supersedes": "K-0062",
+  "actor": "librarian",
+  "message_id": 1073,
+  "ts": "2026-11-10T07:09:11.218699+00:00"
+ },
+ {
+  "id": "K-0171",
+  "kind": "method",
+  "title": "Scout forecasts: round trip and counts held; gross per entry fell below the central case in two more cards",
+  "statement": "H-0122 forecast 80000 to 180000 events and a round trip near 11 bps; G1 counted about 180000 and 11.3 bps. Gross per entry was about 1.3 bps against a central 3 and an optimistic 12. The card named its likeliest death correctly (a real but sub-cost effect). H-0123 forecast 90000 to 100000 events and 10 to 12 bps; G1 counted about 75000 and 11.3 bps, with gross about 0.4 bps against a central 15 and a pessimistic 3, so below the pessimistic case; its likeliest death (mechanism passes, book misses the Sharpe floor) was wrong, the mechanism itself failed. Pattern with H-0116 and H-0117: a card that takes an earlier unconfirmed pass (H-0115, K-0160) as its central case has been too high each time. Keep writing the case in which the mechanism is absent. This supersedes K-0159.",
+  "evidence": "[\"H-0122\",\"H-0123\",\"H-0116\",\"H-0117\",\"K-0159\",\"K-0165\",\"K-0160\"]",
+  "confidence": "low",
+  "supersedes": "K-0159",
+  "actor": "librarian",
+  "message_id": 1074,
+  "ts": "2026-11-10T07:09:11.226658+00:00"
+ },
+ {
+  "id": "K-0172",
+  "kind": "method",
+  "title": "Learned dollar-neutral books: the long leg earns and the short leg loses in four cards, also with beta-balanced legs",
+  "statement": "In four learned dollar-neutral or beta-neutral weekly books whose event test passed, the G1 decomposition shows a positive long leg and a negative short leg: H-0106 (K-0147), H-0114, H-0115 and H-0126. The earlier reading for the first three was market exposure or a sector tilt (K-0074). H-0126 weakens that reading: its legs were built inside beta terciles and balanced by construction, and the short leg still lost. So the pooled event average (side-adjusted, against raw unmarked peers) probably leans on the long side, and the book pays for a short leg that adds cost and no return. The event study reports no side split, and the card of H-0126 named none, so this is inferred from leg Sharpes, not tested. A Scout writing a learned neutral card should state what it expects from each leg, and a Builder or G1 should report the event average by side. A long-only tilt on an always-invested core avoids the short leg but keeps the limits of K-0064 and K-0153.",
+  "evidence": "[\"H-0126\",\"H-0114\",\"H-0115\",\"H-0106\",\"K-0147\",\"K-0074\",\"K-0064\",\"K-0153\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1083,
+  "ts": "2026-11-10T12:07:19.568413+00:00"
+ },
+ {
+  "id": "K-0173",
+  "kind": "market",
+  "title": "Estimated-exposure diffusion: oil and credit passed the event test; rates, dollar and non-oil commodities did not",
+  "statement": "K-0164 read the oil pass of H-0114 against nulls in rates, dollar, credit and non-oil commodities and called oil special or episodic. H-0126 corrects the credit part: the shock was the credit spread move not explained by stocks or Treasuries (market-based), and stocks were mapped by balance sheet (leverage, coverage, volatility), not by a return beta. Entries beat same-stock placebos, gross covered cost, and the sign held in every third, the latest included, unlike oil. H-0116 failed on credit with statistical betas, so the mapping probably decided, not the price. Both passes share a structural link and a clean shock; both books were part-time, missed the absolute Sharpe floor and had a losing short leg. Open: the ridge control never ran, the effect grew to the longest horizon (slow leverage drift not excluded), and the beta gap against unmarked peers was not neutralized (K-0074). Rates, dollar and non-oil commodities stay unsupported. A further card needs an explicit link and a clean shock series, not a new price.",
+  "evidence": "[\"H-0126\",\"H-0114\",\"H-0116\",\"H-0119\",\"K-0164\",\"K-0074\",\"K-0135\"]",
+  "confidence": "low",
+  "supersedes": "K-0164",
+  "actor": "librarian",
+  "message_id": 1085,
+  "ts": "2026-11-10T12:07:19.619006+00:00"
  }
 ]

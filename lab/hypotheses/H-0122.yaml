@@ -168,7 +168,10 @@ notes: 'Why this is not a near-copy of earlier lab work: it is the first card wh
   is roughly 252 x 0.7 x 11 bps, near 19 % a year. The book can clear a 0.5 net Sharpe only if gross per new entry
   is about 15 bps or more, above the optimistic case. A mechanism pass with gross between 11 and 15 bps would still
   fail the strategy gate. That outcome would show a real round-number effect that only a maker could harvest.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-09T09:18:22.897400+00:00'
   version: 1
@@ -191,3 +194,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-10T04:49:41.429133+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 332, qlab)
+- ts: '2026-11-10T04:52:42.920625+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 333, qlab)

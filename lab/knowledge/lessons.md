@@ -1090,3 +1090,39 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: No refile with another asymmetry marker (coverage, short interest, insiders, ownership) or other tree size or top fraction. Do not forecast a model-selected event count from condition arithmetic.
 - open questions: Untested: the ridge control and the low-versus-high asymmetry split of the calls (named in the card, not reported); a plain event study without a learner, splitting non-earnings volume moves by R&D intensity, both directions marked.
 - related: H-0094, H-0108, H-0030, H-0115, H-0099, H-0111
+
+## H-0122 – Round-number support and resistance, learned - LIQ-500 dollar-neutral daily, LightGBM on the unadjusted close's place on the dollar grid, 1-day hold; mechanism = gbm-only vs ridge picks
+
+- family: `round-number-order-clustering` · mechanism: behavioral · instruments: LIQ-500 US stocks, daily dollar-neutral, gbm on the close's place on the dollar grid
+- outcome: rejected at G1: gbm-only picks beat peers slightly, but the placebo percentile was under the bar and gross was far below cost
+- lesson: Real but sub-cost and fading. The gbm-only picks beat peers on average on a very large event set, but a sizeable share of that was earned by the same stocks on shifted dates, the percentile stayed under the bar and gross per entry was a small fraction of the round trip. The placebo bar lay well below cost, so this is not a power problem: no tradable next-session grid effect for a taker. It was strongest in the earliest third and weakest in the latest (K-0060) and larger at five sessions than at one, the shape of slow drift. Whether the model used the grid, and whether it beat the ridge, were not reported.
+- avoid: Do not retune top or n_estimators, or add price-level variants on the same events: new trials. Do not move to a longer hold because it looks larger: a grid position read at the close goes stale.
+- open questions: Low-priced, less liquid names (not loadable) and resting-order entries are untested. Grid concentration and the gbm-versus-ridge average never reached the output (K-0135).
+- related: H-0011, H-0030, H-0094, H-0121
+
+## H-0123 – Macro-cleaned liquidity concession, learned - LIQ-500 beta-neutral weekly, ridge on 5-day returns split into a cross-asset ETF part and a residual, hold 5 days
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: LIQ-500 US stocks, weekly beta-neutral, ridge on macro-cleaned five-day returns
+- outcome: rejected at G1: entries earned about the same as same-stock placebos and gross was a tiny fraction of cost
+- lesson: The macro-cleaning claim is not supported. New leg entries of the ridge score earned no more than same-stock placebos on a large event set; gross per entry was a tiny fraction of the round trip, below even the card's pessimistic case, and the placebo bar lay below cost, so a tradable effect would have shown. The shape was a small gain in the first sessions, gone by five and negative by ten, with the thirds disagreeing in sign: neither the quick concession nor the slow build the card described. Ridge weights and the plain SPY-only control were not reported, so the split itself is untested.
+- avoid: No further weekly LIQ-500 reversal score that only changes the cleaning (macro, sector, SPY, industry residuals, beta windows): same sort, many trials already. Do not follow the early positive sessions.
+- open questions: H-0115 (volatile half) did not repeat in H-0117 or here; a new card needs its exact spec and a volatile-versus-calm control.
+- related: H-0115, H-0117, H-0114, H-0116, H-0119, H-0099, H-0094
+
+## H-0124 – US-stress switch for crypto short-term momentum, learned - top-20 Binance perps dollar-neutral 5-day cohorts, LightGBM on coin momentum x VIX and BTC-trend state
+
+- family: `short-term-momentum` · mechanism: cross_asset_information · instruments: top twenty Binance perps, dollar-neutral, gbm on momentum plus VIX and BTC state
+- outcome: rejected at G1 on the event count: no events at G0 or G1, so nothing about the idea was measured
+- lesson: Untested, not refuted: the mechanism test saw no events at all, so there is no sign, percentile or cost result. G0 passed with zero events and ran in a fraction of a second, unlike the other learned cards, so the model probably never produced a score. The cause is likely an input rule that leaves no scored rows (all-valid sixty-day returns including BTC, the delivered VIX series, the warm-up on a three-year window, the universe), not the market. The card forecast many events and an almost empty first third, so zero was not expected. The state-switch claim and the gbm-versus-ridge comparison remain untested.
+- avoid: Do not read this as evidence against crypto momentum or the VIX switch, or retune parameters to make events appear. Count scored rows by year before resubmitting.
+- open questions: The unconditional momentum slope among liquid perps is the missing control (K-0119) and a cheaper first card; report how the state was used (K-0162).
+- related: H-0081, H-0120, H-0029, H-0099
+
+## H-0126 – Credit-market news into levered equities, learned - LIQ-500 beta-neutral legs in weeks of a credit-specific Baa spread move, LightGBM on leverage x shock, hold 5 days
+
+- family: `oil-shock-equity-underreaction` · mechanism: cross_asset_information · instruments: LIQ-500 stocks, weekly beta-balanced long/short legs in credit-spread-shock weeks, LightGBM on leverage, coverage, volatility, five-day hold
+- outcome: mechanism test passed; rejected at G1 on the strategy: reliable versus T-bills, but under the absolute Sharpe floor (gross only just above it)
+- lesson: Credit-specific Baa spread news reached levered large caps within a week: entries beat same-stock placebos (placebo mean near zero), gross covered round-trip cost, and the sign held in every third, the latest included. A balance-sheet mapping with a market-based shock worked where H-0116's statistical betas failed. The book was invested about a fifth of the time, gross Sharpe barely cleared the floor, costs took the rest, and the long leg earned while the short leg lost despite beta-balanced legs. The effect kept growing to the longest horizon, so slow leverage drift is not excluded. No ridge control was reported, so gbm convexity is untested.
+- avoid: Do not retune z_news or n_estimators, or drop the short leg after seeing it lose (dev-selected). Do not read the pass as a tradable book (K-0027). Do not file another macro price on this build without a balance-sheet link and a clean shock series.
+- open questions: Ridge control (K-0135), a side split (widening against tightening) and an episode split (2001-2002, 2008, 2020) are unreported. A long-only tilt on an always-invested core is the cheapest tradable form (K-0064 limits).
+- related: H-0114, H-0116, H-0119, H-0056, H-0080, H-0075

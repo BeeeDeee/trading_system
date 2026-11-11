@@ -198,17 +198,17 @@ Two learned cards gave a gradient-boosted score date-level inputs that are the s
 
 *confidence low · 2026-11-09 · librarian · supersedes K-0137 · evidence: H-0118; H-0098; H-0099; H-0110; K-0137; K-0152; K-0027; K-0034; K-0060*
 
-### K-0164 Estimated-exposure diffusion: oil passed once; rates, dollar, credit and non-oil commodities did not
+### K-0169 Learned large-cap sorts: the dollar price grid and macro-cleaned residuals add nothing either
 
-K-0158 read the oil pass of H-0114 against the failure of H-0116 on rate, dollar and credit news, and left open whether direct economic links in other commodities would repeat it. H-0119 tested that on gold, natural gas, grains and base metals, taken net of the stock market and of oil, with the same construction (estimated exposure times a residual shock, a gradient-boosted score, weekly legs, five-day hold). Entries earned about zero, below the same-stock placebo mean, gross a small fraction of cost, event and date counts ample. So the oil pass is not a general property of direct producer and user links; it is either specific to oil, where the link to large caps is big and visible, or episodic, as its faded latest third suggested. Inferred, not tested: ETF proxies for gas, grains and metals are noisy shock measures, and one year of daily regressions gives noisy exposures for stocks with weak links. Per-commodity results and the ridge control were not reported. Do not file further prices on this construction without an argument for why the shock series is clean and the link large.
+K-0166 listed fundamentals, ownership, attention, calendar, tax clock, return-distribution shape and information-asymmetry markers as learned conditioners that did not lift a short-horizon large-cap sort above cost. Two more sources failed. H-0122 used the price level on the dollar grid (next-session hold, picks only a gbm makes against a ridge): entries beat peers slightly, but a sizeable share was earned by the same stocks on shifted dates, gross was a small fraction of cost, and the effect was largest early and grew with the horizon. H-0123 split the weekly move into a cross-asset part and a residual for a ridge: entries matched placebos, gross was near zero, and the thirds disagreed. In both the placebo bar lay below cost, so not a power problem. In the most liquid stocks neither a behavioral microstructure input nor a cross-asset input brings gross near a taker's round trip. Any grid effect probably sits in low-priced names or needs resting orders. A further learned conditioner has a low prior.
 
-*confidence low · 2026-11-09 · librarian · supersedes K-0158 · evidence: H-0119; H-0116; H-0114; H-0056; H-0075; K-0158; K-0060; K-0074*
+*confidence low · 2026-11-10 · librarian · supersedes K-0166 · evidence: H-0122; H-0123; H-0121; H-0117; K-0166; K-0152; K-0142; K-0160; K-0060*
 
-### K-0166 Information-asymmetry markers add nothing for a learned large-cap sort; continuation calls were rare
+### K-0173 Estimated-exposure diffusion: oil and credit passed the event test; rates, dollar and non-oil commodities did not
 
-K-0152 listed fundamentals, ownership, attention, calendar, tax clock and return-distribution shape as learned conditioners that did not lift a one-week large-cap sort above cost. H-0121 adds a fifth source from the literature on informed versus hedging volume: R&D intensity, how much news past releases revealed, and position in the earnings cycle, on non-earnings weeks with a volume-accompanied move. Only the model's continuation calls were marked, because no reversal rule can make them. They were rare relative to the card's expectation (inferred: the model mostly faded moves), averaged about zero against same-stock placebos, and gross was a small fraction of cost. The thirds disagreed in sign and the latest was the best, so this is not the usual decay (K-0060) but not a stable effect either. The placebo bar lay above cost, so a large effect was excluded and a modest one was not. The ridge control and the low-versus-high asymmetry split never ran (K-0135). In large caps the sign flip of the volume-return relation with information asymmetry is not visible with these markers, and a further learned conditioner has a low prior.
+K-0164 read the oil pass of H-0114 against nulls in rates, dollar, credit and non-oil commodities and called oil special or episodic. H-0126 corrects the credit part: the shock was the credit spread move not explained by stocks or Treasuries (market-based), and stocks were mapped by balance sheet (leverage, coverage, volatility), not by a return beta. Entries beat same-stock placebos, gross covered cost, and the sign held in every third, the latest included, unlike oil. H-0116 failed on credit with statistical betas, so the mapping probably decided, not the price. Both passes share a structural link and a clean shock; both books were part-time, missed the absolute Sharpe floor and had a losing short leg. Open: the ridge control never ran, the effect grew to the longest horizon (slow leverage drift not excluded), and the beta gap against unmarked peers was not neutralized (K-0074). Rates, dollar and non-oil commodities stay unsupported. A further card needs an explicit link and a clean shock series, not a new price.
 
-*confidence low · 2026-11-09 · librarian · supersedes K-0152 · evidence: H-0121; H-0111; H-0108; H-0109; H-0110; H-0094; K-0152; K-0135; K-0060*
+*confidence low · 2026-11-10 · librarian · supersedes K-0164 · evidence: H-0126; H-0114; H-0116; H-0119; K-0164; K-0074; K-0135*
 
 ## Data
 
@@ -418,6 +418,18 @@ K-0145 explained an empty first block by a dataset starting after the default de
 
 *confidence low · 2026-11-09 · librarian · supersedes K-0145 · evidence: H-0120; H-0105; H-0102; H-0104; K-0145; K-0069; K-0098; K-0006*
 
+### K-0171 Scout forecasts: round trip and counts held; gross per entry fell below the central case in two more cards
+
+H-0122 forecast 80000 to 180000 events and a round trip near 11 bps; G1 counted about 180000 and 11.3 bps. Gross per entry was about 1.3 bps against a central 3 and an optimistic 12. The card named its likeliest death correctly (a real but sub-cost effect). H-0123 forecast 90000 to 100000 events and 10 to 12 bps; G1 counted about 75000 and 11.3 bps, with gross about 0.4 bps against a central 15 and a pessimistic 3, so below the pessimistic case; its likeliest death (mechanism passes, book misses the Sharpe floor) was wrong, the mechanism itself failed. Pattern with H-0116 and H-0117: a card that takes an earlier unconfirmed pass (H-0115, K-0160) as its central case has been too high each time. Keep writing the case in which the mechanism is absent. This supersedes K-0159.
+
+*confidence low · 2026-11-10 · librarian · supersedes K-0159 · evidence: H-0122; H-0123; H-0116; H-0117; K-0159; K-0165; K-0160*
+
+### K-0172 Learned dollar-neutral books: the long leg earns and the short leg loses in four cards, also with beta-balanced legs
+
+In four learned dollar-neutral or beta-neutral weekly books whose event test passed, the G1 decomposition shows a positive long leg and a negative short leg: H-0106 (K-0147), H-0114, H-0115 and H-0126. The earlier reading for the first three was market exposure or a sector tilt (K-0074). H-0126 weakens that reading: its legs were built inside beta terciles and balanced by construction, and the short leg still lost. So the pooled event average (side-adjusted, against raw unmarked peers) probably leans on the long side, and the book pays for a short leg that adds cost and no return. The event study reports no side split, and the card of H-0126 named none, so this is inferred from leg Sharpes, not tested. A Scout writing a learned neutral card should state what it expects from each leg, and a Builder or G1 should report the event average by side. A long-only tilt on an always-invested core avoids the short leg but keeps the limits of K-0064 and K-0153.
+
+*confidence low · 2026-11-10 · librarian · evidence: H-0126; H-0114; H-0115; H-0106; K-0147; K-0074; K-0064; K-0153*
+
 ## The judge (framework behaviour)
 
 ### K-0008 Gate runner fixes found by real hypotheses
@@ -461,12 +473,6 @@ K-0047 said G0 events_in_dev matches the G1 event count. That still holds for H-
 Intraday crypto_top_n cards may name a leader or exclusion (e.g. BTCUSDT, ETHUSDT) in strategy.py. Since commit 405b0961 the Builder's lab try adds instrument-like string literals (…USDT) to the synthetic market; before, data.col('BTCUSDT') crashed in lab try (synthetic names were AAAUSDT..FFFUSDT) although real G0 on real data was unaffected. A Builder rewrite after such a block may not reuse earlier code (old workspace files are gone), so re-verify parity with the card's reference.
 
 *confidence high · 2026-10-15 · human · evidence: H-0040 message 288*
-
-### K-0062 Zero events can pass G0 and then read as a mechanism failure
-
-Three cards ended on the event count with no mechanism result: H-0021 (empty by universe), H-0038 (events at G0, none at G1) and H-0043 (zero at G0 and at G1). H-0043 is new: G0 passed with zero events, and the signal was a two-sigma residual gap that fires regularly in any healthy series, so the cause is almost surely the inputs (ICE BofA spread coverage in the lab's FRED copy, the valid-day rule, or NaN propagation), not the market. The registry shows g1_mechanism_events, which a Scout can read as a failed mechanism. Suggested handling: G0 should flag a card whose events_in_dev is zero; the Builder should report events by year before submitting; the Archivist should confirm first-valid dates of long-history series. The card's fail-loudly coverage check cannot be point-in-time at G0.
-
-*confidence low · 2026-10-16 · librarian · evidence: H-0043; H-0038; H-0021; K-0054; K-0032*
 
 ### K-0069 G1 event-count code can hide a measured mechanism failure; date tripwires cannot fire at G0
 
@@ -582,6 +588,12 @@ H-0113 is the first card to reach G3 and the first to fail it. The deflated Shar
 
 *confidence low · 2026-11-08 · librarian · evidence: H-0113; H-0017; H-0022; H-0018; K-0059; K-0087*
 
+### K-0170 Zero events pass G0 and read as a mechanism failure: a learned crypto card that probably never scored
+
+K-0062 listed three cards that ended on the event count without a mechanism result (H-0021, H-0038, H-0043). H-0124 is a fourth, and the first learned one: G0 passed with zero events in dev and a runtime of 0.19 s, while learned cards of the same days took 264 s (H-0122) and 85 s (H-0123), so no walk-forward fit seems to have run. G1 then counted zero events and blocks; the registry shows g1_mechanism_events, which reads as sparsity (K-0069). The card forecast about 1500 to 2500 events; H-0120, a learned card on the same kind of universe and window, did produce events, so warm-up alone does not explain it. Candidate causes, none verified: the all-valid sixty-day return rule including BTC, the VIX input with leading NaN, the minimum training sample against a three-year window, the universe the gate hands over (K-0131). Suggested: G0 flags zero events when hundreds are forecast and reports scored rows by year. A question went to the owner.
+
+*confidence low · 2026-11-10 · librarian · supersedes K-0062 · evidence: H-0124; H-0120; H-0043; H-0038; H-0021; K-0062; K-0069; K-0131; K-0163*
+
 ## How the lab works
 
 ### K-0010 Fail loudly on missing inputs
@@ -638,12 +650,6 @@ On the Librarian's question the Chair merged macro-announcement-premium into var
 
 *confidence high · 2026-10-21 · librarian · evidence: H-0052; H-0073; H-0042; H-0045; K-0088; K-0070; K-0087; chair reply to question 541*
 
-### K-0159 Scout gross forecasts: the estimated-exposure card H-0116 came in below its pessimistic case
-
-K-0157 found that H-0112 fell below its pessimistic case, H-0114 matched its central case, and H-0113 and H-0115 exceeded their ranges, and suggested that cards built on a measured statistical regularity can beat forecasts. H-0116 (estimated factor exposure, same construction as H-0114) is a fifth data point and goes the other way: G1 counted 13071 events on 301 dates against a forecast of 14000-22000 events and 280-450 gate-on dates, so the count was slightly below range and the dates inside it; the round trip was about 11 bps against 12-15 forecast; but gross per event was negative against a central forecast of 15 bps and a pessimistic one of 1.5 bps. The Scout wrote the pessimistic case before the result, as asked, and it was still too high. Reading: an exposure-based card that reuses a mechanism that passed once (H-0114) cannot take that pass as the central case for new inputs. Five cards remain too few to retune a rule. Keep stating the forecast at a tenth of the central case and add the case in which the mechanism is absent.
-
-*confidence low · 2026-11-08 · librarian · supersedes K-0157 · evidence: H-0116; H-0114; H-0112; H-0113; H-0115; K-0157; K-0120*
-
 ### K-0165 Events defined as a subset of a model's own calls ran an order of magnitude below the Scout's count; cost matched
 
 H-0121 marked only the gbm's continuation calls (new entries to a leg whose recent move agrees with the leg side). The card forecast about 4000 to 8000 events; G0 and G1 both counted 547 on 280 dates (about 34 a year), so roughly a tenth of the lower bound. The Scout had written that a model that never calls continuation would fail the event count, but still built the forecast from condition arithmetic: a quarter to a half of leg names. The round trip matched (about 11 bps forecast, 11.4 modelled); gross per event came in near 1.6 bps against a central forecast of 15 bps. K-0142 saw model-defined event counts run above forecast, so the direction is not systematic; the point is that such counts cannot be derived from conditions alone. A card with model-defined events should give a count range from a stated call rate, say what the card concludes at a call rate a tenth of that, and note that the G1 minimum of 200 events and 2 positive blocks may bind. The registry again shows only the percentile code while the cost check failed too (K-0069, K-0098).
@@ -674,6 +680,7 @@ H-0121 marked only the gbm's continuation calls (new entries to a leg whose rece
 - K-0055 The G1 event study needs unmarked peers on each date: marking every universe instrument gives zero events
 - K-0056 Stress rebounds: positive on average, near generic drift, weakest lately
 - K-0061 G2 random-timing null is far below zero in three cards, so passing it may only measure costs
+- K-0062 Zero events can pass G0 and then read as a mechanism failure
 - K-0065 Macro-calendar cards on asset-class ETFs fail in three designs; reaction drift is single-stock only
 - K-0066 Perp funding does not tell forced crash selling from informational selling on a daily horizon
 - K-0067 The G1 reason code can name the event count while the mechanism was measured and failed; the count was visible at G0
@@ -713,4 +720,7 @@ H-0121 marked only the gbm's continuation calls (new entries to a leg whose rece
 - K-0156 An estimated stock-level oil link carried a delayed response, but it faded in the latest third
 - K-0157 Scout gross forecasts split in the latest four cards: below, central and above the range
 - K-0158 Estimated-exposure diffusion in liquid US stocks: oil passed once, rate, dollar and credit news did not
+- K-0159 Scout gross forecasts: the estimated-exposure card H-0116 came in below its pessimistic case
+- K-0164 Estimated-exposure diffusion: oil passed once; rates, dollar, credit and non-oil commodities did not
+- K-0166 Information-asymmetry markers add nothing for a learned large-cap sort; continuation calls were rare
 - K-0167 H-0113 core-only control: the reconstructed S&P 500 core beats SPY_TR by 7.9 %/yr on dev; the model window adds nothing
