@@ -85,3 +85,79 @@
     no slippage, and a pre-registered out-of-sample test found it negative after 2023 even before costs; altcoin
     costs are higher than BTC (the engine's liquidity tiers), so the gross move must be large. Family:
     us-open-range-breakout-crypto.
+
+# 2026-11-12, VWAP Wave batch: the four setups of the leaflet "VWAP Wave - Core Setup Guide" (Chris Drysdale,
+# Drysdale Trading Group, 7 pages; written for ES 5m, discretionary, NO performance numbers in the document; the
+# owner wants an honest test of a strategy that is marketed as very profitable). The lab has no US index intraday
+# data, so these are crypto analogues on binance_perp_5m, instruments BTCUSDT.P and ETHUSDT.P only (also keeps the
+# 5m panel small enough for the judge's MemoryMax at G4). All entries share ONE family (session-vwap-bands-crypto).
+#
+# Shared definitions for every entry (write them into the card exactly; they mirror qlab research 23, prereg v1.0.1
+# in strategy_backtester_2026_sep/docs/research23/PREREGISTRATION.md):
+# - Session = UTC day, anchor 00:00 UTC (TradingView's "Session" VWAP anchor on crypto). Candle price
+#   p = quote_volume / volume (exact candle VWAP; (h+l+c)/3 when volume is 0). From the session start to candle t:
+#   V = sum(v*p)/sum(v), sigma = sqrt(sum(v*p^2)/sum(v) - V^2). Bands U = V + k*sigma, L = V - k*sigma; the
+#   "value area" is [L, U]; k = 1 (k = 2 as the neighbour). Everything uses candles closed up to t.
+# - ATR = mean true range of the last 14 candles; stop buffer 0.25*ATR ("a few points"); band proximity
+#   tol = 0.1*k*sigma ("band area"). Entries only at session positions 6..275 (not in the first 30 minutes, when
+#   the bands are degenerate, nor in the last hour). Every position is flat at the end of the session (23:55 UTC).
+# - Both sides are traded (short = mirror of long). "Strength" = a close above the high of the reference candle.
+# - The lab engine decides at closes, so stops and targets are checked on candle closes (exit at the next open);
+#   say so in the card as a deviation from the leaflet (intrabar stops).
+# - Priors: qlab research 15/16 found that holds under ~2 days on BTC/ETH lose to ~15 bps round-trip costs in every
+#   family tested; the typical target here is 0.2-0.6 % on BTC. Forecast honestly that the base rules fail.
+#   Contamination (write it in every card's notes): qlab research 23 (2026-11-12) already ran these exact rules on
+#   BTC/ETH 5m over 2020-2022, the lab's dev period, and rejected all four setups at its dev gate. The 2023-2026
+#   holdout was NOT opened, so the lab's G4 period is still unseen for these rules. The lab run is an independent
+#   check with a different engine (close-based stops, fill at the next open, lab cost tiers), not a fresh test.
+
+- id: VWAP-C1
+  title: VWAP Wave setup 1 - price discovery continuation after acceptance outside the value area (BTC/ETH 5m)
+  text: |
+    Long side (short mirrored). Breakout = close > U. Acceptance = 3 closes > U in a row OR one close >= V +
+    (k+0.5)*sigma. After acceptance, a backtest candle b has low <= U + tol AND close >= U - tol; a newer backtest
+    candle replaces b. Entry signal = the first close above high[b] within the 6 candles after b. A close below V
+    cancels the acceptance and any pending backtest. Stop = lowest low since b - 0.25*ATR. Grid: exit
+    {end of session only (leaflet: "let the trade breathe"), target 2R}, entry {backtest as above, aggressive =
+    the first close > U after a close <= U, stop low[t] - 0.25*ATR}, k {1, 2} only around the primary
+    (backtest + end of session). Mechanism to argue: acceptance outside value means the auction moved to new
+    prices, so the pullback to the old value edge is bought by the participants who accept the new prices. Control
+    the owner wants: the same trades with random entry candles on the same day, same side and same stop distance;
+    if those do as well, the setup has no timing edge. Family: session-vwap-bands-crypto.
+
+- id: VWAP-C2
+  title: VWAP Wave setup 2 - fade the value area extremes after time inside value (BTC/ETH 5m)
+  text: |
+    Long at the lower band (short at the upper band mirrored). Context: the 6 closes before t were all inside
+    [L, U]. Test candle b: low <= L + tol and close >= L. Entry signal = the first close above high[b] within 3
+    candles after b (a close below L cancels: the band broke). Stop = lowest low since b - 0.25*ATR. Target =
+    V at the signal (leaflet: "VWAP serves as a key magnet") or, as the grid alternative, the opposite band U at
+    the signal. Second entry variant: enter right at the close of the test candle b (stop low[b] - 0.25*ATR).
+    Mechanism to argue: on balanced (rotational) days the value-area edges are where responsive sellers/buyers
+    take the other side. Falsification must include: the fade loses on days that later trend (report by the
+    day's range terciles) and the same trades at random times of the same day do as well. Family:
+    session-vwap-bands-crypto.
+
+- id: VWAP-C3
+  title: VWAP Wave setup 3 - return to value after an excursion outside the bands (BTC/ETH 5m)
+  text: |
+    Long side (short mirrored). Excursion = at least 3 closes < L in a row, during which some low <= L - 0.5*sigma
+    (time AND distance). Return = the first close >= L after it. Conservative entry: after at least 2 closes >= L
+    since the return, a pullback candle b with low <= L + tol (close >= L); entry signal = the first close above
+    high[b] within 6 candles; a close < L cancels (back outside); the return expires 24 candles after it; one trade
+    per return. Stop = lowest low since b - 0.25*ATR. Aggressive entry (grid): at the return candle itself, stop
+    low[t] - 0.25*ATR. Target = V at the signal, or the opposite band U (grid). Mechanism to argue: failed price
+    discovery (price rejected outside value) rotates back through value toward VWAP. Family:
+    session-vwap-bands-crypto.
+
+- id: VWAP-C4
+  title: VWAP Wave setup 4 - VWAP bounce after a return into value (BTC/ETH 5m)
+  text: |
+    Context: within the last 24 candles price returned into value (a close inside [L, U] right after a close
+    outside either band). Long (short mirrored): the previous close is inside value and above V; test candle b has
+    low <= V + tol and close > V. Entry signal = the first close above high[b] within 3 candles (a close < V
+    cancels). Stop = lowest low since b - 0.25*ATR. Target = the band U at the signal, or 2R (grid). Second entry
+    variant: at the close of the test candle. The leaflet claims "higher volatility days are better" for this setup:
+    report the result by terciles of ATR/price at entry and say whether the claim holds. Mechanism to argue: VWAP is
+    the session's average cost; after a return into value, a hold of VWAP shows which side controls the rotation.
+    Expect traps (the leaflet itself warns of VWAP break-and-reclaim games). Family: session-vwap-bands-crypto.
