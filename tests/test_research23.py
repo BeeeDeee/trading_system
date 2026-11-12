@@ -154,3 +154,22 @@ def test_grid_has_twenty_variants_and_four_primaries():
     g = SU.grid()
     assert len(g) == 20 and len({v.id for v in g}) == 20
     assert sum(v.primary and v.k == 1.0 for v in g) == 4
+
+
+def test_null_is_unbiased_on_a_driftless_walk():
+    """Stop + end-of-session trades at random times of a driftless walk have mean ~0 (a non-overlap rule that
+    depends on the outcome would push it clearly below 0)."""
+    d = synth(60, seed=11)
+    rng = np.random.default_rng(11)
+    lr = rng.normal(0, 0.002, len(d["c"]))
+    c = 100 * np.exp(np.cumsum(lr))
+    o = np.r_[100.0, c[:-1]]
+    d |= {"c": c, "o": o, "h": np.maximum(o, c) * 1.0005, "l": np.minimum(o, c) * 0.9995, "fund": np.zeros(len(c))}
+    a = E.prepare(d)
+    n = 40 * 60
+    e = (np.arange(n) // 40) * PER_DAY + 10 + (np.arange(n) % 40) * 6
+    b = G.Book(e, e + 1, np.where(np.arange(n) % 2 == 0, 1, -1).astype(np.int8), np.full(n, 0.003),
+               np.full(n, np.nan), np.zeros(n), np.zeros(n, np.int8))
+    sums, cnts = G.null_sums(a, b, 0, len(c), n_rep=20, seed=2, cost=0.0)
+    m = sums.sum() / cnts.sum()
+    assert abs(m) < 2e-4, m

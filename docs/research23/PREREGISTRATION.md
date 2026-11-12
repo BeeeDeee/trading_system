@@ -87,7 +87,7 @@ serves as a key magnet“), S3 `PB_VWAP` (principy 3–4), S4 `STR_BAND`.
 ## 6. Nula a benchmarky
 
 - **B_RND (hlavní nula, 500 běhů, seed 0..499):** pro každý obchod varianty náhodný vstup **téhož UTC dne**
-  ve vstupním okně, na reálné svíčce bez otevřené pozice, **se stejnou stranou, stejnou relativní vzdáleností
+  ve vstupním okně, na reálné svíčce (náhodné obchody se navzájem neblokují, v1.0.2), **se stejnou stranou, stejnou relativní vzdáleností
   stopu a stejnou relativní vzdáleností cíle** (u `EOD` bez cíle), výstup podle stejných pravidel a nejpozději na
   konci session. Testuje se načasování vstupu v rámci dne, ne strana, volatilita dne ani tvar výstupu.
   p = (1 + #{běhy s průměrným čistým obchodem ≥ P}) / (1 + 500).
@@ -135,3 +135,4 @@ rodina `session-vwap-bands-crypto`). Lab je otestuje nezávisle svým enginem a 
 | Datum | Změna | Důvod |
 |---|---|---|
 | 2026-11-12 | v1.0.1: S1 `PB` backtest svíčka musí navíc zavřít v oblasti pásma nebo vně (close ≥ U − tol). | Kontrola implementace před jakýmkoli výpočtem výnosu (viděny jen počty signálů a jeden ručně procházený signál): podmínka „low ≤ U + tol“ platí pro každou svíčku, která je celá zpět ve value area, takže S1 PB dával ~21 signálů denně na pohyb uvnitř value area, ne na test pásma. Leták: „backtest pullback of VWAP deviation band“. Žádná jiná změna. |
+| 2026-11-12 | v1.0.2: B_RND bez pravidla „bez otevřené pozice“, náhodné obchody se navzájem neblokují. Vývojový běh zopakován (rerun zapsán v registru jako `other`, n_configs = 0). | Chyba nalezená po prvním vývojovém běhu: náhodný obchod se zamítal, když se jeho držení (vstup→výstup) překrylo s jiným. Zamítnutí tak záviselo na výsledku (rychlé stopnutí se vejde, vítěz držený do konce session ne), takže nula vybírala ztrátové obchody. U S1_PB_EOD (BTC, dev, bez nákladů) dávala −20 bp na obchod proti +9,6 bp nezávislé referenční implementace. Ve vývojovém běhu mělo všech 20 variant záporný čistý Sharpe i průměrný obchod, takže oprava verdikt brány nemění (brána vyžaduje i Sharpe > 0). Stejný vzor (`if occ[e:x+1].any(): continue` po simulaci výstupu) má `research15.strategy.random_book` a `research16.engine.random_book`; jejich verdikty se zde nepřepočítávají. |

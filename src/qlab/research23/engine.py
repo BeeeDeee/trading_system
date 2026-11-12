@@ -107,54 +107,41 @@ def trade_book(a: dict, sig: Signals, target: str, start: int, end: int, delay: 
 
 @njit(cache=True)
 def _null(o, h, l, c, real, fund, pos, E, SD, RISK, TREL, start, end, cost, n_rep, seed, tries):
-    """Per replication: sum and count of net returns of random same-day entries (prereg §6)."""
+    """Per replication: sum and count of net returns of random same-day entries (prereg §6, v1.0.2).
+
+    Random trades do not block each other: a non-overlap rule would accept or reject a draw depending on how
+    long the trade lasted, i.e. on its outcome (quick stop-outs fit, winners held to the session end collide),
+    which biases the null downwards."""
     np.random.seed(seed)
     sums = np.zeros(n_rep)
     cnts = np.zeros(n_rep, np.int64)
-    occ = np.zeros(len(c), np.bool_)
     for r in range(n_rep):
-        set_lo = np.empty(len(E), np.int64); set_hi = np.empty(len(E), np.int64); ns = 0
         for i in range(len(E)):
             day0 = E[i] - pos[E[i]]
             lo, hi = max(day0 + WIN_LO, start), min(day0 + WIN_HI, end - 2)
+            last = min(day0 + PER_DAY - 1, end - 1)
             if hi < lo:
                 continue
-            last = min(day0 + PER_DAY - 1, end - 1)
             s = SD[i]
             for _ in range(tries):
                 e = np.random.randint(lo, hi + 1)
-                if not real[e] or occ[e] or e >= last:
+                if not real[e] or e >= last:
                     continue
                 p = c[e]
                 St = p * (1.0 - s * RISK[i])
                 T = p * (1.0 + s * TREL[i]) if TREL[i] == TREL[i] else np.nan
                 x, px, why = _exit(o, h, l, c, real, e, last, s, St, T)
-                clash = False
-                for j in range(e, x + 1):
-                    if occ[j]:
-                        clash = True
-                        break
-                if clash:
-                    continue
-                for j in range(e, x + 1):
-                    occ[j] = True
-                set_lo[ns], set_hi[ns] = e, x
-                ns += 1
                 f = 0.0
                 for j in range(e + 1, x + 1):
                     f += fund[j]
                 sums[r] += s * (px / p - 1.0) - s * f - 2.0 * cost
                 cnts[r] += 1
                 break
-        for q in range(ns):
-            for j in range(set_lo[q], set_hi[q] + 1):
-                occ[j] = False
     return sums, cnts
 
 
 def null_sums(a: dict, b: Book, start: int, end: int, n_rep: int, seed: int, cost: float = COST,
               tries: int = 200) -> tuple[np.ndarray, np.ndarray]:
-    """B_RND sums/counts per replication. Reference trades are placed in book order; a trade that finds no free
-    candle in `tries` draws is dropped from that replication (the count is reported)."""
+    """B_RND sums/counts per replication; a trade that finds no real candle in `tries` draws is dropped."""
     return _null(a["o"], a["h"], a["l"], a["c"], a["real"], a["fund"], a["pos"], b.e, b.side.astype(np.int64),
                  b.risk, b.trel, start, end, cost, n_rep, seed, tries)

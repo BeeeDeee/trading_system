@@ -16,8 +16,12 @@ from qlab.validation.stats import sharpe
 snapshot = sys.argv[1]
 reg = registry()
 grid = SU.grid()
-for v in grid:
-    reg.record("candidates", v.as_dict(), note=f"r23 dev {v.id}")
+if all(reg.has(v.as_dict()) for v in grid):                 # rerun after a logged fix (prereg §12): N unchanged
+    reg.record("other", {"study": "research23", "stage": "dev_rerun", "reason": sys.argv[2] if len(sys.argv) > 2
+                         else "rerun"}, n_configs=0, note="r23 dev rerun")
+else:
+    for v in grid:
+        reg.record("candidates", v.as_dict(), note=f"r23 dev {v.id}")
 assets = {s: E.prepare(d) for s, d in load_dev(snapshot).items()}
 t = next(iter(assets.values()))["t"]
 start, end = E.start_index(assets, DEV[0]), len(t)
