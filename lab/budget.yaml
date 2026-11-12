@@ -1,15 +1,15 @@
 # Agent budget of the research lab (decision Q4: Claude Pro, 8 runs/day). The owner edits this file.
 # Counted per UTC day from agent_invocations (every started run counts, failed ones too: they used the quota).
-daily:
-  scout: 6            # 2 more hypotheses per day (owner, 2026-10-07); +1 on every role (owner, 2026-10-11), again +1 (owner, 2026-10-15), again +1 (owner, 2026-10-16); -1 (owner, 2026-10-27)
-  builder: 6          # each new hypothesis needs a Scout and a Builder run; -1 (owner, 2026-10-27)
-  skeptic: 4
-  archivist: 3        # -1 (owner, 2026-10-27)
-  librarian: 4
-  chair: 4
+daily:               # TEMPORARY boost 2026-11-12..13 (raised twice): scout 6->16, builder 6->16, skeptic 4->10, archivist 3->5, librarian 4->8, chair 4->6
+  scout: 16            # 2 more hypotheses per day (owner, 2026-10-07); +1 on every role (owner, 2026-10-11), again +1 (owner, 2026-10-15), again +1 (owner, 2026-10-16); -1 (owner, 2026-10-27)
+  builder: 16          # each new hypothesis needs a Scout and a Builder run; -1 (owner, 2026-10-27)
+  skeptic: 10
+  archivist: 5        # -1 (owner, 2026-10-27)
+  librarian: 8
+  chair: 6
   steward: 4          # runs only weekly and only while something is in PAPER
-total_daily: 30
+total_daily: 66       # TEMPORARY boost 2026-11-12..13 (owner: fresh limit, ~30 h); back to 30 on 2026-11-14 (30->44->66)
 quiet_utc: [0, 2]     # no agent runs 00:00-02:00 UTC (the cpb bots' daily run uses the same subscription)
-max_agent_runs_per_cycle: 1
-propose_when_waiting_below: 4   # Scout proposes only while fewer hypotheses than this wait for the Builder (2 -> 4, owner, 2026-10-26: two cards stuck on Builder questions blocked the Scout)
+max_agent_runs_per_cycle: 3   # TEMPORARY with the boost; back to 1 on 2026-11-14
+propose_when_waiting_below: 6   # Scout proposes only while fewer hypotheses than this wait for the Builder (2 -> 4, owner, 2026-10-26: two cards stuck on Builder questions blocked the Scout); TEMPORARY 4 -> 6 with the boost, back to 4 on 2026-11-14
 rate_limit_pause_hours: 5       # after a rate-limit error no agent runs for this long
