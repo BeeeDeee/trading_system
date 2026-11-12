@@ -171,7 +171,10 @@ notes: 'Brief fit: the signal comes from the TIPS/Treasury market (FRED breakeve
   gross under cost or the latest third wrong-signed. If it passes, the part-time dollar-neutral book will most likely
   miss the absolute Sharpe floor (K-0027); a long-only tilt would then be the next card. No data purchase needed;
   all series are in the catalog with loaders.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-10T18:15:11.377912+00:00'
   version: 1
@@ -194,3 +197,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-11T03:57:27.199580+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 345, qlab)
+- ts: '2026-11-11T03:59:29.867071+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 346, qlab)

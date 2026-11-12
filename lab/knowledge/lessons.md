@@ -1126,3 +1126,48 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not retune z_news or n_estimators, or drop the short leg after seeing it lose (dev-selected). Do not read the pass as a tradable book (K-0027). Do not file another macro price on this build without a balance-sheet link and a clean shock series.
 - open questions: Ridge control (K-0135), a side split (widening against tightening) and an episode split (2001-2002, 2008, 2020) are unreported. A long-only tilt on an always-invested core is the cheapest tradable form (K-0064 limits).
 - related: H-0114, H-0116, H-0119, H-0056, H-0080, H-0075
+
+## H-0127 – Treasury auction supply cycle, peer-testable - short TLT/IEF 3 sessions before each 5y-30y auction cluster, long 3 after, short-Treasury ETFs as peers
+
+- family: `treasury-auction-supply-concession` · mechanism: flow_structural · instruments: TLT and IEF around 5y-30y Treasury auction clusters, five short-Treasury ETFs as peers, 2007-2020
+- outcome: rejected at G1: mechanism measured, average slightly wrong-signed, no better than placebos, gross negative against cost
+- lesson: The cycle was measured this time: with unmarked short-Treasury peers the study ran and found no auction concession in TLT/IEF over 2007-2020. Average slightly wrong-signed, no better than shifted placebos, gross negative against cost, placebo bar under cost, so not a power problem. The longest horizon was the most negative, the shape of duration drift, not a one-week cycle. The middle third carried the loss, the first and last were slightly positive, so no decay story. Fed purchases absorbing supply is a possible reading, untested.
+- avoid: Do not refile the auction cycle in TLT/IEF with another hold, lead, cluster split (mid-month versus month-end), extra peers, or the mirror (long before, short after): a measured negative, and a mirror chosen from a wrong-signed dev result is a new trial. The H-0038 zero-event question is answered; the card's own park rule applies.
+- open questions: If the concession exists it likely lives where dealers hold the inventory: when-issued prices, on-the-run yields or Treasury futures, none loadable, or before the Fed's purchase programmes. Daily ETF bars with open-to-open timing see little of it.
+- related: H-0038, H-0048, H-0072
+
+## H-0128 – Credit-market news into levered equities, plain rule - LIQ-500 beta-tercile-matched long/short on net market leverage in weeks of a credit-specific Baa spread move, hold 5 days
+
+- family: `oil-shock-equity-underreaction` · mechanism: cross_asset_information · instruments: LIQ-500 US stocks, weekly beta-tercile-matched long/short on net market leverage in weeks of a credit-specific Baa spread move, five-day hold, 1999-2020
+- outcome: rejected at G1 on the mechanism test: right-signed average but inside the placebo cloud, bar under cost, gross a small fraction of cost; strategy not run
+- lesson: The plain leverage sort on a credit-specific spread shock did not reproduce H-0126's pass. Average right-signed but inside the placebo cloud, bar under cost and gross a small fraction of cost, so not a power problem. The earliest third (with the 2001-2002 credit episode) was wrong-signed, and the effect was near zero after one session and larger at ten and twenty: slow leverage-style drift, not delayed absorption of news. H-0126's pass probably needed its coverage and volatility inputs, or was luck; the ridge control never ran, so the two are not separated.
+- avoid: Do not retune z_news, leg_quantile or the beta-tercile matching, drop the short leg, or swap the Baa spread for another credit series. No further leverage sort on a credit shock: a third credit trial needs a different mapping, not a new threshold.
+- open questions: Does distress (interest coverage, volatility) rather than leverage carry H-0126's pass? Untested: a distress-only sort in widening weeks, a side split (widening against tightening) and an episode split. The prior is low after this null; state the expected result by leg.
+- related: H-0126, H-0114, H-0116, H-0119, H-0129
+
+## H-0129 – Inflation news into nominal balance sheets - LIQ-500 neutral, after a residual TIPS-breakeven shock, real-asset-heavy vs cash-heavy firms within leverage terciles, hold 5 days
+
+- family: `oil-shock-equity-underreaction` · mechanism: cross_asset_information · instruments: LIQ-500 US stocks ex banks, weekly dollar-neutral: real-asset-heavy against monetary-asset-heavy firms within leverage terciles, in weeks of a residual TIPS-breakeven shock, five-day hold, 2004-2020
+- outcome: rejected at G1 on the mechanism test: right-signed average inside the placebo cloud, bar under cost, gross a small fraction of cost; strategy not run
+- lesson: A clean inflation shock (TIPS breakeven net of stocks, real yield, oil, credit) mapped through an explicit balance-sheet link gave a small right-signed average inside the placebo cloud, with a bar under cost: not tradable and not a power problem. The shape refutes the claim: the effect peaked within three sessions, faded by the primary horizon and was negative at two and four weeks, so a taker at the next open is late and there is no build over the week (the card's own kill condition). Thirds disagreed, latest strongest. Sector rotation after reflation news is the inferred reading.
+- avoid: Do not retune z_shock or leg_quantile, or refile the same sort with a one-to-three-session hold because the early sessions look larger: a dev-selected horizon the next open cannot capture. Do not file other macro news through a balance-sheet sort without saying why the shape would differ.
+- open questions: The by-sign (inflation up against down) and by-leg splits and the non-shock-week control sort the card asked for did not reach the gate output, so a sector tilt is not separated from a news effect. Nothing seen suggests a tradable form; the prior for another macro-news-to-balance-sheet map is low.
+- related: H-0126, H-0128, H-0114, H-0116, H-0119, H-0056
+
+## H-0130 – TradFi risk shifts re-order the crypto risk ladder, learned - Binance spot top-20 long-only 5-day cohorts, LightGBM on beta/ivol/liquidity x VIX and real-yield shifts
+
+- family: `crypto-flight-to-quality` · mechanism: cross_asset_information · instruments: Binance spot top twenty coins, long-only five-day cohorts, LightGBM on beta, idiosyncratic risk, liquidity and VIX and real-yield shifts
+- outcome: rejected at G1: gbm-only picks versus a ridge stayed inside the placebo cloud and gross was a fraction of round-trip cost
+- lesson: The claim that US risk shifts re-order the crypto ladder was not visible. The point estimate was positive but inside the placebo cloud and below cost. The first third was empty from model warm-up, nearly all the gain sat in the middle third and the latest third was about zero, the declared kill in spirit. The horizon profile was flat to negative at one and ten days, with no build around five. Events fell on far fewer dates than forecast, so the disagreement with the ridge sits in a few TradFi episodes. The placebo bar lay above cost, so a small effect is unresolved, but observed gross was below cost: not tradable in this form.
+- avoid: Do not retune the shock thresholds, top or n_estimators, or add funding, stablecoin or session features to the same TradFi-state sort: a second trial of one idea. Do not read the middle-third gain as support; it is one regime. Do not file another VIX- or real-yield-switched crypto sort without saying how the state enters the score.
+- open questions: The risk-off versus risk-on and calm-date splits the card asked for never reached the gate output, so the sign flip is untested. The plain ladder premium without a learner is the missing control.
+- related: H-0124, H-0081, H-0120, H-0099, H-0098
+
+## H-0131 – Equity-rally rebalancing pressure - 60/40 SPY/IEF book tilted toward IEF for 5 sessions after a large stock-over-Treasury rally, rally side only
+
+- family: `rebalancing-flow-pressure` · mechanism: flow_structural · instruments: SPY/IEF 60/40 book tilted to IEF after stock rallies; event study on four equity ETFs vs four bond ETFs, 2003-2020
+- outcome: rejected at G1 mechanism test: right-signed but inside the placebo cloud, gross about equal to cost, latest third reversed
+- lesson: The rally side did not show a rebalancing concession. Equities lagged bonds after large rallies, above a placebo mean that is itself negative (equity premium), but inside the placebo cloud; gross only about matched round-trip cost, and the latest third, the one with the most events, reversed sign (a declared kill condition). The effect was small at one session and grew out to three weeks: slow drift, not a week-long build. Four equity ETFs share each date, so the independent evidence is the event dates. With H-0050, this control leans toward the H-0046 pass being stress reversal, not rebalancer pressure.
+- avoid: Do not refile the same rally state with another k, tilt, hold or ETF set, or the mirror side (that is the H-0041 / H-0046 stress event): same stock-bond spread events, new trials. Do not file another daily SPY/IEF tilt for rebalancing pressure; the family now has several trials on daily ETFs and none supports the claim.
+- open questions: Rebalancing pressure observed where it trades (index futures, closing auction, quarter-end calendars with known flow size) or with pension and target-date flow data. A both-sides-marked, volatility-standardized spread test could separate stress rebound from drift. A slow equity-over-bond continuation after rallies is a different claim (trend) and would need its own argued card.
+- related: H-0046, H-0050, H-0002, H-0044, H-0041

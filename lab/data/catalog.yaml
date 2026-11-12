@@ -1265,3 +1265,94 @@ datasets:
     - XTZ.value_krw
     location: LAB_HOME/data/upbit_krw_1d
     cost_model: null
+
+  - id: exchange_holidays_1d
+    loader: generic
+    asset_class: macro
+    instruments: 'Scheduled full-day holiday calendar of 12 Asia-Pacific stock exchanges
+      aligned to XNYS sessions (signal only, not tradable). Keys per XNYS session d
+      and exchange MIC X (XTKS, XHKG, XKRX, XTAI, XSES, XKLS, XASX, XBKK, XIDX, XPHS,
+      XNZE, XBOM): X.closed_next = 1 if X has no regular session on any local calendar
+      date strictly after d up to and including the date of the next XNYS session, else
+      0; X.anchored = 1 if X had a regular session on any local date strictly after
+      the previous XNYS session''s date up to and including d, else 0. Weekends are
+      never sessions; half-day sessions count as sessions.'
+    frequency: 1d
+    range:
+    - '2001-01-02'
+    - '2023-01-12'
+    clock: us_close
+    source: open-source exchange_calendars library (Apache-2.0, github.com/gerrymanoim/exchange_calendars),
+      session lists tests/resources/<mic>.csv fetched from raw.githubusercontent.com
+      (free, public, no key); these encode each exchange's published holiday schedule.
+      Derived by the fetcher.
+    quality: 'lab ingest 2026-11-11: 133032 rows, 24 series, see LAB_HOME/data/exchange_holidays_1d/report.json'
+    holdout_from: '2021-01-01'
+    known_biases:
+    - 'Derived calendar, not exchange notices: sessions come from the library''s holiday
+      rules as of its current master, i.e. holiday lists compiled after the fact from
+      exchange announcements. Not cross-checked day by day against each exchange''s
+      own notices (the Archivist is data-blind and only checked counts and ranges).
+      A wrong or missing holiday flips closed_next on the day before and anchored on
+      the day itself.'
+    - 'Unscheduled closures: weather closures the library encodes as holidays were put
+      back as sessions (XHKG typhoon and black-rainstorm days 2001-2020 as listed in
+      the library''s ''Weather related closures'' block: 16 dates; XPHS typhoon days
+      2011-09-27, 2012-08-07, 2014-07-16, 2014-09-19, 2014-12-08, 2017-09-12). For these
+      days the real exchange was closed but the series says a session: closed_next =
+      0 the day before, anchored = 1, so they are never events (conservative for a holiday-fade
+      rule, but they hide a true no-new-close day). The list was read from labelled
+      blocks in the library source; other unlabelled ad-hoc closures (emergency or special
+      holidays declared at short notice by XBKK, XIDX, XBOM, XKLS, XPHS, or mourning
+      days) cannot be told apart from scheduled ones and are kept as holidays. Taiwan
+      typhoon closures before 2024 are not in the library and show as sessions.'
+    - 'Scheduled-ahead status is judged by type, not by announcement date: some special
+      holidays (royal funerals, mourning days such as XASX/XNZE 2022-09, election days,
+      extra bridge days) were announced only days or weeks ahead, not at the US close
+      of the day before; announcement dates are not in the source. Lunisolar and religious
+      holidays in Malaysia, Indonesia, Singapore, India and Thailand are fixed in advance
+      in the library but were sometimes moved by the authorities late.'
+    - Coverage is cut at the XNYS session list of the library (last XNYS session 2023-01-13,
+      so the last row is 2023-01-12) and per exchange at the library's own date range;
+      Saturday sessions (Korea, Taiwan, others before about 2002) are ignored as the
+      spec says weekends are no session. Rows start 2001-01-02 and cover all 12 exchanges
+      on all 5543 sessions. XNYS special closures (2001-09-11..14, 2004-06-11, 2007-01-02,
+      2012-10-29/30, 2018-12-05) come from the same library.
+    - The holdout boundary (2021-01-01) leaves about two years of holdout because the
+      library's XNYS session file stops in January 2023; the request period ended 2020-12-31.
+    - Both series are 0/1 flags on a calendar that repeats each year, so the flags are
+      constant over long stretches; XIDX, XPHS and XBOM lists are the least checked.
+    forward_source: 'same library: tests/resources/<mic>.csv from the exchange_calendars
+      repository, or the library itself (pip) for later dates; exchange holiday notices
+      (JPX, HKEX, KRX, TWSE, SGX, Bursa Malaysia, ASX, SET, IDX, PSE, NZX, BSE) for
+      cross-checks. The csv files are refreshed only when the library is updated (XNYS
+      file currently ends 2023-01-13), so a forward feed needs the library calendars
+      computed locally.'
+    calendar: XNYS
+    fields:
+    - XASX.anchored
+    - XASX.closed_next
+    - XBKK.anchored
+    - XBKK.closed_next
+    - XBOM.anchored
+    - XBOM.closed_next
+    - XHKG.anchored
+    - XHKG.closed_next
+    - XIDX.anchored
+    - XIDX.closed_next
+    - XKLS.anchored
+    - XKLS.closed_next
+    - XKRX.anchored
+    - XKRX.closed_next
+    - XNZE.anchored
+    - XNZE.closed_next
+    - XPHS.anchored
+    - XPHS.closed_next
+    - XSES.anchored
+    - XSES.closed_next
+    - XTAI.anchored
+    - XTAI.closed_next
+    - XTKS.anchored
+    - XTKS.closed_next
+    location: LAB_HOME/data/exchange_holidays_1d
+    cost_model: null
