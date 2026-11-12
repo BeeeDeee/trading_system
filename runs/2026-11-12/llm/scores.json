@@ -1,0 +1,127 @@
+{
+ "date": "2026-11-12",
+ "regime": {
+  "label": "Risk-off, zvýšená volatilita",
+  "summary": "Horká říjnová CPI srazila BTC pod 74 tis. USD a vyvolala likvidace přes 1 mld. USD, spotová BTC ETF mají silné odtoky a dominance BTC stoupla k 61 %. Altcoiny s vysokou betou ztrácejí víc než BTC, sentiment je ve strachu, takže krátkodobý odraz je možný, ale trend je dolů."
+ },
+ "events_7d": [
+  {"date": "2026-11-13", "title": "US PPI (inflace výrobních cen)", "type": "makro"},
+  {"date": "2026-11-15", "title": "Unlocky STRK a ARB (mimo univerzum, sentiment altcoinů)", "type": "unlock"},
+  {"date": "2026-11-15", "title": "Solana Breakpoint v Londýně (15.–17. 11.)", "type": "jine"},
+  {"date": "2026-11-17", "title": "US maloobchodní tržby a výsledky NVIDIA", "type": "makro"},
+  {"date": "2026-11-18", "title": "Zápis z jednání FOMC", "type": "makro"}
+ ],
+ "coins": {
+  "BTC": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.47, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Pod všemi SMA po horké CPI a odtocích z ETF, RSI 35 a blízko 30d minima dává jen omezený prostor k odrazu.",
+   "sources": ["https://theblock.co/news/markets/2026-11-07-bitcoin-etfs-flip-negative-for-2026-after-1-28-billion-outflow-week-worst-since-june-435984", "https://www.tokenpost.com/news/investing/53272"]
+  },
+  "ETH": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.42, "p_up_7d": 0.44, "expected_move_7d_pct": -1.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Výrazně slabší než BTC (rel7 −7 %) s pokračujícími odtoky z ETH ETF, RSI pod 30 dává jen krátký odraz.",
+   "sources": ["https://cryptonews.com/es/noticias/ethereum-salidas-etf-gas-minimos/"]
+  },
+  "BNB": {
+   "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.53, "p_up_7d": 0.46, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Po hacku Binance z konce října (výběry obnoveny, krytí 90 %) se BNB drží lépe než BTC a má nízkou betu, šok je v ceně.",
+   "sources": ["https://www.cnbc.com/2026/10/31/binance-hack-asset-coverage-withdrawals.html"]
+  },
+  "XRP": {
+   "trend": -2, "mr": 2, "news": -1, "conviction": 2,
+   "p_outperform_btc_7d": 0.45, "p_up_7d": 0.45, "expected_move_7d_pct": -1.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Silně přeprodané (RSI 23), ale tlak z prodeje ukradených XRP, odtoky z ETF a prodej Davida Schwartze pokračují.",
+   "sources": ["https://cryptobriefing.com/xrp-drops-24-in-four-weeks-pressured-by-stolen-asset-conversions/", "https://247wallst.com/investing/cryptocurrency/2026/11/10/xrp-fell-17-in-a-week-more-than-any-other-major-coin-is-xrp-dead/"]
+  },
+  "SOL": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.45, "expected_move_7d_pct": -1.0,
+   "event": true, "event_type": "jine", "risk_flag": false,
+   "note": "Hluboko pod SMA a přeprodaná (RSI 24), konference Breakpoint 15.–17. 11. může dát krátký narativní impuls.",
+   "sources": ["https://www.analyticsinsight.net/cryptocurrency-analytics-insight/november-2026-economic-releases-and-crypto-events-to-watch-us-cpi-fed-minutes-pce-inflation-and-token-unlocks"]
+  },
+  "ZEC": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.44, "p_up_7d": 0.44, "expected_move_7d_pct": -2.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Po upgradu NU7 výběr zisků, odtoky z Grayscale ZEC ETF a pád −20 % za 3 dny; odraz možný, ale volatilita a beta jsou extrémní.",
+   "sources": ["https://www.coinspeaker.com/why-is-crypto-crashing-today-bitcoin-falls-below-73k-as-zcash-zec-leads-crypto-losses/", "https://www.kucoin.com/news/flash/zec-price-plummets-11-3-despite-grayscale-s-1m-sponsorship"]
+  },
+  "HYPE": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.47, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nízká korelace s BTC (0,27) a kniha s převahou bidů; unlock 6. 11. byl malý a další je až 29. 11.",
+   "sources": ["https://www.techflowpost.com/en-US/newsletter/141744", "https://app.tokenomics.com/tokenomics/hyperliquid/unlocks"]
+  },
+  "DOGE": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.44, "p_up_7d": 0.44, "expected_move_7d_pct": -1.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Klesající on-chain aktivita a slabý memecoinový sentiment, RSI 30 nabízí jen technický odraz.",
+   "sources": ["https://cryptoticker.io/en/dogecoin-news-on-chain-activity-down-37-percent-november-2026/"]
+  },
+  "NEAR": {
+   "trend": -2, "mr": 0, "news": -1, "conviction": 2,
+   "p_outperform_btc_7d": 0.42, "p_up_7d": 0.43, "expected_move_7d_pct": -2.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejslabší 30d trend vůči BTC (−20 %), únik dat z NEAR AI (ne exploit sítě) přidává negativní sentiment, beta 2.",
+   "sources": ["https://coinmarketcap.com/cmc-ai/near-protocol/latest-updates/"]
+  },
+  "UNI": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.45, "p_up_7d": 0.44, "expected_move_7d_pct": -2.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Pád −6,6 % za den na 30d minimum bez specifické negativní zprávy (likvidace), ale vysoká beta v risk-off škodí.",
+   "sources": ["https://www.tokenpost.com/news/investing/53659"]
+  },
+  "SUI": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.45, "p_up_7d": 0.45, "expected_move_7d_pct": -1.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Pod SMA se slabým rel30, zprávy (Samsung Wallet, konec peněženky Suiet) jsou drobné a v ceně.",
+   "sources": ["https://coinmarketcap.com/cmc-ai/sui/latest-updates/"]
+  },
+  "PEPE": {
+   "trend": 1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.44, "expected_move_7d_pct": -1.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Měsíční trend zůstává silný (rel30 +25 %), ale denní propad −16 % zlomil momentum a volatilita je vysoká.",
+   "sources": ["https://www.fxstreet.com/cryptocurrencies/news/meme-coins-price-prediction-dogecoin-shiba-inu-and-pepe-have-yet-to-find-a-floor-202611120358"]
+  },
+  "ENA": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.43, "p_up_7d": 0.43, "expected_move_7d_pct": -3.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Růst USDe a příliv 100 mil. PYUSD je pozitivní, ale token je −36 % od 30d maxima s betou 2,3 v risk-off trhu.",
+   "sources": ["https://gokhshtein.com/news/2026-11-11-100m-pyusd-flows-to-ethena-supports-usde-collateral"]
+  }
+ },
+ "top10": [
+  {"coin": "BNB", "reason": "Nízká beta a relativní síla vůči BTC, hack už v ceně."},
+  {"coin": "HYPE", "reason": "Nízká korelace s BTC, bez blízkého unlocku, bidy v knize."},
+  {"coin": "PEPE", "reason": "Nejlepší 30d relativní trend, ale po propadu opatrně."},
+  {"coin": "SOL", "reason": "Přeprodaná, Breakpoint jako možný impuls."},
+  {"coin": "XRP", "reason": "Extrémně přeprodaná, prostor pro odraz, ale prodejní tlak trvá."},
+  {"coin": "UNI", "reason": "Na 30d minimu bez fundamentální zprávy, možný odraz."},
+  {"coin": "SUI", "reason": "Méně přeprodaná, bez negativní zprávy."},
+  {"coin": "ZEC", "reason": "Po −20 % za 3 dny možný odraz, vysoké riziko."},
+  {"coin": "DOGE", "reason": "Přeprodaná, ale slabá aktivita a sentiment."},
+  {"coin": "ETH", "reason": "Slabá vůči BTC s odtoky z ETF, jen technický odraz."}
+ ],
+ "claude_volne": {
+  "comment": "V risk-off režimu po horké CPI držím jen 45 % v defenzivnějších aktivech a zbytek v hotovosti, PEPE prodávám.",
+  "positions": [
+   {"coin": "BTC", "weight_pct": 20, "reason": "Při rostoucí dominanci je BTC nejméně rizikový krypto expozice.", "invalidation": "Denní uzávěr pod 70 000 USD nebo další týden odtoků z ETF nad 1 mld. USD."},
+   {"coin": "BNB", "weight_pct": 15, "reason": "Relativní síla vůči BTC a nízká beta i po hacku Binance.", "invalidation": "Nové problémy Binance (výběry, regulace) nebo pád BNB o víc než 5 % pod BTC za týden."},
+   {"coin": "HYPE", "weight_pct": 10, "reason": "Nízká korelace s BTC a bez unlocku do 29. 11., diverzifikace.", "invalidation": "Pokles pod 65 USD nebo zprávy o odlivu aktivity z Hyperliquid."}
+  ]
+ }
+}
