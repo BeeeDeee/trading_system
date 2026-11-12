@@ -17,7 +17,7 @@ snapshot = sys.argv[1]
 reg = registry()
 grid = SU.grid()
 for v in grid:
-    reg.record("config", v.as_dict(), note="r23 dev")
+    reg.record("candidates", v.as_dict(), note=f"r23 dev {v.id}")
 assets = {s: E.prepare(d) for s, d in load_dev(snapshot).items()}
 t = next(iter(assets.values()))["t"]
 start, end = E.start_index(assets, DEV[0]), len(t)
