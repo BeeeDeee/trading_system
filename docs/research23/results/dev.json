@@ -1,0 +1,902 @@
+{
+ "snapshot": "binance_2026-10-03",
+ "stage": [
+  "2020-01-01",
+  "2022-12-31"
+ ],
+ "variants": {
+  "S1_PB_EOD": {
+   "sharpe": -1.5955354567428264,
+   "cagr": -0.7146810408271564,
+   "max_dd": 0.9848621570657379,
+   "days": 1096,
+   "n_trades": 7368,
+   "mean_trade": -0.0008531001962277262,
+   "median_trade": -0.005134712808511351,
+   "hit_rate": 0.15784473398479912,
+   "mean_R": -0.21474421455654902,
+   "median_risk": 0.00446390387555348,
+   "median_hold_candles": 16.0,
+   "trades_per_day": 6.7226277372262775,
+   "reasons": {
+    "stop": 6067,
+    "target": 0,
+    "end": 1301
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.001239717335096933,
+    "ETHUSDT": -0.0004449084402341217
+   },
+   "per_asset_n": {
+    "BTCUSDT": 3784,
+    "ETHUSDT": 3584
+   },
+   "gross_mean_trade": 0.0006468998037722738,
+   "sides": {
+    "long": {
+     "n": 3724,
+     "mean": -0.0003351500154350688
+    },
+    "short": {
+     "n": 3644,
+     "mean": -0.0013824214018456893
+    }
+   },
+   "sharpe_cost_x2": -4.242426587624816,
+   "sharpe_gross": 1.2531969244592216
+  },
+  "S1_PB_2R": {
+   "sharpe": -5.778642073160923,
+   "cagr": -0.9139179493086469,
+   "max_dd": 0.9994383831433525,
+   "days": 1096,
+   "n_trades": 11942,
+   "mean_trade": -0.0011876747144448096,
+   "median_trade": -0.004305860837970353,
+   "hit_rate": 0.34860157427566574,
+   "mean_R": -0.3627861630634325,
+   "median_risk": 0.004688018469659235,
+   "median_hold_candles": 9.0,
+   "trades_per_day": 10.895985401459853,
+   "reasons": {
+    "stop": 7570,
+    "target": 3948,
+    "end": 424
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0013552341925526705,
+    "ETHUSDT": -0.0010174564600131577
+   },
+   "per_asset_n": {
+    "BTCUSDT": 6018,
+    "ETHUSDT": 5924
+   },
+   "gross_mean_trade": 0.0003123252855551904,
+   "sides": {
+    "long": {
+     "n": 5982,
+     "mean": -0.0010788605934544753
+    },
+    "short": {
+     "n": 5960,
+     "mean": -0.0012968904982978598
+    }
+   },
+   "sharpe_cost_x2": -12.910468940690645,
+   "sharpe_gross": 1.5192161509435698
+  },
+  "S1_BRK_EOD": {
+   "sharpe": -1.7772584281528383,
+   "cagr": -0.792270633557674,
+   "max_dd": 0.9933562121836035,
+   "days": 1096,
+   "n_trades": 11121,
+   "mean_trade": -0.0007061628374276693,
+   "median_trade": -0.004348386610446507,
+   "hit_rate": 0.12651739951443217,
+   "mean_R": -0.2795322905754236,
+   "median_risk": 0.0033899026483053766,
+   "median_hold_candles": 10.0,
+   "trades_per_day": 10.146897810218977,
+   "reasons": {
+    "stop": 9602,
+    "target": 0,
+    "end": 1519
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0012305340523868003,
+    "ETHUSDT": -0.00013787295409927982
+   },
+   "per_asset_n": {
+    "BTCUSDT": 5784,
+    "ETHUSDT": 5337
+   },
+   "gross_mean_trade": 0.0007938371625723307,
+   "sides": {
+    "long": {
+     "n": 5628,
+     "mean": -0.00034840486745244496
+    },
+    "short": {
+     "n": 5493,
+     "mean": -0.0010727133298763425
+    }
+   },
+   "sharpe_cost_x2": -5.181836242313189,
+   "sharpe_gross": 2.1369242543323606
+  },
+  "S1_BRK_2R": {
+   "sharpe": -9.783786998668086,
+   "cagr": -0.9856998521429456,
+   "max_dd": 0.9999970755787975,
+   "days": 1096,
+   "n_trades": 20132,
+   "mean_trade": -0.0012335518368750756,
+   "median_trade": -0.0035205343510112384,
+   "hit_rate": 0.3447248162129942,
+   "mean_R": -0.5183191145764521,
+   "median_risk": 0.0034157990515496497,
+   "median_hold_candles": 5.0,
+   "trades_per_day": 18.368613138686133,
+   "reasons": {
+    "stop": 12919,
+    "target": 6907,
+    "end": 306
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0013684545001043538,
+    "ETHUSDT": -0.001093514186667238
+   },
+   "per_asset_n": {
+    "BTCUSDT": 10254,
+    "ETHUSDT": 9878
+   },
+   "gross_mean_trade": 0.00026644816312492445,
+   "sides": {
+    "long": {
+     "n": 9983,
+     "mean": -0.0013360419947756332
+    },
+    "short": {
+     "n": 10149,
+     "mean": -0.0011327380378484456
+    }
+   },
+   "sharpe_cost_x2": -20.03730265014301,
+   "sharpe_gross": 2.249470088184331
+  },
+  "S2_REJ_VWAP": {
+   "sharpe": -11.48854252704337,
+   "cagr": -0.7447871774974468,
+   "max_dd": 0.9832941544047754,
+   "days": 1096,
+   "n_trades": 4617,
+   "mean_trade": -0.001763940356566628,
+   "median_trade": -0.0010951024260609774,
+   "hit_rate": 0.3214208360407191,
+   "mean_R": -0.5032268555758143,
+   "median_risk": 0.004104349956285066,
+   "median_hold_candles": 4.0,
+   "trades_per_day": 4.212591240875913,
+   "reasons": {
+    "stop": 1936,
+    "target": 2622,
+    "end": 59
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0016961949516599768,
+    "ETHUSDT": -0.0018337413608306057
+   },
+   "per_asset_n": {
+    "BTCUSDT": 2343,
+    "ETHUSDT": 2274
+   },
+   "gross_mean_trade": -0.00026394035656662805,
+   "sides": {
+    "long": {
+     "n": 2292,
+     "mean": -0.001751443029202681
+    },
+    "short": {
+     "n": 2325,
+     "mean": -0.001776260302509926
+    }
+   },
+   "sharpe_cost_x2": -19.342532284594128,
+   "sharpe_gross": -1.7894454021962294
+  },
+  "S2_REJ_OPP": {
+   "sharpe": -8.40468128869862,
+   "cagr": -0.7941210794246522,
+   "max_dd": 0.9912461508929888,
+   "days": 1096,
+   "n_trades": 4980,
+   "mean_trade": -0.0018809234561530204,
+   "median_trade": -0.0038707482287167402,
+   "hit_rate": 0.32871485943775103,
+   "mean_R": -0.5066764188269988,
+   "median_risk": 0.004323977277469613,
+   "median_hold_candles": 9.0,
+   "trades_per_day": 4.543795620437956,
+   "reasons": {
+    "stop": 3037,
+    "target": 1720,
+    "end": 223
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.001790645336903846,
+    "ETHUSDT": -0.0019756597541305486
+   },
+   "per_asset_n": {
+    "BTCUSDT": 2550,
+    "ETHUSDT": 2430
+   },
+   "gross_mean_trade": -0.00038092345615302033,
+   "sides": {
+    "long": {
+     "n": 2504,
+     "mean": -0.0020140317143361028
+    },
+    "short": {
+     "n": 2476,
+     "mean": -0.0017463099349533274
+    }
+   },
+   "sharpe_cost_x2": -14.460206037341612,
+   "sharpe_gross": -1.734060211956365
+  },
+  "S2_TST_VWAP": {
+   "sharpe": -21.845792631340558,
+   "cagr": -0.9759453736438797,
+   "max_dd": 0.9999861037958582,
+   "days": 1096,
+   "n_trades": 14410,
+   "mean_trade": -0.0015395183245119025,
+   "median_trade": -0.002567969423148296,
+   "hit_rate": 0.2598195697432339,
+   "mean_R": -1.0863341063430227,
+   "median_risk": 0.0018726908848564453,
+   "median_hold_candles": 2.0,
+   "trades_per_day": 13.147810218978103,
+   "reasons": {
+    "stop": 9685,
+    "target": 4636,
+    "end": 89
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0015865185966733007,
+    "ETHUSDT": -0.0014912084472438402
+   },
+   "per_asset_n": {
+    "BTCUSDT": 7304,
+    "ETHUSDT": 7106
+   },
+   "gross_mean_trade": -3.951832451190248e-05,
+   "sides": {
+    "long": {
+     "n": 7292,
+     "mean": -0.0015700626286345725
+    },
+    "short": {
+     "n": 7118,
+     "mean": -0.0015082273627722975
+    }
+   },
+   "sharpe_cost_x2": -37.09310825978095,
+   "sharpe_gross": -0.5840173193482047
+  },
+  "S2_TST_OPP": {
+   "sharpe": -14.192145137126936,
+   "cagr": -0.9623222769022262,
+   "max_dd": 0.9999466454084867,
+   "days": 1096,
+   "n_trades": 12096,
+   "mean_trade": -0.0016075479606085497,
+   "median_trade": -0.0029668185044096616,
+   "hit_rate": 0.18204365079365079,
+   "mean_R": -1.0946183386782007,
+   "median_risk": 0.0019024419665271985,
+   "median_hold_candles": 4.0,
+   "trades_per_day": 11.036496350364963,
+   "reasons": {
+    "stop": 9786,
+    "target": 2023,
+    "end": 287
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0015829599164007245,
+    "ETHUSDT": -0.0016332332400548584
+   },
+   "per_asset_n": {
+    "BTCUSDT": 6180,
+    "ETHUSDT": 5916
+   },
+   "gross_mean_trade": -0.00010754796060854967,
+   "sides": {
+    "long": {
+     "n": 6147,
+     "mean": -0.0016217898457517076
+    },
+    "short": {
+     "n": 5949,
+     "mean": -0.0015928320641595685
+    }
+   },
+   "sharpe_cost_x2": -25.518387366792957,
+   "sharpe_gross": -0.9788495703372999
+  },
+  "S3_PB_VWAP": {
+   "sharpe": -7.841171849967244,
+   "cagr": -0.5111176641535742,
+   "max_dd": 0.883112701441252,
+   "days": 1096,
+   "n_trades": 2430,
+   "mean_trade": -0.0017566930086432933,
+   "median_trade": -0.0012131108867062244,
+   "hit_rate": 0.3337448559670782,
+   "mean_R": -0.5233262467979877,
+   "median_risk": 0.0042282443539077025,
+   "median_hold_candles": 4.0,
+   "trades_per_day": 2.2171532846715327,
+   "reasons": {
+    "stop": 1083,
+    "target": 1320,
+    "end": 27
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0016720847110984576,
+    "ETHUSDT": -0.0018389663369377033
+   },
+   "per_asset_n": {
+    "BTCUSDT": 1198,
+    "ETHUSDT": 1232
+   },
+   "gross_mean_trade": -0.0002566930086432932,
+   "sides": {
+    "long": {
+     "n": 1286,
+     "mean": -0.0016513464394998162
+    },
+    "short": {
+     "n": 1144,
+     "mean": -0.0018751158127678664
+    }
+   },
+   "sharpe_cost_x2": -13.246432599008763,
+   "sharpe_gross": -1.2044818473133552
+  },
+  "S3_PB_OPP": {
+   "sharpe": -5.9653631118163855,
+   "cagr": -0.6113717005418124,
+   "max_dd": 0.9413207596760643,
+   "days": 1096,
+   "n_trades": 2914,
+   "mean_trade": -0.00192022565626634,
+   "median_trade": -0.004032055838457614,
+   "hit_rate": 0.31022649279341113,
+   "mean_R": -0.5230827479392846,
+   "median_risk": 0.00436199456873057,
+   "median_hold_candles": 8.0,
+   "trades_per_day": 2.658759124087591,
+   "reasons": {
+    "stop": 1809,
+    "target": 997,
+    "end": 108
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.001717075690339347,
+    "ETHUSDT": -0.002122263233605095
+   },
+   "per_asset_n": {
+    "BTCUSDT": 1453,
+    "ETHUSDT": 1461
+   },
+   "gross_mean_trade": -0.00042022565626633986,
+   "sides": {
+    "long": {
+     "n": 1539,
+     "mean": -0.0019967177378113652
+    },
+    "short": {
+     "n": 1375,
+     "mean": -0.0018346101555406717
+    }
+   },
+   "sharpe_cost_x2": -10.169015898823787,
+   "sharpe_gross": -1.3362675128472048
+  },
+  "S3_BRK_VWAP": {
+   "sharpe": -15.934765214396231,
+   "cagr": -0.9876101122194794,
+   "max_dd": 0.9999980986639183,
+   "days": 1096,
+   "n_trades": 13849,
+   "mean_trade": -0.0018763141097500988,
+   "median_trade": -0.0030784560160501116,
+   "hit_rate": 0.33258719041086,
+   "mean_R": -0.6671473451412024,
+   "median_risk": 0.0033879656474703453,
+   "median_hold_candles": 4.0,
+   "trades_per_day": 12.635948905109489,
+   "reasons": {
+    "stop": 8185,
+    "target": 5487,
+    "end": 177
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0018286556206850105,
+    "ETHUSDT": -0.0019256464237801477
+   },
+   "per_asset_n": {
+    "BTCUSDT": 7044,
+    "ETHUSDT": 6805
+   },
+   "gross_mean_trade": -0.00037631410975009875,
+   "sides": {
+    "long": {
+     "n": 7206,
+     "mean": -0.0018613065900912043
+    },
+    "short": {
+     "n": 6643,
+     "mean": -0.0018925935296901853
+    }
+   },
+   "sharpe_cost_x2": -26.76603169623764,
+   "sharpe_gross": -3.323785379048592
+  },
+  "S3_BRK_OPP": {
+   "sharpe": -12.178050915348196,
+   "cagr": -0.9905331381885131,
+   "max_dd": 0.9999991537873693,
+   "days": 1096,
+   "n_trades": 13985,
+   "mean_trade": -0.001957808151079315,
+   "median_trade": -0.003820445417592909,
+   "hit_rate": 0.249767608151591,
+   "mean_R": -0.6847825359815102,
+   "median_risk": 0.003438979043043802,
+   "median_hold_candles": 7.0,
+   "trades_per_day": 12.760036496350365,
+   "reasons": {
+    "stop": 10209,
+    "target": 3281,
+    "end": 495
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0018440919386322231,
+    "ETHUSDT": -0.0020759171909751645
+   },
+   "per_asset_n": {
+    "BTCUSDT": 7125,
+    "ETHUSDT": 6860
+   },
+   "gross_mean_trade": -0.00045780815107931494,
+   "sides": {
+    "long": {
+     "n": 7272,
+     "mean": -0.001984689619418165
+    },
+    "short": {
+     "n": 6713,
+     "mean": -0.0019286882288746191
+    }
+   },
+   "sharpe_cost_x2": -20.662351571167,
+   "sharpe_gross": -2.913241841075425
+  },
+  "S4_STR_BAND": {
+   "sharpe": -13.198241150112851,
+   "cagr": -0.8425762599204368,
+   "max_dd": 0.9961112289893855,
+   "days": 1096,
+   "n_trades": 6719,
+   "mean_trade": -0.0016395461208205417,
+   "median_trade": -0.0010195483769356848,
+   "hit_rate": 0.30465843131418363,
+   "mean_R": -0.5333847042395756,
+   "median_risk": 0.003838280184587344,
+   "median_hold_candles": 3.0,
+   "trades_per_day": 6.130474452554744,
+   "reasons": {
+    "stop": 2476,
+    "target": 4214,
+    "end": 29
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.001634009537336585,
+    "ETHUSDT": -0.001645403198723631
+   },
+   "per_asset_n": {
+    "BTCUSDT": 3454,
+    "ETHUSDT": 3265
+   },
+   "gross_mean_trade": -0.00013954612082054166,
+   "sides": {
+    "long": {
+     "n": 3348,
+     "mean": -0.00167605241084139
+    },
+    "short": {
+     "n": 3371,
+     "mean": -0.0016032889096102775
+    }
+   },
+   "sharpe_cost_x2": -21.27939525493089,
+   "sharpe_gross": -1.2367965012751767
+  },
+  "S4_STR_2R": {
+   "sharpe": -5.59639307273657,
+   "cagr": -0.819003114895083,
+   "max_dd": 0.9942603149852015,
+   "days": 1096,
+   "n_trades": 7539,
+   "mean_trade": -0.0013232684444248563,
+   "median_trade": -0.004068391914371859,
+   "hit_rate": 0.3479241278684176,
+   "mean_R": -0.40442943265554526,
+   "median_risk": 0.00433447752178306,
+   "median_hold_candles": 10.0,
+   "trades_per_day": 6.8786496350364965,
+   "reasons": {
+    "stop": 4836,
+    "target": 2515,
+    "end": 188
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0014383088585402182,
+    "ETHUSDT": -0.001201861289833644
+   },
+   "per_asset_n": {
+    "BTCUSDT": 3871,
+    "ETHUSDT": 3668
+   },
+   "gross_mean_trade": 0.00017673155557514368,
+   "sides": {
+    "long": {
+     "n": 3732,
+     "mean": -0.0013995841997431631
+    },
+    "short": {
+     "n": 3807,
+     "mean": -0.0012484561515832694
+    }
+   },
+   "sharpe_cost_x2": -11.124987817770972,
+   "sharpe_gross": 0.788341015747609
+  },
+  "S4_TST_BAND": {
+   "sharpe": -22.759858759593385,
+   "cagr": -0.9964448650040669,
+   "max_dd": 0.9999999554764317,
+   "days": 1096,
+   "n_trades": 21558,
+   "mean_trade": -0.0015504592409545824,
+   "median_trade": -0.0024234796847050198,
+   "hit_rate": 0.25976435661935243,
+   "mean_R": -1.0956959429749016,
+   "median_risk": 0.00186902242034768,
+   "median_hold_candles": 2.0,
+   "trades_per_day": 19.669708029197082,
+   "reasons": {
+    "stop": 13461,
+    "target": 8038,
+    "end": 59
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.001559936334584415,
+    "ETHUSDT": -0.0015404599585623052
+   },
+   "per_asset_n": {
+    "BTCUSDT": 11068,
+    "ETHUSDT": 10490
+   },
+   "gross_mean_trade": -5.0459240954582336e-05,
+   "sides": {
+    "long": {
+     "n": 10679,
+     "mean": -0.0015946699023808451
+    },
+    "short": {
+     "n": 10879,
+     "mean": -0.0015070613502136082
+    }
+   },
+   "sharpe_cost_x2": -31.892707929236455,
+   "sharpe_gross": -0.9622637665625494
+  },
+  "S4_TST_2R": {
+   "sharpe": -17.523206486969915,
+   "cagr": -0.9934464211190918,
+   "max_dd": 0.999999719680155,
+   "days": 1096,
+   "n_trades": 20407,
+   "mean_trade": -0.0014576383357268502,
+   "median_trade": -0.0026621253705782486,
+   "hit_rate": 0.3005831332385946,
+   "mean_R": -1.0433388381730035,
+   "median_risk": 0.001958412217024395,
+   "median_hold_candles": 3.0,
+   "trades_per_day": 18.619525547445257,
+   "reasons": {
+    "stop": 13461,
+    "target": 6852,
+    "end": 94
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0015002002096726685,
+    "ETHUSDT": -0.0014126966672978643
+   },
+   "per_asset_n": {
+    "BTCUSDT": 10481,
+    "ETHUSDT": 9926
+   },
+   "gross_mean_trade": 4.2361664273149816e-05,
+   "sides": {
+    "long": {
+     "n": 10044,
+     "mean": -0.0015325235915145399
+    },
+    "short": {
+     "n": 10363,
+     "mean": -0.0013850582422084143
+    }
+   },
+   "sharpe_cost_x2": -27.431530033752967,
+   "sharpe_gross": 0.6207617114867152
+  },
+  "S1_PB_EOD_k2": {
+   "sharpe": -1.6240822890979993,
+   "cagr": -0.5680275126013659,
+   "max_dd": 0.9469799654375747,
+   "days": 1096,
+   "n_trades": 2568,
+   "mean_trade": -0.0017257497219270927,
+   "median_trade": -0.006340239201191032,
+   "hit_rate": 0.19820872274143303,
+   "mean_R": -0.13695519220712712,
+   "median_risk": 0.006284944716141711,
+   "median_hold_candles": 19.0,
+   "trades_per_day": 2.343065693430657,
+   "reasons": {
+    "stop": 1988,
+    "target": 0,
+    "end": 580
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0018973348678394464,
+    "ETHUSDT": -0.0015692405605401735
+   },
+   "per_asset_n": {
+    "BTCUSDT": 1225,
+    "ETHUSDT": 1343
+   },
+   "gross_mean_trade": -0.00022574972192709267,
+   "sides": {
+    "long": {
+     "n": 1371,
+     "mean": -8.786954128883574e-05
+    },
+    "short": {
+     "n": 1197,
+     "mean": -0.0036017177483724148
+    }
+   },
+   "sharpe_cost_x2": -3.0060229424916987,
+   "sharpe_gross": -0.21403550314289294
+  },
+  "S2_REJ_VWAP_k2": {
+   "sharpe": -8.237208155229652,
+   "cagr": -0.8483477541768012,
+   "max_dd": 0.996532138954596,
+   "days": 1096,
+   "n_trades": 5317,
+   "mean_trade": -0.00209596905791627,
+   "median_trade": -0.0034328516403138707,
+   "hit_rate": 0.3690050780515328,
+   "mean_R": -0.41064666106818315,
+   "median_risk": 0.00561529151431817,
+   "median_hold_candles": 9.0,
+   "trades_per_day": 4.851277372262774,
+   "reasons": {
+    "stop": 2738,
+    "target": 2267,
+    "end": 312
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.001862711152598678,
+    "ETHUSDT": -0.0023326741243961907
+   },
+   "per_asset_n": {
+    "BTCUSDT": 2678,
+    "ETHUSDT": 2639
+   },
+   "gross_mean_trade": -0.0005959690579162699,
+   "sides": {
+    "long": {
+     "n": 2686,
+     "mean": -0.002003272526685718
+    },
+    "short": {
+     "n": 2631,
+     "mean": -0.00219060337296198
+    }
+   },
+   "sharpe_cost_x2": -13.241007967316131,
+   "sharpe_gross": -2.447138442055739
+  },
+  "S3_PB_VWAP_k2": {
+   "sharpe": -2.6595324562728395,
+   "cagr": -0.2426983296337114,
+   "max_dd": 0.5764305171897868,
+   "days": 1096,
+   "n_trades": 801,
+   "mean_trade": -0.0020443824045549707,
+   "median_trade": -0.005061893115080261,
+   "hit_rate": 0.33707865168539325,
+   "mean_R": -0.372479702060157,
+   "median_risk": 0.006063861773188874,
+   "median_hold_candles": 11.0,
+   "trades_per_day": 0.7308394160583942,
+   "reasons": {
+    "stop": 486,
+    "target": 247,
+    "end": 68
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0014691627576852025,
+    "ETHUSDT": -0.002584782460209862
+   },
+   "per_asset_n": {
+    "BTCUSDT": 388,
+    "ETHUSDT": 413
+   },
+   "gross_mean_trade": -0.0005443824045549706,
+   "sides": {
+    "long": {
+     "n": 394,
+     "mean": -0.001728272648940656
+    },
+    "short": {
+     "n": 407,
+     "mean": -0.002350395288368337
+    }
+   },
+   "sharpe_cost_x2": -4.462847652106719,
+   "sharpe_gross": -0.7203252490963076
+  },
+  "S4_STR_BAND_k2": {
+   "sharpe": -7.121023676899729,
+   "cagr": -0.61244489761646,
+   "max_dd": 0.94248677349724,
+   "days": 1096,
+   "n_trades": 3544,
+   "mean_trade": -0.0015894571442736365,
+   "median_trade": -0.0011148911848146135,
+   "hit_rate": 0.36089164785553046,
+   "mean_R": -0.4538030316487409,
+   "median_risk": 0.004340421001128515,
+   "median_hold_candles": 5.0,
+   "trades_per_day": 3.2335766423357666,
+   "reasons": {
+    "stop": 1587,
+    "target": 1931,
+    "end": 26
+   },
+   "per_asset_mean_trade": {
+    "BTCUSDT": -0.0015145871834360502,
+    "ETHUSDT": -0.0016701200915300747
+   },
+   "per_asset_n": {
+    "BTCUSDT": 1838,
+    "ETHUSDT": 1706
+   },
+   "gross_mean_trade": -8.945714427363648e-05,
+   "sides": {
+    "long": {
+     "n": 1706,
+     "mean": -0.0016339779898742082
+    },
+    "short": {
+     "n": 1838,
+     "mean": -0.0015481336608163046
+    }
+   },
+   "sharpe_cost_x2": -12.631983551811881,
+   "sharpe_gross": -0.4203050819743943
+  }
+ },
+ "families": {
+  "S1": {
+   "P": "S1_PB_EOD",
+   "B_RND": {
+    "p": 0.998003992015968,
+    "median": -0.000359745310783441,
+    "p95": -7.391291814291816e-05,
+    "placed": 1.0
+   },
+   "gate": {
+    "sharpe_gt_0": 0.0,
+    "mean_trade_gt_0": false,
+    "n_ge_200": true,
+    "null_p_le_0.10": false
+   },
+   "pass": false,
+   "ranking": [
+    "S1_PB_EOD",
+    "S1_BRK_EOD",
+    "S1_PB_2R",
+    "S1_BRK_2R"
+   ]
+  },
+  "S2": {
+   "P": "S2_REJ_OPP",
+   "B_RND": {
+    "p": 0.003992015968063872,
+    "median": -0.0021772586332414667,
+    "p95": -0.00199693296257773,
+    "placed": 1.0
+   },
+   "gate": {
+    "sharpe_gt_0": 0.0,
+    "mean_trade_gt_0": false,
+    "n_ge_200": true,
+    "null_p_le_0.10": true
+   },
+   "pass": false,
+   "ranking": [
+    "S2_REJ_OPP",
+    "S2_REJ_VWAP",
+    "S2_TST_OPP",
+    "S2_TST_VWAP"
+   ]
+  },
+  "S3": {
+   "P": "S3_PB_OPP",
+   "B_RND": {
+    "p": 0.001996007984031936,
+    "median": -0.0024211342628625123,
+    "p95": -0.002177959668660089,
+    "placed": 1.0
+   },
+   "gate": {
+    "sharpe_gt_0": 0.0,
+    "mean_trade_gt_0": false,
+    "n_ge_200": true,
+    "null_p_le_0.10": true
+   },
+   "pass": false,
+   "ranking": [
+    "S3_PB_OPP",
+    "S3_PB_VWAP",
+    "S3_BRK_OPP",
+    "S3_BRK_VWAP"
+   ]
+  },
+  "S4": {
+   "P": "S4_STR_2R",
+   "B_RND": {
+    "p": 1.0,
+    "median": -0.0010538112336489422,
+    "p95": -0.0008975568077393084,
+    "placed": 1.0
+   },
+   "gate": {
+    "sharpe_gt_0": 0.0,
+    "mean_trade_gt_0": false,
+    "n_ge_200": true,
+    "null_p_le_0.10": false
+   },
+   "pass": false,
+   "ranking": [
+    "S4_STR_2R",
+    "S4_STR_BAND",
+    "S4_TST_2R",
+    "S4_TST_BAND"
+   ]
+  }
+ },
+ "passed_gate": [],
+ "sr_daily_var": 0.11004100714332686,
+ "n_registered": 20
+}
