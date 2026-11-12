@@ -45,3 +45,10 @@ def submit(lab: Lab, card: dict, actor: str = "human", evaluator=None) -> str:
     lab.send("NEW_HYPOTHESIS", actor, "system", None, {"card": card})
     tick(lab, evaluator)
     return lab.hypotheses()[-1]["id"]
+
+
+@pytest.fixture(autouse=True)
+def no_owner_queue(monkeypatch, tmp_path):
+    """Tests never read the real owner queue (lab/briefs/owner_queue.yaml) unless they pass a path."""
+    from lab.framework import briefs
+    monkeypatch.setattr(briefs, "OWNER_QUEUE", tmp_path / "no_owner_queue.yaml")

@@ -168,7 +168,7 @@ def propose_brief(lab: Lab, policy: Policy) -> str | None:
     from lab.framework import briefs
     if len(lab.hypotheses(S.DATA_READY)) + len(lab.hypotheses(S.IDEA)) >= policy.propose_when_waiting_below:
         return None
-    return briefs.text(briefs.choose(lab))
+    return briefs.next_task(lab)
 
 
 def infrastructure_broken(lab: Lab, n: int = 3) -> bool:

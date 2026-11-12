@@ -44,6 +44,7 @@ def test_positive_control_metrics_and_trials(slab):
     assert all(c["pass"] for c in g1["checks"].values())
     d = g1["decomposition"]                                                  # descriptive: gross vs net, not a gate
     assert d["sharpe_gross"] >= d["sharpe_net"] and d["cost_drag_per_year"] >= 0
+    assert d["tracking_error"] > 0 and abs(d["information_ratio"] - d["active_return_per_year"] / d["tracking_error"]) < 1e-2
     assert slab.family_trials("canary-positive") == 1 + 2                   # primary + two threshold neighbors
     thresholds = {r[0] for r in slab.con.execute("SELECT thresholds_sha256 FROM gate_results")}
     assert len(thresholds) == 1

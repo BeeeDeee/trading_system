@@ -1,0 +1,87 @@
+# Owner queue: ideas the owner wants tested, taken by the Scout one per `propose` run, in this order, before the
+# diversity brief (lab/framework/briefs.py: owner_seed). An entry is done once a card has `owner_seed: <id>` in its
+# notes. Add `skip: true` to take an entry out. Append new entries at the end; never reuse an id.
+#
+# 2026-11-10, ORB batch: hypotheses from the owner's literature review "ORB strategie hypotezy a validace"
+# (reports/ in the owner's workspace). Only the crypto analogues are queued: the lab has no US intraday stock,
+# ETF or index-futures data, so the US-equity ORB hypotheses (MNQ/NQ volatility-conditioned ORB, relative-volume
+# stocks in play, news-catalyst filter, long/short asymmetry, LLM news filter) wait for an owner data decision.
+# All entries share ONE family (us-open-range-breakout-crypto) so their trials count together in the DSR.
+#
+# Shared background for every entry (from the review; treat as priors, not as facts about this data):
+# - No credible published test of an opening-range breakout on BTC exists; only anecdotal backtests.
+# - On US stocks/ETFs the gross ORB edge in independent replications is small (about +0.05..0.13 R per trade on
+#   index ETFs) and of the same size as round-trip costs; the "stocks in play" version decayed after 2023.
+# - The most consistent conditioning variable across studies is the volatility state (ORB profits cluster in
+#   high-volatility regimes; Lundstrom: 150-200 bp/day difference between top and bottom volatility states).
+# - BTC volatility clusters around the US cash open: the most volatile UTC hour tracks 09:30 ET (13:30 UTC in
+#   US daylight time, 14:30 UTC in standard time), and US hours carry about half of daily variance in 2022-2025.
+# - Costs: a scalp pays two taker fees plus slippage (at least ~13 bps round trip on BTC in this lab's engine), so
+#   only a few large moves per day can pay; expect the base rule to fail and say so in the forecasts.
+
+- id: ORB-C1
+  title: US-open range breakout on BTC/ETH perps (base rule)
+  text: |
+    Opening range anchored at the US equity cash open, 09:30 America/New_York (DST-aware: 13:30 UTC in US daylight
+    time, 14:30 UTC in standard time; use the `times` of the intraday view, never a fixed UTC hour). Data:
+    binance_perp_15m (5m only if truly needed). Instruments: BTCUSDT.P and ETHUSDT.P (or crypto_top_n with small n).
+    Range = high/low of the first 15 or 30 minutes after 09:30 ET (grid). Entry: the first candle that CLOSES
+    beyond the range, filled at the next open (no fills at the range boundary), long above / short below, one
+    trade per instrument per day. Exit: at the 16:00 ET close of the US session, or earlier when a candle closes
+    beyond the opposite side of the range (grid: with that stop / without a stop, end of session only). These
+    exit variants are the exit-design question from the review; keep them inside this card's grid, not as
+    separate cards. Control the owner wants reported in notes or falsification: the same rule anchored at
+    00:00 UTC (and/or a random anchor hour); if the 00:00 UTC anchor works as well, the US-open claim is wrong.
+    Family: us-open-range-breakout-crypto.
+
+- id: ORB-C2
+  title: US-open range breakout on BTC/ETH only in high-volatility states
+  text: |
+    The ORB-C1 rule, traded only on days whose volatility state is high, decided with data available before the
+    entry: e.g. the trailing realized volatility of the previous days in its own top tercile of a trailing window,
+    or the opening-range width relative to its trailing average of the same window above a threshold (pick one
+    measure, small grid, no fishing). Mechanism to argue: ORB is a bet on trend days, and trend days are far more
+    frequent in high-volatility regimes (Lundstrom; Gao et al. find stronger intraday momentum on high-volatility
+    days). Falsification must include: the high-volatility subset is not better per trade than the low-volatility
+    subset. Family: us-open-range-breakout-crypto.
+
+- id: ORB-C3
+  title: US-open range breakout on BTC/ETH after daily range contraction (NR4/NR7)
+  text: |
+    The ORB-C1 rule, traded only on days that follow a narrow-range day on the 00:00 UTC daily bar built from the
+    intraday candles (NR4 or NR7: the previous day's high-low range is the smallest of the last 4 / 7 days; grid
+    over 4/7). Mechanism to argue: Crabel-style volatility contraction precedes range expansion. Prior: Crabel's
+    1990 results are unverifiable and gross; modern re-tests are mixed. Falsification must include: the post-NR
+    days do not have larger absolute session moves than other days. Family: us-open-range-breakout-crypto.
+
+- id: ORB-C4
+  title: US-open range breakout on BTC/ETH aligned with the pre-session move
+  text: |
+    The ORB-C1 rule, taken only when the breakout direction agrees with the move from 00:00 UTC to the 09:30 ET
+    open (Asia + Europe session); the crypto analogue of "trade the ORB in the direction of the gap". The card
+    must also report the opposite (breakouts against the pre-session move) as the control: the review found gap
+    fade (attention overshoot) and gap continuation (news) both have support, so the sign is an open question.
+    Family: us-open-range-breakout-crypto.
+
+- id: ORB-C5
+  title: US-open range breakout on BTC/ETH on US macro release days
+  text: |
+    The ORB-C1 rule, traded only on US macro release days (CPI and employment report at 08:30 ET, FOMC at 14:00 ET)
+    from the dataset macro_release_calendar_1d, if the intraday branch can read it as a signal-only series; if
+    it cannot, write the card anyway (BLOCKED_DATA) and say what is missing. Mechanism to argue: macro news days
+    have stronger intraday momentum in equity indices (Gao et al.); BTC reacts to US macro news mainly after
+    2020. For FOMC days consider whether the 09:30 ET range is the right anchor or the 14:00 ET release is.
+    Expect few events (about 30 per year): state the power problem in the forecasts. Family:
+    us-open-range-breakout-crypto.
+
+- id: ORB-C6
+  title: US-open range breakout on the altcoins "in play" by opening relative volume
+  text: |
+    Crypto analogue of the "stocks in play" ORB (Zarattini, Barbon & Aziz 2024): universe crypto_top_n
+    (n about 20-30) on binance_perp_15m. At the end of the 09:30 ET opening range, rank coins by relative volume
+    = quote volume of the opening-range window divided by the average quote volume of the same window on the
+    previous 10-20 days (point in time); trade the ORB-C1 rule only on the top 3-5 coins with relative volume
+    above a threshold (e.g. 2x; small grid). Prior: the equity version had Sharpe 2.81 in-sample 2016-2023 with
+    no slippage, and a pre-registered out-of-sample test found it negative after 2023 even before costs; altcoin
+    costs are higher than BTC (the engine's liquidity tiers), so the gross move must be large. Family:
+    us-open-range-breakout-crypto.

@@ -97,3 +97,16 @@ def test_scalping_cell_is_crypto_only_and_counts_double(lab):
         b = briefs.choose(lab)
         seen.add((b["horizon"], b["group"]))
     assert all(g == "crypto" for h, g in seen if h == "scalp")
+
+
+def test_owner_queue_goes_first_and_is_consumed_by_a_card_that_cites_it(lab, card, tmp_path):
+    from lab.framework import briefs
+    q = tmp_path / "queue.yaml"
+    q.write_text("- {id: Q-1, title: first, text: idea one}\n- {id: Q-2, title: second, text: idea two, skip: true}\n"
+                 "- {id: Q-3, title: third, text: idea three}\n")
+    assert "OWNER QUEUE item Q-1" in briefs.next_task(lab, q) and "owner_seed: Q-1" in briefs.next_task(lab, q)
+    submit(lab, dict(card, notes="owner_seed: Q-1\nrest of the notes"))
+    assert "OWNER QUEUE item Q-3" in briefs.next_task(lab, q)                 # Q-2 is skipped
+    submit(lab, dict(card, title="another", notes="owner_seed: Q-3"))
+    assert briefs.next_task(lab, q) == briefs.text(briefs.choose(lab))       # empty queue: the diversity brief
+    assert briefs.owner_seed(lab, tmp_path / "missing.yaml") is None
