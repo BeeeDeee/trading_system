@@ -250,3 +250,16 @@ def test_long_bash_commands_are_waited_for_not_backgrounded(tmp_path, monkeypatc
     assert env["BASH_DEFAULT_TIMEOUT_MS"] == env["BASH_MAX_TIMEOUT_MS"] == headless.BASH_TIMEOUT_MS
     assert {"BASH_DEFAULT_TIMEOUT_MS", "BASH_MAX_TIMEOUT_MS"} <= set(headless.AGENT_ENV)   # kept through sudo
     assert int(headless.BASH_TIMEOUT_MS) / 1000 <= min(agents.spec(a).timeout_s for a in ("scout", "builder", "archivist", "librarian", "chair"))
+
+
+def test_a_run_may_read_its_own_saved_tool_result_but_not_another_runs(tmp_path):
+    spec = agents.spec("scout")
+    ws = tmp_path / "workspaces" / "scout-20261113T054622-29a4fa"
+    ws.mkdir(parents=True)
+    slug = str(ws.resolve()).replace("/", "-").replace("_", "-")
+    mine = f"/home/labagent/.claude/projects/{slug}/f39cc01a/tool-results/toolu_01X.txt"
+    other = mine.replace("scout-20261113T054622-29a4fa", "scout-20261113T050633-be7f92")
+    assert headless.audit([("Read", {"file_path": mine})], ws, spec) == []
+    assert len(headless.audit([("Read", {"file_path": other})], ws, spec)) == 1
+    assert len(headless.audit([("Write", {"file_path": mine})], ws, spec)) == 1          # reading only
+    assert len(headless.audit([("Read", {"file_path": mine.replace("tool-results", "secrets")})], ws, spec)) == 1

@@ -13,6 +13,7 @@ The transcript is written outside the workspace (`LAB_HOME/transcripts`), so the
 
 import json
 import os
+import re
 import shlex
 import signal
 import subprocess
@@ -128,6 +129,14 @@ def usage(evs: list[dict]) -> dict:
             "duration_ms": res.get("duration_ms")}
 
 
+def _own_tool_result(path: Path, ws: Path) -> bool:
+    """A large tool result (a WebSearch answer) that Claude Code saved for this run and tells the agent to Read:
+    `<home>/.claude/projects/<workspace path with / as ->/<session>/tool-results/<file>`. It is the run's own
+    output, not the lab's data; another run's directory stays outside."""
+    slug = re.sub(r"[^A-Za-z0-9]", "-", str(ws.resolve()))
+    return re.fullmatch(rf".*/\.claude/projects/{re.escape(slug)}/[^/]+/tool-results/[^/]+", str(path)) is not None
+
+
 def audit(calls: list[tuple[str, dict]], ws: Path, spec: agents.AgentSpec) -> list[str]:
     root = ws.resolve()
     out = []
@@ -146,7 +155,7 @@ def audit(calls: list[tuple[str, dict]], ws: Path, spec: agents.AgentSpec) -> li
                 continue   # Glob/Grep default to the cwd
             path = Path(raw).expanduser()
             path = (path if path.is_absolute() else root / path).resolve()
-            if not path.is_relative_to(root):
+            if not path.is_relative_to(root) and not (name == "Read" and _own_tool_result(path, ws)):
                 out.append(f"{name} outside the workspace: {raw}")
         elif name not in spec.tools and name not in HARMLESS_TOOLS:
             out.append(f"tool {name} is not allowed")
