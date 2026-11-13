@@ -1171,3 +1171,93 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile the same rally state with another k, tilt, hold or ETF set, or the mirror side (that is the H-0041 / H-0046 stress event): same stock-bond spread events, new trials. Do not file another daily SPY/IEF tilt for rebalancing pressure; the family now has several trials on daily ETFs and none supports the claim.
 - open questions: Rebalancing pressure observed where it trades (index futures, closing auction, quarter-end calendars with known flow size) or with pension and target-date flow data. A both-sides-marked, volatility-standardized spread test could separate stress rebound from drift. A slow equity-over-bond continuation after rallies is a different claim (trend) and would need its own argued card.
 - related: H-0046, H-0050, H-0002, H-0044, H-0041
+
+## H-0133 – Home-holiday delayed anchoring - fade an Asian country ETF's US-hours move while its home exchange stays closed, peer-hedged, hold to reopening
+
+- family: `etf-premium-arbitrage` · mechanism: flow_structural · instruments: US-listed Asia-Pacific country ETFs faded while their home exchange was on a scheduled holiday, peer-ETF hedge, daily 2001-2020
+- outcome: passed the G1 mechanism test; rejected at G1 on the strategy: net Sharpe below T-bills, bootstrap bound below zero, exposure also just under the floor
+- lesson: First ETF-wrapper card to clear the placebo bar: fading a country ETF's US-hours move while its home exchange was shut for a scheduled holiday paid in the two-session window, above same-instrument placebos, gross above event-leg cost, positive in every third though much weaker in the latest. The shape fit the claim: small on the first session, larger after the home reopening, smaller by the fifth. The book still lost: gross Sharpe would have cleared the floor, but the peer hedge roughly doubled traded gross, costs took all of it, the short side lost and exposure sat just under the floor.
+- avoid: Do not read this as general ETF mispricing: the effect is tied to a closed underlying, and ordinary-day ETF gaps still fail (H-0037, H-0080). Do not retune min_z, vol_days, the hedge basket or the hold to lift net Sharpe: same events, new trials of etf-premium-arbitrage. Do not rebuild it as a plain overnight country-ETF overreaction on normal days.
+- open questions: Untested: split by exchange and by holiday length (Lunar New Year, Golden Week); a long-only tilt on an always-invested Asia core that buys down-moves and skips the hedge round trip, since the long side carried the gain. Each is a new trial.
+- related: H-0037, H-0077, H-0078, H-0079, H-0080
+
+## H-0134 – Leverage-crowded vs spot-led trends, learned - top-30 Binance perps dollar-neutral 21-day weekly cohorts, LightGBM on momentum x basis; mechanism = gbm vs ridge picks
+
+- family: `short-term-momentum` · mechanism: flow_structural · instruments: top-30 Binance perps, dollar-neutral weekly cohorts held about a month, LightGBM on momentum and perp basis, 2019-2022
+- outcome: rejected at G1 on the mechanism test: gbm-only picks did worse than ridge-only picks; cost and block checks failed too; strategy not run
+- lesson: The learned momentum-by-crowding switch did not beat its own linear control: picks only the gbm made did worse than picks only the ridge made at every horizon from a week to two months, so more events would not cure it. The sign followed the cycle: clearly negative in the 2021 boom block, slightly positive in 2022, and the first block was empty from warm-up. Events sat on few weekly dates. The book and funding carry never ran, and whether plain crypto momentum or the ridge side pays was not tested.
+- avoid: Do not refile a gbm on momentum and basis with other n_estimators, n_leg or features: same dates, new trials. The wrong sign is dev-selected, so do not trade the ridge side as a mirror card either. Do not argue a rich-basis give-back without showing the average split by regime and by side.
+- open questions: A plain double sort or ridge on past-month return and basis, with the linear form as the primary claim, would say whether crypto momentum or the crowding switch exists; none is scored yet (H-0124 never scored). Only one cycle is available (K-0006).
+- related: H-0039, H-0071, H-0124, H-0029, H-0130
+
+## H-0135 – 52-week-high anchoring in liquid crypto - Binance spot top-20 long-only, weekly 28-day cohorts of the coins whose close is nearest their trailing one-year closing high
+
+- family: `52-week-high-anchoring` · mechanism: behavioral · instruments: Binance spot top twenty pairs, long-only weekly four-week cohorts of coins nearest their one-year closing high, 2018 to 2022
+- outcome: rejected at G1: positive abnormal return above cost, but same-coin placebos on shifted dates earned the same average, so the percentile sat mid-cloud
+- lesson: Positive and well above cost, yet no better than the same coins on shifted dates (K-0025): near-high status is persistent, so the sort picks coin identity, the boom-cycle leaders, not a timing effect. The placebo mean matched the event mean, so this is not a power problem. The gain was largest in the earliest block and nearly gone in the latest, and it grew with the horizon, as the placebo does. Strategy gates never ran.
+- avoid: Do not retune high_window_days or n_hold, or run the long-only book as a rescue: same events, new trials. Do not read the slow build as anchoring, nor refile nearness to the high as crypto momentum or resistance on the same coins.
+- open questions: Nearness and past return were not separated; a design matched on prior return could test it, but dev holds one crypto cycle (K-0006).
+- related: H-0011, H-0083, H-0134, H-0130
+
+## H-0136 – Quarter-long earnings-reaction drift, held release to release - LIQ-500 long-only, equal weight in every stock whose latest 8-K earnings-release reaction was strongly positive, until its next release
+
+- family: `post-earnings-announcement-drift` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), long-only after a strongly positive 8-K earnings-release reaction, held to the next release (about a quarter), 2004 to 2020
+- outcome: rejected at G1 on the mechanism test: positive and above cost, but same-stock placebos on shifted dates earned more, so the percentile was far under the bar; strategy not run
+- lesson: Held a quarter, the positive-reaction set did no better than the same stocks on shifted dates: the placebo average was above the event average, so the gain belongs to stock identity (repeat positive reactors, persistent winners), not to release timing (K-0025). Not decay and not power: the latest third was among the strongest, gross covered cost several times, the effect grew with horizon, yet the placebo grew with it. The drift in this set is a front-end effect. The release-to-release book was never simulated.
+- avoid: Do not re-file the release-to-release or quarter hold with another z_threshold, exit rule or hold length: same events, same placebo average, and the family trial count is already heavy for G3. Do not read a positive abnormal return over peers as support without the placebo average.
+- open questions: Is there any quarter-long drift beyond persistent reactors? Only a control matched on each stock's reaction history and prior return could say, and G1 does not offer it. The five-session front end (H-0028, H-0031, H-0033) is the only place the reaction effect cleared the placebo. Less covered stocks are untested and not loadable.
+- related: H-0028, H-0031, H-0033, H-0104, H-0105, H-0102
+
+## H-0137 – US-cash-open range breakout on BTC/ETH perps - 15m, follow the first close beyond the 09:30-10:00 New York range, exit at the 16:00 close
+
+- family: `us-open-range-breakout-crypto` · mechanism: flow_structural · instruments: BTC and ETH perps, 15-minute, US-open range breakout, both sides
+- outcome: rejected at G1: enough trades, but net Sharpe under the bar, bootstrap bound of the mean trade below zero, drawdown over the limit
+- lesson: Not a power problem: the trade count matched the forecast. Gross per trade was positive but a little below the taker round trip and well under the card's forecast, so costs took more than all of it. Holding for hours, the design meant to escape the one-candle delay that killed H-0035 and H-0063, did not lift gross above cost. The US-open claim itself is untested: the UTC-midnight control, the long/short split, thirds, delay and doubled costs never ran because G1 ended the card. We know only that the rule at taker cost does not pay.
+- avoid: Do not refile the breakout with another range length, stop setting, anchor time or exit hour: that is study 16's ORB again and each variant is a new trial. Do not read a long-side-only version as new unless it argues why it escapes study 16's bull-market artefact verdict.
+- open questions: Does a clock-anchored event carry any move beyond generic intraday momentum? Needs a measurement the judge reports (move after the anchor against random anchors, split by side), not a taker strategy. Slower holds are untested.
+- related: H-0063, H-0035, H-0040, H-0089
+
+## H-0138 – US-cash-open range breakout on BTC/ETH perps, high-volatility days only - 15m, H-0137's rule traded only when trailing 7-day realized vol is in the top tercile of its last 60 sessions
+
+- family: `us-open-range-breakout-crypto` · mechanism: flow_structural · instruments: BTC and ETH perps, 15-minute, US-open range breakout on high-volatility sessions only, both sides, 2020-2022
+- outcome: rejected at G1: enough trades, but net Sharpe negative and the bootstrap bound of the mean net trade below zero; costs were a multiple of gross per trade
+- lesson: Conditioning H-0137's rule on high trailing volatility made it worse, not better: gross per trade fell far below the all-sessions rule's, which was already under the taker round trip, so costs were a multiple of gross and the average trade lost clearly. Trade count matched the forecast, so this is not power. It meets the card's own owner criterion (top tercile not beating the all-sessions mean per trade), so the claim that trend days cluster in high-volatility states and that fixed-bps costs shrink against larger moves is refuted for this rule in 2020-2022. Exposure was small, which diluted Sharpe further. Gross is derived from the cost share and mean net trade, not reported.
+- avoid: Do not refile this rule with another volatility measure (range width, ATR, other rank window, tercile or quartile cut) or another conditioner (weekday, news day, holiday): each is a new trial of a family whose two cards lost at taker cost. Do not flip it to low-volatility days only: that sign would be picked from this dev result.
+- open questions: The bottom-tercile run, side split, dose response and thirds were never reported because G1 ended the card. Whether anything clock-anchored exists at the US open is unmeasured: it needs a judge-reported move after the anchor against random anchors, by side, not a taker strategy. Maker entry and slower holds are untested.
+- related: H-0137, H-0063, H-0035, H-0040
+
+## H-0139 – US-cash-open range breakout on BTC/ETH perps after a narrow-range weekday (NR4) - 15m, H-0137's rule only when the prior weekday UTC range is the smallest of 4
+
+- family: `us-open-range-breakout-crypto` · mechanism: flow_structural · instruments: BTC and ETH perpetuals, 15-minute, US-open range breakout only after a narrow-range weekday, both sides, 2020 to 2022
+- outcome: passed G1 (Sharpe, bootstrap bound, drawdown, trades); rejected at G2 on median neighbor Sharpe ratio and block concentration; delay, doubled costs and random timing passed
+- lesson: First card of the family to clear G1 at taker cost: after a narrow-range weekday, gross per trade was above the round trip, unlike the all-sessions rule (H-0137) and the high-volatility subset (H-0138). G2 then failed on two narrow misses: the longer-window neighbor was much weaker (its trade count is thin by the card's own forecast) and the latest block carried most of the return, the reverse of the usual decay (K-0060), so one regime may be the result. The side split, the post-contraction diagnostic and the bull-artefact check never ran: the premise is neither shown nor refuted.
+- avoid: Do not refile with another narrow-range window, other contraction measure, new neighbor grid or long-only cut to rescue the G2 misses: each is a further trial of this family. Do not combine with H-0138 into a low-volatility-only rule: that sign is read off dev.
+- open questions: Run the owner's diagnostic on dev first: move size and gross per trade by side, post-contraction versus other sessions. Is the strong latest block a bear-market short episode? Maker entry, slower holds and a pre-registered forward run (K-0014) are untested.
+- related: H-0137, H-0138, H-0063, H-0035
+
+## H-0140 – US-open range breakout on BTC/ETH perps aligned with the pre-session move - 15m, H-0137's breakout only when it agrees with the 00:00 UTC to 09:30 ET move, exit 16:00 ET
+
+- family: `us-open-range-breakout-crypto` · mechanism: flow_structural · instruments: BTC and ETH perpetuals, fifteen-minute candles, US-open range breakout taken only when it agrees with the move from UTC midnight to the US open, both sides, 2020 to 2022
+- outcome: rejected at G1: trade count as forecast, but net Sharpe about zero and under the bar, and the bootstrap bound of the mean net trade below zero; costs took slightly more than all of gross
+- lesson: Keeping only breakouts that agree with the pre-session move did not lift gross per trade above the taker round trip. By derivation from cost share and mean net trade (not reported), gross stayed about where the unconditional rule of H-0137 was, a little under cost and far under the forecast, so the filter thinned trades without selecting better ones. Not a power problem. The against and all controls, side split and thirds never ran, so the continuation story is unsupported, but its sign is unmeasured, not refuted.
+- avoid: Do not refile with another alignment threshold or pre-session window, or trade the against-move side: that sign would be picked from this dev result and is a new counted trial, like every variant of H-0137 to H-0139 and study 16. Do not stack it on the narrow-range filter of H-0139.
+- open questions: Of four conditioners of this breakout (none, volatility, narrow range, alignment) only narrow range cleared G1. Whether any clock-anchored move exists at the US open needs a judge-reported move after the anchor against random anchors, split by side, or a maker entry, not a fifth taker variant.
+- related: H-0137, H-0138, H-0139, H-0063, H-0035
+
+## H-0142 – Altcoins in play at the US open - 15m perps, top-20 PIT universe ex BTC/ETH, US-open 30-minute range breakout only on the top-k alts by coin-specific opening relative volume, exit 16:00 ET, both sides
+
+- family: `us-open-range-breakout-crypto` · mechanism: flow_structural · instruments: liquid altcoin perps ex BTC/ETH, 15m, US-open range breakout on the few alts with the biggest own-volume shock, both sides, 2020-2022
+- outcome: rejected at G1: trades as forecast, but net Sharpe negative, bootstrap bound of the mean net trade below zero, drawdown far over the limit
+- lesson: The core claim, that selecting coins by their own opening-volume shock lifts the breakout above cost, was not supported. Derived gross per trade (from cost share and mean net trade; the judge does not report it) was near zero, worse than the unselected BTC/ETH rule of H-0137, while alts pay higher slippage. Not a power problem and no implementation deviation is visible. The stock-in-play analogue did not transfer: a volume spike in a crypto alt is mostly market or high-beta flow. The owner controls (no filter, lowest volume, sides, thirds) never ran, so selection versus clock is unmeasured.
+- avoid: Do not refile with another volume multiple, top_k, baseline or ranking measure on the alt cross-section: a sixth trial of a family that keeps losing at taker cost.
+- open questions: Any clock-anchored move at the US open needs a judge-reported measure against random anchors, by side, or a maker entry; not another taker variant. H-0141 is the last sibling pending.
+- related: H-0137, H-0138, H-0139, H-0140, H-0141
+
+## H-0143 – Frog-in-the-pan momentum in asset-class ETFs, learned - fixed 60/40 sleeves, LightGBM on momentum x path smoothness x jumps x attention picks each sleeve's top fifth, 2-month cohorts
+
+- family: `cross-sectional-momentum` · mechanism: behavioral · instruments: 43 ETFs in fixed risk and defensive sleeves, monthly, long-only book, 2002-2020
+- outcome: rejected at G1: mechanism average mid-cloud against same-ETF placebos, gross a fraction of cost
+- lesson: The frog-in-the-pan claim did not show. Top- and bottom-fifth entries within each sleeve earned an average barely above zero, mid-cloud against same-ETF placebos on shifted dates, which earned over half of it; gross was a fraction of cost, below even the pessimistic forecast. Thirds were unstable (right, about zero, right) and there was no slow build: largest near one month, negative at three. The placebo bar lay above cost, so a tiny effect is unresolved, but the central forecast would have cleared it. Ridge baseline, side split and jump-share interaction were not reported, so the conditional claim itself was never examined.
+- avoid: Do not refile as smooth-momentum, information-discreteness or path-shape variants on the same ETF sleeves, nor retune horizon, n_estimators or the sleeve lists: same ETFs, same monthly dates, a new trial each. Do not adopt the one-month horizon that looks largest descriptively as a new claim.
+- open questions: Plain in-sleeve momentum (rank or linear, class mix fixed) was never reported as a control, so it is unknown whether any momentum exists among these ETFs before a learned conditioner is added. Smaller or less-covered funds are untested. A tens-of-ETFs cross-section gives few independent names per date, so a small effect will stay unresolved.
+- related: H-0054, H-0060, H-0087

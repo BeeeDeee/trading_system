@@ -170,7 +170,10 @@ notes: 'WHY THIS IS NOT A RETRY. H-0039 (perp-leverage-crowding, now in short-te
   should build it as the top 30 by trailing 30-day quote volume from data up to t, accept views shorter than 90
   rows, and report scored rows and events per year at G0. No VIX or spot dataset is needed (basis is in the perp
   extras), so the lab try gaps of K-0106 do not apply. Not a scalping card; decisions weekly, daily bars only.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_abnormal_return
 history:
 - ts: '2026-11-11T10:11:19.129968+00:00'
   version: 1
@@ -193,3 +196,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-12T03:41:04.489946+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 354, qlab)
+- ts: '2026-11-12T03:41:07.604277+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 355, qlab)
