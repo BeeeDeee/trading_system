@@ -94,5 +94,13 @@
   "reason": "Same counterparty and reason for the effect: investors under-react to earnings information that is resolved at the real or predicted 8-K release / filing, traded on the same LIQ-500 release events. H-0093 (earnings seasonality) is a seasonal-earnings-change surprise like H-0024; H-0096 and H-0097 are learned models on earnings-change, last-reaction and accrual features, and H-0095 (PEAD) is a learned model on the same release events with overlapping features. K-0083 and K-0136 already read them as one body of evidence. The live H-0097 and any future learned earnings card should carry the combined 14-trial penalty. Merging only makes the penalty stricter.",
   "message_id": 885,
   "ts": "2026-11-04T06:06:31.669319+00:00"
+ },
+ {
+  "from_family": "us-open-range-breakout-crypto",
+  "into_family": "short-term-reversal",
+  "actor": "chair",
+  "reason": "Same mechanism as H-0063: a close beyond a recent range on Binance BTC/ETH perps, both sides, held for hours, harvested by a taker, where the counterparty is the stops and breakout orders resting beyond the range. H-0137 differs only in the range anchor (09:30-10:00 New York) and in not requiring taker-dominated volume. Keeping it in a separate family hid its trial from the multiple-testing penalty. Merging is the stricter direction. The merged family is a price-structure range breakout on 15m crypto perps, and the family name is a label only.",
+  "message_id": 1164,
+  "ts": "2026-11-12T21:36:48.526950+00:00"
  }
 ]

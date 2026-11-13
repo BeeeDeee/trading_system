@@ -170,7 +170,10 @@ notes: 'Brief fit: short horizon (5 days), learned model, cross-asset (the switc
   holds one boom-and-bust cycle, so the model may learn mostly a regime dummy (low VIX in the boom, higher VIX in
   the bust) rather than a stable switch, so the latest third flips sign, or gross per entry stays under the near-90-bps
   round trip.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_events
 history:
 - ts: '2026-11-09T10:42:25.627934+00:00'
   version: 1
@@ -193,3 +196,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-10T06:05:40.676762+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 336, qlab)
+- ts: '2026-11-10T06:05:40.989628+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 337, qlab)
