@@ -1,0 +1,74 @@
+{
+ "date": "2026-11-13",
+ "regime": {
+  "label": "Risk-off, zvýšená volatilita",
+  "summary": "BTC padl pod 72k (po uzávěrce krátce pod 69k) po horké CPI (0,4 % m/m), obavách z utažení Fedu, odlivech z ETF a kaskádě likvidací longů přes 1 mld USD. Trh je krátkodobě přeprodaný (RSI BTC ~30), ale trend je jasně dolů."
+ },
+ "events_7d": [
+  {"date": "2026-11-14", "title": "Konec vývoje peněženky Suiet (ekosystém Sui)", "type": "jine"},
+  {"date": "2026-11-15", "title": "Solana Breakpoint London (15.–17. 11.)", "type": "jine"},
+  {"date": "2026-11-16", "title": "Unlock CRO (~60 mil. USD), mimo univerzum", "type": "unlock"},
+  {"date": "2026-11-18", "title": "Zápis z FOMC (zasedání 28. 10.) – očekávané datum, citlivé na obavy z utahování", "type": "makro"}
+ ],
+ "coins": {
+  "BTC": {"trend": -2, "mr": 1, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.5, "p_up_7d": 0.45, "expected_move_7d_pct": -1.0, "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Pod všemi SMA u 30d minima s odlivy z ETF a horkou CPI; přeprodanost dává šanci na odraz, ale trend je negativní.",
+   "sources": ["https://www.kucoin.com/news/flash/bitcoin-falls-below-72k-amid-accelerated-long-liquidations-and-etf-outflows", "https://theblock.co/news/markets/2026-11-10-bitcoin-price-cpi-inflation-73000-support-437301", "https://theblock.co/news/markets/2026-11-07-bitcoin-etfs-flip-negative-for-2026-after-1-28-billion-outflow-week-worst-since-june-435984"]},
+  "ETH": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.42, "p_up_7d": 0.42, "expected_move_7d_pct": -2.0, "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Slabší než BTC (rel30 −5), pokračující odlivy z ETH ETF a vysoký L/S 3,66 ukazuje na přeplněné longy.",
+   "sources": []},
+  "BNB": {"trend": -1, "mr": 1, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.52, "p_up_7d": 0.45, "expected_move_7d_pct": -1.0, "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Relativně odolný vůči BTC (rel30 +2,7) a hack Binance za 6,3 mld z října je z velké části pokryt a započten v ceně.",
+   "sources": ["https://www.bitrue.com/blog/bnb-price-after-binance-hack", "https://www.bleepingcomputer.com/news/security/binance-denies-data-breach-after-alleged-shinyhunters-claims/"]},
+  "XRP": {"trend": -2, "mr": 2, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.45, "p_up_7d": 0.45, "expected_move_7d_pct": -1.5, "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Silně přeprodaný (RSI 22,7, −13,7 % za týden), ale trend je nejslabší z velkých a L/S 3,1 s plným fundingem hrozí dalšími likvidacemi.",
+   "sources": []},
+  "SOL": {"trend": -2, "mr": 2, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.48, "p_up_7d": 0.45, "expected_move_7d_pct": -1.0, "event": true, "event_type": "jine", "risk_flag": false,
+   "note": "Hluboce přeprodaný (RSI 22,4) před konferencí Breakpoint 15.–17. 11., která může dát krátký katalyzátor, ale trend i ETF toky jsou slabé.",
+   "sources": ["https://blockchain.news/news/solana-breakpoint-2026-london-token-supercycle", "https://www.tradingnews.com/news/solana-price-targets-80-usd-as-etf-outflows-strech-to-5-week-despite-schwab-and-formation-bringing-sol-to-wall-street"]},
+  "ZEC": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.4, "p_up_7d": 0.4, "expected_move_7d_pct": -4.0, "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Po upgradu NU7 typický sell-the-news (−17,8 % za 3 dny) s likvidacemi a odlivy z ETF; vysoká volatilita, odraz nejistý.",
+   "sources": ["https://theblock.co/news/defi/2026-11-06-zcashs-nu7-goes-live-435807", "https://cryptoticker.io/en/zcash-price-falls-16-percent-to-1003-dollars/"]},
+  "HYPE": {"trend": -1, "mr": 1, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.52, "p_up_7d": 0.47, "expected_move_7d_pct": 0.0, "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nízká beta (0,38) a průběžné buybacky drží HYPE nad BTC, listing na Upbit/Bithumb už je v ceně.",
+   "sources": ["https://247wallst.com/investing/cryptocurrency/2026/11/10/hyperliquid-listed-on-upbit-and-bithumb-why-is-hype-still-down-14-in-a-week/", "https://u.today/hyperliquid-burns-153-million-in-hype-tokens-in-24-hours-amid-price-dip"]},
+  "DOGE": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.45, "p_up_7d": 0.43, "expected_move_7d_pct": -2.0, "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Pod všemi SMA s klesajícím objemem, ukončení smlouvy 21Shares s House of Doge je drobně negativní.",
+   "sources": ["https://cryptoticker.io/en/dogecoin-news-21shares-house-of-doge-tdog-etf/"]},
+  "NEAR": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.42, "p_up_7d": 0.4, "expected_move_7d_pct": -3.0, "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Beta 2 v risk-off a rel30 −18; rekordní poplatky Intents nevyváží průnik do NEAR AI z 10. 11. ani slabý trend.",
+   "sources": ["https://coinmarketcap.com/cmc-ai/near-protocol/latest-updates/"]},
+  "UNI": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.43, "p_up_7d": 0.42, "expected_move_7d_pct": -3.0, "event": false, "event_type": "none", "risk_flag": false,
+   "note": "−13 % za 3 dny při rotaci z DeFi do BTC, vysoká beta 1,75; bez nového pozitivního katalyzátoru.",
+   "sources": ["https://tradersunion.com/news/cryptocurrency-news/show/907619-uniswap-moves-toward-6/"]},
+  "SUI": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.43, "p_up_7d": 0.42, "expected_move_7d_pct": -3.0, "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Slabý měsíční trend (rel30 −9) a beta 1,47, partnerství se Samsungem je známé a cenu nezvedlo.",
+   "sources": ["https://coinmarketcap.com/cmc-ai/sui/latest-updates"]},
+  "PEPE": {"trend": 1, "mr": 0, "news": 0, "conviction": 3, "p_outperform_btc_7d": 0.48, "p_up_7d": 0.45, "expected_move_7d_pct": -1.0, "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Jediný s pozitivním měsíčním trendem (rel30 +22, nad SMA50/100), ale po −11 % za 3 dny a v risk-off je memecoin riskantní.",
+   "sources": []},
+  "ENA": {"trend": -2, "mr": 1, "news": 0, "conviction": 2, "p_outperform_btc_7d": 0.4, "p_up_7d": 0.4, "expected_move_7d_pct": -4.0, "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejslabší trend (−33 % za 30 d, beta 2,2); návrhy na sdílení poplatků jsou zatím jen podmíněné a deleveraging tlačí na USDe.",
+   "sources": ["https://coinmarketcap.com/cmc-ai/ethena-usde/latest-updates"]}
+ },
+ "top10": [
+  {"coin": "HYPE", "reason": "Nízká beta a buybacky, relativní síla vůči BTC."},
+  {"coin": "BNB", "reason": "Defenzivní, kladné rel30, hack Binance je v ceně."},
+  {"coin": "PEPE", "reason": "Jediný kladný měsíční trend, ale vysoká volatilita."},
+  {"coin": "SOL", "reason": "Silná přeprodanost a Breakpoint jako katalyzátor."},
+  {"coin": "XRP", "reason": "Extrémně přeprodaný, prostor pro odraz."},
+  {"coin": "DOGE", "reason": "Beta kolem 1, sleduje trh bez zvláštní slabosti."},
+  {"coin": "UNI", "reason": "Velký 3denní pád, možný technický odraz."},
+  {"coin": "SUI", "reason": "Týdenně mírně lepší než BTC, jinak slabý."},
+  {"coin": "ETH", "reason": "Přeprodaný, ale odlivy z ETF a přeplněné longy."},
+  {"coin": "NEAR", "reason": "Silné fundamenty Intents, ale beta 2 v risk-off."}
+ ],
+ "claude_volne": {
+  "comment": "Risk-off s trendem dolů: držím jen menší defenzivní expozici (~37 %) a zbytek v hotovosti, nekupuji přeprodané alty se slabým trendem.",
+  "positions": [
+   {"coin": "BTC", "weight_pct": 15, "reason": "Jádro portfolia, přeprodaný u 30d minima s nejnižším rizikem z univerza.", "invalidation": "Denní uzávěrka pod 68 000 USD s pokračujícími odlivy z ETF."},
+   {"coin": "BNB", "weight_pct": 12, "reason": "Nižší beta a kladná relativní síla vůči BTC za 30 dní.", "invalidation": "Nové bezpečnostní nebo regulační problémy Binance, případně pád BNB pod 620 USD."},
+   {"coin": "HYPE", "weight_pct": 10, "reason": "Nízká korelace s BTC a stálé buybacky z poplatků.", "invalidation": "Pokles pod 30d minimum (~69 USD) a propad poplatků či OI na Hyperliquid."}
+  ]
+ }
+}
