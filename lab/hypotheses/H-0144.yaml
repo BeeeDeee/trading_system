@@ -155,7 +155,10 @@ notes: 'Brief fit: the brief asks for a 6-24 month horizon, but the schema caps 
   or not, has its first scored verdict. Requests to the judge if possible: event average split by side of the market
   (BTC up vs down 56 days) and the ridge event result next to the gbm (K-0135). No WebSearch used; both references
   are standard Journal of Finance papers.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_abnormal_return
 history:
 - ts: '2026-11-13T03:26:12.111193+00:00'
   version: 1
@@ -178,3 +181,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-13T03:46:46.397447+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 373, qlab)
+- ts: '2026-11-13T03:46:55.760081+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 374, qlab)

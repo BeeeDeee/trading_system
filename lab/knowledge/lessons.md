@@ -1261,3 +1261,120 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile as smooth-momentum, information-discreteness or path-shape variants on the same ETF sleeves, nor retune horizon, n_estimators or the sleeve lists: same ETFs, same monthly dates, a new trial each. Do not adopt the one-month horizon that looks largest descriptively as a new claim.
 - open questions: Plain in-sleeve momentum (rank or linear, class mix fixed) was never reported as a control, so it is unknown whether any momentum exists among these ETFs before a learned conditioner is added. Smaller or less-covered funds are untested. A tens-of-ETFs cross-section gives few independent names per date, so a small effect will stay unresolved.
 - related: H-0054, H-0060, H-0087
+
+## H-0144 – Momentum life cycle in liquid crypto, learned - Binance spot top-50 long-only, weekly 8-week sleeves of the top fifth of a LightGBM score on 6-month trend x run stage x volume trend, BTC as filler
+
+- family: `cross-sectional-momentum` · mechanism: behavioral · instruments: Binance spot top-50 liquid coins, long-only, two-month sleeves of the top fifth of a LightGBM trend, run-stage and volume score, BTC filler
+- outcome: rejected at G1 mechanism test: entries earned less than the same coins on shifted dates, wrong-signed, cost not covered, both later thirds negative; strategy not run
+- lesson: The momentum life-cycle interaction is not visible in liquid crypto at two months. Entries did worse than the placebo, whose mean was positive: these coins do well on any date, so the score picked coin identity and, if anything, the wrong timing. Shorter horizons were flat, so there is no early signal either. Both later thirds were negative, the boom-era middle one as much as the bear year, so the card's beta-gap excuse did not explain it. The first third was nearly empty from warm-up (K-0163), so only two blocks counted.
+- avoid: Do not refile six-month trend, run stage, volume trend or volatility sorts in the crypto spot cross-section with other leaves, top fraction or sleeve length: same evidence as H-0135 and study 9. Do not trade the mirror.
+- open questions: The ridge control and the split by BTC direction were never reported. The multi-month horizon of the literature is outside the sixty-day schema cap. Untested: BTC alone, a dated own-price event, a perp short leg.
+- related: H-0135, H-0134, H-0143, H-0124
+
+## H-0145 – Slow leverage-crowding unwind - top-30 Binance perps dollar-neutral, short own-history basis risers, long fallers (net of run-up, within beta halves), 26-week cohorts
+
+- family: `perp-leverage-crowding` · mechanism: flow_structural · instruments: top-30 Binance perps, dollar-neutral in beta halves, short basis risers, long fallers, half-year cohorts
+- outcome: rejected at G1: positive and above cost, but the placebo percentile was under the bar and the bar lay far above cost; cannot tell
+- lesson: A cannot-tell, not a refutation and not a lean toward an effect. The placebo mean was negative, so coin identity (K-0128) does not explain the average; the event sat in a very wide cloud because sixty-day windows from weekly formation overlap and share one boom-and-bust cycle (K-0006). Thirds disagreed: the thin early third was clearly wrong-signed, the middle carried the average, the latest was small. Horizons below the cap were about zero, so the slow build cannot be told from noise.
+- avoid: Do not retune lookback, own-history window or hold, or re-slice by beta half or side, on these events. Do not read the positive average as support for shorting basis risers.
+- open questions: The gate sees only two months of a half-year hold. The plain basis sort in the same halves is unreported. Open interest and liquidation data are not loadable. Only a multi-cycle history gives enough independent episodes.
+- related: H-0039, H-0071, H-0049, H-0134, H-0085
+
+## H-0146 – Empire-building overinvestment, learned - LIQ-500 long-only 6-month cohorts of the top fifth of a LightGBM score on asset growth x cash-flow discretion x ROA change
+
+- family: `asset-growth-overinvestment` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), long-only six-month cohorts of the top fifth of a gradient-boosted score on asset growth, capex, cash flow, leverage, ROA change
+- outcome: rejected at G1 on the mechanism test: average above cost, but placebo percentile well under the bar; same stocks on shifted dates earned most of it
+- lesson: A cannot-tell, leaning negative. Fresh top-fifth entries averaged above cost, but same-stock placebos on shifted dates earned most of it, so the score partly marks stocks that do well in any quarter; the placebo bar lay far above cost, so a modest real effect could still miss it. The era split was the one the card predicted: the early-2000s third carried most, the middle was about zero, the latest small and positive. The profile was slow (flat at a week, negative at a month, largest at a quarter), which fits slow mispricing but also placebo drift. The ridge control was again not reported, so the interaction claim over plain linear asset growth is unanswered.
+- avoid: Do not refile with other leaf counts, top fractions or capex and ROA definitions on the same six inputs: same events, new trial. Do not read the positive raw average as support (K-0025).
+- open questions: The plain linear asset-growth sort against its same-stock placebo; the event average by side (the card expected the overinvestor side to carry it, but the book is long-only); the long-only book against an equal-weight liquid-universe control, since early-era concentration and equal weighting would both flatter it.
+- related: H-0059, H-0086, H-0032, H-0151
+
+## H-0147 – VWAP Wave setup 1 - price-discovery continuation after acceptance outside the UTC-session VWAP value area, BTC/ETH perps 5m: buy (sell) the first pullback to the old band edge, hold to session end
+
+- family: `session-vwap-bands-crypto` · mechanism: flow_structural · instruments: BTC and ETH perpetuals, five-minute candles, UTC-session VWAP and dispersion bands, long and short, 2020 to 2022
+- outcome: rejected at G1: many trades, net Sharpe negative, bootstrap bound of the mean net trade below zero, drawdown over the limit; gross a little under cost
+- lesson: Buying (selling) the first pullback after acceptance outside the session value area did not pay at taker cost. It was the closest of the four VWAP setups: derived gross per trade (from mean net trade and cost share; the judge does not report it) was positive and only a little under the round trip, so costs took more than all of it, on thousands of trades and a book invested a good part of the time. Not a power problem. The random-timing, aggressive-entry, delay and thirds checks never ran because G1 ended the card, so the acceptance claim itself is unmeasured, and the card's own prior (study 16, H-0137) was confirmed.
+- avoid: Do not refile with another band multiplier, acceptance count, pullback tolerance, exit hour or target: each is a new trial of a family whose siblings also lost. Do not trade the mirror; that sign would be read off this dev result.
+- open questions: Whether anything exists beyond generic intraday drift needs a judge-reported measure (move after acceptance events against random times of the same session, split by side), not another taker strategy. Maker entry and holds longer than a session are untested.
+- related: H-0137, H-0138, H-0140, H-0148, H-0149, H-0150, H-0063
+
+## H-0148 – VWAP Wave setup 2 - fade a rejected test of the UTC-session VWAP value-area edge after time inside value, BTC/ETH perps 5m, confirmation close, target the session VWAP, both sides
+
+- family: `session-vwap-bands-crypto` · mechanism: liquidity_provision · instruments: BTC and ETH perpetuals, five-minute candles, fade of a rejected band-edge test toward the session VWAP, both sides, 2020 to 2022
+- outcome: rejected at G1: many trades, net Sharpe deeply negative, bootstrap bound below zero, drawdown over the limit; gross a small fraction of cost
+- lesson: Fading a rejected probe of the band edge while price is inside value, with the session VWAP as target, lost clearly. Derived gross per trade (not reported by the judge) was a small fraction of the round trip, so costs were a multiple of gross; the book was invested a small part of the time, so Sharpe was deeply negative and drawdown severe. Not a power problem: trades were plentiful. With H-0147 (continuation) also under cost, the band edge shows no gross above cost in either direction at this clock, so there is no side to flip. The owner's diagnostics (range terciles, same-session random times, sides) were not produced after the G1 failure (K-0193).
+- avoid: Do not refile with another confirmation count, target fraction, band multiplier or cost filter; the filter that required a target far enough to pay two round trips did not rescue it. Do not flip to the trend-day side: that sign would be picked from dev.
+- open questions: The range-tercile and side split, which are the card's own mechanism claim, remain unmeasured and need a judge-run diagnostic. A maker entry at the band, where reversal is paid to passive liquidity (K-0049), is untested.
+- related: H-0147, H-0149, H-0150, H-0035, H-0063
+
+## H-0149 – VWAP Wave setup 3 - return to value after a failed excursion outside the UTC-session VWAP bands, BTC/ETH perps 5m, trade the re-entry toward VWAP, both sides
+
+- family: `session-vwap-bands-crypto` · mechanism: liquidity_provision · instruments: BTC and ETH perpetuals, five-minute candles, trade the re-entry toward the session VWAP after a failed excursion outside the bands, 2020 to 2022
+- outcome: rejected at G1: trades several times the forecast, net Sharpe deeply negative, bootstrap bound below zero, drawdown near total; gross tiny against cost
+- lesson: Trading the re-entry after a failed excursion outside the bands, toward the session VWAP, lost: derived gross per trade (not reported) was tiny against the round trip, costs were several times gross, exposure was small and drawdown close to total. Not a power problem; the conservative entry fired several times more often than the card forecast, so the pullback-and-trigger rule is loose on a five-minute clock. H-0150 takes the other side of these re-entries (a held VWAP test continuing to the far band) and also lost, so neither direction after a failed excursion shows gross above cost: the trapped-excursion counterparty is not visible at taker cost. Random-timing and delay checks never ran.
+- avoid: Do not refile with another excursion depth, entry mode, target or band multiplier: the family now has four dead setups and each variant is a counted trial. Do not trade the mirror from this dev sign.
+- open questions: Whether failed excursions exist as an event at all (move after the re-entry against random times of the same session, by side) needs a judge-reported diagnostic. Maker execution at the re-entry and holds longer than a session are untested.
+- related: H-0147, H-0148, H-0150
+
+## H-0150 – VWAP Wave setup 4 - VWAP hold after a return into the UTC-session value area, BTC/ETH perps 5m: enter on a close beyond the test candle, target the far band, both sides
+
+- family: `session-vwap-bands-crypto` · mechanism: flow_structural · instruments: BTC and ETH perpetuals, five-minute candles, buy or sell a held VWAP test after a return into value, target the far band, 2020 to 2022
+- outcome: rejected at G1: most trades of the family, net Sharpe deeply negative, bootstrap bound below zero, nearly all capital lost; gross a small fraction of cost
+- lesson: Buying a held VWAP test after a return into value, aiming at the far band, lost nearly all capital in dev: the most trades of the family, derived gross per trade (not reported) a small fraction of the round trip, so cost drag dominated. With H-0149 on the opposite side of the same re-entries also losing, a rotation and a continuation after a return into value are equally absent at taker cost. Trades ran well above the forecast: a close beyond a single five-minute candle's extreme is a very common event, so the confirmation rule filters little. The volatility-tercile claim was not produced; the card itself expected it to fail after costs. Not a power problem.
+- avoid: Do not refile with another confirmation count, tolerance, target or session anchor, and do not stack a volatility filter on it (H-0138 refuted that claim for a sibling breakout). The family now has four dead setups.
+- open questions: The leaflet setups on BTC and ETH carry no gross above cost at taker execution. Only maker execution, holds longer than a session, or a judge-run random-time comparison would be a different card.
+- related: H-0147, H-0148, H-0149, H-0138
+
+## H-0151 – Healthy cheap stocks vs value traps, learned - LIQ-500 long-only monthly buffered top fifth of a LightGBM 60-day score on B/M x profitability x accruals x ROA change x vol
+
+- family: `long-term-reversal` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), long-only monthly buffered top fifth of a gradient-boosted score on book-to-market, gross profitability, accruals, ROA change and volatility, through 2020
+- outcome: rejected at G1 on the mechanism test: fresh entries lagged other members over a quarter, wrong-signed in every third and worst in the latest, gross negative against cost; strategy not run
+- lesson: The healthy-cheap claim was wrong-signed here, not merely weak. Fresh top-fifth entries lagged the other liquid stocks over a quarter in every third of dev, most in the latest, while same-stock placebos were positive: the score picks stocks that do fine on other dates, at the wrong moment. Counts were in range and the first third was not empty, so not a power problem. Inferred contributors: cheap, profitable, low-volatility names have lower beta than peers in long bull markets (K-0074), and value's long dry spell, which the card named as a kill condition. The ridge baseline was not reported, so the conditional claim was not examined.
+- avoid: Do not refile value-plus-quality in LIQ-500 with another health measure, leaf count or buffer: same inputs, same events. Do not trade the mirror (short the healthy cheap); its sign would be read off dev.
+- open questions: Value and quality as a linear score against its own same-stock placebo; a beta-matched or size-matched peer set, since the raw-peer comparison disadvantages low-beta picks in bull markets; the one-month horizon, which was not negative.
+- related: H-0146, H-0083, H-0092, H-0097, H-0059
+
+## H-0152 – Lumpy equity issuers shorted for a year - LIQ-500 beta-neutral, short stocks whose filed share count jumped 10 %+ in a quarter, hedged with other members
+
+- family: `trading-window-flows` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), beta-neutral short of stocks whose filed share count jumped by a tenth or more in a quarter, hedged with other members, year-long cohorts, 1998 to 2020
+- outcome: rejected at G1 on the mechanism test: right-signed with gross just above cost, but the placebo percentile was far under the bar inside a wide cloud; strategy not run
+- lesson: A cannot-tell with a tiny central estimate. After a large one-quarter jump in filed share count, stocks lagged peers by a small average that cleared cost, but the cloud was wide (a bar far above cost) and the placebo mean was near zero, so it is not coin identity. The shape contradicted the card: no larger at a quarter than at a week (a declared kill condition), and the thirds went wrong-signed, large positive, small. Events ran above forecast while gross ran far below it. Routine issuers (REITs, utilities) could not be excluded, and only the first quarter of a year-long claim is visible.
+- avoid: Do not retune the jump threshold, hold, distress cut or ratio guards on the same events, and do not isolate the middle third as a regime. Do not read the small positive average as support.
+- open questions: The issuer-only effect needs power: less covered stocks or offering-type, unlock and sector data, none loadable. The book was never run, so the issuer leg against the hedge leg (K-0172) is unseen.
+- related: H-0086, H-0019, H-0027, H-0097
+
+## H-0154 – Reaching for income across the rate cycle, learned - LIQ-500 long-only monthly 3-month sleeves, LightGBM on dividend yield, rate beta and 6-month return x Treasury-yield change, level and market state
+
+- family: `reaching-for-income` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), long-only three-month sleeves of the top fifth of a gradient-boosted score on dividend yield, rate beta, past return and Treasury state
+- outcome: rejected at G1 on the mechanism test: right-signed, gross several times cost, but below the same-stock placebo mean; latest third wrong-signed
+- lesson: The positive average belongs to stock identity, not to the rate-state claim. Fresh top-fifth entries (dividend yield, bond-like rate beta, past return, crossed with Treasury state) earned several times cost, but the same stocks on shifted dates earned more, so the score marks high-dividend bond-proxy names that do well in any quarter. The first two thirds were positive and the latest negative, the usual fade (K-0060). Date-level inputs cannot reorder a ridge, but no split by rate state was reported, so the model's use of the state is unseen and it may have learned only a static tilt. Counts exceeded the forecast, so not a power problem.
+- avoid: Do not refile with other rate-state variables (yield level, curve, change windows), other dividend measures or sleeve lengths: each is a trial on identical stocks. Do not read a gain over peers as evidence without the placebo mean.
+- open questions: The event average split by rate state (falling, flat, rising yields), which the card asked for and G1 did not give; a plain static dividend-and-beta sort against its placebo, to see whether it is only the low-volatility tilt of study 1; sector-matched peers, since utilities and REITs probably drive bond-proxy names (inferred).
+- related: H-0010, H-0098, H-0099, H-0130, H-0155
+
+## H-0155 – Aggregate-volatility risk premium from the options market into stocks - LIQ-500 long-only, 6-month monthly cohorts of the stocks most hurt by VIX innovations (market beta and idio vol matched)
+
+- family: `variance-risk-premium-timing` · mechanism: risk_premium · instruments: US liquid stocks (LIQ-500), long-only six-month monthly cohorts of the stocks most hurt by VIX innovations, matched on market beta and idiosyncratic volatility, 1998 to 2020
+- outcome: rejected at G1 on the mechanism test: right-signed in every third, but the same stocks on shifted dates earned several times more; percentile far under the bar; strategy not run
+- lesson: No sign of a priced aggregate-volatility loading in liquid stocks. Long-leg entries (stocks most hurt by VIX innovations, matched on beta and idiosyncratic volatility) were right-signed in every third, but placebos of the same stocks earned far more, so the sort picks names that do well anyway and the timing adds nothing. Short horizons were negative and there was no build to a quarter. Cells held beta fixed, so the beta confound (K-0074) is an unlikely excuse; the bar was above cost, but the event mean sat below the placebo mean, so more power would not help. K-0129 guessed the premium is global and cancels in a ranking; this is the cross-sectional test and it is empty.
+- avoid: Do not refile with another innovation measure (VIX3M, realized volatility, skew), estimation window, cell matching or hold, and do not trade the mirror, which would be picked from dev. Do not propose another volatility-premium card on stocks without a new information source.
+- open questions: Time-series versions across many markets with an always-invested control remain the only variant not covered (K-0129). Loadings measured from option prices directly are not loadable and would replace a noisy collinear regression.
+- related: H-0084, H-0073, H-0052, H-0055, H-0154
+
+## H-0156 – Global dollar funding cycle into EM equities - 12-month dollar trend vs the DM majors (FRED FX) sets a beta-hedged EM country ETFs vs SPY position, 12-month monthly cohorts
+
+- family: `dollar-funding-cycle` · mechanism: cross_asset_information · instruments: emerging-market country ETFs against US index ETFs, signed by the 12-month trend of the dollar against developed-market majors, monthly 12-month cohorts, 2000 to 2020
+- outcome: rejected at G1 on the mechanism test: right-signed on average but tiny, far under cost, inside a wide placebo cloud and below the same ETFs' placebo mean; middle third wrong-signed; strategy not run
+- lesson: Nothing visible over a quarter. Marked EM ETFs against US index ETFs averaged about zero, a fraction of cost and below the placebo mean; thirds were positive, negative, positive; the profile rose toward two months and fell back, no clean build. The dollar signal is persistent and sixty-session windows overlap, so the independent sample is a handful of dollar cycles (the card forecast this) and the cloud was wide: a small real effect stays unresolved. The raw comparison also mixes EM-versus-US beta (K-0074), which the book would hedge and the study cannot. H-0088's currency value passed its mechanism test on country ETFs; the common dollar factor did not.
+- avoid: Do not refile with another dollar window, currency basket, dollar-index series or EM list: same dates, new trial. Do not blend it with currency value to rescue it.
+- open questions: More independent cycles are impossible in this history; the always-on EM-minus-US beta-hedged return would be the control that shows how much of the sign is beta. Dollar credit or funding-spread data, not loadable, might be a closer transmission variable.
+- related: H-0062, H-0088, H-0087, H-0060
+
+## H-0157 – Home-closure anchoring in Asian ADRs - LIQ-500, fade an ADR's excess move while its home exchange is shut for a multi-day holiday, net-hedged, hold 3 days
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: US-listed receipts of Asian companies in LIQ-500 (assigned by correlation to a country ETF), fade of the excess move during a multi-day home closure
+- outcome: rejected at G1: far too few closure episodes (under the event minimum) and the average wrong-signed in every third, the move continued instead of reverting
+- lesson: Too few episodes, and the sign was against the claim. Multi-day home closures gave about one event date a year, far under the forecast and under the minimum event count, so the test could not tell. Still, the faded move continued rather than reverted, in every block and more at ten sessions than at three. H-0133's home-holiday country ETFs reverted at the reopening; a single-company receipt on a closed home market probably carries real company news that a basket wrapper does not, so a cut arbitrage link is not sufficient (K-0183). Which stocks the correlation rule assigned to home exchanges was never reported.
+- avoid: Do not refile with another hold, z threshold or correlation cut on the same closures: few episodes, each variant a new trial. Do not read the continuation as a short-the-reversal recipe; its sign comes from a few dozen episodes.
+- open questions: More closure dates would add power (single-session closures) but change the claim and count as a new trial. Effects by exchange and holiday type are unreported. The ordinary-share price of the company, the real anchor, is not loadable.
+- related: H-0133, H-0079, H-0037, H-0080
