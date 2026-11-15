@@ -189,7 +189,10 @@ notes: 'Relation to earlier cards. H-0126 (gbm on leverage, coverage, volatility
   Sharpe is near the 0.5 floor in the central case. The most likely death is the cost ratio or the absolute floor,
   as for H-0126. First G1 block (1998-2005) will be thin: z needs 252 sessions and the gbm its minimum training
   sample. No mechanism event is defined on calm weeks on purpose: the claim is only about credit-news weeks.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_costs
 history:
 - ts: '2026-11-14T02:46:51.187278+00:00'
   version: 1
@@ -212,3 +215,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-14T04:05:02.373712+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 400, qlab)
+- ts: '2026-11-14T04:07:44.442799+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 401, qlab)

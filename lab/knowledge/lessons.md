@@ -1378,3 +1378,111 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile with another hold, z threshold or correlation cut on the same closures: few episodes, each variant a new trial. Do not read the continuation as a short-the-reversal recipe; its sign comes from a few dozen episodes.
 - open questions: More closure dates would add power (single-session closures) but change the claim and count as a new trial. Effects by exchange and holiday type are unreported. The ordinary-share price of the company, the real anchor, is not loadable.
 - related: H-0133, H-0079, H-0037, H-0080
+
+## H-0158 – Credit-market news through debt rollover need, learned - LIQ-500 ex banks dollar-neutral weekly, LightGBM on short-term debt, cash, leverage and volatility x credit-specific Baa-Aaa shock, hold 5 days
+
+- family: `oil-shock-equity-underreaction` · mechanism: cross_asset_information · instruments: LIQ-500 stocks ex banks, weekly dollar-neutral, LightGBM on debt maturity, leverage, volatility x credit shock
+- outcome: rejected at G1: narrowly cleared the placebo bar, but gross per entry fell just under round-trip cost; no book run
+- lesson: Third credit-news card, first with a refinancing mapping (short-term debt net of cash) in a gbm with leverage and volatility. Unlike the plain sort H-0128, entries narrowly beat same-stock placebos (placebo mean near zero) and were positive in every third, but gross per entry fell just under round-trip cost, so it died before any book ran. The effect kept building to ten and twenty sessions, the middle third was strongest and the latest weakest: slow drift with episode weight, not one-week absorption. The ridge and no-debt controls never ran, so what maturity adds over H-0126's inputs is unknown; a market rebound after credit stress (K-0084) is not excluded.
+- avoid: Do not retune top, n_estimators or the shock threshold, or refile with another hold or larger gross scale to climb over cost: that is a dev-selected new trial. No fourth credit-shock gbm on balance-sheet features without a new information source or a reported control.
+- open questions: Controls the judge did not run: gbm without debt features, ridge with products, widening versus tightening split, episode split. Volatility, shared with H-0126 but absent from the failed H-0128, may be the carrier, not debt maturity.
+- related: H-0126, H-0128, H-0129, H-0114, H-0116
+
+## H-0159 – Credit-specific spread news into high-volatility stocks, plain rule - LIQ-500 beta-tercile-matched long/short on 63-day volatility in weeks of a credit-specific Baa-Aaa move, hold 5 days
+
+- family: `oil-shock-equity-underreaction` · mechanism: cross_asset_information · instruments: LIQ-500 US stocks, beta-matched long/short on volatility in credit-shock weeks
+- outcome: rejected at G1: average inside the placebo cloud, gross far under cost, only the latest third right-signed
+- lesson: The volatility-only control did not reproduce the H-0126 and H-0158 passes. The first two thirds of dev, the 2001-2002 credit episode among them, were wrong-signed and only the latest was positive. The effect was near zero at one session and grew steadily with horizon: slow drift, not delayed absorption of a dated credit shock. Events matched the forecast and the bar lay below cost, so it is not a power problem. Volatility did not carry the learned passes; they needed other inputs or were luck.
+- avoid: No third plain sort on a credit-specific shock (distress, leverage, volatility, size), no retuning of z_news, vol_days or beta matching, no other credit series. Do not read the positive latest third as a revival.
+- open questions: Unreported by the judge: widening against tightening weeks, long against short leg, episode split. A new card needs a new information source or a different transmission, and should say why the learned pass was not a stress rebound (K-0084).
+- related: H-0126, H-0128, H-0158, H-0129, H-0116, H-0114
+
+## H-0161 – Home-closure down-move tilt on a 60/40 core - move part of SPY into an Asia-Pacific country ETF that fell in US hours while its home exchange is shut, hold until the home market reopens
+
+- family: `etf-premium-arbitrage` · mechanism: flow_structural · instruments: Asia-Pacific country ETFs bought after a US-hours drop while the home exchange was closed, long-only tilt on a core
+- outcome: rejected at G1 on the mechanism test: right-signed at two sessions with gross just above round-trip cost, but the placebo percentile was under the bar; strategy never run
+- lesson: The down-move side of H-0133 (said to carry its gain) came close but did not clear alone. Right-signed, placebo mean near zero (so not ETF identity), gross barely above cost, placebo bar above cost, so a small real effect is not excluded and a pass would have been thin. The first session was slightly negative as claimed, but the gain kept growing to five sessions, past a typical reopening, and the first two thirds carried it while the latest third was about zero (K-0060). That the long side carried H-0133 is not confirmed.
+- avoid: Do not retune z_threshold, slot_weight, hold or exchange list, or cut to the early years, to lift the percentile: same closure events, new trials of etf-premium-arbitrage. Do not add the up-move side as another long-only card on the same closures.
+- open questions: Unreported: the ordinary-day control (same rule with home market open), split by exchange and holiday length, and the tilt book. The pooled pass of H-0133 may depend on both sides or on trial luck. A follow-up needs many more closure dates or a different wrapper.
+- related: H-0133, H-0157, H-0037, H-0080, H-0079
+
+## H-0162 – Treasury-curve news into funding structure, learned - LIQ-500 beta-balanced legs in curve-shock weeks, LightGBM on deposits, short-term debt, interest burden x shocks, 5 days
+
+- family: `oil-shock-equity-underreaction` · mechanism: cross_asset_information · instruments: LIQ-500 stocks, weekly beta-balanced long/short legs in Treasury curve-shock weeks, LightGBM on funding-structure ratios
+- outcome: mechanism test passed; rejected at G1 on the strategy: reliable against T-bills and above the excess margin, but net Sharpe under the absolute floor (gross cleared it, costs took the margin)
+- lesson: Treasury curve and front-end shocks read through funding structure passed the event test: entries beat same-stock placebos (placebo mean near zero), gross covered round-trip cost, every third was positive and the latest the strongest. The gain was absent at one session, present by the third and gone by ten: not instant pricing, not slow drift. The book still missed the absolute floor: long leg earned, short leg lost despite beta balancing, costs ate the rest. No ridge control or deposit-share split was reported, so the need for a nonlinear shock interaction is untested; stress rebound in curve-shock weeks (K-0084) is not excluded.
+- avoid: Do not retune shock_z, n_estimators or the leg size, drop the short leg after seeing it lose, or refile with a larger gross scale to climb over the Sharpe floor: dev-selected new trials of one family. Do not read the pass as a tradable stand-alone book (K-0027). No further rate or credit shock gbm on balance-sheet ratios without a new information source or a reported linear control.
+- open questions: Untested: ridge on the same inputs (K-0135), bull against bear steepening, lenders against leveraged non-financials, whether the model used the shocks, the long leg alone as a tilt on an always-invested core, and why the gain is gone by ten sessions. The framework also drops members missing any debt field, so the scored set is narrower than the card said.
+- related: H-0116, H-0126, H-0158, H-0159, H-0128, H-0129, H-0114, H-0119, H-0075
+
+## H-0163 – Options news not yet in the ETF price - after an excess ETF-specific implied-vol move, trade 11 asset-class ETFs toward the feared side, SPY-hedged, 5 days
+
+- family: `options-lead-underlying` · mechanism: cross_asset_information · instruments: eleven asset-class ETFs, SPY-hedged, traded after excess moves in their own implied-vol index
+- outcome: rejected at G1: right-signed, but under the placebo percentile bar and under cost; one of three thirds positive
+- lesson: An implied-vol move that neither the VIX nor the ETF's own price move explains did not lead the ETF beyond what same-ETF placebo dates earn. Right-signed, but inside the cloud, gross under cost, flat at the shortest horizons and larger only at ten sessions (slow drift, not options-led news). The two earlier thirds were wrong-signed; only the latest was positive, so one era carries it. Events were plentiful and the placebo bar sat near cost, so this is mostly a real null, not a power problem. Inferred, not tested: stress rebound (K-0084) in the latest third.
+- avoid: Do not refile with another z threshold, hold, ETF list or vol index, or by trading the mirror sign; same trial. Do not argue the next-morning clock cost the signal: the card priced that in and the effect is not larger at short horizons.
+- open questions: Not reported: split between excess rises and falls, split by ETF, ordinary-day control. Option-level data (skew, volume, open interest) is not loadable. Only a different information source than index-level implied vol deserves a new card.
+- related: H-0084, H-0073, H-0055, H-0155, H-0070
+
+## H-0164 – Fed purchase-day local supply flow - 60/40 SPY/IEF book whose bond sleeve moves, duration-matched, into the Treasury ETF of the maturity bucket the New York Fed has scheduled to buy next session
+
+- family: `fed-purchase-local-supply` · mechanism: flow_structural · instruments: Treasury ETFs by maturity sector in a stock-bond core book; the sector the Fed was scheduled to buy next session was marked against the others
+- outcome: rejected at G1 on the mechanism test: marked sector lagged the others, below every placebo, gross negative against cost; book not run
+- lesson: No sector-specific purchase flow showed up in daily Treasury ETF baskets. The test had power: hundreds of events, a placebo bar well under cost. The gap was wrong-signed and grew more negative with horizon, so it is not an operation-day effect. Events sat mostly in the middle third (purchase programmes cluster in a few years) and the latest third was slightly positive, so this is not the usual decay. Reading: a few basis points in the purchased CUSIPs are either diluted in the ETF basket or already priced once the schedule is public.
+- avoid: Do not refile with other buckets, a close-to-close window, a day-before or day-after entry, or the mirror sign; same trial. Do not blame the announcement-date stamping: the schedule was known at the close and the sign was wrong, not just small.
+- open questions: Not measured: size-weighted events, split by programme, and whether the dealer-side effect lives in on-the-run yields or futures, which are not loadable. With H-0038, H-0127 and H-0048 this is the fourth Treasury-ETF supply-flow card with nothing visible.
+- related: H-0038, H-0127, H-0048, H-0041
+
+## H-0165 – Excess single-stock put demand as contrarian timing - 60/40 SPY/IEF tilted toward SPY for 5 sessions after a price- and VIX-residual high equity put/call ratio, away after a low one
+
+- family: `option-demand-pressure` · mechanism: flow_structural · instruments: US equity ETFs (SPY, QQQ, IWM, DIA) against Treasury and aggregate-bond ETFs, both sides marked on excess equity put/call ratio; the book was a stock-bond core tilted for a week
+- outcome: rejected at G1 on the placebo percentile: contrarian sign, gross several times cost, placebo mean near zero, but just under the 95th-percentile bar, which lay far above cost; the book was never run
+- lesson: Excess put demand (net of price and VIX) was followed by an equity-over-bond premium on the point estimate, contrarian as claimed, so the informed-flow reading of H-0163 is not supported. Still a near miss: the cloud was wide (few dates, four ETFs per date), the earlier two thirds were positive and the latest slightly negative (K-0060), and the gain kept growing toward ten sessions, slow drift rather than a hedge unwind.
+- avoid: Do not lower the threshold, change the smoothing or hold, or add the index-option ratio to move the percentile; same trial. Do not read the early thirds as support.
+- open questions: Untested: the raw ratio without the price and VIX residual, a split by fear and complacency side, and a stock-level cross-section. The latest third also has less data, since the Cboe file ends in 2019. Stock-level option volume is not loadable.
+- related: H-0163, H-0041, H-0081, H-0055
+
+## H-0166 – VIX shocks unwind crowded crypto leverage, learned - top-20 Binance perps dollar-neutral 5-day books on VIX-shock dates, LightGBM on funding, basis, flush x shock
+
+- family: `crypto-flight-to-quality` · mechanism: cross_asset_information · instruments: top liquid Binance USD-M perps, dollar-neutral books on days of large VIX moves, ranked by a gradient-boosted model on funding, basis, flush and VIX shock and state
+- outcome: rejected at G1 on the event count: zero marked events in the whole dev window, so every other check was undefined; G0 had passed with zero events; the idea was not tested
+- lesson: A cannot-tell, not a refutation. The card needed a year of VIX history for its state feature and a first model fit on a window of about three years, and the Builder had already warned that scoring would start late; in the end no shock date was scored at all. The family's earlier cards (H-0081, H-0124, H-0130) found no usable ordering either (K-0179), so the lab still has no clean read on funding and basis as the transmission channel.
+- avoid: Do not refile the same learned design on the same 2019-2022 perp window: the warm-up eats the shock dates. Do not lower shock_abs or the VIX baseline after the fact to create events. State which dates can be scored before the card is filed.
+- open questions: A plain rule (no model, VIX change only, a short VIX baseline) on funding and basis sorts would test the channel with events; K-0197 says the unconditional sorts are empty, so the shock interaction is the only open part. The long-only BTC-alone route is also untested.
+- related: H-0130, H-0124, H-0081, H-0120
+
+## H-0167 – Asia-Pacific pre-holiday run-up via US country ETFs - 60/40 core, part of SPY moved into the ETF over its home market's last two sessions before a scheduled closure
+
+- family: `pre-holiday-effect` · mechanism: calendar · instruments: seven US-listed Asia-Pacific country ETFs against a stock-bond core book, entered before the home exchange's scheduled closure
+- outcome: rejected at G1 on the placebo percentile: average about zero, mid-cloud, gross a small fraction of cost; only the earliest third positive
+- lesson: No pre-holiday premium in these country ETFs after 2002. Run-up entries were indistinguishable from ordinary dates; the one-session control and the first home session were both slightly negative, so there is no run-up signature. The placebo bar lay under cost, so this is not a power problem. Only the first third leaned positive, the usual decay of a published calendar effect (K-0060). Home-closure dates now tested on both sides: weak anchoring after a closure starts (H-0133, H-0161), nothing before it.
+- avoid: Do not refile with other pre-sessions, tilt sizes, ADRs or a post-holiday window; same closure calendar, same trial.
+- open questions: Not reported: split by market and by holiday length. Local-market instruments would test the premium directly, but they are not loadable.
+- related: H-0133, H-0157, H-0161, H-0042
+
+## H-0168 – Hedge-failure rebound - after a session where US stocks fall sharply and Treasuries fall too, move a 60/40 SPY/IEF book's bond sleeve into five US equity ETFs for 5 sessions
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: five US equity ETFs against Treasury ETFs after days when stocks and Treasuries both fell; a stock-bond core book moved its bond sleeve into equities
+- outcome: rejected at G1 on the placebo percentile: near zero, below the placebo mean, gross a fraction of cost, only the middle third positive; book not run
+- lesson: No hedge-failure rebound: equity-over-Treasury after these days earned no more than on shifted dates, and horizons were flat to negative for about two weeks, positive only at a month. Only a few dozen dates, so the cloud was much wider than cost and a modest effect could not show; but the point estimate hints at none. One mid-sample episode carried it. With H-0041, neither Treasury-fall nor Treasury-rally equity drops rebound reliably, so the bond condition adds nothing (K-0084).
+- avoid: Do not retune k_sigma, the hold or the Treasury condition for more events; do not read the middle third as support. A further daily-ETF stress-rebound card has a low prior.
+- open questions: Untested: a joint drop defined on the bond side (a yield jump) or a measure of volatility-target leverage; neither is loadable.
+- related: H-0041, H-0046, H-0050, H-0131
+
+## H-0169 – Trend-follower deleveraging spillover - after a big loss day of a replicated CTA book, trade against the trend in 18 ETFs that did not lose, hold 5 days
+
+- family: `trend-follower-deleveraging` · mechanism: flow_structural · instruments: eighteen ETFs in equity, bond, commodity and currency sectors; after a big loss day of a replicated trend-following book, non-losing ETFs traded against trend
+- outcome: rejected at G1 on the placebo percentile: right-signed but well under the bar, gross under cost, latest third negative; book not run
+- lesson: A small spillover in the predicted direction, not distinguishable from placebos and below cost. The shape does not fit the claim: the gain was present in the first sessions, gone or negative by two weeks, and weakened steadily to the latest third, when trend-following assets were largest. That reads as a one-day reversal after stress, not a multi-day de-risking flow, so the card's own kill conditions apply. Events are many but sit on a few hundred shock dates.
+- avoid: Do not refile with other lookbacks, thresholds or replicated books; same trial. Do not call this a reverse stress rebound until a split by side exists.
+- open questions: Not reported: split by long-trend and short-trend bystander and by sector. Real CTA positions are not loadable, so the replication is the weak link.
+- related: H-0050, H-0046, H-0041, H-0070
+
+## H-0170 – Real-yield news into equity cash-flow duration, learned - LIQ-500 long-only EW core, 5 sessions in the top fifth of a LightGBM duration x TIPS-shock score
+
+- family: `oil-shock-equity-underreaction` · mechanism: cross_asset_information · instruments: liquid US stocks (LIQ-500), top and bottom fifth of a gradient-boosted score on dividend yield, book-to-market, profitability and growth crossed with the real-yield (TIPS) shock, held a week
+- outcome: rejected at G1 on the mean abnormal return: marginally wrong-signed, below the same stocks on shifted dates (placebo mean positive), gross about zero, the three thirds disagreed in sign
+- lesson: Real-yield news mapped through valuation duration produced nothing: picks did no better than the same stocks on ordinary dates and horizons disagreed in sign. Many events but only a few hundred shock dates, so the cloud was about as wide as cost; yet the point estimate sat at zero, not near a bar. The ridge control never ran (K-0135). The macro-shock passes (K-0206) used credit or funding mappings; a discount-rate mapping failed, so those passes look more like trial count.
+- avoid: Do not refile with another real-yield threshold, breakeven or nominal yield, or other duration proxies; same shock, same mapping. Do not add stock past-return or volatility features: that rebuilds reversal.
+- open questions: Not reported: split by shock direction and by tail. The family has many trials; a new card needs a new information source, not a new mapping.
+- related: H-0116, H-0129, H-0154, H-0162, H-0126

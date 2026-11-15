@@ -1356,3 +1356,222 @@ datasets:
     - XTKS.closed_next
     location: LAB_HOME/data/exchange_holidays_1d
     cost_model: null
+
+  - id: nyfed_tsy_operations_1d
+    loader: generic
+    asset_class: macro
+    instruments: Federal Reserve Bank of New York Desk outright Treasury purchase operations
+      (coupon and TIPS; bills, FRNs, agency debt and sales ignored) as a daily XNYS-session
+      calendar, signal only, not tradable. Keys buy_next.<bucket> (1 if a purchase operation
+      in the maturity bucket is held on the next XNYS session and its tentative schedule
+      period had already started on or before this session, else 0) and buy_today_par.<bucket>
+      (accepted par in USD on the session, known after that day's operation, 0 if none);
+      buckets b0_3, b3_7, b7_10, b10_20, b20_30 by the midpoint of the operation's maturity
+      range measured from the operation date (years), and tips (any TIPS purchase).
+    frequency: 1d
+    range:
+    - '2008-01-02'
+    - '2020-12-31'
+    clock: us_close
+    source: 'Operation results: Federal Reserve Bank of New York Markets Data API, https://markets.newyorkfed.org/api/tsy/all/results/summary/search.json
+      (free, public, no key). Schedule periods: the NY Fed ''Tentative Outright Treasury
+      Operation Schedule'' archive page https://www.newyorkfed.org/markets/tot_operation_schedule.html
+      (free, public).'
+    quality: 'lab ingest 2026-11-14: 39288 rows, 12 series, see LAB_HOME/data/nyfed_tsy_operations_1d/report.json'
+    holdout_from: '2017-02-01'
+    known_biases:
+    - 'Announcement dates are NOT published by the API (it serves results, announced
+      at the start of each operation). The first-announcement date is therefore stamped
+      conservatively as the first day of the tentative schedule period (from the NY
+      Fed schedule archive page) that contains the operation: a schedule is public before
+      its first operation, so buy_next for session d is set only if the period start
+      is on or before d. The true announcement was usually days earlier (monthly schedule
+      on or around the 8th business day in 2010-2011, last business day of the preceding
+      month in 2012-2014, as stated by the Desk), so buy_next is late, never early;
+      the first operation of every schedule period never gets a buy_next on the session
+      before it.'
+    - 'Operations that fall in no schedule period on the archive page are DROPPED from
+      buy_next (value 0) because no announcement date can be recovered: all operations
+      before 2010-08-17 (2009 to August 2010 biweekly schedules, not on the archive
+      page), everything after the last period (2014-10-28), including the 2016-2017
+      test operations and the 2019-2020 purchases (March 2020 purchases were announced
+      on rolling schedules that are not archived). So buy_next is 0 in those years even
+      when an operation took place: 0 means ''no recoverable announcement'', not ''no
+      operation''. buy_today_par has no such restriction and shows every executed operation,
+      so it can be positive on days when buy_next was 0.'
+    - 'Built from executed operations only: a scheduled operation that was cancelled
+      or changed is not visible, and the bucket is that of the operation as executed;
+      tentative schedules could change. Operation results are not revised, but the schedule
+      archive page is today''s snapshot.'
+    - Bucket = midpoint of the maturity range (start and end dates published with the
+      results) minus the operation date, in years of 365.25 days; operations below 0.75
+      years (bills) and all sales, FRN, bill and agency operations are ignored; TIPS
+      purchases are all in the tips key regardless of maturity. The calendar of XNYS
+      sessions is coded in the fetcher (regular holiday rules plus special closures
+      2012-10-29/30 and 2018-12-05); an operation on a day the NYSE is closed is counted
+      on the next XNYS session.
+    - Rows exist on every XNYS session 2008-01-02 to 2020-12-31 as requested; values
+      after 2020-12-31 are not included (the QE of 2021-2022 would be covered by buy_today_par
+      only, as no schedule archive exists for it).
+    - Because the history ends 2020-12-31 the framework sets the holdout at 70 % of
+      the history (2017-02-01), not the lab-wide 2021-01-01. Every buy_next value of
+      1 lies before 2014-11 (dev); the holdout part of buy_next is all 0 by construction
+      (no recoverable announcement dates), so it contains no test of the signal.
+    forward_source: null
+    calendar: XNYS
+    fields:
+    - buy_next.b0_3
+    - buy_next.b10_20
+    - buy_next.b20_30
+    - buy_next.b3_7
+    - buy_next.b7_10
+    - buy_next.tips
+    - buy_today_par.b0_3
+    - buy_today_par.b10_20
+    - buy_today_par.b20_30
+    - buy_today_par.b3_7
+    - buy_today_par.b7_10
+    - buy_today_par.tips
+    location: LAB_HOME/data/nyfed_tsy_operations_1d
+    cost_model: null
+
+  - id: cboe_putcall_1d
+    loader: generic
+    asset_class: sentiment
+    instruments: 'Cboe daily options volume and put/call ratios, Cboe options exchange
+      only (not consolidated OPRA volume). Three products, each with call volume, put
+      volume and the put/call ratio: equity options (keys equity_pc, equity_call, equity_put),
+      index options (index_pc, index_call, index_put) and total options (total_pc, total_call,
+      total_put). Contracts, one value per XNYS session. Signal only, not tradable.'
+    frequency: 1d
+    range:
+    - '2003-10-17'
+    - '2019-10-04'
+    clock: next_morning
+    source: Cboe free public CSV files https://cdn.cboe.com/resources/options/volume_and_call_put_ratios/{equitypc,totalpc,indexpc}.csv
+      plus the older {equitypcarchive,totalpcarchive,indexpcarchive}.csv (Cboe historical
+      market statistics data). Current files take precedence over the archive files
+      on a shared date. Published for informational use, no key. Ratio = put volume
+      / call volume as published (the Archivist did not look at values).
+    quality: 'lab ingest 2026-11-14: 36165 rows, 9 series, see LAB_HOME/data/cboe_putcall_1d/report.json'
+    holdout_from: '2014-12-01'
+    known_biases:
+    - 'Coverage as fetched 2026-11-14 (framework report): every key starts 2003-10-17
+      and ends 2019-10-04 (n=4018 for equity and total keys, 4019 for index keys), max
+      gap 5 days, no gap above 7 days. The files were frozen on 2019-10-04: there are
+      NO values after that date, so the series cannot be used for 2019-10-07 onwards
+      and has no forward data from these files. A strategy must treat the later period
+      as missing data, not fill it.'
+    - 'Holdout: because the history ends 2019-10-04 the framework sets holdout_from
+      to 70 % of the history (2014-12-01), not the lab-wide 2021-01-01. A card that
+      wants 2006-2020 dev data gets only 2003-10 to 2014-11 as dev; the 2014-12 to 2019-10
+      part is holdout.'
+    - 'Cboe-exchange volume only, NOT consolidated across all US option exchanges: the
+      file headers say ''EXCHANGE: Cboe''. The ratio therefore reflects the order flow
+      routed to Cboe, whose market share and customer mix changed over 2003-2019 (multiple-listing
+      growth), so level shifts of equity_pc can reflect share and product-mix changes
+      and not sentiment.'
+    - 'Revisions: the files are a current snapshot. Cboe provides the data for convenience
+      and may correct it; a restatement of a past day is not visible with its date.
+      The archive files (older, different header) and the current files overlap; on
+      shared dates the current file wins. The two sources were not cross-checked by
+      value.'
+    - 'Publication: Cboe posts the day''s volume after the close, so the value of session
+      d is stamped d with clock next_morning (conservative). Holidays have no row. Early-close
+      days are ordinary sessions.'
+    - 'Methodology: product definitions in Cboe''s files changed over time and are not
+      visible. index_call has 6 large day-to-day jumps (framework flag), kept as published;
+      index volumes are dominated by SPX and VIX products and are lumpy around expiries.
+      Rows with zero or missing volume or non-positive ratio are dropped.'
+    forward_source: null for these CSV files (frozen at 2019-10-04). Later sessions
+      exist only on the Cboe Daily Market Statistics pages (one request per session,
+      e.g. cdn.cboe.com/resources/us/options/market_statistics/daily/cone/archive/html/<YYYY-MM-DD>.html,
+      Cboe exchange only); about 1800 sessions to 2026 exceed the 500-request limit
+      of one fetch, so an extension would need a separate incremental fetcher.
+    calendar: XNYS
+    fields:
+    - equity_call
+    - equity_pc
+    - equity_put
+    - index_call
+    - index_pc
+    - index_put
+    - total_call
+    - total_pc
+    - total_put
+    location: LAB_HOME/data/cboe_putcall_1d
+    cost_model: null
+
+  - id: exchange_holidays_ahead_1d
+    loader: generic
+    asset_class: macro
+    instruments: Forward view of the scheduled full-day holiday calendar of 12 Asia-Pacific
+      stock exchanges (XTKS, XHKG, XKRX, XTAI, XSES, XKLS, XASX, XBKK, XIDX, XPHS, XNZE,
+      XBOM) on XNYS sessions (signal only, not tradable). Key <MIC>.sessions_to_closure
+      on XNYS session d = number j >= 0 of XNYS sessions from d to the first XNYS session
+      d_j (d_0 = d) on which <MIC>.closed_next of exchange_holidays_1d equals 1 (the
+      exchange has no regular session on any weekday after d_j up to and including the
+      next XNYS session); values above 10 are stored as 10; the last 10 sessions of
+      the library's XNYS file without a closure inside the file have no value.
+    frequency: 1d
+    range:
+    - '2001-01-02'
+    - '2023-01-06'
+    clock: us_close
+    source: open-source exchange_calendars library (Apache-2.0, github.com/gerrymanoim/exchange_calendars),
+      session lists tests/resources/<mic>.csv fetched from raw.githubusercontent.com
+      (free, public, no key); weather-closure lists read from exchange_calendar_xhkg.py
+      in the same repository. Derived by the fetcher with the same rules as exchange_holidays_1d.
+    quality: 'lab ingest 2026-11-14: 66408 rows, 12 series, see LAB_HOME/data/exchange_holidays_ahead_1d/report.json'
+    holdout_from: '2021-01-01'
+    known_biases:
+    - 'Derived calendar, not exchange notices: sessions come from the library''s holiday
+      rules as of its current master, i.e. holiday lists compiled after the fact. Not
+      cross-checked day by day against exchange notices. A wrong or missing holiday
+      shifts sessions_to_closure by one for the days before it.'
+    - 'Look-ahead through short-notice holidays: the value stamped on d assumes the
+      whole holiday schedule was known at the US close of d. True for fixed annual holidays
+      (exchanges publish the next year''s list months ahead), but special holidays (royal
+      funerals, mourning days such as XASX/XNZE 2022-09, election days, extra bridge
+      days) were announced only days or weeks ahead, and lunisolar/religious holidays
+      in Malaysia, Indonesia, Singapore, India and Thailand were sometimes moved by
+      the authorities late. These appear as if scheduled ahead.'
+    - 'XHKG weather list: the fetcher reads the uncommented dates of the library''s
+      ''Weather related closures'' block up to the start of the 2022 special holidays
+      (14 dates in 2001-2020, plus 2021-10-13; morning-only closures commented out in
+      the library are not put back). exchange_holidays_1d documents 16 weather dates
+      for 2001-2020, so the two datasets may differ on up to two XHKG weather days (library
+      revision or parsing).'
+    - 'Unscheduled closures: weather closures the library encodes as holidays are put
+      back as sessions (XHKG typhoon and black-rainstorm days; XPHS typhoon days 2011-09-27,
+      2012-08-07, 2014-07-16, 2014-09-19, 2014-12-08, 2017-09-12). Other ad-hoc closures
+      cannot be told apart and stay holidays. Taiwan typhoon closures before 2024 are
+      not in the library and show as sessions.'
+    - Coverage is cut at the library's XNYS session list (last session 2023-01-13);
+      rows within 10 sessions of that end have no value unless a closure is already
+      inside the file. Weekends are never sessions (Saturday sessions in Korea/Taiwan
+      etc. ignored); half-day sessions count as sessions. Values above 10 are capped
+      at 10.
+    - The framework sets the lab-wide holdout (2021-01-01); the request period ended
+      2020-12-31, so the library's data after that date make up the holdout. Calendar
+      flags repeat each year; XIDX, XPHS and XBOM lists are the least checked.
+    forward_source: 'same library: tests/resources/<mic>.csv from the exchange_calendars
+      repository (refreshed only when the library is updated; XNYS file ends 2023-01-13),
+      or the library itself (pip) for later dates; exchange holiday notices (JPX, HKEX,
+      KRX, TWSE, SGX, Bursa Malaysia, ASX, SET, IDX, PSE, NZX, BSE) for cross-checks.'
+    calendar: XNYS
+    fields:
+    - XASX.sessions_to_closure
+    - XBKK.sessions_to_closure
+    - XBOM.sessions_to_closure
+    - XHKG.sessions_to_closure
+    - XIDX.sessions_to_closure
+    - XKLS.sessions_to_closure
+    - XKRX.sessions_to_closure
+    - XNZE.sessions_to_closure
+    - XPHS.sessions_to_closure
+    - XSES.sessions_to_closure
+    - XTAI.sessions_to_closure
+    - XTKS.sessions_to_closure
+    location: LAB_HOME/data/exchange_holidays_ahead_1d
+    cost_model: null
