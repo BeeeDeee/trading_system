@@ -4600,5 +4600,31 @@
   "thresholds_sha256": "b7adfed789b3e6e98dbddae10e39b26a06c04ba7e1d256740573ecb66565cb86",
   "evaluator": "qlab",
   "ts": "2026-11-14T23:31:02.359925+00:00"
+ },
+ {
+  "id": 355,
+  "run_id": 425,
+  "hypothesis_id": "H-0171",
+  "version": 1,
+  "gate": "G0",
+  "passed": 1,
+  "reason_code": null,
+  "metrics_json": "{\"event_controls\":{\"events\":108,\"min_controls\":3,\"with_controls\":108},\"events_in_dev\":108,\"events_lookahead_failures\":{\"cuts_tested\":25,\"perturbation\":[],\"truncation\":[]},\"lookahead_failures\":{\"cuts_tested\":25,\"perturbation\":[],\"truncation\":[]},\"problems\":[],\"runtime_s\":0.075}",
+  "thresholds_sha256": "b7adfed789b3e6e98dbddae10e39b26a06c04ba7e1d256740573ecb66565cb86",
+  "evaluator": "qlab",
+  "ts": "2026-11-15T08:20:26.993895+00:00"
+ },
+ {
+  "id": 356,
+  "run_id": 426,
+  "hypothesis_id": "H-0171",
+  "version": 1,
+  "gate": "G1",
+  "passed": 0,
+  "reason_code": "g1_mechanism_events",
+  "metrics_json": "{\"checks\":{\"mechanism_abnormal_return\":{\"op\":\">\",\"pass\":false,\"threshold\":0.0,\"value\":-0.002098},\"mechanism_blocks\":{\"op\":\">=\",\"pass\":false,\"threshold\":2.0,\"value\":1.0},\"mechanism_controls\":{\"op\":\">=\",\"pass\":true,\"threshold\":0.5,\"value\":1.0},\"mechanism_costs\":{\"op\":\">=\",\"pass\":false,\"threshold\":1.0,\"value\":-0.25179},\"mechanism_events\":{\"op\":\">=\",\"pass\":false,\"threshold\":200.0,\"value\":0.0},\"mechanism_placebo_percentile\":{\"op\":\">=\",\"pass\":false,\"threshold\":0.95,\"value\":0.41}},\"mechanism\":{\"blocks\":[{\"events\":0,\"mean_abnormal\":null},{\"events\":48,\"mean_abnormal\":-0.00794732446658558},{\"events\":60,\"mean_abnormal\":0.0025810125499725308}],\"cost_ratio\":-0.25178980155306213,\"events_per_year\":68.6,\"horizon_days\":5,\"mean_abnormal\":-0.0020982483462755183,\"n_event_dates\":9,\"n_events\":108,\"n_events_no_controls\":0,\"other_horizons_mean_abnormal\":{\"1\":0.005074903899981558,\"10\":-0.0074907138899086454,\"3\":0.0030406949398272174},\"placebo\":{\"mean\":-0.00020991692634803535,\"p95\":0.01545737996041969,\"runs\":200,\"sd\":0.01052149368430153},\"placebo_percentile\":0.41,\"round_trip_cost\":0.008333333333333335,\"z_vs_placebo\":-0.17947370179435126},\"strategy_not_run\":true}",
+  "thresholds_sha256": "b7adfed789b3e6e98dbddae10e39b26a06c04ba7e1d256740573ecb66565cb86",
+  "evaluator": "qlab",
+  "ts": "2026-11-15T08:20:27.871793+00:00"
  }
 ]

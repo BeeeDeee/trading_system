@@ -102,5 +102,13 @@
   "reason": "Same mechanism as H-0063: a close beyond a recent range on Binance BTC/ETH perps, both sides, held for hours, harvested by a taker, where the counterparty is the stops and breakout orders resting beyond the range. H-0137 differs only in the range anchor (09:30-10:00 New York) and in not requiring taker-dominated volume. Keeping it in a separate family hid its trial from the multiple-testing penalty. Merging is the stricter direction. The merged family is a price-structure range breakout on 15m crypto perps, and the family name is a label only.",
   "message_id": 1164,
   "ts": "2026-11-12T21:36:48.526950+00:00"
+ },
+ {
+  "from_family": "crypto-flight-to-quality",
+  "into_family": "short-term-reversal",
+  "actor": "chair",
+  "reason": "H-0171 is the H-0039 funding sort (short high / long low trailing funding in liquid Binance perps, hold five days) run on VIX-shock dates, and H-0166 sorts the same funding/basis crowding on the same dates; the counterparty (crowded leveraged perp holders) and the reason for the effect (forced unwind of leverage) are the same as perp-leverage-crowding, which was merged into short-term-reversal (K-0087). The TradFi-stress gate is a conditioning date set, not a new counterparty. Families cannot be split, so H-0130 (learned risk ladder, spot) moves too; it is a different cross-asset story, but H-0081 and H-0124 on the same VIX state already sit in short-term-reversal, so the merge only makes the penalty stricter.",
+  "message_id": 1395,
+  "ts": "2026-11-15T08:35:48.212691+00:00"
  }
 ]

@@ -1486,3 +1486,12 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile with another real-yield threshold, breakeven or nominal yield, or other duration proxies; same shock, same mapping. Do not add stock past-return or volatility features: that rebuilds reversal.
 - open questions: Not reported: split by shock direction and by tail. The family has many trials; a new card needs a new information source, not a new mapping.
 - related: H-0116, H-0129, H-0154, H-0162, H-0126
+
+## H-0171 – VIX jumps unwind crowded crypto leverage, plain rule - top-30 Binance perps dollar-neutral, short high / long low 7-day funding within BTC-beta halves, hold 5 days
+
+- family: `crypto-flight-to-quality` · mechanism: cross_asset_information · instruments: top liquid Binance USD-M perps, dollar-neutral books on VIX-jump days: short high, long low recent funding within beta halves, held five days
+- outcome: rejected at G1 on the mechanism test: too few shock dates scored, none in the first third of dev, no gain over placebos; strategy not run
+- lesson: Mostly a cannot-tell. The plain rule was scored on fewer than a dozen shock dates against a forecast of dozens, none in the first third of dev, which holds the early-2020 crash, the most informative dates. Cause unverified (inferred: thin perp panel or funding and beta eligibility in 2020, or the book-opening rule), not a model warm-up. On the scored dates the funding sort did no better than on random dates, gross was below zero, a small one-day gain reversed by ten days. The placebo bar lay above cost, so a real effect could hide.
+- avoid: Do not refile with a lower vix_shock, shorter funding_days or another threshold to manufacture dates: a second trial of the same idea. Do not read the right-signed latest block as support; it is a handful of dates in one episode. Do not file before listing, from the view start, the dates on which enough perps have funding and beta to open a book.
+- open questions: Whether funding crowding is unwound after a US volatility shock is still untested at useful power: the 2020 stress dates never entered. A new card needs a window or universe that provably produces books on dozens of shock dates, the unconditional funding sort on the same dates as control, and a leg split. Slower horizons and a crypto-native stress trigger are untested.
+- related: H-0166, H-0039, H-0081, H-0130, H-0124

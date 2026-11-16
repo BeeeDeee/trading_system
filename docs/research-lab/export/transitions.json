@@ -10510,5 +10510,113 @@
   "message_id": null,
   "reason": "G1 failed (run 424, qlab)",
   "ts": "2026-11-14T23:31:02.381115+00:00"
+ },
+ {
+  "id": 877,
+  "hypothesis_id": "H-0171",
+  "version": 1,
+  "from_status": null,
+  "to_status": "IDEA",
+  "actor": "scout",
+  "invocation_id": "scout-20261115T080549-6d2f30",
+  "message_id": 1387,
+  "reason": "created",
+  "ts": "2026-11-15T08:15:19.001757+00:00"
+ },
+ {
+  "id": 878,
+  "hypothesis_id": "H-0171",
+  "version": 1,
+  "from_status": "IDEA",
+  "to_status": "SPECIFIED",
+  "actor": "scout",
+  "invocation_id": "scout-20261115T080549-6d2f30",
+  "message_id": 1387,
+  "reason": "spec complete",
+  "ts": "2026-11-15T08:15:19.187845+00:00"
+ },
+ {
+  "id": 879,
+  "hypothesis_id": "H-0171",
+  "version": 1,
+  "from_status": "SPECIFIED",
+  "to_status": "DATA_READY",
+  "actor": "system",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "all data requirements resolve in the catalog",
+  "ts": "2026-11-15T08:15:19.335169+00:00"
+ },
+ {
+  "id": 880,
+  "hypothesis_id": "H-0171",
+  "version": 1,
+  "from_status": "DATA_READY",
+  "to_status": "IMPLEMENTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G0 passed (run 425, qlab)",
+  "ts": "2026-11-15T08:20:27.001441+00:00"
+ },
+ {
+  "id": 881,
+  "hypothesis_id": "H-0171",
+  "version": 1,
+  "from_status": "IMPLEMENTED",
+  "to_status": "REJECTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G1 failed (run 426, qlab)",
+  "ts": "2026-11-15T08:20:27.877210+00:00"
+ },
+ {
+  "id": 882,
+  "hypothesis_id": "H-0172",
+  "version": 1,
+  "from_status": null,
+  "to_status": "IDEA",
+  "actor": "scout",
+  "invocation_id": "scout-20261115T133032-58bad5",
+  "message_id": 1400,
+  "reason": "created",
+  "ts": "2026-11-15T13:53:00.101654+00:00"
+ },
+ {
+  "id": 883,
+  "hypothesis_id": "H-0172",
+  "version": 1,
+  "from_status": "IDEA",
+  "to_status": "SPECIFIED",
+  "actor": "scout",
+  "invocation_id": "scout-20261115T133032-58bad5",
+  "message_id": 1400,
+  "reason": "spec complete",
+  "ts": "2026-11-15T13:53:00.817629+00:00"
+ },
+ {
+  "id": 884,
+  "hypothesis_id": "H-0172",
+  "version": 1,
+  "from_status": "SPECIFIED",
+  "to_status": "BLOCKED_DATA",
+  "actor": "system",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "missing dataset exchange_closures_mena_1d",
+  "ts": "2026-11-15T13:53:00.983305+00:00"
+ },
+ {
+  "id": 885,
+  "hypothesis_id": "H-0172",
+  "version": 1,
+  "from_status": "BLOCKED_DATA",
+  "to_status": "PARKED",
+  "actor": "archivist",
+  "invocation_id": null,
+  "message_id": 1402,
+  "reason": "exchange_closures_mena_1d: the only free, public, structured source named in the request (exchange_calendars, tests/resources/xtae.csv and xsau.csv, plus the library's own calendar classes) does not reach back far enough. lab fetch validated a fetcher built exactly as specified (own session lists, Sunday sessions count, closed_next / anchored per XNYS session): XTAE rows only exist from 2019-01-03 and XSAU rows only from 2021-01-05 (both to 2023-01-12, the end of the library's XNYS file). With the lab-wide holdout at 2021-01-01 that leaves about 2 years of dev for XTAE and none for XSAU, against the requested dev period 2008-2020 (and ETF listings EIS 2008, ISRA 2011, KSA 2015, FLSA 2018). Before the library's start dates there is no free structured session list: Tel Aviv holidays could be approximated from a Hebrew-calendar API plus rules and Tadawul closures (Eid moon-sighting, short-notice bridge days, the pre-mid-2013 Saturday-Wednesday week) have no free published history, so any reconstruction would be an unverifiable guess that silently creates look-ahead in a flag the hypothesis relies on for entry and exit. Ingesting the 2019+ slice would leave the card with a few events on a 2-year dev window and no XSAU dev data, so it is not offered. Note for the owner: the request text assumes Friday/Saturday non-sessions for Tadawul throughout 2008-2020, but the Saudi weekend moved from Thursday-Friday to Friday-Saturday only in mid-2013, so pre-2013 XSAU flags would differ from the stated rule anyway (the library has no such history).",
+  "ts": "2026-11-15T13:54:47.496064+00:00"
  }
 ]

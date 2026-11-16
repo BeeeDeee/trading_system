@@ -2542,5 +2542,29 @@
   "actor": "librarian",
   "message_id": 1384,
   "ts": "2026-11-15T03:08:51.225684+00:00"
+ },
+ {
+  "id": "K-0213",
+  "kind": "framework",
+  "title": "A plain perp event rule without a model also lost its early-2020 dates",
+  "statement": "K-0211 asked if zero events in H-0124 and H-0166 came from model warm-up and a VIX baseline. H-0171 removes both: a plain rule (VIX jump, funding sort in BTC-beta halves, top-30 perps, no model) opened books on only 9 dates (108 events) against a forecast of 55-75 dates. G1 blocks held 0, 48 and 60 events, so the first third of dev, with the early-2020 stress, was empty. Cause unverified: few perps with funding and 45 beta pairs in 2020 (fewer than 12 eligible), the fallback universe (K-0131), or the book-opening rule. The G1 check mechanism_events shows value 0.0 although n_events is 108. Scouts: count eligible perps per month from the view start and forecast dates from that, not from the VIX base rate (K-0120). Suggested: G0 reports events per block.",
+  "evidence": "[\"H-0171\",\"H-0166\",\"H-0124\",\"K-0211\",\"K-0131\",\"K-0120\",\"run 426\"]",
+  "confidence": "low",
+  "supersedes": "K-0211",
+  "actor": "librarian",
+  "message_id": 1392,
+  "ts": "2026-11-15T08:21:58.492099+00:00"
+ },
+ {
+  "id": "K-0214",
+  "kind": "process",
+  "title": "Family crypto-flight-to-quality merged into short-term-reversal; H-0130 moves with it but tests a different mechanism",
+  "statement": "On the Librarian's question (message 1393) the Chair merged crypto-flight-to-quality into short-term-reversal. H-0171 is the H-0039 funding sort on VIX-shock dates, and H-0166 sorts the same funding and basis crowding on the same dates, so the counterparty (crowded leveraged perp holders) and the reason (forced unwind) are the same; the TradFi story is only the conditioning date set. The combined count is that of short-term-reversal, which already holds the earlier perp-leverage-crowding cards after K-0087 (H-0039, H-0049, H-0071, H-0145 among them) and the VIX-state cards H-0081 and H-0124, not just the four crowding cards. Families cannot be split, so H-0130 moves too. It is a different mechanism, a cross-asset risk-ladder idea (levered altcoin holders de-risking with a lag after a US shock; evidence in K-0179), and should be read as counted for trials only. The merge makes the multiple-testing penalty stricter for new cards in this family and changes no past verdict. Read lessons filed under the old family name (H-0130, H-0166, H-0171) as part of short-term-reversal for the trial count.",
+  "evidence": "[\"H-0171\",\"H-0166\",\"H-0130\",\"H-0124\",\"H-0081\",\"H-0039\",\"K-0087\",\"K-0179\",\"K-0197\",\"chair reply to question 1393\"]",
+  "confidence": "high",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1397,
+  "ts": "2026-11-15T08:36:13.496458+00:00"
  }
 ]

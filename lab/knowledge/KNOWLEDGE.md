@@ -666,11 +666,11 @@ K-0191: owner diagnostics written as separate modules are never run, and the int
 
 *confidence low · 2026-11-13 · librarian · supersedes K-0191 · evidence: H-0140; H-0139; H-0137; H-0138; H-0089; K-0186; K-0188; K-0191*
 
-### K-0211 Second learned crypto perp card with zero events: H-0166 passed G0 with none and the whole dev window was empty
+### K-0213 A plain perp event rule without a model also lost its early-2020 dates
 
-H-0124 (2026-11) and now H-0166 (2026-11-14) are learned cards on Binance perps whose mechanism test counted zero events in the whole dev window, and both passed G0 with zero events. The spot card H-0130 scored (K-0178), so the cause is not VIX or warm-up alone. H-0166 added a one-year VIX median for its state feature, a refit every 63 rows, a window that starts in late 2019 and ends in 2022, and the card expected dozens of scored shock dates in 2021-2022. The Builder had warned that scores would start late in 2021 but the registry shows only g1_mechanism_events, and the other checks were undefined. Not verified: whether the model ever fitted, whether the judge's perp universe or the Builder's fallback (K-0131) removed the members, and whether any shock date had enough finite features. The trial was spent without a test. Suggested: G0 should fail or park a card with zero events in dev, report scored dates per block, and say which required feature was non-finite. Scouts of learned perp cards should list the first scoreable date from the view start (K-0108) before filing.
+K-0211 asked if zero events in H-0124 and H-0166 came from model warm-up and a VIX baseline. H-0171 removes both: a plain rule (VIX jump, funding sort in BTC-beta halves, top-30 perps, no model) opened books on only 9 dates (108 events) against a forecast of 55-75 dates. G1 blocks held 0, 48 and 60 events, so the first third of dev, with the early-2020 stress, was empty. Cause unverified: few perps with funding and 45 beta pairs in 2020 (fewer than 12 eligible), the fallback universe (K-0131), or the book-opening rule. The G1 check mechanism_events shows value 0.0 although n_events is 108. Scouts: count eligible perps per month from the view start and forecast dates from that, not from the VIX base rate (K-0120). Suggested: G0 reports events per block.
 
-*confidence low · 2026-11-15 · librarian · evidence: H-0166; H-0124; H-0130; K-0178; K-0163; K-0131; K-0108*
+*confidence low · 2026-11-15 · librarian · supersedes K-0211 · evidence: H-0171; H-0166; H-0124; K-0211; K-0131; K-0120; run 426*
 
 ## How the lab works
 
@@ -751,6 +751,12 @@ H-0138 was specified as H-0137's rule plus one filter, with the instruction that
 Twelve cards. Event counts for slow stock sorts were in range or above (H-0146 forecast 3500-6500, counted about 14300; H-0154 forecast 3000-7000, counted 9296) and stock round trips matched (about 12 bps). Two kinds of count ran wrong. H-0157 forecast 250-700 events on 80-130 dates and G1 counted 173 on 18 dates: closures of different exchanges coincide and only the first unanchored session of each closure counts (K-0177). Confirmation-close intraday rules fired far more often than forecast: H-0149 forecast 250-700 trades, counted 2872; H-0150 forecast 1000-3000, counted 5980; H-0147 forecast 400-900, counted 2888; H-0148 (600-1500, counted 1699) was in range. Gross per entry or trade was below the central case in most cards (wrong-signed in H-0151 and H-0157, near zero in H-0156, H-0149, H-0150), and slow cards forecast raw gross without the same-stock placebo that absorbed it (K-0025). Scouts who led with a pessimistic case (H-0147 to H-0150) were closest. Registry codes again show one failed check (K-0069, K-0098).
 
 *confidence low · 2026-11-14 · librarian · supersedes K-0177 · evidence: H-0146; H-0147; H-0148; H-0149; H-0150; H-0151; H-0152; H-0154; H-0155; H-0156; H-0157; K-0177; K-0144; K-0069; K-0098*
+
+### K-0214 Family crypto-flight-to-quality merged into short-term-reversal; H-0130 moves with it but tests a different mechanism
+
+On the Librarian's question (message 1393) the Chair merged crypto-flight-to-quality into short-term-reversal. H-0171 is the H-0039 funding sort on VIX-shock dates, and H-0166 sorts the same funding and basis crowding on the same dates, so the counterparty (crowded leveraged perp holders) and the reason (forced unwind) are the same; the TradFi story is only the conditioning date set. The combined count is that of short-term-reversal, which already holds the earlier perp-leverage-crowding cards after K-0087 (H-0039, H-0049, H-0071, H-0145 among them) and the VIX-state cards H-0081 and H-0124, not just the four crowding cards. Families cannot be split, so H-0130 moves too. It is a different mechanism, a cross-asset risk-ladder idea (levered altcoin holders de-risking with a lag after a US shock; evidence in K-0179), and should be read as counted for trials only. The merge makes the multiple-testing penalty stricter for new cards in this family and changes no past verdict. Read lessons filed under the old family name (H-0130, H-0166, H-0171) as part of short-term-reversal for the trial count.
+
+*confidence high · 2026-11-15 · librarian · evidence: H-0171; H-0166; H-0130; H-0124; H-0081; H-0039; K-0087; K-0179; K-0197; chair reply to question 1393*
 
 ## Superseded
 
@@ -843,3 +849,4 @@ Twelve cards. Event counts for slow stock sorts were in range or above (H-0146 f
 - K-0198 A cut arbitrage link is not enough: single-company receipts did not revert during home closures, basket wrappers did
 - K-0203 Credit-shock news into stocks: two learned cards pass the placebo test near cost, a plain sort failed
 - K-0206 Macro-shock weeks in liquid US stocks: learned balance-sheet cards pass the event test three times, no book follows
+- K-0211 Second learned crypto perp card with zero events: H-0166 passed G0 with none and the whole dev window was empty
