@@ -1,0 +1,145 @@
+{
+ "date": "2026-11-16",
+ "regime": {
+  "label": "Risk-off, extrémní strach, přeprodaný trh",
+  "summary": "BTC za týden −12,7 % na čtyřměsíční minimum u 62 tis. USD kvůli odlivům z ETF, vyšší inflaci, obavám z Fedu a likvidacím ~2 mld. USD; Fear & Greed 10 a záporný funding ukazují kapitulaci a dávají šanci na krátký odraz, trend je ale jasně klesající."
+ },
+ "events_7d": [
+  {"date": "2026-11-17", "title": "USA: maloobchodní tržby za říjen", "type": "makro"},
+  {"date": "2026-11-18", "title": "Zápis z jednání FOMC (27.–28. 10.)", "type": "makro"},
+  {"date": "2026-11-19", "title": "Výsledky Nvidia – citlivé pro tech a riziková aktiva", "type": "makro"},
+  {"date": "2026-11-29", "title": "HYPE: měsíční unlock týmu (~9,9 mil. HYPE), mimo 7denní okno, ale může tlačit už dříve", "type": "unlock"}
+ ],
+ "coins": {
+  "BTC": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Hluboko pod všemi SMA a RSI 24 se záporným fundingem; odlivy z ETF a makro jsou známé, krátký odraz pravděpodobný, trend zůstává dolů.",
+   "sources": [
+    "https://finance.yahoo.com/markets/crypto/articles/bitcoin-drops-below-65-000-212800178.html",
+    "https://crypto.news/why-bitcoin-price-fell-62000",
+    "https://www.businesstoday.com.my/2026/11/16/bitcoin-rebounds-above-us65000-as-crypto-market-stages-cautious-recovery/"
+   ]
+  },
+  "ETH": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Slabší než BTC za 30 dní a odlivy z ETH ETF pokračují, ale vyšší beta a přeprodanost (RSI 26) dávají šanci na silnější odraz.",
+   "sources": [
+    "https://www.businesstoday.com.my/2026/11/16/bitcoin-rebounds-above-us65000-as-crypto-market-stages-cautious-recovery/"
+   ]
+  },
+  "BNB": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.51, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Za 30 dní lehce silnější než BTC i po hacku Binance za 6,3 mld. USD, který burza kryje sama; nová informace chybí.",
+   "sources": [
+    "https://www.coindesk.com/business/2026/11/03/binance-s-usd6-3-billion-hack-began-with-a-fake-job-interview-exchange-says",
+    "https://www.cnn.com/2026/11/01/business/binance-withdrawals-crypto-heist"
+   ]
+  },
+  "XRP": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.5, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Krátce pod 1 USD a 25 % pod SMA50, včerejší +6,5 % už část odrazu vybralo; fundamentální novinky chybí.",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/xrp/latest-updates"
+   ]
+  },
+  "SOL": {
+   "trend": -2, "mr": 2, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejvíc přeprodaný (RSI 21, −11 % za 3 dny) a s nejzápornějším fundingem, ale trend vůči BTC je slabý (rel30 −10 %).",
+   "sources": [
+    "https://finance.yahoo.com/markets/crypto/articles/bitcoin-drops-below-65-000-212800178.html"
+   ]
+  },
+  "TRX": {
+   "trend": 1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.48, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Obranné aktivum s nulovou korelací k BTC a silnou relativní výkonností (rel30 +11 %), při odrazu trhu ale pravděpodobně zaostane.",
+   "sources": []
+  },
+  "HYPE": {
+   "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.51, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Relativně silný vůči BTC (rel7 +4 %, rel30 +5 %); unlock týmu 29. 11. je známý a minulý unlock byl menší, než se čekalo.",
+   "sources": [
+    "https://cryptoticker.io/en/hyperliquid-team-unlock-180000-hype/"
+   ]
+  },
+  "ZEC": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.48, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Po upgradu NU7 výprodej typu sell-the-news (−24,5 % za týden) a velmi vysoká volatilita; nic nového, co by trh ještě nezapočítal.",
+   "sources": [
+    "https://cointelegraph.com/news/zcash-nu7-november-mainnet-activation"
+   ]
+  },
+  "DOGE": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.45, "p_up_7d": 0.48, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejnižší ceny od roku 2023, aktivita na síti klesá o 37 % a do ETF nic nepřitéká; slabý trend bez katalyzátoru.",
+   "sources": [
+    "https://cryptoticker.io/en/dogecoin-news-on-chain-activity-down-37-percent-november-2026/"
+   ]
+  },
+  "NEAR": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.48, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Rekordní poplatky z NEAR Intents a schválené snížení emisí jsou pozitivní, ale už známé; za 30 dní −36 % a vysoká beta.",
+   "sources": [
+    "https://cointelegraph.com/news/near-sinks-7-proposal-cut-annual-token-issuance-passes",
+    "https://coinmarketcap.com/cmc-ai/near-protocol/latest-updates/"
+   ]
+  },
+  "UNI": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.44, "p_up_7d": 0.47, "expected_move_7d_pct": -1.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejslabší trend v univerzu (rel7 −11 %) a peněženka spojovaná s hackerem Binance drží UNI za ~47 mil. USD, což visí nad trhem s objemem 40 mil. USD denně.",
+   "sources": [
+    "https://www.forexcrunch.com/blog/2026/11/16/binance-hacker-suspected-wallet-stacked-uni/"
+   ]
+  },
+  "SUI": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.48, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Za týden lehce lepší než BTC, ale za 30 dní −28 %; listopadový unlock je za námi a nové zprávy chybí.",
+   "sources": [
+    "https://defillama.com/unlocks/sui-foundation"
+   ]
+  }
+ },
+ "top10": [
+  {"coin": "HYPE", "reason": "Nejlepší relativní síla vůči BTC, nízká korelace, unlock až koncem měsíce."},
+  {"coin": "BNB", "reason": "Stabilní vůči BTC na 30 dní, hack už je v ceně."},
+  {"coin": "SOL", "reason": "Nejvíc přeprodaný se záporným fundingem, má šanci na ostrý odraz."},
+  {"coin": "ETH", "reason": "Vysoká beta při odrazu z extrémního strachu."},
+  {"coin": "TRX", "reason": "Obranná volba, kdyby výprodej pokračoval."},
+  {"coin": "NEAR", "reason": "Fundamentálně zlepšené (poplatky, emise), vysoká beta."},
+  {"coin": "SUI", "reason": "Týdenní relativní síla, unlock je za námi."},
+  {"coin": "XRP", "reason": "Přeprodaný, ale bez katalyzátoru."},
+  {"coin": "ZEC", "reason": "Po sell-the-news výprodeji možný odraz, velmi volatilní."},
+  {"coin": "DOGE", "reason": "Přeprodaný, ale fundamentálně slabý."}
+ ],
+ "claude_volne": {
+  "comment": "Při extrémním strachu držím zhruba třetinovou expozici ve stávajících pozicích a zbytek v hotovosti, přeprodaný trh nehoním.",
+  "positions": [
+   {"coin": "BTC", "weight_pct": 15, "reason": "Jádro portfolia, přeprodaný stav a záporný funding dávají šanci na odraz.", "invalidation": "Denní uzávěr pod 62 tis. USD (nové minimum) při pokračujících odlivech z ETF."},
+   {"coin": "BNB", "weight_pct": 12, "reason": "Relativně stabilní vůči BTC i po hacku Binance.", "invalidation": "Nové problémy Binance (výběry, regulace) nebo pokles pod 30d minimum."},
+   {"coin": "HYPE", "weight_pct": 8, "reason": "Nejsilnější relativní trend v univerzu.", "invalidation": "Výrazný přesun odemčených tokenů týmu na burzy před unlockem 29. 11. nebo ztráta relativní síly (rel7 < 0)."}
+  ]
+ }
+}
