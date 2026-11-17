@@ -1,42 +1,47 @@
 {
- "last_label": "2026-11-16T05",
+ "last_label": "2026-11-17T05",
  "meta": {
   "funding_kontra": {
-   "BTC": {
-    "entry_t": 1794787200000,
-    "ref_open": 65224.87
-   },
    "ETH": {
-    "entry_t": 1794758400000,
-    "ref_open": 1806.99
+    "entry_t": 1794873600000,
+    "ref_open": 1828.18
    },
    "SOL": {
     "entry_t": 1794758400000,
     "ref_open": 71.31
    },
    "SUI": {
-    "entry_t": 1794643200000,
-    "ref_open": 0.777
+    "entry_t": 1794873600000,
+    "ref_open": 0.7202
+   },
+   "TRX": {
+    "entry_t": 1794816000000,
+    "ref_open": 0.3028
    },
    "XRP": {
     "entry_t": 1794700800000,
     "ref_open": 0.8985
    }
   },
-  "h_breakout": {},
+  "h_breakout": {
+   "ETH": {
+    "entry_t": 1794841200000,
+    "ref_open": 1803.79
+   }
+  },
   "h_kniha": {},
   "h_momentum": {
-   "BNB": {
-    "entry_t": 1794794400000,
-    "ref_open": 594.36
+   "NEAR": {
+    "entry_t": 1794884400000,
+    "ref_open": 3.169
    },
-   "ETH": {
-    "entry_t": 1794805200000,
-    "ref_open": 1827.78
+   "TRX": {
+    "entry_t": 1794880800000,
+    "ref_open": 0.3054
    },
    "UNI": {
-    "entry_t": 1794801600000,
-    "ref_open": 5.212
+    "entry_t": 1794866400000,
+    "ref_open": 5.134
    }
   },
   "h_reverze": {},
@@ -47,28 +52,19 @@
   "funding_kontra": {
    "base": {
     "blocked": {},
-    "cash": 3.50808742,
-    "fees": 873.3845152,
+    "cash": 0.0,
+    "fees": 881.56125319,
     "last_rebalance": null,
-    "n_trades": 625,
+    "n_trades": 635,
     "positions": {
-     "BTC": {
-      "avg_px": 65326.456905,
-      "entry_date": "2026-11-16",
-      "entry_ms": 1794787324316,
-      "high": 65293.805,
-      "qty": 0.0128012141,
-      "ref_px": 65293.805,
-      "stop_checked_ms": 1794787324316
-     },
      "ETH": {
-      "avg_px": 1809.814455,
-      "entry_date": "2026-11-15",
-      "entry_ms": 1794758532211,
-      "high": 1808.905,
-      "qty": 0.4537403046,
-      "ref_px": 1808.905,
-      "stop_checked_ms": 1794758532211
+      "avg_px": 1820.379735,
+      "entry_date": "2026-11-17",
+      "entry_ms": 1794873725184,
+      "high": 1819.465,
+      "qty": 0.4538504031,
+      "ref_px": 1819.465,
+      "stop_checked_ms": 1794873725184
      },
      "SOL": {
       "avg_px": 71.19112,
@@ -80,13 +76,22 @@
       "stop_checked_ms": 1794758532211
      },
      "SUI": {
-      "avg_px": 0.77042125,
-      "entry_date": "2026-11-14",
-      "entry_ms": 1794643326040,
-      "high": 0.76845,
-      "qty": 1108.0857625639,
-      "ref_px": 0.76845,
-      "stop_checked_ms": 1794643326040
+      "avg_px": 0.7230975,
+      "entry_date": "2026-11-17",
+      "entry_ms": 1794873725184,
+      "high": 0.71945,
+      "qty": 1123.0469806159,
+      "ref_px": 0.71945,
+      "stop_checked_ms": 1794873725184
+     },
+     "TRX": {
+      "avg_px": 0.30405825,
+      "entry_date": "2026-11-16",
+      "entry_ms": 1794816125579,
+      "high": 0.30325,
+      "qty": 2707.4053331923,
+      "ref_px": 0.30325,
+      "stop_checked_ms": 1794816125579
      },
      "XRP": {
       "avg_px": 0.9148139,
@@ -98,34 +103,25 @@
       "stop_checked_ms": 1794700931667
      }
     },
-    "slippage": 2025.3768668,
+    "slippage": 2042.85238476,
     "started": "2026-09-30T22",
-    "turnover": 873384.51514989
+    "turnover": 881561.25312782
    },
    "gross": {
     "blocked": {},
-    "cash": 11.08958998,
+    "cash": 5.70879528,
     "fees": 0.0,
     "last_rebalance": null,
-    "n_trades": 623,
+    "n_trades": 633,
     "positions": {
-     "BTC": {
-      "avg_px": 65293.805,
-      "entry_date": "2026-11-16",
-      "entry_ms": 1794787324316,
-      "high": 65293.805,
-      "qty": 0.0192953942,
-      "ref_px": 65293.805,
-      "stop_checked_ms": 1794787324316
-     },
      "ETH": {
-      "avg_px": 1808.905,
-      "entry_date": "2026-11-15",
-      "entry_ms": 1794758532211,
-      "high": 1808.905,
-      "qty": 0.682629111,
-      "ref_px": 1808.905,
-      "stop_checked_ms": 1794758532211
+      "avg_px": 1819.465,
+      "entry_date": "2026-11-17",
+      "entry_ms": 1794873725184,
+      "high": 1819.465,
+      "qty": 0.6873412936,
+      "ref_px": 1819.465,
+      "stop_checked_ms": 1794873725184
      },
      "SOL": {
       "avg_px": 71.115,
@@ -137,13 +133,22 @@
       "stop_checked_ms": 1794758532211
      },
      "SUI": {
-      "avg_px": 0.76845,
-      "entry_date": "2026-11-14",
-      "entry_ms": 1794643326040,
-      "high": 0.76845,
-      "qty": 1677.9525466633,
-      "ref_px": 0.76845,
-      "stop_checked_ms": 1794643326040
+      "avg_px": 0.71945,
+      "entry_date": "2026-11-17",
+      "entry_ms": 1794873725184,
+      "high": 0.71945,
+      "qty": 1738.2631549085,
+      "ref_px": 0.71945,
+      "stop_checked_ms": 1794873725184
+     },
+     "TRX": {
+      "avg_px": 0.30325,
+      "entry_date": "2026-11-16",
+      "entry_ms": 1794816125579,
+      "high": 0.30325,
+      "qty": 4093.940091888,
+      "ref_px": 0.30325,
+      "stop_checked_ms": 1794816125579
      },
      "XRP": {
       "avg_px": 0.91385,
@@ -157,32 +162,23 @@
     },
     "slippage": 0.0,
     "started": "2026-09-30T22",
-    "turnover": 1050824.6691252
+    "turnover": 1063248.20777214
    },
    "stress": {
     "blocked": {},
-    "cash": 1.20033781,
-    "fees": 2668.15638883,
+    "cash": 0.0,
+    "fees": 2684.94168157,
     "last_rebalance": null,
-    "n_trades": 630,
+    "n_trades": 640,
     "positions": {
-     "BTC": {
-      "avg_px": 65359.10381,
-      "entry_date": "2026-11-16",
-      "entry_ms": 1794787324316,
-      "high": 65293.805,
-      "qty": 0.0067029003,
-      "ref_px": 65293.805,
-      "stop_checked_ms": 1794787324316
-     },
      "ETH": {
-      "avg_px": 1810.71891,
-      "entry_date": "2026-11-15",
-      "entry_ms": 1794758532211,
-      "high": 1808.905,
-      "qty": 0.2384080203,
-      "ref_px": 1808.905,
-      "stop_checked_ms": 1794758532211
+      "avg_px": 1821.28947,
+      "entry_date": "2026-11-17",
+      "entry_ms": 1794873725184,
+      "high": 1819.465,
+      "qty": 0.2357900947,
+      "ref_px": 1819.465,
+      "stop_checked_ms": 1794873725184
      },
      "SOL": {
       "avg_px": 71.26224,
@@ -194,13 +190,22 @@
       "stop_checked_ms": 1794758532211
      },
      "SUI": {
-      "avg_px": 0.7723425,
-      "entry_date": "2026-11-14",
-      "entry_ms": 1794643326040,
-      "high": 0.76845,
-      "qty": 564.1366707174,
-      "ref_px": 0.76845,
-      "stop_checked_ms": 1794643326040
+      "avg_px": 0.726695,
+      "entry_date": "2026-11-17",
+      "entry_ms": 1794873725184,
+      "high": 0.71945,
+      "qty": 550.2816226134,
+      "ref_px": 0.71945,
+      "stop_checked_ms": 1794873725184
+     },
+     "TRX": {
+      "avg_px": 0.3048165,
+      "entry_date": "2026-11-16",
+      "entry_ms": 1794816125579,
+      "high": 0.30325,
+      "qty": 1412.2678342018,
+      "ref_px": 0.30325,
+      "stop_checked_ms": 1794816125579
      },
      "XRP": {
       "avg_px": 0.9157278,
@@ -212,198 +217,231 @@
       "stop_checked_ms": 1794700931667
      }
     },
-    "slippage": 3028.27655835,
+    "slippage": 3045.84810788,
     "started": "2026-09-30T22",
-    "turnover": 667039.09723784
+    "turnover": 671235.42042502
    }
   },
   "h_breakout": {
    "base": {
     "blocked": {},
-    "cash": 8093.59536144,
-    "fees": 217.37244938,
+    "cash": 6473.25757008,
+    "fees": 218.99116845,
     "last_rebalance": null,
-    "n_trades": 118,
-    "positions": {},
-    "slippage": 683.93967825,
+    "n_trades": 119,
+    "positions": {
+     "ETH": {
+      "avg_px": 1833.3162,
+      "entry_date": "2026-11-16",
+      "entry_ms": 1794841325251,
+      "high": 1838.59,
+      "qty": 0.8829459273,
+      "ref_px": 1832.395,
+      "stop": 1783.4323,
+      "stop_checked_ms": 1794888000001
+     }
+    },
+    "slippage": 684.75304804,
     "started": "2026-09-30T22",
-    "turnover": 217372.44936285
+    "turnover": 218991.16843514
    },
    "gross": {
     "blocked": {},
-    "cash": 8926.02323806,
+    "cash": 7140.81859045,
     "fees": 0.0,
     "last_rebalance": null,
-    "n_trades": 118,
-    "positions": {},
+    "n_trades": 119,
+    "positions": {
+     "ETH": {
+      "avg_px": 1832.395,
+      "entry_date": "2026-11-16",
+      "entry_ms": 1794841325251,
+      "high": 1838.59,
+      "qty": 0.9742466267,
+      "ref_px": 1832.395,
+      "stop": 1783.4323,
+      "stop_checked_ms": 1794888000001
+     }
+    },
     "slippage": 0.0,
     "started": "2026-09-30T22",
-    "turnover": 227970.13749946
+    "turnover": 229755.34214707
    },
    "stress": {
     "blocked": {},
-    "cash": 7009.67361001,
-    "fees": 812.0162059,
+    "cash": 5602.13114912,
+    "fees": 817.62394479,
     "last_rebalance": null,
-    "n_trades": 118,
-    "positions": {},
-    "slippage": 1265.33989303,
+    "n_trades": 119,
+    "positions": {
+     "ETH": {
+      "avg_px": 1834.2324,
+      "entry_date": "2026-11-16",
+      "entry_ms": 1794841325251,
+      "high": 1838.59,
+      "qty": 0.7643168456,
+      "ref_px": 1832.395,
+      "stop": 1783.4323,
+      "stop_checked_ms": 1794888000001
+     }
+    },
+    "slippage": 1266.7442488,
     "started": "2026-09-30T22",
-    "turnover": 203004.05147215
+    "turnover": 204405.98619415
    }
   },
   "h_kniha": {
    "base": {
     "blocked": {},
-    "cash": 5630.75698125,
-    "fees": 1183.77825769,
+    "cash": 5555.4803413,
+    "fees": 1208.27127445,
     "last_rebalance": null,
-    "n_trades": 766,
+    "n_trades": 788,
     "positions": {},
-    "slippage": 2698.45653783,
+    "slippage": 2751.1296006,
     "started": "2026-09-30T22",
-    "turnover": 1183778.25752356
+    "turnover": 1208271.27430712
    },
    "gross": {
     "blocked": {},
-    "cash": 9359.83869261,
+    "cash": 9363.57623945,
     "fees": 0.0,
     "last_rebalance": null,
-    "n_trades": 766,
+    "n_trades": 788,
     "positions": {},
     "slippage": 0.0,
     "started": "2026-09-30T22",
-    "turnover": 1490159.54300411
+    "turnover": 1531207.63407531
    },
    "stress": {
     "blocked": {},
-    "cash": 2525.73074168,
-    "fees": 3420.36447511,
+    "cash": 2437.04362592,
+    "fees": 3463.80625667,
     "last_rebalance": null,
-    "n_trades": 766,
+    "n_trades": 788,
     "positions": {},
-    "slippage": 3730.3673855,
+    "slippage": 3776.20513693,
     "started": "2026-09-30T22",
-    "turnover": 855091.118799
+    "turnover": 865951.56418567
    }
   },
   "h_momentum": {
    "base": {
     "blocked": {},
-    "cash": 0.03099769,
-    "fees": 1807.02753821,
+    "cash": 0.0,
+    "fees": 1817.1796559,
     "last_rebalance": null,
-    "n_trades": 1347,
+    "n_trades": 1373,
     "positions": {
-     "BNB": {
-      "avg_px": 593.0389,
-      "entry_date": "2026-11-16",
-      "entry_ms": 1794794525887,
-      "high": 591.555,
-      "qty": 0.671158952,
-      "ref_px": 591.555,
-      "stop_checked_ms": 1794794525887
+     "NEAR": {
+      "avg_px": 3.1949675,
+      "entry_date": "2026-11-17",
+      "entry_ms": 1794884525134,
+      "high": 3.1865,
+      "qty": 120.5861146921,
+      "ref_px": 3.1865,
+      "stop_checked_ms": 1794884525134
      },
-     "ETH": {
-      "avg_px": 1813.60635,
-      "entry_date": "2026-11-16",
-      "entry_ms": 1794805324905,
-      "high": 1812.695,
-      "qty": 0.2183681254,
-      "ref_px": 1812.695,
-      "stop_checked_ms": 1794805324905
+     "TRX": {
+      "avg_px": 0.307329,
+      "entry_date": "2026-11-17",
+      "entry_ms": 1794880927412,
+      "high": 0.30575,
+      "qty": 1273.3405567861,
+      "ref_px": 0.30575,
+      "stop_checked_ms": 1794880927412
      },
      "UNI": {
-      "avg_px": 5.21701,
+      "avg_px": 5.1979625,
       "entry_date": "2026-11-16",
-      "entry_ms": 1794801724679,
-      "high": 5.2035,
-      "qty": 76.6594266594,
-      "ref_px": 5.2035,
-      "stop_checked_ms": 1794801724679
+      "entry_ms": 1794866524704,
+      "high": 5.1845,
+      "qty": 75.9563495251,
+      "ref_px": 5.1845,
+      "stop_checked_ms": 1794866524704
      }
     },
-    "slippage": 4382.66327763,
+    "slippage": 4404.34670208,
     "started": "2026-09-30T22",
-    "turnover": 1807027.53829544
+    "turnover": 1817179.65598578
    },
    "gross": {
     "blocked": {},
-    "cash": 10.38965677,
+    "cash": 0.0,
     "fees": 0.0,
     "last_rebalance": null,
-    "n_trades": 1347,
+    "n_trades": 1373,
     "positions": {
-     "BNB": {
-      "avg_px": 591.555,
-      "entry_date": "2026-11-16",
-      "entry_ms": 1794794525887,
-      "high": 591.555,
-      "qty": 3.0815242282,
-      "ref_px": 591.555,
-      "stop_checked_ms": 1794794525887
+     "NEAR": {
+      "avg_px": 3.1865,
+      "entry_date": "2026-11-17",
+      "entry_ms": 1794884525134,
+      "high": 3.1865,
+      "qty": 573.3529765322,
+      "ref_px": 3.1865,
+      "stop_checked_ms": 1794884525134
      },
-     "ETH": {
-      "avg_px": 1812.695,
-      "entry_date": "2026-11-16",
-      "entry_ms": 1794805324905,
-      "high": 1812.695,
-      "qty": 1.0048565644,
-      "ref_px": 1812.695,
-      "stop_checked_ms": 1794805324905
+     "TRX": {
+      "avg_px": 0.30575,
+      "entry_date": "2026-11-17",
+      "entry_ms": 1794880927412,
+      "high": 0.30575,
+      "qty": 6027.5567274313,
+      "ref_px": 0.30575,
+      "stop_checked_ms": 1794880927412
      },
      "UNI": {
-      "avg_px": 5.2035,
+      "avg_px": 5.1845,
       "entry_date": "2026-11-16",
-      "entry_ms": 1794801724679,
-      "high": 5.2035,
-      "qty": 352.83351844,
-      "ref_px": 5.2035,
-      "stop_checked_ms": 1794801724679
+      "entry_ms": 1794866524704,
+      "high": 5.1845,
+      "qty": 357.9594054963,
+      "ref_px": 5.1845,
+      "stop_checked_ms": 1794866524704
      }
     },
     "slippage": 0.0,
     "started": "2026-09-30T22",
-    "turnover": 3376117.90343107
+    "turnover": 3423522.65776262
    },
    "stress": {
     "blocked": {},
     "cash": 0.0,
-    "fees": 3722.6518529,
+    "fees": 3726.35333208,
     "last_rebalance": null,
-    "n_trades": 1347,
+    "n_trades": 1373,
     "positions": {
-     "BNB": {
-      "avg_px": 594.5178,
-      "entry_date": "2026-11-16",
-      "entry_ms": 1794794525887,
-      "high": 591.555,
-      "qty": 0.0630308749,
-      "ref_px": 591.555,
-      "stop_checked_ms": 1794794525887
+     "NEAR": {
+      "avg_px": 3.202935,
+      "entry_date": "2026-11-17",
+      "entry_ms": 1794884525134,
+      "high": 3.1865,
+      "qty": 10.641584337,
+      "ref_px": 3.1865,
+      "stop_checked_ms": 1794884525134
      },
-     "ETH": {
-      "avg_px": 1814.5127,
-      "entry_date": "2026-11-16",
-      "entry_ms": 1794805324905,
-      "high": 1812.695,
-      "qty": 0.0203831129,
-      "ref_px": 1812.695,
-      "stop_checked_ms": 1794805324905
+     "TRX": {
+      "avg_px": 0.308858,
+      "entry_date": "2026-11-17",
+      "entry_ms": 1794880927412,
+      "high": 0.30575,
+      "qty": 113.9488085011,
+      "ref_px": 0.30575,
+      "stop_checked_ms": 1794880927412
      },
      "UNI": {
-      "avg_px": 5.23002,
+      "avg_px": 5.210925,
       "entry_date": "2026-11-16",
-      "entry_ms": 1794801724679,
-      "high": 5.2035,
-      "qty": 7.0856308934,
-      "ref_px": 5.2035,
-      "stop_checked_ms": 1794801724679
+      "entry_ms": 1794866524704,
+      "high": 5.1845,
+      "qty": 6.8355241009,
+      "ref_px": 5.1845,
+      "stop_checked_ms": 1794866524704
      }
     },
-    "slippage": 4433.71682457,
+    "slippage": 4437.60051001,
     "started": "2026-09-30T22",
-    "turnover": 930662.96321248
+    "turnover": 931588.33300531
    }
   },
   "h_reverze": {
@@ -479,36 +517,36 @@
   "seance_usa": {
    "base": {
     "blocked": {},
-    "cash": 6530.53935654,
-    "fees": 774.71921608,
+    "cash": 6553.25414046,
+    "fees": 787.80304538,
     "last_rebalance": null,
-    "n_trades": 460,
+    "n_trades": 470,
     "positions": {},
-    "slippage": 956.15338754,
+    "slippage": 970.88263473,
     "started": "2026-09-30T22",
-    "turnover": 774719.21604979
+    "turnover": 787803.04534539
    },
    "gross": {
     "blocked": {},
-    "cash": 8020.31811389,
+    "cash": 8082.45069042,
     "fees": 0.0,
     "last_rebalance": null,
-    "n_trades": 460,
+    "n_trades": 470,
     "positions": {},
     "slippage": 0.0,
     "started": "2026-09-30T22",
-    "turnover": 854541.47760016
+    "turnover": 870644.24640447
    },
    "stress": {
     "blocked": {},
-    "cash": 4433.50475909,
-    "fees": 2600.05617413,
+    "cash": 4412.68488092,
+    "fees": 2635.44116574,
     "last_rebalance": null,
-    "n_trades": 460,
+    "n_trades": 470,
     "positions": {},
-    "slippage": 1587.0142046,
+    "slippage": 1606.6900944,
     "started": "2026-09-30T22",
-    "turnover": 650014.04351594
+    "turnover": 658860.29141641
    }
   }
  },
