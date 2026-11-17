@@ -1,0 +1,970 @@
+{
+ "entries": [
+  {
+   "bytes": 6105,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.898Z",
+   "file": "0020_binance_depth_BNB.json.gz",
+   "gzip": true,
+   "kind": "depth",
+   "meta": {
+    "coin": "BNB"
+   },
+   "seq": 20,
+   "sha256": "231da058541beb8d57c0c1213674e4da51415d033b141cc87912b9a31b13311e",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/depth?symbol=BNBUSDT&limit=100"
+  },
+  {
+   "bytes": 6447,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.899Z",
+   "file": "0015_binance_depth_BTC.json.gz",
+   "gzip": true,
+   "kind": "depth",
+   "meta": {
+    "coin": "BTC"
+   },
+   "seq": 15,
+   "sha256": "1cd7b01d02793bf5e45737be7ac8ba3b05cc3ef18254758c276c27dc01b5d209",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100"
+  },
+  {
+   "bytes": 6298,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.901Z",
+   "file": "0019_binance_depth_DOGE.json.gz",
+   "gzip": true,
+   "kind": "depth",
+   "meta": {
+    "coin": "DOGE"
+   },
+   "seq": 19,
+   "sha256": "ce07e24c7bf31792dd794c7b1de73990bcf929da70855116c64889e26687559e",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/depth?symbol=DOGEUSDT&limit=100"
+  },
+  {
+   "bytes": 6298,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.903Z",
+   "file": "0016_binance_depth_ETH.json.gz",
+   "gzip": true,
+   "kind": "depth",
+   "meta": {
+    "coin": "ETH"
+   },
+   "seq": 16,
+   "sha256": "6674ec832f4c13dcd0003721eea87c842f1fdad0478f95b0e0782d504d9d4e9f",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/depth?symbol=ETHUSDT&limit=100"
+  },
+  {
+   "bytes": 5969,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.905Z",
+   "file": "0018_binance_depth_HYPE.json.gz",
+   "gzip": true,
+   "kind": "depth",
+   "meta": {
+    "coin": "HYPE"
+   },
+   "seq": 18,
+   "sha256": "9000600fa3210da84adf25eb0d759f594576863a74c9a7468f2a18b1e72f0cdf",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/depth?symbol=HYPEUSDT&limit=100"
+  },
+  {
+   "bytes": 6082,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.906Z",
+   "file": "0021_binance_depth_NEAR.json.gz",
+   "gzip": true,
+   "kind": "depth",
+   "meta": {
+    "coin": "NEAR"
+   },
+   "seq": 21,
+   "sha256": "4963dfc4c8eb90f7634ad5daca40eeffd3ef200fa984962f603acb485109ba8f",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/depth?symbol=NEARUSDT&limit=100"
+  },
+  {
+   "bytes": 6033,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.908Z",
+   "file": "0017_binance_depth_SOL.json.gz",
+   "gzip": true,
+   "kind": "depth",
+   "meta": {
+    "coin": "SOL"
+   },
+   "seq": 17,
+   "sha256": "b6acfdddea87d019f364c8524ed53bd41852e55c3f6c5c81bb9f7d3c6c88d17b",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/depth?symbol=SOLUSDT&limit=100"
+  },
+  {
+   "bytes": 6112,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.908Z",
+   "file": "0014_binance_depth_SUI.json.gz",
+   "gzip": true,
+   "kind": "depth",
+   "meta": {
+    "coin": "SUI"
+   },
+   "seq": 14,
+   "sha256": "68d40729b9798d10979467c5c733aabd48b1dfb20c189816351ec9ecfb5726b1",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/depth?symbol=SUIUSDT&limit=100"
+  },
+  {
+   "bytes": 6214,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.040Z",
+   "file": "0046_binance_depth_TRX.json.gz",
+   "gzip": true,
+   "kind": "depth",
+   "meta": {
+    "coin": "TRX"
+   },
+   "seq": 46,
+   "sha256": "fbff19e46710e1652be672e8588f5faa1b037509ff703403ac3c32de60d03228",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/depth?symbol=TRXUSDT&limit=100"
+  },
+  {
+   "bytes": 6002,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.053Z",
+   "file": "0047_binance_depth_UNI.json.gz",
+   "gzip": true,
+   "kind": "depth",
+   "meta": {
+    "coin": "UNI"
+   },
+   "seq": 47,
+   "sha256": "c6671bb8cb42dfaefd0e9b6831d353aa787e8b6a9ecbf8cdf327be1295749c20",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/depth?symbol=UNIUSDT&limit=100"
+  },
+  {
+   "bytes": 6129,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.061Z",
+   "file": "0048_binance_depth_XRP.json.gz",
+   "gzip": true,
+   "kind": "depth",
+   "meta": {
+    "coin": "XRP"
+   },
+   "seq": 48,
+   "sha256": "d41f411ab3c778c10ba05e050603c23f42025d8b1ab676c2d7c3a0fa3dd9f7c7",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/depth?symbol=XRPUSDT&limit=100"
+  },
+  {
+   "bytes": 6065,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.192Z",
+   "file": "0049_binance_depth_ZEC.json.gz",
+   "gzip": true,
+   "kind": "depth",
+   "meta": {
+    "coin": "ZEC"
+   },
+   "seq": 49,
+   "sha256": "e49ef57c9cbab31bbef2ed2413ba7577d93d8327bdf19153eb49785eaa425b61",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/depth?symbol=ZECUSDT&limit=100"
+  },
+  {
+   "bytes": 225,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.194Z",
+   "file": "0025_fapi_premium_BNB.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "BNB"
+   },
+   "seq": 25,
+   "sha256": "7fb0edda34d3afeda758f3736a80fb5a93d5e930e567a70e50141ef015683572",
+   "status": 200,
+   "url": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BNBUSDT"
+  },
+  {
+   "bytes": 121,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.916Z",
+   "file": "0041_fapi_ls_BNB.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "BNB"
+   },
+   "seq": 41,
+   "sha256": "7736901f8d9b9225be5ee41752315fca4aa4ec0aa0dece50272e004f19f9695f",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=BNBUSDT&period=1h&limit=1"
+  },
+  {
+   "bytes": 343,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.625Z",
+   "file": "0033_fapi_oi_BNB.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "BNB"
+   },
+   "seq": 33,
+   "sha256": "e193cccce9655fc9a7632125791ab05408c04b4e867d730972a6f6ec58db0460",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/openInterestHist?symbol=BNBUSDT&period=1h&limit=2"
+  },
+  {
+   "bytes": 231,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.184Z",
+   "file": "0022_fapi_premium_BTC.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "BTC"
+   },
+   "seq": 22,
+   "sha256": "273bbc9dd43e31646bc3fee74af52df4184d7be7a5866963993a5b764c694edc",
+   "status": 200,
+   "url": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT"
+  },
+  {
+   "bytes": 121,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.775Z",
+   "file": "0039_fapi_ls_BTC.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "BTC"
+   },
+   "seq": 39,
+   "sha256": "ff1d28ccf53dadd7d5ddcd06dd36be58f33f4061759763ccca9edc175560d112",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=BTCUSDT&period=1h&limit=1"
+  },
+  {
+   "bytes": 341,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.471Z",
+   "file": "0032_fapi_oi_BTC.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "BTC"
+   },
+   "seq": 32,
+   "sha256": "cae9ed1b927acabd800a9803803a13b251057cb4151dfaf0d7ebe92c97ddfdc1",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/openInterestHist?symbol=BTCUSDT&period=1h&limit=2"
+  },
+  {
+   "bytes": 221,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.192Z",
+   "file": "0028_fapi_premium_DOGE.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "DOGE"
+   },
+   "seq": 28,
+   "sha256": "1dc45971369540fbf9d9dc99605e73ba478683c482b0135d97097ff13a070e42",
+   "status": 200,
+   "url": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=DOGEUSDT"
+  },
+  {
+   "bytes": 122,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.946Z",
+   "file": "0045_fapi_ls_DOGE.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "DOGE"
+   },
+   "seq": 45,
+   "sha256": "96ef46e2746e19d66ab8475c6377bfaa28216f1764e77bc25dea364ef7eb8d38",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=DOGEUSDT&period=1h&limit=1"
+  },
+  {
+   "bytes": 359,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.654Z",
+   "file": "0036_fapi_oi_DOGE.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "DOGE"
+   },
+   "seq": 36,
+   "sha256": "8fe9631fd4cd1b39635f0e01e657e9a46ec17b7cf95e034475957fdbb37df9c3",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/openInterestHist?symbol=DOGEUSDT&period=1h&limit=2"
+  },
+  {
+   "bytes": 228,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.190Z",
+   "file": "0027_fapi_premium_ETH.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "ETH"
+   },
+   "seq": 27,
+   "sha256": "a02a775bfc8698ce6422947a38617a550e67eab99d3f73964dbb13a6a4346ba9",
+   "status": 200,
+   "url": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT"
+  },
+  {
+   "bytes": 121,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.920Z",
+   "file": "0043_fapi_ls_ETH.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "ETH"
+   },
+   "seq": 43,
+   "sha256": "e212e20f2828d33a0e91d7ffdc985713b51d978732f5e39dfe87cdfa5975c0f3",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=ETHUSDT&period=1h&limit=1"
+  },
+  {
+   "bytes": 347,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.631Z",
+   "file": "0034_fapi_oi_ETH.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "ETH"
+   },
+   "seq": 34,
+   "sha256": "2d4a937aca7e4eb8a14adf5c3fcd562add0d0934b030fb3063b7060f4cae6bd2",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/openInterestHist?symbol=ETHUSDT&period=1h&limit=2"
+  },
+  {
+   "bytes": 223,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.187Z",
+   "file": "0024_fapi_premium_HYPE.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "HYPE"
+   },
+   "seq": 24,
+   "sha256": "f018e7f1dbb1617533e75d0ad8cbdd52581d6dae68ab7cbc2e2efe5f2c43ab3c",
+   "status": 200,
+   "url": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=HYPEUSDT"
+  },
+  {
+   "bytes": 122,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.777Z",
+   "file": "0040_fapi_ls_HYPE.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "HYPE"
+   },
+   "seq": 40,
+   "sha256": "5590fe12668adc011aea07063f79c938ca85802c1e29ae3edd9301d08fb7a9fd",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=HYPEUSDT&period=1h&limit=1"
+  },
+  {
+   "bytes": 347,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.473Z",
+   "file": "0031_fapi_oi_HYPE.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "HYPE"
+   },
+   "seq": 31,
+   "sha256": "e2108f71a04eac37305f16f7a0de9051a62e6556e5f3662101f03c4be8be1809",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/openInterestHist?symbol=HYPEUSDT&period=1h&limit=2"
+  },
+  {
+   "bytes": 220,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.191Z",
+   "file": "0026_fapi_premium_NEAR.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "NEAR"
+   },
+   "seq": 26,
+   "sha256": "2be12d253562627adb1d1f2a7520b29c7dbfb81da617e10f1a0456289db70f1b",
+   "status": 200,
+   "url": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=NEARUSDT"
+  },
+  {
+   "bytes": 122,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.931Z",
+   "file": "0042_fapi_ls_NEAR.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "NEAR"
+   },
+   "seq": 42,
+   "sha256": "747ce9404914b2e827b38f202218d3c35b8abc1e25c325eac4a70f2c1699dd8e",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=NEARUSDT&period=1h&limit=1"
+  },
+  {
+   "bytes": 351,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.626Z",
+   "file": "0035_fapi_oi_NEAR.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "NEAR"
+   },
+   "seq": 35,
+   "sha256": "b8695b0d15e964a6d27f47d1e4d058e4416204931384d066ab2bce2137b02c33",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/openInterestHist?symbol=NEARUSDT&period=1h&limit=2"
+  },
+  {
+   "bytes": 223,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.188Z",
+   "file": "0023_fapi_premium_SOL.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "SOL"
+   },
+   "seq": 23,
+   "sha256": "cc33218d79034fde6c0052071c285f83a5bd4678e86c984dfc19dc3058331eb6",
+   "status": 200,
+   "url": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT"
+  },
+  {
+   "bytes": 121,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.760Z",
+   "file": "0038_fapi_ls_SOL.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "SOL"
+   },
+   "seq": 38,
+   "sha256": "168b86c9458c386d39157ef4e698d09778c315cb34c2593de631adc38bb8cfcf",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=SOLUSDT&period=1h&limit=1"
+  },
+  {
+   "bytes": 345,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.470Z",
+   "file": "0030_fapi_oi_SOL.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "SOL"
+   },
+   "seq": 30,
+   "sha256": "2407251b0c5920f0c4b156bb94fc748cf8d053ba36ae8c99798c500b293f9c4d",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/openInterestHist?symbol=SOLUSDT&period=1h&limit=2"
+  },
+  {
+   "bytes": 219,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.195Z",
+   "file": "0029_fapi_premium_SUI.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "SUI"
+   },
+   "seq": 29,
+   "sha256": "63a634ea1540240d29bf68d8c42688f68b4d916f17057307332c96826be15fa5",
+   "status": 200,
+   "url": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SUIUSDT"
+  },
+  {
+   "bytes": 121,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.960Z",
+   "file": "0044_fapi_ls_SUI.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "SUI"
+   },
+   "seq": 44,
+   "sha256": "f217f17a1bf79d7fa4fabd543583274840d593a032281e80b6f78406cb44375f",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=SUIUSDT&period=1h&limit=1"
+  },
+  {
+   "bytes": 347,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:02.663Z",
+   "file": "0037_fapi_oi_SUI.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "SUI"
+   },
+   "seq": 37,
+   "sha256": "06f351e615af0a2496c8ec786a4824b90f1beb616e53d4fedfea83ea741d864f",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/openInterestHist?symbol=SUIUSDT&period=1h&limit=2"
+  },
+  {
+   "bytes": 220,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.322Z",
+   "file": "0050_fapi_premium_TRX.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "TRX"
+   },
+   "seq": 50,
+   "sha256": "768fed0185a31ee5c2e00d580488410b3d8de218b7df39f3640a0f42e50f5e25",
+   "status": 200,
+   "url": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=TRXUSDT"
+  },
+  {
+   "bytes": 121,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:04.351Z",
+   "file": "0061_fapi_ls_TRX.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "TRX"
+   },
+   "seq": 61,
+   "sha256": "1584fa173e57c471c43c28bd98dd1aa75ccdcb94865647165c7b94ed4d0cd2a7",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=TRXUSDT&period=1h&limit=1"
+  },
+  {
+   "bytes": 351,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.609Z",
+   "file": "0060_fapi_oi_TRX.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "TRX"
+   },
+   "seq": 60,
+   "sha256": "89986abfdc4dfb94a61af97cc7ffed9f42679bbf834eb40f6ca1befe7fd80e28",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/openInterestHist?symbol=TRXUSDT&period=1h&limit=2"
+  },
+  {
+   "bytes": 219,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.327Z",
+   "file": "0051_fapi_premium_UNI.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "UNI"
+   },
+   "seq": 51,
+   "sha256": "16225cad22eb6cae4b0f2f0a00da711236e1af8bba1eb2d3de2b404213dde65b",
+   "status": 200,
+   "url": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=UNIUSDT"
+  },
+  {
+   "bytes": 121,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.984Z",
+   "file": "0057_fapi_ls_UNI.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "UNI"
+   },
+   "seq": 57,
+   "sha256": "6f87987d3b504e86baf5c5a9807dee4dcad86cb4cb8ff4d683e85c74d6083f9c",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=UNIUSDT&period=1h&limit=1"
+  },
+  {
+   "bytes": 345,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.726Z",
+   "file": "0054_fapi_oi_UNI.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "UNI"
+   },
+   "seq": 54,
+   "sha256": "4d99743a4bbdeb0007329fd3cdb109b5b26619120c17942e0962ebb06a73e4a8",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/openInterestHist?symbol=UNIUSDT&period=1h&limit=2"
+  },
+  {
+   "bytes": 220,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.333Z",
+   "file": "0053_fapi_premium_XRP.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "XRP"
+   },
+   "seq": 53,
+   "sha256": "7a77abf771902218f96a4230027d94eaaaff9946ea00330f083a48a4f9a3eadd",
+   "status": 200,
+   "url": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=XRPUSDT"
+  },
+  {
+   "bytes": 121,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.996Z",
+   "file": "0058_fapi_ls_XRP.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "XRP"
+   },
+   "seq": 58,
+   "sha256": "b6fbe7ed9858362f3202894a1a3f9410a2dc7b0d16704aefb493d6c026225b32",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=XRPUSDT&period=1h&limit=1"
+  },
+  {
+   "bytes": 353,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.737Z",
+   "file": "0055_fapi_oi_XRP.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "XRP"
+   },
+   "seq": 55,
+   "sha256": "f5e18ed3fe9cad5b3085276d058f7d2e3eb200bc7f8b1789e216a2265131adc8",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/openInterestHist?symbol=XRPUSDT&period=1h&limit=2"
+  },
+  {
+   "bytes": 225,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.466Z",
+   "file": "0052_fapi_premium_ZEC.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "ZEC"
+   },
+   "seq": 52,
+   "sha256": "2852edf1fb37f85fc88882a09135624dc46c0a6d8cb965f650059ae2eaff3fa4",
+   "status": 200,
+   "url": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ZECUSDT"
+  },
+  {
+   "bytes": 121,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:04.007Z",
+   "file": "0059_fapi_ls_ZEC.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "ZEC"
+   },
+   "seq": 59,
+   "sha256": "66bb653a9fe62fe7934d30f96d99171f2f29bf596525fbc009d48e243f1df898",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=ZECUSDT&period=1h&limit=1"
+  },
+  {
+   "bytes": 341,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:03.730Z",
+   "file": "0056_fapi_oi_ZEC.json",
+   "gzip": false,
+   "kind": "derivatives",
+   "meta": {
+    "coin": "ZEC"
+   },
+   "seq": 56,
+   "sha256": "0d997af76d2a2dcf881cd93b2a0b6eb5d1034943a16a05b12a09d7cb594aa96e",
+   "status": 200,
+   "url": "https://fapi.binance.com/futures/data/openInterestHist?symbol=ZECUSDT&period=1h&limit=2"
+  },
+  {
+   "bytes": 59425,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:00.708Z",
+   "file": "0001_binance_exchangeinfo.json.gz",
+   "gzip": true,
+   "kind": "exchange_info",
+   "meta": {},
+   "seq": 1,
+   "sha256": "a4c38dd96844b7e7844f6f12e80aa0739859c64a0debfc78f25e98f220030814",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/exchangeInfo?symbols=%5B%22BNBUSDT%22%2C%22BTCUSDT%22%2C%22DOGEUSDT%22%2C%22ETHUSDT%22%2C%22HYPEUSDT%22%2C%22NEARUSDT%22%2C%22SOLUSDT%22%2C%22SUIUSDT%22%2C%22TRXUSDT%22%2C%22UNIUSDT%22%2C%22XRPUSDT%22%2C%22ZECUSDT%22%5D"
+  },
+  {
+   "bytes": 681,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.280Z",
+   "file": "0003_binance_1h_BNB.json.gz",
+   "gzip": true,
+   "kind": "hourly",
+   "meta": {
+    "coin": "BNB",
+    "pair": "BNBUSDT"
+   },
+   "seq": 3,
+   "sha256": "dfeea2ddc4650d735dff4544c607b2b86ad45a8e9d1f98ef8a708a9268c8dd38",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=BNBUSDT&interval=1h&startTime=1794826800000&endTime=1794841199999&limit=1000"
+  },
+  {
+   "bytes": 721,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.281Z",
+   "file": "0002_binance_1h_BTC.json.gz",
+   "gzip": true,
+   "kind": "hourly",
+   "meta": {
+    "coin": "BTC",
+    "pair": "BTCUSDT"
+   },
+   "seq": 2,
+   "sha256": "8e64a6ef23a94178f99d880b3815435c668f6b0c20fefa19864f24394337e313",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&startTime=1794826800000&endTime=1794841199999&limit=1000"
+  },
+  {
+   "bytes": 674,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.281Z",
+   "file": "0008_binance_1h_DOGE.json.gz",
+   "gzip": true,
+   "kind": "hourly",
+   "meta": {
+    "coin": "DOGE",
+    "pair": "DOGEUSDT"
+   },
+   "seq": 8,
+   "sha256": "e478ce82a8af542baead4ae1f2ccab3bb63803e2e94ac32bcd43c5ce4038da76",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=DOGEUSDT&interval=1h&startTime=1794826800000&endTime=1794841199999&limit=1000"
+  },
+  {
+   "bytes": 711,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.282Z",
+   "file": "0007_binance_1h_ETH.json.gz",
+   "gzip": true,
+   "kind": "hourly",
+   "meta": {
+    "coin": "ETH",
+    "pair": "ETHUSDT"
+   },
+   "seq": 7,
+   "sha256": "8aead9424ab0034e1085347758de11ab37d9e968a9cd19fa769c286d28d4b094",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1h&startTime=1794826800000&endTime=1794841199999&limit=1000"
+  },
+  {
+   "bytes": 677,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.283Z",
+   "file": "0005_binance_1h_HYPE.json.gz",
+   "gzip": true,
+   "kind": "hourly",
+   "meta": {
+    "coin": "HYPE",
+    "pair": "HYPEUSDT"
+   },
+   "seq": 5,
+   "sha256": "e5508b36abe784ce8b4d608a05d369e2e5f2d0c3efe39fd3c1a88a5dd27546fe",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=HYPEUSDT&interval=1h&startTime=1794826800000&endTime=1794841199999&limit=1000"
+  },
+  {
+   "bytes": 666,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.284Z",
+   "file": "0009_binance_1h_NEAR.json.gz",
+   "gzip": true,
+   "kind": "hourly",
+   "meta": {
+    "coin": "NEAR",
+    "pair": "NEARUSDT"
+   },
+   "seq": 9,
+   "sha256": "0c1f660eaa0eaabebf35d1f0c5c5bf47cababe210afe83d4bac44bc40aa5c5a7",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=NEARUSDT&interval=1h&startTime=1794826800000&endTime=1794841199999&limit=1000"
+  },
+  {
+   "bytes": 678,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.284Z",
+   "file": "0006_binance_1h_SOL.json.gz",
+   "gzip": true,
+   "kind": "hourly",
+   "meta": {
+    "coin": "SOL",
+    "pair": "SOLUSDT"
+   },
+   "seq": 6,
+   "sha256": "934f934b83865b36283e1613feb7c054d800de3d140aaabd438965bd08f4c295",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=SOLUSDT&interval=1h&startTime=1794826800000&endTime=1794841199999&limit=1000"
+  },
+  {
+   "bytes": 659,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.285Z",
+   "file": "0004_binance_1h_SUI.json.gz",
+   "gzip": true,
+   "kind": "hourly",
+   "meta": {
+    "coin": "SUI",
+    "pair": "SUIUSDT"
+   },
+   "seq": 4,
+   "sha256": "344366d52373bb2187132931314b1fa8c2ec6d98a7d554333e3129cb5243ecd1",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=SUIUSDT&interval=1h&startTime=1794826800000&endTime=1794841199999&limit=1000"
+  },
+  {
+   "bytes": 665,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.552Z",
+   "file": "0011_binance_1h_TRX.json.gz",
+   "gzip": true,
+   "kind": "hourly",
+   "meta": {
+    "coin": "TRX",
+    "pair": "TRXUSDT"
+   },
+   "seq": 11,
+   "sha256": "399ff73358a0a63670d94216c2a56f7a08e370f69ea14c5248aaa22b80ee1629",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=TRXUSDT&interval=1h&startTime=1794826800000&endTime=1794841199999&limit=1000"
+  },
+  {
+   "bytes": 656,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.553Z",
+   "file": "0010_binance_1h_UNI.json.gz",
+   "gzip": true,
+   "kind": "hourly",
+   "meta": {
+    "coin": "UNI",
+    "pair": "UNIUSDT"
+   },
+   "seq": 10,
+   "sha256": "5103b30c349dd2f696d8b5e03e28ad1a16f44ff505c9614d35a93f4b4b5d00dd",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=UNIUSDT&interval=1h&startTime=1794826800000&endTime=1794841199999&limit=1000"
+  },
+  {
+   "bytes": 675,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.593Z",
+   "file": "0012_binance_1h_XRP.json.gz",
+   "gzip": true,
+   "kind": "hourly",
+   "meta": {
+    "coin": "XRP",
+    "pair": "XRPUSDT"
+   },
+   "seq": 12,
+   "sha256": "de01d0d810f980dbcb9f37eed8bfa008acbf5b3d54a21ccffd6587e04e924d25",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=XRPUSDT&interval=1h&startTime=1794826800000&endTime=1794841199999&limit=1000"
+  },
+  {
+   "bytes": 683,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:01.612Z",
+   "file": "0013_binance_1h_ZEC.json.gz",
+   "gzip": true,
+   "kind": "hourly",
+   "meta": {
+    "coin": "ZEC",
+    "pair": "ZECUSDT"
+   },
+   "seq": 13,
+   "sha256": "b583f2efc15257ebf71e6f21f4fb8217fbf5b7218ef55769205631729223becc",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=ZECUSDT&interval=1h&startTime=1794826800000&endTime=1794841199999&limit=1000"
+  },
+  {
+   "bytes": 28,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:04.987Z",
+   "file": "0063_binance_time.json",
+   "gzip": false,
+   "kind": "server_time",
+   "meta": {},
+   "seq": 63,
+   "sha256": "55411bad8aef2e9b63ad4932483d81fe016a62e7823cb3791f117bdf9bc69223",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/time"
+  },
+  {
+   "bytes": 1426,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:04.704Z",
+   "file": "0062_binance_snapshot.json",
+   "gzip": false,
+   "kind": "snapshot",
+   "meta": {},
+   "seq": 62,
+   "sha256": "8ad0226e9c45bbef115df3e37723ccbec2ffe002c7100b554a13c98b9de401a6",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/ticker/bookTicker?symbols=%5B%22BNBUSDT%22%2C%22BTCUSDT%22%2C%22DOGEUSDT%22%2C%22ETHUSDT%22%2C%22HYPEUSDT%22%2C%22NEARUSDT%22%2C%22SOLUSDT%22%2C%22SUIUSDT%22%2C%22TRXUSDT%22%2C%22UNIUSDT%22%2C%22XRPUSDT%22%2C%22ZECUSDT%22%5D"
+  },
+  {
+   "bytes": 362,
+   "error": null,
+   "fetched_at": "2026-11-16T15:02:05.251Z",
+   "file": "0064_okx_ticker_BTC.json",
+   "gzip": false,
+   "kind": "snapshot",
+   "meta": {
+    "coin": "BTC"
+   },
+   "seq": 64,
+   "sha256": "d38bd491072baba57fa1898f6f8f3e27663d4d8f8c0991d293e4581701dee300",
+   "status": 200,
+   "url": "https://www.okx.com/api/v5/market/ticker?instId=BTC-USDT"
+  }
+ ]
+}
