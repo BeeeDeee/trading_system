@@ -4626,5 +4626,57 @@
   "thresholds_sha256": "b7adfed789b3e6e98dbddae10e39b26a06c04ba7e1d256740573ecb66565cb86",
   "evaluator": "qlab",
   "ts": "2026-11-15T08:20:27.871793+00:00"
+ },
+ {
+  "id": 357,
+  "run_id": 427,
+  "hypothesis_id": "H-0175",
+  "version": 1,
+  "gate": "G0",
+  "passed": 1,
+  "reason_code": null,
+  "metrics_json": "{\"event_controls\":{\"events\":1184,\"min_controls\":3,\"with_controls\":1184},\"events_in_dev\":1184,\"events_lookahead_failures\":{\"cuts_tested\":25,\"perturbation\":[],\"truncation\":[]},\"lookahead_failures\":{\"cuts_tested\":25,\"perturbation\":[],\"truncation\":[]},\"problems\":[],\"runtime_s\":0.208}",
+  "thresholds_sha256": "b7adfed789b3e6e98dbddae10e39b26a06c04ba7e1d256740573ecb66565cb86",
+  "evaluator": "qlab",
+  "ts": "2026-11-17T21:41:48.186351+00:00"
+ },
+ {
+  "id": 358,
+  "run_id": 428,
+  "hypothesis_id": "H-0175",
+  "version": 1,
+  "gate": "G1",
+  "passed": 0,
+  "reason_code": "g1_sharpe_vs_tbill",
+  "metrics_json": "{\"bench_cagr\":0.013835104790084873,\"bench_max_dd\":2.4999984568063738e-06,\"bench_sharpe\":0.0,\"benchmark\":\"TBILL\",\"cagr\":0.023092564662466897,\"checks\":{\"decision_dates\":{\"op\":\">=\",\"pass\":true,\"threshold\":36.0,\"value\":3780.0},\"mean_exposure\":{\"op\":\">=\",\"pass\":true,\"threshold\":0.2,\"value\":0.463345},\"position_entries\":{\"op\":\">=\",\"pass\":true,\"threshold\":100.0,\"value\":901.0},\"sharpe_diff_ci_lower\":{\"op\":\">\",\"pass\":true,\"threshold\":0.0,\"value\":0.08071},\"sharpe_excess\":{\"op\":\">=\",\"pass\":true,\"threshold\":0.1,\"value\":0.193997},\"sharpe_vs_tbill\":{\"op\":\">=\",\"pass\":false,\"threshold\":0.5,\"value\":0.193997}},\"decomposition\":{\"cost_drag_per_year\":0.006,\"sharpe_gross\":0.3042,\"sharpe_long_leg\":0.2473,\"sharpe_net\":0.194,\"sharpe_short_leg\":-0.1756},\"end\":\"2020-12-31\",\"max_dd\":0.16038860330212545,\"mean_exposure\":0.4633449613773415,\"mechanism\":{\"blocks\":[{\"events\":147,\"mean_abnormal\":0.0107771613423158},{\"events\":530,\"mean_abnormal\":0.002279164547013687},{\"events\":507,\"mean_abnormal\":0.0039362070002036675}],\"cost_ratio\":4.043798037450115,\"events_per_year\":59.3,\"horizon_days\":21,\"mean_abnormal\":0.004043798037450115,\"n_event_dates\":677,\"n_events\":1184,\"n_events_no_controls\":0,\"other_horizons_mean_abnormal\":{\"1\":0.001137700597515105,\"10\":0.0060043335046268635,\"42\":0.0065997608724423645,\"5\":0.005962330071853778},\"placebo\":{\"mean\":0.00026382233439361033,\"p95\":0.0033362593745425886,\"runs\":200,\"sd\":0.0018609042227451722},\"placebo_percentile\":0.985,\"round_trip_cost\":0.0010000000000000002,\"z_vs_placebo\":2.0312575235496824},\"n_obs\":5031,\"ppy\":251.6033278553821,\"sharpe\":0.19399681786160794,\"start\":\"2001-01-03\"}",
+  "thresholds_sha256": "b7adfed789b3e6e98dbddae10e39b26a06c04ba7e1d256740573ecb66565cb86",
+  "evaluator": "qlab",
+  "ts": "2026-11-17T21:41:53.603417+00:00"
+ },
+ {
+  "id": 359,
+  "run_id": 429,
+  "hypothesis_id": "H-0176",
+  "version": 1,
+  "gate": "G0",
+  "passed": 1,
+  "reason_code": null,
+  "metrics_json": "{\"event_controls\":{\"events\":542,\"min_controls\":3,\"with_controls\":542},\"events_in_dev\":542,\"events_lookahead_failures\":{\"cuts_tested\":25,\"perturbation\":[],\"truncation\":[]},\"lookahead_failures\":{\"cuts_tested\":11,\"perturbation\":[],\"truncation\":[]},\"problems\":[],\"runtime_s\":31.312}",
+  "thresholds_sha256": "b7adfed789b3e6e98dbddae10e39b26a06c04ba7e1d256740573ecb66565cb86",
+  "evaluator": "qlab",
+  "ts": "2026-11-17T23:20:24.876632+00:00"
+ },
+ {
+  "id": 360,
+  "run_id": 430,
+  "hypothesis_id": "H-0176",
+  "version": 1,
+  "gate": "G1",
+  "passed": 0,
+  "reason_code": "g1_mechanism_placebo_percentile",
+  "metrics_json": "{\"checks\":{\"mechanism_abnormal_return\":{\"op\":\">\",\"pass\":true,\"threshold\":0.0,\"value\":0.000375},\"mechanism_blocks\":{\"op\":\">=\",\"pass\":true,\"threshold\":2.0,\"value\":2.0},\"mechanism_controls\":{\"op\":\">=\",\"pass\":true,\"threshold\":0.5,\"value\":1.0},\"mechanism_costs\":{\"op\":\">=\",\"pass\":false,\"threshold\":1.0,\"value\":0.374722},\"mechanism_events\":{\"op\":\">=\",\"pass\":true,\"threshold\":200.0,\"value\":537.0},\"mechanism_placebo_percentile\":{\"op\":\">=\",\"pass\":false,\"threshold\":0.95,\"value\":0.37}},\"mechanism\":{\"blocks\":[{\"events\":80,\"mean_abnormal\":0.005676143319577618},{\"events\":228,\"mean_abnormal\":-0.0028780162417194645},{\"events\":229,\"mean_abnormal\":0.0017612317043948715}],\"cost_ratio\":0.37472220253370014,\"events_per_year\":23.4,\"horizon_days\":42,\"mean_abnormal\":0.00037472220253370023,\"n_event_dates\":220,\"n_events\":537,\"n_events_no_controls\":0,\"other_horizons_mean_abnormal\":{\"10\":0.00204024184463795,\"21\":0.00557068278920692,\"5\":0.0007305343528148516,\"60\":-0.002040311748459321},\"placebo\":{\"mean\":0.001863370335971135,\"p95\":0.00966543159721695,\"runs\":200,\"sd\":0.004186765690095083},\"placebo_percentile\":0.37,\"round_trip_cost\":0.0010000000000000002,\"z_vs_placebo\":-0.355560411933066},\"strategy_not_run\":true}",
+  "thresholds_sha256": "b7adfed789b3e6e98dbddae10e39b26a06c04ba7e1d256740573ecb66565cb86",
+  "evaluator": "qlab",
+  "ts": "2026-11-17T23:20:26.568476+00:00"
  }
 ]

@@ -163,7 +163,10 @@ notes: 'owner_seed: ORB-C5. (1) Family: us-open-range-breakout-crypto, the owner
   even there. (7) Not declared: mechanism_test (the intraday judge has none). Single parameter on purpose (range_minutes),
   to limit trials; the entry window (A + 4 h) and the exit (A + 6.5 h) are fixed by the equity session clock, not
   tuned.'
-status: DATA_READY
+status: PARKED
+terminal:
+  stage: DATA_READY
+  reason_code: null
 history:
 - ts: '2026-11-12T23:46:04.936130+00:00'
   version: 1
@@ -186,3 +189,11 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-17T20:58:45.874212+00:00'
+  version: 1
+  from: DATA_READY
+  to: PARKED
+  agent: human
+  invocation_id: null
+  reason: 'Builder question #1190: IntradayView has no accessor for macro_release_calendar_1d (next_cpi_sessions
+    etc.); resume after the accessor exists'

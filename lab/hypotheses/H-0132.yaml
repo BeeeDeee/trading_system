@@ -174,7 +174,10 @@ notes: 'Brief fit: cross-asset (signal from the oil market via FRED, trades fore
   shock window ends one session before the decision, which loses some of any fast response but adds no look-ahead.
   Most likely death: gross per event below the round trip, or the latest third wrong-signed as in H-0114. Requested
   gate outputs if possible: event average by shock sign (oil up vs down) and by leg (high vs low exposure).'
-status: DATA_READY
+status: PARKED
+terminal:
+  stage: DATA_READY
+  reason_code: null
 history:
 - ts: '2026-11-11T08:43:33.598793+00:00'
   version: 1
@@ -197,3 +200,11 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-17T21:07:00.041984+00:00'
+  version: 1
+  from: DATA_READY
+  to: PARKED
+  agent: human
+  invocation_id: null
+  reason: 'owner: replaced by a re-filed card without the data that G0 cannot load (a DATA_READY card cannot be
+    revised; precedent K-0102)'

@@ -2566,5 +2566,53 @@
   "actor": "librarian",
   "message_id": 1397,
   "ts": "2026-11-15T08:36:13.496458+00:00"
+ },
+ {
+  "id": "K-0215",
+  "kind": "process",
+  "title": "Six cards left without a verdict on 2026-11-17: data and loader limits DATA_READY cannot see",
+  "statement": "The DATA_READY check resolves datasets, not columns, tickers or loader combinations. H-0125: 17 of 47 Upbit columns had no value in dev (first values 2023 to 2026). H-0132: ticker GXG not in Sharadar SFP (as K-0102). H-0141: IntradayView has no accessor for a daily signal dataset. H-0153: the synthetic market has no distributions, so a fail-loud dividend check cannot pass. H-0160: the loader cannot deliver a sharadar_sep panel next to an ETF universe. H-0172: no free source for Tel Aviv and Tadawul calendars before 2019 and 2021. None says anything about its mechanism. Suggested: DATA_READY checks first valid date per column against the dev start, ticker presence for named-instrument cards, and loader support for the dataset combination. Scouts should date-gate columns and verify tickers before filing.",
+  "evidence": "[\"H-0125\",\"H-0132\",\"H-0141\",\"H-0153\",\"H-0160\",\"H-0172\",\"K-0102\",\"K-0108\",\"K-0091\",\"K-0106\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1422,
+  "ts": "2026-11-17T22:07:54.316079+00:00"
+ },
+ {
+  "id": "K-0216",
+  "kind": "market",
+  "title": "Closed-end fund gaps against ETF anchors: four books on one event, a slower hold did not help",
+  "statement": "K-0103 found the pooled closed-end fund book clearing the placebo test but missing the absolute Sharpe floor. H-0175 changed the book, not the event: a one-month hold, pooled slots, beta-sized anchor hedges, a liquidity floor for thin funds. The event study cleared the placebo bar again, gross well above cost, positive in every third. But the effect did not keep building past one to two weeks: the one-month average was no larger than the one-week average, so the longer hold harvested nothing extra and net Sharpe stayed far below the floor. The anchor short lost money again and the long leg alone had a higher Sharpe than the hedged book, so asset-class beta after selloffs (K-0074) is not excluded. Entries, exposure and the bootstrap bound passed. Four designs (H-0077, H-0078, H-0079, H-0175) share one event; a further hold, threshold, slot or class variant is the same evidence. Untested: the long leg as a tilt on a core, an ordinary-day control.",
+  "evidence": "[\"H-0175\",\"H-0079\",\"H-0078\",\"H-0077\",\"K-0103\",\"K-0074\",\"K-0060\",\"K-0027\"]",
+  "confidence": "low",
+  "supersedes": "K-0103",
+  "actor": "librarian",
+  "message_id": 1423,
+  "ts": "2026-11-17T22:07:54.322986+00:00"
+ },
+ {
+  "id": "K-0217",
+  "kind": "market",
+  "title": "ETF cross-sections sorted on price-derived state: four designs, none above same-ETF placebos",
+  "statement": "Monthly sorts of country and asset-class ETFs have ended at the mechanism test four times without a clear gap over the same ETFs on shifted dates: country long-term reversal (H-0060), bond-to-equity momentum (H-0087), a learned path-shape momentum score (H-0143) and, new, a learned drawdown-by-volatility-cycle score (H-0176). In H-0176 the average sat slightly below the placebo mean, gross was a fraction of cost, the effect peaked near a month and was gone by two, as in H-0143, and the thirds disagreed without the usual late decay (K-0060). Reading, inferred: a few dozen ETFs give few independent picks and a wide placebo cloud, the picks earn in any month (identity, perhaps a beta gap, K-0074), and a month-scale effect is small next to round-trip cost. Drawdown from the one-year high is the high-gap of K-0184. The plain sort was never run as a control. Low prior for another ETF sort on price, path or volatility state unless it reports the plain sort and makes the state the event.",
+  "evidence": "[\"H-0176\",\"H-0143\",\"H-0060\",\"H-0087\",\"K-0195\",\"K-0184\",\"K-0074\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": "K-0195",
+  "actor": "librarian",
+  "message_id": 1429,
+  "ts": "2026-11-17T23:36:28.183614+00:00"
+ },
+ {
+  "id": "K-0218",
+  "kind": "framework",
+  "title": "G1 cannot report a card's by-state split of events",
+  "statement": "H-0176 (2026-11-17) listed a by-state split of its entries as a kill criterion and asked the Builder for it. The Builder reported that events() has no field for it, so it was not output. G1 gives only pooled events, three blocks, horizons and the placebo, so the card's central claim (a sign flip between volatility states) was never examined; it died on the pooled percentile. Same gap as K-0135 (ridge control never runs), now for state splits: a conditional claim cannot be separated from a wrong learner. Workaround: make the state part of the event definition, so the pooled test is the state test, and list no kill criterion the judge cannot compute. Suggested to the owner: let events carry a state label that G1 reports as a split.",
+  "evidence": "[\"H-0176\",\"K-0135\",\"run 430\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1430,
+  "ts": "2026-11-17T23:36:28.191574+00:00"
  }
 ]

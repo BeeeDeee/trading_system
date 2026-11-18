@@ -102,12 +102,6 @@ On real earnings-release sessions, following a large standardized own-price reac
 
 *confidence low · 2026-10-25 · librarian · evidence: H-0034; H-0030; H-0028; H-0031; H-0033; K-0083; K-0024*
 
-### K-0103 Closed-end fund gaps revert in a pooled seven-class book; only the net Sharpe floor fails
-
-A pooled book of closed-end funds from seven classes, long after a large shortfall against a beta-adjusted ETF anchor and short the anchor, again cleared the placebo test at the top of the cloud, with gross several times cost and a positive sign in every third. The middle third, which likely holds 2008, was strongest and the latest weakest but positive. Muni and country funds reuse the event type of H-0077 and H-0078, so this is partly the same evidence, not an independent confirmation. Pooling cured exposure and entry counts and passed the bootstrap check, but net Sharpe stayed under the absolute floor while gross cleared it: cost of thinly traded funds took the margin. The anchor short lost money alone again, so the long leg may include asset-class beta (K-0074). The effect was small at one session and built over about two weeks, so it is not a one-day bounce.
-
-*confidence low · 2026-10-28 · librarian · supersedes K-0100 · evidence: H-0079; H-0078; H-0077; K-0100; K-0074; K-0060*
-
 ### K-0110 Net repurchasers versus issuers: filing-anchored pass, no release flow, no slow drift
 
 The same repurchaser-versus-issuer sort was tested at three anchors in LIQ-500. Anchored to the quarterly filing, a five-session spread cleared the placebo bar clearly (H-0019). Anchored to the real release it did not, built slowly and reversed lately (H-0027). As a slow style premium, the route K-0041 left open, new entries to the extreme quintiles over a quarter (H-0086) averaged below same-stock placebos, were slightly negative in the first weeks, and faded from clearly positive in the earliest third to clearly negative in the latest. Reading: the filing-anchored pass was filing-linked news or an early-era effect, not a trading-window flow and not a drift visible in large caps. Caveats: the placebo bar lay well above cost, repurchasers have lower beta than issuers so late bull years bias the raw comparison (K-0074), no split by side was reported, and the year-long hold was never simulated. Treat the family as closed for event-study cards in LIQ-500 unless beta-neutral, side-split or in less covered stocks.
@@ -210,12 +204,6 @@ K-0192 found that of four breakout conditioners on BTC and ETH only a narrow-ran
 
 *confidence low · 2026-11-13 · librarian · supersedes K-0192 · evidence: H-0142; H-0137; H-0138; H-0139; H-0140; K-0192; K-0193; K-0006; prior_studies 16*
 
-### K-0195 Cross-sectional sorts of ETFs on past returns: three designs, none clearly above same-ETF placebos
-
-Monthly-formation sorts of country and asset-class ETFs have now ended at the mechanism test three times without a clear gap over the same ETFs on shifted dates: country long-term reversal (H-0060, wrong-signed), bond-to-equity cross-asset momentum (H-0087, small and right-signed but inside the cloud, latest third negative) and, new, a learned frog-in-the-pan momentum score ranking ETFs inside fixed risk and defensive sleeves (H-0143). In H-0143 the average was tiny, over half of it was earned by the same ETFs on shifted dates, the thirds were unstable, and the effect peaked near one month and turned negative at a quarter. That is not the slow build and early-era weight of stock residual momentum (H-0054, a near miss). Reading, inferred: a cross-section of a few dozen ETFs gives few independent picks per date and a wide placebo cloud, and any in-sleeve momentum is small next to ETF round-trip cost. Plain in-sleeve momentum was never run as a control, so a path-shape conditioner was tested without knowing whether its base effect exists. A further ETF momentum card has a low prior unless it argues a horizon of about a month or less, or reports the plain sort first.
-
-*confidence low · 2026-11-13 · librarian · evidence: H-0143; H-0060; H-0087; H-0054; K-0074; K-0060; K-0112*
-
 ### K-0196 Crypto spot trend sorts: near-high and a learned life-cycle score both fail the same-coin placebo
 
 Two cards sorted liquid Binance spot coins on past trend and died at the mechanism test alike. Nearness to the one-year high (H-0135) was positive but no better than the same coins on shifted dates. A learned two-month score on six-month trend, run stage and volume trend (H-0144) was below its placebo, flat at short horizons, and wrong-signed in both later thirds, boom era included. The placebo mean was positive in both, so the sort picks coin identity, not timing. With K-0128 and study 9, no coin-characteristic sort of the crypto spot cross-section has beaten its same-coin control. The ridge control and a BTC-direction split were not reported. The long-horizon momentum claim is outside the sixty-day schema cap. One boom-and-bust window (K-0006). Low prior for more unless dated own-price events or BTC alone.
@@ -281,6 +269,18 @@ Four cards tried to harvest Treasury supply or index flow through daily ETFs: de
 K-0206 recorded three learned cards that mapped a dated cross-asset shock to an explicit balance-sheet exposure and cleared or nearly cleared the same-stock placebo test (credit news on leverage, credit news on rollover need, curve news on funding structure). H-0170 tested a different mapping with a market-based shock: real-yield news through valuation duration built from payout, book-to-market, profitability and growth. It was marginally wrong-signed, below the placebo mean, gross about zero, and the thirds disagreed in sign; the cloud was about as wide as cost, but the point estimate was at zero. The ridge control was again not reported (K-0135), and no split by shock direction or tail exists. Reading: the earlier passes were specific to credit and funding mappings, or came from the family's large trial count and overlapping stress weeks (K-0084), not from a general macro-to-balance-sheet transmission. Plain sorts on the same shocks also failed (K-0204). The family now has many cards on a few hundred shock dates; a new card needs a new information source and a reported linear control.
 
 *confidence low · 2026-11-15 · librarian · supersedes K-0206 · evidence: H-0170; H-0162; H-0158; H-0126; H-0159; H-0128; H-0116; H-0129; H-0119; K-0206; K-0204; K-0135; K-0084*
+
+### K-0216 Closed-end fund gaps against ETF anchors: four books on one event, a slower hold did not help
+
+K-0103 found the pooled closed-end fund book clearing the placebo test but missing the absolute Sharpe floor. H-0175 changed the book, not the event: a one-month hold, pooled slots, beta-sized anchor hedges, a liquidity floor for thin funds. The event study cleared the placebo bar again, gross well above cost, positive in every third. But the effect did not keep building past one to two weeks: the one-month average was no larger than the one-week average, so the longer hold harvested nothing extra and net Sharpe stayed far below the floor. The anchor short lost money again and the long leg alone had a higher Sharpe than the hedged book, so asset-class beta after selloffs (K-0074) is not excluded. Entries, exposure and the bootstrap bound passed. Four designs (H-0077, H-0078, H-0079, H-0175) share one event; a further hold, threshold, slot or class variant is the same evidence. Untested: the long leg as a tilt on a core, an ordinary-day control.
+
+*confidence low · 2026-11-17 · librarian · supersedes K-0103 · evidence: H-0175; H-0079; H-0078; H-0077; K-0103; K-0074; K-0060; K-0027*
+
+### K-0217 ETF cross-sections sorted on price-derived state: four designs, none above same-ETF placebos
+
+Monthly sorts of country and asset-class ETFs have ended at the mechanism test four times without a clear gap over the same ETFs on shifted dates: country long-term reversal (H-0060), bond-to-equity momentum (H-0087), a learned path-shape momentum score (H-0143) and, new, a learned drawdown-by-volatility-cycle score (H-0176). In H-0176 the average sat slightly below the placebo mean, gross was a fraction of cost, the effect peaked near a month and was gone by two, as in H-0143, and the thirds disagreed without the usual late decay (K-0060). Reading, inferred: a few dozen ETFs give few independent picks and a wide placebo cloud, the picks earn in any month (identity, perhaps a beta gap, K-0074), and a month-scale effect is small next to round-trip cost. Drawdown from the one-year high is the high-gap of K-0184. The plain sort was never run as a control. Low prior for another ETF sort on price, path or volatility state unless it reports the plain sort and makes the state the event.
+
+*confidence low · 2026-11-17 · librarian · supersedes K-0195 · evidence: H-0176; H-0143; H-0060; H-0087; K-0195; K-0184; K-0074; K-0060*
 
 ## Data
 
@@ -672,6 +672,12 @@ K-0211 asked if zero events in H-0124 and H-0166 came from model warm-up and a V
 
 *confidence low · 2026-11-15 · librarian · supersedes K-0211 · evidence: H-0171; H-0166; H-0124; K-0211; K-0131; K-0120; run 426*
 
+### K-0218 G1 cannot report a card's by-state split of events
+
+H-0176 (2026-11-17) listed a by-state split of its entries as a kill criterion and asked the Builder for it. The Builder reported that events() has no field for it, so it was not output. G1 gives only pooled events, three blocks, horizons and the placebo, so the card's central claim (a sign flip between volatility states) was never examined; it died on the pooled percentile. Same gap as K-0135 (ridge control never runs), now for state splits: a conditional claim cannot be separated from a wrong learner. Workaround: make the state part of the event definition, so the pooled test is the state test, and list no kill criterion the judge cannot compute. Suggested to the owner: let events carry a state label that G1 reports as a split.
+
+*confidence medium · 2026-11-17 · librarian · evidence: H-0176; K-0135; run 430*
+
 ## How the lab works
 
 ### K-0010 Fail loudly on missing inputs
@@ -758,6 +764,12 @@ On the Librarian's question (message 1393) the Chair merged crypto-flight-to-qua
 
 *confidence high · 2026-11-15 · librarian · evidence: H-0171; H-0166; H-0130; H-0124; H-0081; H-0039; K-0087; K-0179; K-0197; chair reply to question 1393*
 
+### K-0215 Six cards left without a verdict on 2026-11-17: data and loader limits DATA_READY cannot see
+
+The DATA_READY check resolves datasets, not columns, tickers or loader combinations. H-0125: 17 of 47 Upbit columns had no value in dev (first values 2023 to 2026). H-0132: ticker GXG not in Sharadar SFP (as K-0102). H-0141: IntradayView has no accessor for a daily signal dataset. H-0153: the synthetic market has no distributions, so a fail-loud dividend check cannot pass. H-0160: the loader cannot deliver a sharadar_sep panel next to an ETF universe. H-0172: no free source for Tel Aviv and Tadawul calendars before 2019 and 2021. None says anything about its mechanism. Suggested: DATA_READY checks first valid date per column against the dev start, ticker presence for named-instrument cards, and loader support for the dataset combination. Scouts should date-gate columns and verify tickers before filing.
+
+*confidence medium · 2026-11-17 · librarian · evidence: H-0125; H-0132; H-0141; H-0153; H-0160; H-0172; K-0102; K-0108; K-0091; K-0106*
+
 ## Superseded
 
 - K-0004 No earnings dates in the lab
@@ -800,6 +812,7 @@ On the Librarian's question (message 1393) the Chair merged crypto-flight-to-qua
 - K-0099 Wrapper gaps revert where no arbitrage link exists: closed-end funds cleared the placebo test, twin ETFs did not
 - K-0100 Closed-end fund gaps revert against their ETF anchor in two asset classes; both books still fail at G1
 - K-0101 Reported mean exposure of a paired fund-ETF book is about half the card's gross arithmetic; the cause is unknown
+- K-0103 Closed-end fund gaps revert in a pooled seven-class book; only the net Sharpe floor fails
 - K-0105 Wrapper-gap reversion shows in closed-end funds but not in ETFs
 - K-0107 Newly available crypto coins did not underperform liquid peers in the dev window, in three designs
 - K-0109 Monthly-formation, quarter-horizon stock sorts: the placebo bar is about the size of the literature's whole spread
@@ -846,6 +859,7 @@ On the Librarian's question (message 1393) the Chair merged crypto-flight-to-qua
 - K-0190 15m crypto perp taker rules: only the US-open breakout after a narrow-range day cleared cost, fragile
 - K-0191 Intraday cards: owner diagnostics never run, after a G1 failure or a G1 pass
 - K-0192 15m crypto perp taker rules: of four US-open breakout conditioners only the narrow-range one cleared cost, fragile
+- K-0195 Cross-sectional sorts of ETFs on past returns: three designs, none clearly above same-ETF placebos
 - K-0198 A cut arbitrage link is not enough: single-company receipts did not revert during home closures, basket wrappers did
 - K-0203 Credit-shock news into stocks: two learned cards pass the placebo test near cost, a plain sort failed
 - K-0206 Macro-shock weeks in liquid US stocks: learned balance-sheet cards pass the event test three times, no book follows

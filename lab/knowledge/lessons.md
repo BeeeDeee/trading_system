@@ -1118,6 +1118,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - open questions: The unconditional momentum slope among liquid perps is the missing control (K-0119) and a cheaper first card; report how the state was used (K-0162).
 - related: H-0081, H-0120, H-0029, H-0099
 
+## H-0125 – Korean retail pump fade - after a Korea-specific Upbit KRW volume surge with a Binance up-move, short the coin's Binance perp vs a BTC/ETH hedge, hold 5 days
+
+- family: `segmented-venue-premium-transmission` · mechanism: flow_structural · instruments: Binance perps of top-50 coins, short after a Korea-specific Upbit volume surge, BTC/ETH hedge, 2019 to 2022
+- outcome: parked at DATA_READY: G0 found many Upbit volume series empty in dev; owner replaced the card; no verdict
+- lesson: No verdict on the mechanism. The card listed Upbit columns for coins as they are listed today, and a large part of that list had no history in the 2019 to 2022 window, so G0 refused the whole request. The DATA_READY check resolves datasets, not columns, so the Scout could not see it. The card also notes that only coins still listed in 2026 exist in the Upbit data, which leans the marked set away from crashed coins; that was a known bias, not the cause of the failure.
+- avoid: Do not request columns from today's listing list: check each column's first valid date against the dev start and drop or date-gate those that start later, and say so in the card. Do not read the parking as evidence against the pump-fade idea.
+- open questions: Untested: whether Korea-specific volume surges (Upbit surge far above the coin's own Binance spot surge) are followed by a fade in the perp. The earlier price-premium sort H-0076 was a different event and failed. Event counts must be recomputed on the coins that actually have dev history.
+- related: H-0076
+
 ## H-0126 – Credit-market news into levered equities, learned - LIQ-500 beta-neutral legs in weeks of a credit-specific Baa spread move, LightGBM on leverage x shock, hold 5 days
 
 - family: `oil-shock-equity-underreaction` · mechanism: cross_asset_information · instruments: LIQ-500 stocks, weekly beta-balanced long/short legs in credit-spread-shock weeks, LightGBM on leverage, coverage, volatility, five-day hold
@@ -1171,6 +1180,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile the same rally state with another k, tilt, hold or ETF set, or the mirror side (that is the H-0041 / H-0046 stress event): same stock-bond spread events, new trials. Do not file another daily SPY/IEF tilt for rebalancing pressure; the family now has several trials on daily ETFs and none supports the claim.
 - open questions: Rebalancing pressure observed where it trades (index futures, closing auction, quarter-end calendars with known flow size) or with pension and target-date flow data. A both-sides-marked, volatility-standardized spread test could separate stress rebound from drift. A slow equity-over-bond continuation after rallies is a different claim (trend) and would need its own argued card.
 - related: H-0046, H-0050, H-0002, H-0044, H-0041
+
+## H-0132 – Oil-specific shocks into country equity ETFs - after a large 5-day WTI move net of world equities, long the most oil-exposed country ETFs and short the least in the shock's direction, hold 5 days
+
+- family: `oil-shock-equity-underreaction` · mechanism: cross_asset_information · instruments: about thirty single-country equity ETFs, long most oil-exposed and short least after an oil-specific WTI shock, 2000 to 2020
+- outcome: parked at DATA_READY: G0 found a ticker (GXG) missing in Sharadar SFP; owner replaced the card; no verdict
+- lesson: No verdict on the mechanism. The instrument list was written from memory of ETFs that exist, and the DATA_READY check resolves datasets, not tickers, so one absent fund stopped a long list (the pattern of K-0102 for closed-end funds). The question this card was built to ask is still open: does the lagged response to oil-specific news appear in a second, independent cross-section outside US stocks.
+- avoid: Do not file long named-ticker lists without a rule that drops a missing ticker and reports it; do not swap in another fund after seeing results. Do not add more non-oil price cards to this family; earlier lessons already close that.
+- open questions: Untested: the plain, learner-free country-ETF rule with both sides marked and exposure estimated, not hand-labelled. The card named its likely deaths itself: gross below the round trip of thin exporter ETFs, and a wrong-signed latest third. A re-filed version should keep that kill list.
+- related: H-0114, H-0056, H-0116, H-0119
 
 ## H-0133 – Home-holiday delayed anchoring - fade an Asian country ETF's US-hours move while its home exchange stays closed, peer-hedged, hold to reopening
 
@@ -1243,6 +1261,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile with another alignment threshold or pre-session window, or trade the against-move side: that sign would be picked from this dev result and is a new counted trial, like every variant of H-0137 to H-0139 and study 16. Do not stack it on the narrow-range filter of H-0139.
 - open questions: Of four conditioners of this breakout (none, volatility, narrow range, alignment) only narrow range cleared G1. Whether any clock-anchored move exists at the US open needs a judge-reported move after the anchor against random anchors, split by side, or a maker entry, not a fifth taker variant.
 - related: H-0137, H-0138, H-0139, H-0063, H-0035
+
+## H-0141 – US-open range breakout on top-10 crypto perps on US macro release days only - 15m, CPI/jobs anchored 09:30 ET, FOMC 14:00 ET, both sides
+
+- family: `us-open-range-breakout-crypto` · mechanism: calendar · instruments: top-10 Binance perps, 15m range breakout after the US open on CPI, jobs and FOMC days only, both sides, 2020 to 2022
+- outcome: parked at DATA_READY: IntradayView has no accessor for the daily macro release calendar; no gate ran, no verdict
+- lesson: No verdict on the idea; a loader gap, not a result. This is the fifth card of the family. Its conditioner is fixed by an outside schedule and not read off any dev result, which the volatility, alignment and narrow-range conditioners of H-0138 to H-0140 were not. Its own text says the independent evidence is the count of release days, not the trade count, because the trades of one day move together, so a trade-level bootstrap will look better than the evidence.
+- avoid: Do not count it as a failure of the family, and do not rescue it with a BTC and ETH only universe: that dies on trade count by construction. Do not add more conditioners (news day, other clocks) before this one has a verdict.
+- open questions: Untested: whether release-day gross per trade exceeds that of ordinary days at the same anchor, which the judge does not report (K-0193); the FOMC anchor choice; a maker entry. A pass would still rest on a few dozen release days a year.
+- related: H-0137, H-0138, H-0139, H-0140, H-0142
 
 ## H-0142 – Altcoins in play at the US open - 15m perps, top-20 PIT universe ex BTC/ETH, US-open 30-minute range breakout only on the top-k alts by coin-specific opening relative volume, exit 16:00 ET, both sides
 
@@ -1343,6 +1370,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - open questions: The issuer-only effect needs power: less covered stocks or offering-type, unlock and sector data, none loadable. The book was never run, so the issuer leg against the hedge leg (K-0172) is unseen.
 - related: H-0086, H-0019, H-0027, H-0097
 
+## H-0153 – Country dividend-yield value vs own history - 22 country equity ETFs, dollar-neutral 12-month cohorts, cheapest vs richest yield z within 12-month-return halves
+
+- family: `long-term-reversal` · mechanism: risk_premium · instruments: 22 country equity ETFs, dollar-neutral 12-month cohorts, cheap vs rich dividend yield against own history, monthly, 1998 to 2020
+- outcome: parked at DATA_READY: the fail-loud check on distributions cannot pass lab try or G0 (synthetic market has none); no verdict
+- lesson: No verdict on the idea. The card made the right design choice, failing loudly if total returns hold no distributions, and the framework could not test it. Value in country ETFs through a currency-free yield is a different input from the price-based reversal that was wrong-signed in H-0060 and from the currency value cards, so it is not a retry. The mechanism study sees only the first sixty sessions of a year-long hold, so study and book can disagree, as in K-0112.
+- avoid: Do not remove the fail-loud check or proxy the yield with price to get the card through. Do not read the parking as a failure of country value.
+- open questions: Untested: whether yield against own history separates cheap from rich countries beyond persistent identity (K-0025), with legs matched on past return. The card expects a cannot-tell with a placebo bar above cost, so a re-filed version should state what it expects at the book level.
+- related: H-0060, H-0062, H-0088, H-0151
+
 ## H-0154 – Reaching for income across the rate cycle, learned - LIQ-500 long-only monthly 3-month sleeves, LightGBM on dividend yield, rate beta and 6-month return x Treasury-yield change, level and market state
 
 - family: `reaching-for-income` · mechanism: behavioral · instruments: US liquid stocks (LIQ-500), long-only three-month sleeves of the top fifth of a gradient-boosted score on dividend yield, rate beta, past return and Treasury state
@@ -1396,6 +1432,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: No third plain sort on a credit-specific shock (distress, leverage, volatility, size), no retuning of z_news, vol_days or beta matching, no other credit series. Do not read the positive latest third as a revival.
 - open questions: Unreported by the judge: widening against tightening weeks, long against short leg, episode split. A new card needs a new information source or a different transmission, and should say why the learned pass was not a stress rebound (K-0084).
 - related: H-0126, H-0128, H-0158, H-0129, H-0116, H-0114
+
+## H-0160 – Aggregate earnings news into Treasuries - in earnings-season weeks, short TLT/IEF after strongly positive LIQ-500 8-K reactions net of market, long after negative, hold 5 days
+
+- family: `aggregate-earnings-macro-news` · mechanism: cross_asset_information · instruments: TLT and IEF vs cash-like ETFs, traded on aggregate US earnings reactions in earnings-season weeks, 5-day hold, 2007 to 2020
+- outcome: parked at DATA_READY: the loader cannot deliver a stock panel next to an ETF universe; no gate ran, no verdict
+- lesson: No verdict on the idea; a loader limit. The information source is new to the lab: the aggregate of announcer reactions net of other stocks as a macro signal, not stocks traded on their own reaction. The card names its likely death itself: even if the effect exists, the book is invested only in earnings-season weeks and probably falls below the absolute Sharpe floor, so a pass would need the optimistic case.
+- avoid: Do not proxy the signal with a market return or SPY: the card's own control says that would be the stock-bond lead-lag the lab already rejected. Do not file cards whose signal and traded universe come from different datasets until the loader supports the pair.
+- open questions: Untested: whether the aggregate announcer reaction, net of non-announcing stocks, leads Treasury ETFs over a week, split by sign (flight to quality can explain only the weak-news side). A precomputed daily signal series from the Archivist would make it loadable.
+- related: H-0046, H-0041, H-0131, H-0114
 
 ## H-0161 – Home-closure down-move tilt on a 60/40 core - move part of SPY into an Asia-Pacific country ETF that fell in US hours while its home exchange is shut, hold until the home market reopens
 
@@ -1495,3 +1540,30 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile with a lower vix_shock, shorter funding_days or another threshold to manufacture dates: a second trial of the same idea. Do not read the right-signed latest block as support; it is a handful of dates in one episode. Do not file before listing, from the view start, the dates on which enough perps have funding and beta to open a book.
 - open questions: Whether funding crowding is unwound after a US volatility shock is still untested at useful power: the 2020 stress dates never entered. A new card needs a window or universe that provably produces books on dozens of shock dates, the unconditional funding sort on the same dates as control, and a leg split. Slower horizons and a crypto-native stress trigger are untested.
 - related: H-0166, H-0039, H-0081, H-0130, H-0124
+
+## H-0172 – Sun-Thu home-week closure fade in Israel and Saudi country ETFs - fade the Thursday US-hours move while the home exchange stays shut through Friday, hold Friday open to Monday close
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: Israel and Saudi country ETFs, fade the Thursday US-hours move while the home exchange is shut, 2008 to 2020
+- outcome: parked after BLOCKED_DATA: no free source reaches the dev window for the Tel Aviv and Tadawul calendars; no verdict
+- lesson: No verdict on the idea. A calendar dataset from a library is only as long as the library's history, and a reconstruction would put silent look-ahead into the flag that sets entry and exit, so the Archivist refused it. The card's premise about the Saudi weekend was also wrong before the middle of 2013. The mechanism (closed-underlying overreaction reverting at the home reopening) passed once in H-0133 on Asia-Pacific holidays and was a near miss as a long-side tilt in H-0161.
+- avoid: Do not hard-code the Sunday to Thursday week with date literals to get around the data: G0 forbids it and the weekend changes make it wrong in places. Do not ask for a calendar dataset without checking that a free source reaches back to the dev start.
+- open questions: Untested: more closure dates through a wrapper whose home calendar is already loadable (the exchange-holiday dataset), or Israel and Saudi only if a verified calendar from 2008 appears. The ordinary-day control for the wrapper effect is still unreported (K-0205).
+- related: H-0133, H-0161, H-0157, H-0037
+
+## H-0175 – Slow closed-end fund catch-up, pooled across seven fund classes - long a CEF after a 2-sigma 5-session shortfall vs its beta-adjusted ETF anchor, short the anchor, hold one month (21 sessions)
+
+- family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: 44 closed-end funds in seven classes, long after a shortfall vs an ETF anchor, short the anchor, one-month hold, 2001 to 2020
+- outcome: rejected at G1: mechanism test and bootstrap bound passed, but net Sharpe stayed far below the absolute floor
+- lesson: The slower hold kept the event-study pass but did not make a strategy. The abnormal return was already at its size after about a week and did not build further, so a one-month hold harvested no more than the five-session cards and only diluted it against book volatility. The anchor short lost money and the long leg alone had a higher Sharpe than the hedged book: the hedge cost more than it protected. The earliest third was strongest on few events; later thirds were smaller but positive.
+- avoid: Do not refile this event with another hold, z_entry, slot weight, fund class or anchor map to push Sharpe over the floor: it is the fourth book on the same events (H-0077, H-0078, H-0079, H-0175) and the book design is used up. Do not read the pass as a tradable edge (K-0027, K-0064), and do not file it under a new family.
+- open questions: Untested: the long leg alone as a tilt on an always-invested core judged against the same core (K-0153, K-0027); an ordinary-day control for the event; fund discounts from net asset values (not loadable). The fund list leans to survivors (K-0102).
+- related: H-0077, H-0078, H-0079, H-0037
+
+## H-0176 – Volatility-target de-risking cycle in asset-class ETFs, learned - 28 ETFs long-only, monthly 2-month sleeves, LightGBM on drawdown x vol direction x vol elevation
+
+- family: `trend-follower-deleveraging` · mechanism: liquidity_provision · instruments: 28 liquid US ETFs (equity, bond, commodity, currency), long-only monthly sleeves
+- outcome: rejected at G1: entries averaged below the same ETFs on shifted dates, gross a fraction of cost; book not run
+- lesson: The de-risking-cycle claim did not show. Top-fifth entries of a gbm score on drawdown, volatility direction and volatility elevation earned a tiny positive average, below the same ETFs on shifted dates, so the picks mark ETFs that do well in any month, not a timing state. Gross was a fraction of round-trip cost, far under the card's own forecast. The gain was largest near a month and gone by the primary horizon; the thirds disagreed and the first was nearly empty from warm-up. The by-state split and the ridge control the card relied on never ran, so the sign-flip claim itself is untested.
+- avoid: Do not refile with another hold (the one-month horizon that looks largest is a descriptive pick, not a claim), other leaves, top fraction or volatility windows: same ETFs, same monthly dates, a new trial each. Drawdown from the one-year high is the 52-week-high gap of K-0184, and r12_1 is plain momentum (K-0195); they are not new inputs.
+- open questions: The judge cannot output a by-state split (K-0135), so make the state the event: entrants only in the post-peak state, against same-ETF placebos. Never reported: the plain linear sort and the beta gap of picks against peers.
+- related: H-0169, H-0143, H-0099, H-0168, H-0041, H-0003

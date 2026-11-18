@@ -190,7 +190,10 @@ notes: 'Brief fit: the brief asks for a 6-24 month hold on US ETFs across asset 
   ETFs have no forward data, so G4 is the ceiling (K-0014). Universe chosen by a structural rule (every US-listed
   single-country equity ETF with a price before 2004, plus SPY for the US), not by later performance. Ticker coverage
   in SFP is checked only at G0 (K-0102). A missing ticker should be dropped and reported, not replaced.'
-status: DATA_READY
+status: PARKED
+terminal:
+  stage: DATA_READY
+  reason_code: null
 history:
 - ts: '2026-11-13T15:18:24.380527+00:00'
   version: 1
@@ -213,3 +216,11 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-17T20:58:44.973838+00:00'
+  version: 1
+  from: DATA_READY
+  to: PARKED
+  agent: human
+  invocation_id: null
+  reason: 'Builder question #1260: the card''s fail-loud check on zero distributions cannot pass lab try or G0 until
+    the synthetic market carries distributions; resume after that framework change'

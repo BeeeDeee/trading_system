@@ -172,7 +172,10 @@ notes: 'Brief fit: short horizon (5 sessions), cross-asset (signal from the US s
   rank, no column subset is chosen with future information (K-0134). The SEP and 8-K data are signal-only: if the
   loader cannot attach them to an instruments universe, the Builder should report it rather than proxy the signal.
   No forward data for SEP, so the card can pass at most G4.'
-status: DATA_READY
+status: PARKED
+terminal:
+  stage: DATA_READY
+  reason_code: null
 history:
 - ts: '2026-11-14T07:27:58.671986+00:00'
   version: 1
@@ -195,3 +198,11 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-17T20:58:45.407892+00:00'
+  version: 1
+  from: DATA_READY
+  to: PARKED
+  agent: human
+  invocation_id: null
+  reason: 'Builder question #1316: the loader cannot deliver a sharadar_sep panel (liq_rank, sec_8k_item202) next
+    to an ETF instruments universe; resume after a loader extension or a precomputed series'

@@ -201,7 +201,10 @@ notes: 'Brief fit: holding 5 days (grid 3-7), signal from one market (the Korean
   windows must accept views shorter than 30 rows. Spot data is signal only and its history starts with the view
   (K-0108). Dev window is one boom-and-bust cycle (K-0006); the holdout 2023+ and forward data (Upbit and Binance
   APIs) exist, so this is one of the few short-horizon ideas that could reach paper trading.'
-status: DATA_READY
+status: PARKED
+terminal:
+  stage: DATA_READY
+  reason_code: null
 history:
 - ts: '2026-11-09T11:12:06.817455+00:00'
   version: 1
@@ -224,3 +227,11 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-17T21:07:01.141961+00:00'
+  version: 1
+  from: DATA_READY
+  to: PARKED
+  agent: human
+  invocation_id: null
+  reason: 'owner: replaced by a re-filed card without the data that G0 cannot load (a DATA_READY card cannot be
+    revised; precedent K-0102)'
