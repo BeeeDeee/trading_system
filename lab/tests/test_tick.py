@@ -42,6 +42,17 @@ def test_duplicate_stays_idea(lab, card):
     assert "duplicate of H-0001" in lab.inbox("scout", hid)[0]["payload_json"]
 
 
+def test_refiling_a_parked_card_is_no_duplicate_but_a_rejected_one_is(lab, card):
+    first = submit(lab, card)
+    lab.transition(first, S.PARKED, "human", "needs a data fix")
+    refiled = submit(lab, {**card, "title": "The same idea, data fixed"}, actor="scout")
+    assert lab.hypothesis(refiled)["status"] != S.IDEA                       # passes the spec check
+    lab.transition(refiled, S.REJECTED, "human", "rejected")
+    again = submit(lab, {**card, "title": "The same idea, third time"}, actor="scout")
+    assert lab.hypothesis(again)["status"] == S.IDEA                         # a rejected one still counts
+    assert "duplicate of" in lab.inbox("scout", again)[0]["payload_json"]
+
+
 def test_missing_data_blocks_and_ingest_unblocks(lab, blocked_card):
     hid = submit(lab, blocked_card)
     assert lab.hypothesis(hid)["status"] == S.BLOCKED_DATA

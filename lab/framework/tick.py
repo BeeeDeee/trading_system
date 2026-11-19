@@ -131,6 +131,8 @@ def _duplicate_of(lab: Lab, hid: str, card: dict) -> str | None:
     for other in lab.hypotheses():
         if other["id"] == hid or lab.canonical_family(other["family"]) != lab.canonical_family(card["family"]):
             continue
+        if other["status"] == S.PARKED:      # parked = never tested (data or infrastructure): its fixed re-filing is no duplicate
+            continue
         o = json.loads(other["card_json"])
         if o["title"].strip().lower() == card["title"].strip().lower() or SequenceMatcher(
                 None, text, o.get("signal", {}).get("description", "").lower()).ratio() >= DUPLICATE_SIMILARITY:
