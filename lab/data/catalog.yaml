@@ -1575,3 +1575,163 @@ datasets:
     - XTKS.sessions_to_closure
     location: LAB_HOME/data/exchange_holidays_ahead_1d
     cost_model: null
+
+  - id: coinmetrics_adractcnt_1d
+    loader: generic
+    asset_class: crypto_spot
+    instruments: Coin Metrics AdrActCnt (number of unique addresses active as sender
+      or receiver on the UTC day) at 1d for the assets the community tier serves; key
+      = Coin Metrics asset id upper-cased + USDT.P (same convention and ticker identity
+      map as coinmetrics_supply_1d, e.g. BTCUSDT.P). Ambiguous or reused tickers dropped
+      as in coinmetrics_supply_1d (LUNA, LUNA2, LUNC, UST, USTC, REP, REPV2, BCC, ANT,
+      MIR, BNB, AVAXC, AVAXP, AVAXX). Assets without AdrActCnt in the community tier
+      (e.g. privacy coins) are absent. Signal only, not tradable
+    frequency: 1d
+    range:
+    - '2009-01-03'
+    - '2026-11-17'
+    clock: crypto
+    source: Coin Metrics Community API v4, https://community-api.coinmetrics.io/v4/timeseries/asset-metrics
+      (metrics=AdrActCnt, frequency=1d, asset list from /v4/catalog-v2/asset-metrics?metrics=AdrActCnt);
+      free, no key, Coin Metrics community data license (attribution)
+    quality: 'lab ingest 2026-11-18: 264960 rows, 94 series, see LAB_HOME/data/coinmetrics_adractcnt_1d/report.json'
+    holdout_from: '2023-01-01'
+    known_biases:
+    - 'Revised: Coin Metrics documents historical corrections and backfills of network
+      data (newly identified addresses/entity clustering, bug fixes, recomputation);
+      the API serves the current vintage only, so a value as served today is not what
+      was visible on that day. Active-address counts are more exposed to such revisions
+      than supply, and growth rates over 30-day windows can change retroactively: look-ahead
+      of unknown size.'
+    - 'Address counts measure on-chain addresses, not users: exchange hot-wallet batching,
+      spam/dusting and airdrop campaigns, contract activity and one-user-many-addresses
+      behavior produce spikes and level shifts unrelated to adoption; definitions differ
+      across chains (UTXO vs account model, token transfers vs native), so levels are
+      not comparable across assets, only within one.'
+    - 'Coverage is the community tier only: the framework fetch returned 95 series (2026-11-18),
+      skewed to older coins and ERC-20 tokens, and several large coins appear to be
+      absent (the series list shows no XRP, XLM, XMR, ZEC, UNI, SOL, TRX, AVAX, BNB,
+      ATOM, NEAR), so a strategy must treat a missing series as ineligible; coverage
+      of the Binance top-50 is partial and survivorship-skewed. Truncated or restarted
+      series (DOT 2020-05-26..2022-06-03, BSV to 2023-08-07, KCS to 2021-02-10, NEO
+      and GAS to 2025-10-30, FLOW from 2024-03-27, SAI to 2019-11-30) are kept as served,
+      not filled; LEO_EOS has one 11-day gap.'
+    - 'Some community-tier ids carry a chain suffix (e.g. MATIC_ETH, SHIB_ETH, QTUM_ETH,
+      POL_ETH, FLOW_NATIVE, STETH_LIDO, LEO_EOS, LEO_ETH, EOS_ETH vs EOS): their keys
+      (e.g. MATIC_ETHUSDT.P) do not equal a Binance pair id and are not bridged, so
+      they are harmless extras and are ineligible by the key convention; EOS_ETH (ERC-20
+      EOS pre-mainnet) and BNB_ETH are separate history lines from the mainnet coins.
+      Several keys (stablecoins, wrapped and staked tokens) are extras too. The tickers
+      with plain ids (BTC, ETH, LTC, DOGE, DASH, ADA, LINK, AAVE, ...) are the usable
+      ones.'
+    - 'Framework flagged many large day-to-day jumps (big_jumps, e.g. ETC 399, NEO 364,
+      EOS 486, BTM_ETH 490, LRC_ETH 519; BTC 4, ETH 45): address counts are spiky and
+      kept as published; the strategy''s rank-based use has to absorb them.'
+    - 'Daily value is stamped with the UTC day it refers to (full day, known after 00:00
+      UTC of the next day); the newest rows may be provisional and revised. Missing/null
+      values are dropped, not filled. Ticker identity map is not a contract map: renamings
+      (MATIC to POL, FTM to S, RNDR to RENDER) are not bridged.'
+    - Community API is rate limited and its terms and metric list can change (Coin Metrics
+      has cut community metrics before); if the tier shrinks the fetch returns what
+      it serves.
+    forward_source: same endpoint (https://community-api.coinmetrics.io/v4/timeseries/asset-metrics,
+      metrics=AdrActCnt, frequency=1d), refetched daily; only for assets still served
+      by the community tier
+    calendar: 24/7
+    fields:
+    - 1INCHUSDT.P
+    - AAVEUSDT.P
+    - ADAUSDT.P
+    - AE_ETHUSDT.P
+    - AION_ETHUSDT.P
+    - ALGOUSDT.P
+    - ALPHAUSDT.P
+    - BALUSDT.P
+    - BATUSDT.P
+    - BCHUSDT.P
+    - BNB_ETHUSDT.P
+    - BSVUSDT.P
+    - BTCUSDT.P
+    - BTGUSDT.P
+    - BTM_ETHUSDT.P
+    - BUIDL_ETHUSDT.P
+    - BUSDUSDT.P
+    - COMPUSDT.P
+    - CROUSDT.P
+    - CRVUSDT.P
+    - CRVUSD_ETHUSDT.P
+    - CVCUSDT.P
+    - DAIUSDT.P
+    - DASHUSDT.P
+    - DCRUSDT.P
+    - DGBUSDT.P
+    - DOGEUSDT.P
+    - DOTUSDT.P
+    - DRGNUSDT.P
+    - ELFUSDT.P
+    - EOSUSDT.P
+    - EOS_ETHUSDT.P
+    - ETCUSDT.P
+    - ETHUSDT.P
+    - EURCV_ETHUSDT.P
+    - EURC_ETHUSDT.P
+    - FDUSD_ETHUSDT.P
+    - FLOW_NATIVEUSDT.P
+    - FRAX_ETHUSDT.P
+    - FTTUSDT.P
+    - FUNUSDT.P
+    - FXC_ETHUSDT.P
+    - GASUSDT.P
+    - GNOUSDT.P
+    - GNTUSDT.P
+    - GUSDUSDT.P
+    - HBTCUSDT.P
+    - HEDGUSDT.P
+    - HTUSDT.P
+    - HUSDUSDT.P
+    - ICPUSDT.P
+    - ICX_ETHUSDT.P
+    - KCSUSDT.P
+    - KNCUSDT.P
+    - LDOUSDT.P
+    - LENDUSDT.P
+    - LEO_EOSUSDT.P
+    - LEO_ETHUSDT.P
+    - LINKUSDT.P
+    - LPTUSDT.P
+    - LRC_ETHUSDT.P
+    - LTCUSDT.P
+    - LUSD_ETHUSDT.P
+    - MAIDUSDT.P
+    - MANAUSDT.P
+    - MATIC_ETHUSDT.P
+    - MKRUSDT.P
+    - NAS_ETHUSDT.P
+    - NEOUSDT.P
+    - NXMUSDT.P
+    - OMGUSDT.P
+    - PAXGUSDT.P
+    - PAXUSDT.P
+    - PAYUSDT.P
+    - PERPUSDT.P
+    - POLYUSDT.P
+    - POL_ETHUSDT.P
+    - POWRUSDT.P
+    - PPTUSDT.P
+    - PYUSD_ETHUSDT.P
+    - QASHUSDT.P
+    - QNTUSDT.P
+    - QTUM_ETHUSDT.P
+    - RENBTCUSDT.P
+    - RENUSDT.P
+    - REV_ETHUSDT.P
+    - SAIUSDT.P
+    - SDAI_ETHUSDT.P
+    - SHIB_ETHUSDT.P
+    - SNTUSDT.P
+    - SNXUSDT.P
+    - SRMUSDT.P
+    - STETH_LIDOUSDT.P
+    - SUSDE_ETHUSDT.P
+    location: LAB_HOME/data/coinmetrics_adractcnt_1d
+    cost_model: null

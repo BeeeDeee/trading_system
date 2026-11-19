@@ -2614,5 +2614,41 @@
   "actor": "librarian",
   "message_id": 1430,
   "ts": "2026-11-17T23:36:28.191574+00:00"
+ },
+ {
+  "id": "K-0219",
+  "kind": "market",
+  "title": "Estimated macro-factor exposure in liquid US stocks: the slow-trend form also fails the same-stock placebo",
+  "statement": "K-0212 covered dated macro-shock weeks mapped to stock exposures. H-0178 tested the slow-trend form: stock exposures to rates, oil and the dollar crossed with each factor's own multi-month trend, as a learned long-only score held two months. Entries averaged below the same stocks on shifted dates, gross was just under round-trip cost, the latest third was wrong-signed and nothing built toward longer horizons. The score marks persistent exposure identity, not a rotation that follows the trend. Caveats: no split by trend sign, ridge control not run (K-0135), market beta of the picks not neutralised (K-0074). A new macro-to-stock card needs a new information source.",
+  "evidence": "[\"H-0178\",\"H-0116\",\"H-0114\",\"H-0170\",\"K-0212\",\"K-0204\",\"K-0074\",\"K-0135\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1438,
+  "ts": "2026-11-18T04:28:27.254081+00:00"
+ },
+ {
+  "id": "K-0220",
+  "kind": "process",
+  "title": "File stock macro-exposure sorts under oil-shock-equity-underreaction",
+  "statement": "On 2026-11-18 the Chair declined to merge cross-asset-momentum into oil-shock-equity-underreaction after H-0178 (a stock sort on estimated rate, oil and dollar exposure crossed with each factor's trend), because a merge is whole-family and permanent and would also move H-0087 (country bond-to-equity momentum) and the live H-0177 (SPY/IEF time-series momentum) into a family that already carries the stricter trial count of the peer-lead-lag-diffusion merge. The overlap is real only for stock-level macro-exposure sorts (H-0114, H-0116, H-0170, H-0178). Rule for the Scout: file new stock sorts on estimated rate, oil, dollar or credit exposure directly under oil-shock-equity-underreaction, whether the trigger is a shock week or a slow trend; keep time-series and country-ETF cross-asset momentum under cross-asset-momentum. A single hypothesis cannot be moved between families after filing, so the family label must be chosen on the card. Not shown: a shared counterparty between H-0177 and the macro-factor-underreaction cards; the Chair will reconsider only if one is named.",
+  "evidence": "[\"H-0178\",\"H-0114\",\"H-0116\",\"H-0170\",\"H-0087\",\"H-0177\",\"K-0219\",\"K-0212\",\"chair reply 1440 2026-11-18\"]",
+  "confidence": "high",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1441,
+  "ts": "2026-11-18T05:05:48.093860+00:00"
+ },
+ {
+  "id": "K-0221",
+  "kind": "market",
+  "title": "S&P 500 membership changes: three horizons, no book; the slow average sits in one era",
+  "statement": "Membership-change cards in liquid US stocks now span three horizons: additions only over five days (H-0017), additions plus deletions over five days (H-0022) and both directions over sixty sessions with a year-long hold (H-0181). The first two ended just under the placebo bar. The third reached the bar at the margin with a clearly larger average than at shorter horizons and a negative placebo mean, so the slow-build reading of K-0093 was right about the shape. It gave no strategy: almost all of the average came from the middle third of events, the earliest and latest thirds were about zero (K-0060), and in the book the long deletion leg earned while the short addition leg lost, leaving gross near zero. Reading, inferred: the deletion side holds whatever effect exists, and additions are momentum that keeps running. A few dozen events a year at small slots caps the gain of any such book. Further cards on the same events are retries; untested are the deletion leg alone as a tilt on a core, acquisitions excluded, and a control matched on prior-year return.",
+  "evidence": "[\"H-0181\",\"H-0017\",\"H-0022\",\"H-0113\",\"K-0093\",\"K-0060\",\"K-0207\"]",
+  "confidence": "low",
+  "supersedes": "K-0093",
+  "actor": "librarian",
+  "message_id": 1457,
+  "ts": "2026-11-19T02:36:09.584483+00:00"
  }
 ]

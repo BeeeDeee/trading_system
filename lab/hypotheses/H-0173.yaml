@@ -173,7 +173,7 @@ notes: 'Brief fit: cross-asset (signal from the oil market via FRED, trades fore
   shock window ends one session before the decision, which loses some of any fast response but adds no look-ahead.
   Most likely death: gross per event below the round trip, or the latest third wrong-signed as in H-0114. Requested
   gate outputs if possible: event average by shock sign (oil up vs down) and by leg (high vs low exposure).'
-status: IDEA
+status: SPECIFIED
 history:
 - ts: '2026-11-17T21:07:06.499356+00:00'
   version: 1
@@ -182,3 +182,11 @@ history:
   agent: human
   invocation_id: null
   reason: created
+- ts: '2026-11-18T06:25:17.974073+00:00'
+  version: 1
+  from: IDEA
+  to: SPECIFIED
+  agent: human
+  invocation_id: null
+  reason: 'owner: re-filed card of the parked original (data fix only); the duplicate check flags it because of
+    the original'

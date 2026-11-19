@@ -90,12 +90,6 @@ Two designs on the same CFTC non-commercial positioning and almost the same comm
 
 *confidence low · 2026-10-25 · librarian · evidence: H-0051; H-0057*
 
-### K-0093 S&P 500 membership-change reversal: two designs end just under the placebo bar, with slow build and a faded latest third
-
-Two designs on the forced trading around S&P 500 membership changes in liquid US stocks, additions only (H-0017) and additions plus deletions read inside LIQ-500 (H-0022), both showed the predicted sign, a gross effect well above cost and a placebo mean near zero, and both landed just under the placebo percentile bar, with a bar above cost. Both effects were small in the first sessions and larger at the longest horizons, so the reversal is slower than a five-session hold, and in both the latest third of dev was weakest (about zero in the second). Adding the deletion leg gave more events but did not remove the near miss. They share most of their events, so this is one piece of evidence seen twice. Mandated-flow events remain the nearest thing to a live effect in the large-cap short-horizon cross-section (K-0024), but the gate cannot confirm them with a few events per month. Further tests on the same membership events are retries; a card needs a slower horizon argued from the build-up, or many more events.
-
-*confidence low · 2026-10-25 · librarian · evidence: H-0017; H-0022; K-0024; K-0026; K-0034; K-0060*
-
 ### K-0094 Reaction drift is specific to earnings releases: large moves on non-earnings 8-K sessions show none
 
 On real earnings-release sessions, following a large standardized own-price reaction drifts in the same direction (H-0028, H-0031, H-0033). The same rule applied to sessions with a filed non-earnings 8-K (H-0034) gave a slightly wrong-signed average, inside the placebo cloud, with signs mixed across thirds and horizons beyond the first sessions leaning negative. Moves on sessions with no earnings release at all reverse slightly (H-0030). So a filing-identified news event did not turn reversal into drift: what separates the earnings case may be the scheduled date, the consensus benchmark and the attention an earnings release draws, not the presence of news. Caveats: the 8-K item types are pooled and the filing session can come after the press release, so the dated reaction may be a tail or a routine filing. Not tested: single item types, press-release timestamps, a news-versus-no-news comparison within the same stocks. Dated news outside earnings now has one flat verdict; a further filing-based drift card needs a reason that the item type is a surprise.
@@ -281,6 +275,18 @@ K-0103 found the pooled closed-end fund book clearing the placebo test but missi
 Monthly sorts of country and asset-class ETFs have ended at the mechanism test four times without a clear gap over the same ETFs on shifted dates: country long-term reversal (H-0060), bond-to-equity momentum (H-0087), a learned path-shape momentum score (H-0143) and, new, a learned drawdown-by-volatility-cycle score (H-0176). In H-0176 the average sat slightly below the placebo mean, gross was a fraction of cost, the effect peaked near a month and was gone by two, as in H-0143, and the thirds disagreed without the usual late decay (K-0060). Reading, inferred: a few dozen ETFs give few independent picks and a wide placebo cloud, the picks earn in any month (identity, perhaps a beta gap, K-0074), and a month-scale effect is small next to round-trip cost. Drawdown from the one-year high is the high-gap of K-0184. The plain sort was never run as a control. Low prior for another ETF sort on price, path or volatility state unless it reports the plain sort and makes the state the event.
 
 *confidence low · 2026-11-17 · librarian · supersedes K-0195 · evidence: H-0176; H-0143; H-0060; H-0087; K-0195; K-0184; K-0074; K-0060*
+
+### K-0219 Estimated macro-factor exposure in liquid US stocks: the slow-trend form also fails the same-stock placebo
+
+K-0212 covered dated macro-shock weeks mapped to stock exposures. H-0178 tested the slow-trend form: stock exposures to rates, oil and the dollar crossed with each factor's own multi-month trend, as a learned long-only score held two months. Entries averaged below the same stocks on shifted dates, gross was just under round-trip cost, the latest third was wrong-signed and nothing built toward longer horizons. The score marks persistent exposure identity, not a rotation that follows the trend. Caveats: no split by trend sign, ridge control not run (K-0135), market beta of the picks not neutralised (K-0074). A new macro-to-stock card needs a new information source.
+
+*confidence low · 2026-11-18 · librarian · evidence: H-0178; H-0116; H-0114; H-0170; K-0212; K-0204; K-0074; K-0135; K-0060*
+
+### K-0221 S&P 500 membership changes: three horizons, no book; the slow average sits in one era
+
+Membership-change cards in liquid US stocks now span three horizons: additions only over five days (H-0017), additions plus deletions over five days (H-0022) and both directions over sixty sessions with a year-long hold (H-0181). The first two ended just under the placebo bar. The third reached the bar at the margin with a clearly larger average than at shorter horizons and a negative placebo mean, so the slow-build reading of K-0093 was right about the shape. It gave no strategy: almost all of the average came from the middle third of events, the earliest and latest thirds were about zero (K-0060), and in the book the long deletion leg earned while the short addition leg lost, leaving gross near zero. Reading, inferred: the deletion side holds whatever effect exists, and additions are momentum that keeps running. A few dozen events a year at small slots caps the gain of any such book. Further cards on the same events are retries; untested are the deletion leg alone as a tilt on a core, acquisitions excluded, and a control matched on prior-year return.
+
+*confidence low · 2026-11-19 · librarian · supersedes K-0093 · evidence: H-0181; H-0017; H-0022; H-0113; K-0093; K-0060; K-0207*
 
 ## Data
 
@@ -770,6 +776,12 @@ The DATA_READY check resolves datasets, not columns, tickers or loader combinati
 
 *confidence medium · 2026-11-17 · librarian · evidence: H-0125; H-0132; H-0141; H-0153; H-0160; H-0172; K-0102; K-0108; K-0091; K-0106*
 
+### K-0220 File stock macro-exposure sorts under oil-shock-equity-underreaction
+
+On 2026-11-18 the Chair declined to merge cross-asset-momentum into oil-shock-equity-underreaction after H-0178 (a stock sort on estimated rate, oil and dollar exposure crossed with each factor's trend), because a merge is whole-family and permanent and would also move H-0087 (country bond-to-equity momentum) and the live H-0177 (SPY/IEF time-series momentum) into a family that already carries the stricter trial count of the peer-lead-lag-diffusion merge. The overlap is real only for stock-level macro-exposure sorts (H-0114, H-0116, H-0170, H-0178). Rule for the Scout: file new stock sorts on estimated rate, oil, dollar or credit exposure directly under oil-shock-equity-underreaction, whether the trigger is a shock week or a slow trend; keep time-series and country-ETF cross-asset momentum under cross-asset-momentum. A single hypothesis cannot be moved between families after filing, so the family label must be chosen on the card. Not shown: a shared counterparty between H-0177 and the macro-factor-underreaction cards; the Chair will reconsider only if one is named.
+
+*confidence high · 2026-11-18 · librarian · evidence: H-0178; H-0114; H-0116; H-0170; H-0087; H-0177; K-0219; K-0212; chair reply 1440 2026-11-18*
+
 ## Superseded
 
 - K-0004 No earnings dates in the lab
@@ -809,6 +821,7 @@ The DATA_READY check resolves datasets, not columns, tickers or loader combinati
 - K-0081 On real earnings dates the events that cleared the placebo test sort on the stock's own price move
 - K-0085 Perp funding and the perp-versus-spot volume split both fail to separate forced from informational big moves
 - K-0086 G1 needs at least three unmarked peers per date, so early event dates can be dropped at G1 but counted at G0
+- K-0093 S&P 500 membership-change reversal: two designs end just under the placebo bar, with slow build and a faded latest third
 - K-0099 Wrapper gaps revert where no arbitrage link exists: closed-end funds cleared the placebo test, twin ETFs did not
 - K-0100 Closed-end fund gaps revert against their ETF anchor in two asset classes; both books still fail at G1
 - K-0101 Reported mean exposure of a paired fund-ETF book is about half the card's gross arithmetic; the cause is unknown

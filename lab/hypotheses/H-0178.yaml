@@ -180,7 +180,10 @@ notes: 'Why this family and not oil-shock-equity-underreaction: that family (H-0
   quarters in dev), not the stock count: that is why the model is kept small (100 trees, 8 leaves, 500 minimum child
   samples) and the grid has two parameters. Holdout and forward: no forward stock data, so the card can pass at
   most G4.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-18T03:09:08.173051+00:00'
   version: 1
@@ -203,3 +206,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-18T04:24:28.746850+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 431, qlab)
+- ts: '2026-11-18T04:26:55.827764+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 432, qlab)

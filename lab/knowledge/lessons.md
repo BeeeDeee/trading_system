@@ -1567,3 +1567,21 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile with another hold (the one-month horizon that looks largest is a descriptive pick, not a claim), other leaves, top fraction or volatility windows: same ETFs, same monthly dates, a new trial each. Drawdown from the one-year high is the 52-week-high gap of K-0184, and r12_1 is plain momentum (K-0195); they are not new inputs.
 - open questions: The judge cannot output a by-state split (K-0135), so make the state the event: entrants only in the post-peak state, against same-ETF placebos. Never reported: the plain linear sort and the beta gap of picks against peers.
 - related: H-0169, H-0143, H-0099, H-0168, H-0041, H-0003
+
+## H-0178 – Macro-trend pass-through into stock exposures, learned - LIQ-500 long-only, monthly 2-month sleeves of the top fifth of a LightGBM score on rate, oil and dollar betas x the factors' own trends
+
+- family: `cross-asset-momentum` · mechanism: cross_asset_information · instruments: liquid US stocks (LIQ-500), long-only top fifth of a gbm score on rate, oil and dollar exposures crossed with factor trends
+- outcome: rejected at G1 mechanism test: entries averaged slightly positive but below the same stocks on shifted dates, and gross fell just short of round-trip cost; strategy never run
+- lesson: The card's own named risk materialised: the placebo mean was above the event mean, so the score picked stocks that earn on any date (static exposure identity), not a rotation with the macro trend. The first third was near zero, the middle carried the average, the latest was wrong-signed, and nothing built toward longer horizons. The placebo bar was far above cost, but the event sat below the placebo mean, so this is a measured null, not a power problem.
+- avoid: Do not file another stock sort on estimated rate, oil, dollar or credit exposure, keyed to a shock week or to a slow trend, without a new information source. Do not make a gbm interaction the claim without a ridge-on-products control, and do not forecast gross from literature spreads, since the same-stock placebo absorbs them.
+- open questions: Untested: use of the trend-by-exposure interaction by trend sign, a market-beta-neutral top fifth (K-0074), the ridge on the three products as primary claim, and a time-series form on the factors themselves (that is H-0177's idea, not this one).
+- related: H-0087, H-0177, H-0116, H-0114, H-0119, H-0170
+
+## H-0181 – Slow S&P 500 change reversal held for a year - LIQ-500, long liquid stocks just deleted from the index, short just-added ones, equal slots hedged dollar-neutral with the other members, 12-month hold
+
+- family: `index-inclusion-price-pressure` · mechanism: flow_structural · instruments: LIQ-500 stocks: long just-deleted, short just-added S&P 500 members, year-long hold, hedged
+- outcome: rejected at G1: net Sharpe about zero and bootstrap bound below zero; the sixty-session event study sat at the placebo bar
+- lesson: The slower horizon did show a larger average at sixty sessions than at twenty-one, with a placebo mean below zero. But nearly all of it came from the middle third of events; the earliest and latest thirds were about zero, which the card itself named as decay, not support. In the book the deletion (long) leg earned and the addition (short) leg lost about as much, so gross was near zero. A few dozen events a year at small fixed slots cannot turn a per-event gap into an annual gain. Reading (inferred): one episode of deleted-stock recovery, not a standing flow effect.
+- avoid: Do not file another S&P 500 change card on these same events with a different hold, slot size or hedge: three horizons now give two near misses and a flat book. Do not short additions; they kept rising and that leg lost.
+- open questions: The deletion leg alone as a tilt on an always-invested core was never run. Not separated: acquisition deletions, a control matched on prior-year return, the middle block's regime. State the expected annual gain of the book and the latest third.
+- related: H-0017, H-0022, H-0018, H-0113
