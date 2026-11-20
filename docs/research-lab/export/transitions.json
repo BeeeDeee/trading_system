@@ -11122,5 +11122,65 @@
   "message_id": null,
   "reason": "all data requirements resolve in the catalog",
   "ts": "2026-11-19T03:11:19.248596+00:00"
+ },
+ {
+  "id": 928,
+  "hypothesis_id": "H-0182",
+  "version": 1,
+  "from_status": "DATA_READY",
+  "to_status": "IMPLEMENTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G0 passed (run 437, qlab)",
+  "ts": "2026-11-19T04:02:12.280314+00:00"
+ },
+ {
+  "id": 929,
+  "hypothesis_id": "H-0182",
+  "version": 1,
+  "from_status": "IMPLEMENTED",
+  "to_status": "REJECTED",
+  "actor": "gatekeeper",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "G1 failed (run 438, qlab)",
+  "ts": "2026-11-19T04:02:14.936181+00:00"
+ },
+ {
+  "id": 930,
+  "hypothesis_id": "H-0183",
+  "version": 1,
+  "from_status": null,
+  "to_status": "IDEA",
+  "actor": "scout",
+  "invocation_id": "scout-20261119T053511-5967d5",
+  "message_id": 1466,
+  "reason": "created",
+  "ts": "2026-11-19T05:38:38.652387+00:00"
+ },
+ {
+  "id": 931,
+  "hypothesis_id": "H-0183",
+  "version": 1,
+  "from_status": "IDEA",
+  "to_status": "SPECIFIED",
+  "actor": "scout",
+  "invocation_id": "scout-20261119T053511-5967d5",
+  "message_id": 1466,
+  "reason": "spec complete",
+  "ts": "2026-11-19T05:38:38.820962+00:00"
+ },
+ {
+  "id": 932,
+  "hypothesis_id": "H-0183",
+  "version": 1,
+  "from_status": "SPECIFIED",
+  "to_status": "DATA_READY",
+  "actor": "system",
+  "invocation_id": null,
+  "message_id": null,
+  "reason": "all data requirements resolve in the catalog",
+  "ts": "2026-11-19T05:38:38.985513+00:00"
  }
 ]

@@ -216,7 +216,10 @@ notes: 'Brief fit: the brief asks for 6-24 month holds; the schema caps the labe
   (same-ETF placebos absorb ETF identity, K-0025) or G1 Sharpe excess over 60/40. Please have the judge or Builder
   report the ridge event average next to the gbm one (K-0135, K-0182); the conclusion if ridge wins is stated in
   the falsification criteria. No new data needed.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_abnormal_return
 history:
 - ts: '2026-11-19T03:11:18.852036+00:00'
   version: 1
@@ -239,3 +242,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-19T04:02:12.280314+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 437, qlab)
+- ts: '2026-11-19T04:02:14.936181+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 438, qlab)

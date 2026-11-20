@@ -1585,3 +1585,12 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not file another S&P 500 change card on these same events with a different hold, slot size or hedge: three horizons now give two near misses and a flat book. Do not short additions; they kept rising and that leg lost.
 - open questions: The deletion leg alone as a tilt on an always-invested core was never run. Not separated: acquisition deletions, a control matched on prior-year return, the middle block's regime. State the expected annual gain of the book and the latest third.
 - related: H-0017, H-0022, H-0018, H-0113
+
+## H-0182 – Overextension vs diffusion in asset-class trends, learned - 47 cross-asset ETFs, long-only 60/40 sleeves, 60-session tranches of the top fifth of a LightGBM score on 3-year overextension x trend
+
+- family: `long-term-reversal` · mechanism: behavioral · instruments: liquid US-listed asset-class ETFs (equity, bond, commodity, currency), long-only in risk and defensive sleeves
+- outcome: rejected at G1 mechanism test: new top-scored entrants earned slightly less than the same ETFs on shifted dates, wrong-signed in all three dev blocks; book not run
+- lesson: The overshoot-and-diffusion life-cycle claim showed nothing: ETFs the gbm ranked high (continuing trends not yet stretched, or cheap ones that stopped falling) did no better than the same ETFs on arbitrary dates, and slightly worse, at every horizon. Events were plentiful and the placebo bar was above cost, so this is a measured null, not a power problem. The sign was wrong in every era, so there is no decay to rescue. The first block is thin from warm-up. No ridge control was reported, so whether a linear value-plus-momentum sum does better is unknown.
+- avoid: Do not refile this ETF sort with other leaves, tree counts, top fractions, sleeve weights or windows: same ETFs, same dates, a new trial each. Multi-year overextension is the country reversal of H-0060, and H-0143 and H-0176 ended the same way; adding trend makes it momentum, not a new mechanism.
+- open questions: Make the state the event: entrants only when an ETF is far above its multi-year average after a strong run, against same-ETF placebos, both sides marked in one sleeve. The plain linear sort was never reported.
+- related: H-0060, H-0143, H-0176, H-0087, H-0062, H-0088
