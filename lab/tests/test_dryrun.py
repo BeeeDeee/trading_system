@@ -81,6 +81,19 @@ def test_synthetic_view_follows_the_card(card):
     assert (~v.listed).any()                       # a late listing
 
 
+def test_etf_close_drops_on_quarterly_distributions_while_total_return_keeps_them(card):
+    from lab.framework import catalog
+    from lab.framework.paths import LAB_DIR
+    cat = catalog.load(LAB_DIR / "data" / "catalog.yaml")
+    v = dryrun.synthetic_view(card, cat, seed=1)
+    j = 0
+    r = (1 + v.ret_co[1:, j]) * (1 + v.ret_oc[1:, j]) - 1
+    p = v.close[1:, j] / v.close[:-1, j] - 1
+    gap = np.nan_to_num(r - p)
+    assert (gap > 1e-3).sum() >= len(v.dates) // 63 - 2          # about one distribution a quarter
+    assert (np.abs(gap) < 1e-9).mean() > 0.9                     # and none on the other days
+
+
 def test_crypto_top_n_view_has_a_universe(card):
     from lab.framework import catalog
     from lab.framework.paths import LAB_DIR

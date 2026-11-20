@@ -98,7 +98,14 @@ def synthetic_view(card: dict, cat: dict, seed: int, sources: tuple[str, ...] = 
     tradable = listed & ~delisting
     tradable &= rng.random((T, N)) > 0.002                         # rare missing opens
     ret_co, ret_oc = np.where(listed | delisting, ret_co, 0.0), np.where(tradable, ret_oc, 0.0)
-    close = 20 * np.cumprod((1 + ret_co) * (1 + ret_oc), axis=0)
+    # ETFs pay a quarterly distribution: the unadjusted close drops on the ex-day while the total return keeps it
+    # (H-0153 needed the gap d = total return - price return; before this the synthetic close followed the total return)
+    dist = np.zeros((T, N))
+    drng = np.random.default_rng(seed + 1)                           # own stream: the rest of the view is unchanged
+    for j in np.flatnonzero(~crypto & ~stocks):
+        ex = int(drng.integers(0, 63)) + 63 * np.arange(T // 63 + 1)
+        dist[ex[ex < T], j] = 0.004 + 0.004 * drng.random()
+    close = 20 * np.cumprod((1 + ret_co) * (1 + ret_oc) / (1 + dist), axis=0)
     close = np.where(listed, close, np.nan)
     dv = np.where(listed, rng.lognormal(17, 1, (T, N)), np.nan)
     view = DataView(days, tuple(names), tuple(classes), ret_co, ret_oc, tradable, listed, delisting, close, dv,
