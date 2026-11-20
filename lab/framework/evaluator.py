@@ -165,7 +165,7 @@ class QlabEvaluator:
                 for adset, fields in attached.items():
                     v = attached_mod.attach(v, adset, fields, data.DATA_ROOT / "parquet" / data.SHARADAR,
                                               lab.paths.home)
-            if universe["kind"] == "crypto_top_n" and ds == "binance_spot_1d":
+            if universe["kind"] == "crypto_top_n" and ds in ("binance_spot_1d", "binance_perp_1d"):
                 v = replace(v, universe=data.crypto_top_n(v, universe["n"]))
             if ds in per_ds:
                 strat_set |= set(v.instruments if per_ds[ds] is None else per_ds[ds])
