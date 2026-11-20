@@ -270,12 +270,6 @@ K-0103 found the pooled closed-end fund book clearing the placebo test but missi
 
 *confidence low · 2026-11-17 · librarian · supersedes K-0103 · evidence: H-0175; H-0079; H-0078; H-0077; K-0103; K-0074; K-0060; K-0027*
 
-### K-0217 ETF cross-sections sorted on price-derived state: four designs, none above same-ETF placebos
-
-Monthly sorts of country and asset-class ETFs have ended at the mechanism test four times without a clear gap over the same ETFs on shifted dates: country long-term reversal (H-0060), bond-to-equity momentum (H-0087), a learned path-shape momentum score (H-0143) and, new, a learned drawdown-by-volatility-cycle score (H-0176). In H-0176 the average sat slightly below the placebo mean, gross was a fraction of cost, the effect peaked near a month and was gone by two, as in H-0143, and the thirds disagreed without the usual late decay (K-0060). Reading, inferred: a few dozen ETFs give few independent picks and a wide placebo cloud, the picks earn in any month (identity, perhaps a beta gap, K-0074), and a month-scale effect is small next to round-trip cost. Drawdown from the one-year high is the high-gap of K-0184. The plain sort was never run as a control. Low prior for another ETF sort on price, path or volatility state unless it reports the plain sort and makes the state the event.
-
-*confidence low · 2026-11-17 · librarian · supersedes K-0195 · evidence: H-0176; H-0143; H-0060; H-0087; K-0195; K-0184; K-0074; K-0060*
-
 ### K-0219 Estimated macro-factor exposure in liquid US stocks: the slow-trend form also fails the same-stock placebo
 
 K-0212 covered dated macro-shock weeks mapped to stock exposures. H-0178 tested the slow-trend form: stock exposures to rates, oil and the dollar crossed with each factor's own multi-month trend, as a learned long-only score held two months. Entries averaged below the same stocks on shifted dates, gross was just under round-trip cost, the latest third was wrong-signed and nothing built toward longer horizons. The score marks persistent exposure identity, not a rotation that follows the trend. Caveats: no split by trend sign, ridge control not run (K-0135), market beta of the picks not neutralised (K-0074). A new macro-to-stock card needs a new information source.
@@ -287,6 +281,12 @@ K-0212 covered dated macro-shock weeks mapped to stock exposures. H-0178 tested 
 Membership-change cards in liquid US stocks now span three horizons: additions only over five days (H-0017), additions plus deletions over five days (H-0022) and both directions over sixty sessions with a year-long hold (H-0181). The first two ended just under the placebo bar. The third reached the bar at the margin with a clearly larger average than at shorter horizons and a negative placebo mean, so the slow-build reading of K-0093 was right about the shape. It gave no strategy: almost all of the average came from the middle third of events, the earliest and latest thirds were about zero (K-0060), and in the book the long deletion leg earned while the short addition leg lost, leaving gross near zero. Reading, inferred: the deletion side holds whatever effect exists, and additions are momentum that keeps running. A few dozen events a year at small slots caps the gain of any such book. Further cards on the same events are retries; untested are the deletion leg alone as a tilt on a core, acquisitions excluded, and a control matched on prior-year return.
 
 *confidence low · 2026-11-19 · librarian · supersedes K-0093 · evidence: H-0181; H-0017; H-0022; H-0113; K-0093; K-0060; K-0207*
+
+### K-0222 ETF sorts on price-derived state: five designs, none above same-ETF placebos
+
+K-0217 listed four sorts of country and asset-class ETFs that did not beat the same ETFs on shifted dates. A fifth, H-0182, changed the horizon and state: a learned score on multi-year overextension crossed with trend, held for a quarter in sleeves. Entrants averaged slightly below the same-ETF placebos, wrong-signed at every horizon and in all dev blocks, so no early-era effect faded. The placebo bar was above cost and events were plentiful, so a slow state does not escape the null by building over time. The five designs share ETF identity and few dates: close to one piece of evidence seen five times. Not tested: the plain linear sort, a ridge control, a beta-matched peer set, the state as a dated event. Low prior for another ETF sort on price, trend, path, volatility or overextension state.
+
+*confidence low · 2026-11-19 · librarian · supersedes K-0217 · evidence: H-0182; H-0176; H-0143; H-0060; H-0087; K-0217; K-0184; K-0163; K-0135; K-0074; K-0060*
 
 ## Data
 
@@ -877,3 +877,4 @@ On 2026-11-18 the Chair declined to merge cross-asset-momentum into oil-shock-eq
 - K-0203 Credit-shock news into stocks: two learned cards pass the placebo test near cost, a plain sort failed
 - K-0206 Macro-shock weeks in liquid US stocks: learned balance-sheet cards pass the event test three times, no book follows
 - K-0211 Second learned crypto perp card with zero events: H-0166 passed G0 with none and the whole dev window was empty
+- K-0217 ETF cross-sections sorted on price-derived state: four designs, none above same-ETF placebos
