@@ -288,6 +288,24 @@ K-0217 listed four sorts of country and asset-class ETFs that did not beat the s
 
 *confidence low · 2026-11-19 · librarian · supersedes K-0217 · evidence: H-0182; H-0176; H-0143; H-0060; H-0087; K-0217; K-0184; K-0163; K-0135; K-0074; K-0060*
 
+### K-0223 Oil-specific shock underreaction: the US-stock pass did not reproduce in a second cross-section
+
+The delayed response to oil-specific news has been tried in three settings: SPY against Treasuries (H-0056, wrong-signed), a learned stock sort in a liquid US universe (H-0114, passed the mechanism test but not as a book, latest third wrong-signed) and, new, a plain rule on single-country equity ETFs with both legs marked and exposure estimated (H-0173). The ETF version was right-signed but inside the same-ETF placebo cloud, gross about equal to round-trip cost, the earliest third wrong-signed, and the effect gone or reversed by two weeks. The card pre-registered that failure meant the H-0114 pass was US-specific or luck. Reading: the oil channel has one unreplicated pass; independent evidence is a few oil episodes, not thousands of events, because several marked ETFs share each date. Not reported: split by oil direction and by leg. A further oil-to-equity cross-section has a low prior.
+
+*confidence low · 2026-11-20 · librarian · evidence: H-0173; H-0114; H-0056; H-0132; K-0220; K-0074; K-0060*
+
+### K-0224 Korean segmented-venue demand: price-premium catch-up and volume-surge fade both fail the placebo test in Binance perps
+
+Two cards used the Upbit KRW market as a segmented retail venue transmitting into Binance perps. A daily sort on the Upbit price premium (H-0076) was slightly wrong-signed and far under cost. A rare Korea-specific volume surge with an up-move, traded as a fade (H-0174), was right-signed against a negative placebo mean but inside the cloud, under cost, and positive only in the 2022 bear third, where a short of a high-beta alt against an equal-notional BTC and ETH hedge profits from beta (K-0074). Early thirds were wrong-signed: pump continuation in the 2021 boom. So neither the price gap nor the volume surge shows a tradable daily lag; the sign pattern follows the crypto cycle (K-0006), not the Korean event. The control of Korea-specific against global surges was not reported, so the segmentation claim itself is untested. Delisted Korean coins are missing, which biases against the short. Intraday arbitrage speed and withdrawal frictions are not measurable at daily resolution.
+
+*confidence low · 2026-11-20 · librarian · evidence: H-0174; H-0076; H-0125; K-0006; K-0074; K-0060*
+
+### K-0228 Cross-market signals at monthly horizons: equity-bond pairs null, carry-laden targets near the bar
+
+Four cards used a signal read in one market to predict another over months. Past bond returns against equities, as a country cross-section (H-0087) and as a US time series (H-0177), left nothing beyond the same assets on shifted dates, and the stock-level macro-trend form (H-0178) was no better. Yield changes into G10 currency trusts (H-0179) and on-chain user growth into crypto coins (H-0180) were right-signed, built with the horizon and had a placebo mean at or below zero, so they were not plain identity, but both ended just under the percentile bar with the bar above cost, the latest third weakest, and the confound untested: the predicted assets are carry and beta carriers (high-yield currencies, alt coins), so a risk-on loading could explain the sign (K-0074). The pattern is a lean, not a rule: the signals tied to core asset-class prices were null, those tied to a different information source near the bar. Independent evidence in all four is a few regimes, not hundreds of events, so the gate resolves only a large effect (K-0026, K-0034). A further card of this type needs a beta- or carry-matched control and a side split.
+
+*confidence low · 2026-11-20 · librarian · evidence: H-0177; H-0179; H-0180; H-0087; H-0178; K-0026; K-0034; K-0060; K-0074*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -683,6 +701,24 @@ K-0211 asked if zero events in H-0124 and H-0166 came from model warm-up and a V
 H-0176 (2026-11-17) listed a by-state split of its entries as a kill criterion and asked the Builder for it. The Builder reported that events() has no field for it, so it was not output. G1 gives only pooled events, three blocks, horizons and the placebo, so the card's central claim (a sign flip between volatility states) was never examined; it died on the pooled percentile. Same gap as K-0135 (ridge control never runs), now for state splits: a conditional claim cannot be separated from a wrong learner. Workaround: make the state part of the event definition, so the pooled test is the state test, and list no kill criterion the judge cannot compute. Suggested to the owner: let events carry a state label that G1 reports as a split.
 
 *confidence medium · 2026-11-17 · librarian · evidence: H-0176; K-0135; run 430*
+
+### K-0225 G0/G1 output fields: look-ahead cuts, mean exposure and cost share defined
+
+lookahead_failures.cuts and events_lookahead_failures.cuts count the truncation cuts that were run, not failures; the failures are the truncation and perturbation lists beside them (empty = passed). mean_exposure on daily cards is the mean over every scored day of the sum of absolute held weights (flat days count as zero), so a part-time paired book averages well below its gross while a slot is open; on intraday cards it is the share of bars with any position. cost_share_of_gross on intraday cards is the window's total cost over the absolute total gross P&L (net plus cost), a ratio of totals, not per trade and not winners only. A cost per trade derived from it and mean_trade_net is valid only while net P&L is clearly positive. The cost model is a flat rate per fill, not scaled by volatility.
+
+*confidence medium · 2026-11-20 · human · evidence: questions #309, #374, #622, #1297; lab/framework/engine.py, intraday.py*
+
+### K-0226 G1 event counts, idle cash, peer rule: how the checks report them
+
+mechanism_events shows the real event count; a card whose events sit on too few dates fails the separate mechanism_event_dates check (H-0157 read zero for many events on few dates before this). Days with no position earn the T-bill rate in the book as in the benchmark (cash_ret goes into the simulation). The G1 decomposition gives gross vs net, the long and short legs, and against a benchmark the active return, tracking error and information ratio. The event study needs at least three unmarked eligible instruments on each event date (g0_event_peer_set; K-0086, K-0174): a card that marks most of a small universe on every date cannot be measured and must add peer-only instruments or mark fewer.
+
+*confidence medium · 2026-11-20 · human · evidence: questions #1297, #1394, #253; lab/framework/diagnostic.py*
+
+### K-0227 G0 g0_series_empty checks every series of a requested dataset unless the card lists fields; H-0180 lost two days to it
+
+H-0180 (Coin Metrics active addresses, 2026-11-18 to 2026-11-20) failed G0 with g0_series_empty on eight chain-suffixed keys (stablecoin and wrapper keys with first values in 2023 or later) that its strategy never read. The Builder first rewrote the strategy to look up only its own keys; the same G0 error returned on a second run, so the check is on the dataset as loaded, not on what the strategy reads. Version 2 added an explicit fields list of the 57 usable plain-id keys to the data requirement and passed G0 (366 events, 25 look-ahead cuts, no failures). This supports the cause K-0096 only inferred (H-0075: a re-run passed after the series access changed) and matches K-0215 (H-0125: 17 of 47 Upbit columns empty in dev). The DATA_READY check resolves datasets, not columns, so a Scout cannot see it. Rule for Scouts: for a wide signal dataset (Coin Metrics, Upbit, FRED copies) list explicit fields, each with a first valid date before the dev start. Suggested: DATA_READY or G0 reports the empty keys up front, and the catalog lists first valid dates per key.
+
+*confidence medium · 2026-11-20 · librarian · evidence: H-0180; H-0075; H-0125; K-0096; K-0215; run 433; run 447*
 
 ## How the lab works
 

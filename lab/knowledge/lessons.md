@@ -1550,6 +1550,24 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - open questions: Untested: more closure dates through a wrapper whose home calendar is already loadable (the exchange-holiday dataset), or Israel and Saudi only if a verified calendar from 2008 appears. The ordinary-day control for the wrapper effect is still unreported (K-0205).
 - related: H-0133, H-0161, H-0157, H-0037
 
+## H-0173 – Oil-specific shocks into country equity ETFs - after a large 5-day WTI move net of world equities, long the most oil-exposed country ETFs and short the least in the shock's direction, hold 5 days
+
+- family: `oil-shock-equity-underreaction` · mechanism: cross_asset_information · instruments: about thirty single-country equity ETFs, long high and short low oil exposure after a WTI shock
+- outcome: rejected at G1: right-signed average, but below the 95th placebo percentile and gross only matched cost
+- lesson: The oil underreaction of H-0114 did not reproduce cleanly in a second cross-section. Both legs were marked, so the placebo mean was near zero and beta is no excuse; the average was right-signed but inside the placebo cloud, and gross only matched the round trip, so a real effect would net about nothing. Earliest third wrong-signed, later two positive. The response was there within a week and gone or reversed by two weeks. Several ETFs share each date, so the independent evidence is event dates over a few oil episodes. The H-0114 pass is most likely US-specific or luck.
+- avoid: Do not retune shock_z, n_leg or the exposure window, relist a subset of exporters or importers after seeing which carried it, or flip the sign. No further oil or commodity cross-section under this family without a new information source.
+- open questions: The requested split by shock sign and by leg was not reported by the gate, so which side carries the small positive average is unknown. Not tested: exporters only, a long-only tilt on a core, an episode split. Prior for more oil cards is low.
+- related: H-0114, H-0056, H-0132, H-0116, H-0119
+
+## H-0174 – Korean retail pump fade - after a Korea-specific Upbit KRW volume surge with a Binance up-move, short the coin's Binance perp vs a BTC/ETH hedge, hold 5 days
+
+- family: `segmented-venue-premium-transmission` · mechanism: flow_structural · instruments: Binance perps of mid-cap coins listed on Upbit, short after a Korea-specific volume surge, BTC/ETH hedge
+- outcome: rejected at G1: short side right-signed but below the 95th placebo percentile, gross under cost, one block positive
+- lesson: Not a clean refutation, nothing to build on. The pooled fade was right-signed against a negative placebo mean (same coins on shifted dates rose in the boom) but stayed inside a wide cloud and gross fell short of cost. Only the latest third, the 2022 bear, was positive; the earlier two were wrong-signed (pump continuation in 2021, the card's named rival). A short of a high-beta alt against an equal-notional BTC/ETH hedge gains in a bear from beta alone (K-0074). The Korea-specific control was not reported, so the segmentation claim is untested.
+- avoid: Do not lower the threshold for more events, retune hold_days, or flip to a long after the surge: the sign would be chosen from dev. Do not refile Upbit-Binance premium or volume gaps under a new family; with H-0076 it is the same channel in one boom-and-bust window.
+- open questions: Untested: the Korea-specific against global surge control, a beta-scaled hedge, a split by market regime, delisted Korean coins (missing, bias against the short). A new card should say why a daily lag would exist.
+- related: H-0076, H-0125, H-0071, H-0039
+
 ## H-0175 – Slow closed-end fund catch-up, pooled across seven fund classes - long a CEF after a 2-sigma 5-session shortfall vs its beta-adjusted ETF anchor, short the anchor, hold one month (21 sessions)
 
 - family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: 44 closed-end funds in seven classes, long after a shortfall vs an ETF anchor, short the anchor, one-month hold, 2001 to 2020
@@ -1568,6 +1586,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - open questions: The judge cannot output a by-state split (K-0135), so make the state the event: entrants only in the post-peak state, against same-ETF placebos. Never reported: the plain linear sort and the beta gap of picks against peers.
 - related: H-0169, H-0143, H-0099, H-0168, H-0041, H-0003
 
+## H-0177 – Cross-asset time-series momentum on a 60/40 core - monthly, SPY tilted by the past year of Treasury (IEF) excess return, IEF tilted against the past year of SPY excess return, SHY absorbs the rest
+
+- family: `cross-asset-momentum` · mechanism: cross_asset_information · instruments: SPY, IEF and SHY, monthly always-invested tilt on past cross-asset excess returns; near-cash Treasury ETFs as peers
+- outcome: rejected at G1 mechanism test: events earned less than the same events on shifted dates, gross far under cost; strategy never run
+- lesson: The slow-capital claim (past bond returns lead equities, past equity returns lead bond excess returns) left no trace in the SPY/IEF time series: the placebo mean sat above the event mean, the first week was about zero, and the quarter horizon was negative, the opposite of the months-long build the card required. The first block held only the 2007-2008 crisis months (inferred from its few events) and was wrong-signed. The bar is above cost, so a tiny effect is unresolved, but nothing leans toward one. Dev is mostly falling yields, so the bond leg also fought a strong unconditional bond return. The book was never simulated.
+- avoid: Do not retune lookback_days, the tilt size or the cash proxy, and do not refile as bond-to-equity or equity-to-bond time-series momentum on SPY/IEF, TLT, AGG or another equity-bond pair: same events, one trial. Do not add a trend or volatility conditioner (H-0003, K-0005). With H-0087, neither the country cross-section nor the US time series of this claim has beaten its placebo.
+- open questions: The paper's claim is across many countries; one US pair gives few independent bets (K-0026). Only a many-market time-series design with an always-invested control could add information; the prior is low.
+- related: H-0087, H-0178, H-0003, H-0001, H-0041
+
 ## H-0178 – Macro-trend pass-through into stock exposures, learned - LIQ-500 long-only, monthly 2-month sleeves of the top fifth of a LightGBM score on rate, oil and dollar betas x the factors' own trends
 
 - family: `cross-asset-momentum` · mechanism: cross_asset_information · instruments: liquid US stocks (LIQ-500), long-only top fifth of a gbm score on rate, oil and dollar exposures crossed with factor trends
@@ -1576,6 +1603,24 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not file another stock sort on estimated rate, oil, dollar or credit exposure, keyed to a shock week or to a slow trend, without a new information source. Do not make a gbm interaction the claim without a ridge-on-products control, and do not forecast gross from literature spreads, since the same-stock placebo absorbs them.
 - open questions: Untested: use of the trend-by-exposure interaction by trend sign, a market-beta-neutral top fifth (K-0074), the ridge on the three products as primary claim, and a time-series form on the factors themselves (that is H-0177's idea, not this one).
 - related: H-0087, H-0177, H-0116, H-0114, H-0119, H-0170
+
+## H-0179 – FX delayed overshooting - six G10 currency trusts, monthly dollar-neutral: long the 2 whose home 10y yield rose most over 3 months, short the 2 that fell most, 2-month cohorts
+
+- family: `fx-delayed-overshooting` · mechanism: cross_asset_information · instruments: six G10 currency trusts, signal from 10-year yield changes, monthly extremes marked
+- outcome: rejected at G1 mechanism test as a near miss: right-signed, gross above cost, percentile just under the bar; strategy never run
+- lesson: The strongest slow cross-asset result in this batch: currencies whose home yield rose most kept outperforming those whose yield fell most, building from the first week to a quarter (the card's shape condition held), positive in every third, and the placebo mean near zero says it is not just currency identity. But the percentile missed and the placebo bar lay above cost, so this is a coin flip (K-0034), not a refutation or a find. Middle third strongest, latest weakest (K-0060). The marked currencies are single extremes against raw peers, so carry and risk-on beta are not separated (K-0074): yield risers tend to be higher-beta currencies, fallers funding currencies. Inferred, not tested.
+- avoid: Do not retune lookback_months, hold_months or the currency list, add the Swedish trust, or swap the yield series to lift the percentile: a near miss re-run is a new trial on the same dates. Do not refile as yield-change carry, rate-news momentum or yield-differential momentum on the same trusts under another family name, and do not blend with currency value (H-0062) to rescue it.
+- open questions: Separate delayed overshooting from carry and beta: legs matched on carry and equity beta, or a split by side. Report the book next to the event study (K-0112). ETFs have no forward data, so G4 is the ceiling.
+- related: H-0062, H-0087, H-0088, H-0070, H-0177
+
+## H-0180 – Network adoption not yet in the price - Binance spot top-50 long-only, monthly 6-month cohorts of coins whose on-chain active-address growth most exceeds what their own price run implies
+
+- family: `crypto-network-adoption` · mechanism: behavioral · instruments: Binance spot top-50 coins, on-chain active-address growth net of own price run, monthly thirds
+- outcome: rejected at G1 mechanism test: under the percentile bar and only one positive block of two required; strategy never run
+- lesson: Coins whose user base grew faster than their price ran beat the middle third on average, building with the horizon, and the placebo mean was slightly negative, so unlike earlier crypto sorts (K-0128, K-0184, K-0196) this is not plain coin identity. But the events sit on only a few dozen dates, the placebo cloud was far above cost, the first third was empty (eligibility needs seasoned address history, K-0163), and the gain came from one stretch while the latest third lost: a boom-era result in one cycle (K-0006). Cannot tell, not refuted. The pooled mean also includes the bottom third, which spot cannot short, and no side split was reported.
+- avoid: Do not retune lookback_days or hold_days, or swap in transactions, new addresses or active senders on the same coins: same events, new trials. Do not read the positive middle block as support; one boom stretch cannot count as two blocks. Do not file a long-only alt basket without saying what it earns beyond alt beta in a bear market.
+- open questions: Needs more than one cycle, a larger eligible set (the community tier lacks several large coins), a control matched on prior price run, and a top-versus-bottom split.
+- related: H-0085, H-0058, H-0135, H-0144, H-0004, H-0082
 
 ## H-0181 – Slow S&P 500 change reversal held for a year - LIQ-500, long liquid stocks just deleted from the index, short just-added ones, equal slots hedged dollar-neutral with the other members, 12-month hold
 
