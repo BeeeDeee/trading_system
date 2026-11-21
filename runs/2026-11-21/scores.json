@@ -1,0 +1,294 @@
+{
+ "claude_volne": {
+  "comment": "Nízká expozice kolem 30 % s cashem jako hlavní pozicí; držím přeprodaný BTC a defenzivní TRX, malý ETH na odraz, HYPE prodávám kvůli slabosti a unlockům.",
+  "positions": [
+   {
+    "coin": "BTC",
+    "invalidation": "Denní uzavření pod 57 000 USD nebo další dny s odtoky z ETF nad 500 mil. USD.",
+    "reason": "Extrémní přeprodanost u dna 57,7k a záporný funding dávají asymetrii pro odraz.",
+    "weight_pct": 15.0
+   },
+   {
+    "coin": "ETH",
+    "invalidation": "Uzavření pod 1 500 USD nebo pokračující zaostávání za BTC o více než 5 % za týden.",
+    "reason": "RSI 19 a výrazně záporný funding, malá sázka na short squeeze.",
+    "weight_pct": 5.0
+   },
+   {
+    "coin": "TRX",
+    "invalidation": "TRX ztratí relativní sílu (rel7 záporné) nebo propadne pod 30d minimum.",
+    "reason": "Nulová korelace s BTC a silný relativní trend tlumí riziko portfolia.",
+    "weight_pct": 10.0
+   }
+  ]
+ },
+ "coins": {
+  "BNB": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Kopíruje BTC (rel30 +2,4) bez nové zprávy; přeprodaný, ale bez katalyzátoru.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "BTC": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 2,
+   "news": 0,
+   "note": "Extrémně přeprodaný (RSI 17) u medvědího dna 57,7k se záporným fundingem, ale ETF odtoky a jestřábí Fed drží trend dolů.",
+   "p_outperform_btc_7d": 0.5,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/markets/2026/11/20/bitcoin-plunges-below-usd59-000-as-rush-to-cash-puts-new-bear-market-lows-back-in-play",
+    "https://www.fool.com/coverage/stock-market-today/2026/11/20/crypto-market-today-nov-20-bitcoin-plunges-below-usd60-000-as-wall-street-s-sell-off-spreads-to-crypto/"
+   ],
+   "trend": -2
+  },
+  "DOGE": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Vysoká beta meme coin v risk-off prostředí, mainnet DogeOS bez data není katalyzátor pro tento týden.",
+   "p_outperform_btc_7d": 0.46,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptoticker.io/en/dogecoin-price-binance-withdrawals-reopen-1-november-2026/"
+   ],
+   "trend": -2
+  },
+  "ETH": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 2,
+   "news": 0,
+   "note": "Hluboko pod SMA s rekordními ETF odtoky; RSI 19 a funding −0,02 % dávají šanci na odraz, ale beta 1,3 škodí při dalším propadu.",
+   "p_outperform_btc_7d": 0.47,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.coindesk.com/markets/2026/11/20/bitcoin-plunges-below-usd59-000-as-rush-to-cash-puts-new-bear-market-lows-back-in-play"
+   ],
+   "trend": -2
+  },
+  "HYPE": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Pokles −8,6 % za den, 37 % pod 30d maximem a nad tokenem visí měsíční unlocky týmu (další zhruba začátkem prosince).",
+   "p_outperform_btc_7d": 0.46,
+   "p_up_7d": 0.44,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptoticker.io/en/hyperliquid-team-unlock-180000-hype/",
+    "https://www.coindesk.com/markets/2026/11/20/bitcoin-plunges-below-usd59-000-as-rush-to-cash-puts-new-bear-market-lows-back-in-play"
+   ],
+   "trend": -2
+  },
+  "NEAR": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Snížení emise na 1,6 % už cena smazala (−16 % za 3 dny), beta 1,8 je v medvědím trhu nevýhoda.",
+   "p_outperform_btc_7d": 0.44,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://bitcoinworld.co.in/near-protocol-price-up-token-issuance-cut/"
+   ],
+   "trend": -2
+  },
+  "SOL": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Breakpoint a 'Solana 1.0' už odezněly a cena je smazala; slabý trend, záporný funding a vysoký L/S.",
+   "p_outperform_btc_7d": 0.48,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cointelegraph.com/news/solana-sol-gains-7-percent-breakpoint-beta-tokenization"
+   ],
+   "trend": -2
+  },
+  "SUI": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -2.5,
+   "mr": 1,
+   "news": 0,
+   "note": "Beta 1,5, rel7 −4,4 a měsíční unlock kolem 1. 12. těsně za horizontem; bez pozitivní zprávy.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.43,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://www.kucoin.com/blog/sui-three-year-unlock-ends-inflation-pressure-eases-in-2026"
+   ],
+   "trend": -2
+  },
+  "TRX": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -0.5,
+   "mr": 0,
+   "news": 0,
+   "note": "Nekorelovaný defenzivní coin (rel30 +21), který vyhraje při dalším propadu, ale zaostane při prudkém odrazu trhu.",
+   "p_outperform_btc_7d": 0.52,
+   "p_up_7d": 0.48,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/tron/latest-updates/"
+   ],
+   "trend": -1
+  },
+  "UNI": {
+   "conviction": 2,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -3.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Nejslabší relativní trend (rel7 −8,4), beta 2 a klesající objem; governance zprávy cenu nepodržely.",
+   "p_outperform_btc_7d": 0.43,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptoticker.io/en/uniswap-price-lowest-since-september-long-liquidations/"
+   ],
+   "trend": -2
+  },
+  "XRP": {
+   "conviction": 3,
+   "event": false,
+   "event_type": "none",
+   "expected_move_7d_pct": -1.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Za poslední týden relativně silnější než BTC (rel7 +3,8), ale 30d trend slabý a žádná nová zpráva.",
+   "p_outperform_btc_7d": 0.49,
+   "p_up_7d": 0.46,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [],
+   "trend": -2
+  },
+  "ZEC": {
+   "conviction": 2,
+   "event": true,
+   "event_type": "jine",
+   "expected_move_7d_pct": -3.0,
+   "mr": 1,
+   "news": 0,
+   "note": "Propad −21,5 % za 3 dny po spekulativním rally, ETF odtoky a probíhající spor o grantový fond; vysoká volatilita bez jasného odrazového signálu.",
+   "p_outperform_btc_7d": 0.45,
+   "p_up_7d": 0.42,
+   "risk_flag": false,
+   "risk_reason": "",
+   "sources": [
+    "https://cryptoticker.io/en/zcash-vote-dev-fund-zcg-50000-zec/",
+    "https://www.coindesk.com/markets/2026/11/20/bitcoin-plunges-below-usd59-000-as-rush-to-cash-puts-new-bear-market-lows-back-in-play"
+   ],
+   "trend": -2
+  }
+ },
+ "date": "2026-11-21",
+ "events_7d": [
+  {
+   "date": "2026-11-25",
+   "title": "Americká makrodata před Díkůvzdáním (PCE/PPI/žádosti o podporu, přesné datum nejisté) – klíčové pro velikost prosincového zvýšení sazeb",
+   "type": "makro"
+  },
+  {
+   "date": "2026-11-26",
+   "title": "Díkůvzdání v USA – zavřené akciové trhy, nízká likvidita 26.–27. 11.",
+   "type": "makro"
+  },
+  {
+   "date": "2026-11-30",
+   "title": "Konec hlasování o fondu Zcash Community Grants (stažení 50 000 ZEC z oběhu?)",
+   "type": "jine"
+  }
+ ],
+ "regime": {
+  "label": "Risk-off, kapitulace, zvýšená volatilita",
+  "summary": "BTC spadl pod 60 tis. USD (close 58,95k, RSI 17) blízko medvědího dna 57,7k při výprodeji akcií (AI/polovodiče), rekordních odtocích z ETF a téměř jistém prosincovém zvýšení sazeb Fedu. Trh je silně přeprodaný a funding je záporný, takže hrozí short squeeze, ale makro tlak trvá."
+ },
+ "top10": [
+  {
+   "coin": "TRX",
+   "reason": "Nekorelovaný a nejsilnější relativně, defenziva v risk-off."
+  },
+  {
+   "coin": "BTC",
+   "reason": "Nejlikvidnější, extrémně přeprodaný u silné podpory."
+  },
+  {
+   "coin": "BNB",
+   "reason": "Nízká beta, drží se v souladu s BTC."
+  },
+  {
+   "coin": "XRP",
+   "reason": "Relativně silnější za poslední týden."
+  },
+  {
+   "coin": "ETH",
+   "reason": "Přeprodaný se záporným fundingem, šance na squeeze."
+  },
+  {
+   "coin": "SOL",
+   "reason": "Přeprodaný, ETF poptávka, ale slabý trend."
+  },
+  {
+   "coin": "HYPE",
+   "reason": "Nižší beta, ale tlak unlocků."
+  },
+  {
+   "coin": "DOGE",
+   "reason": "Vysoká beta bez katalyzátoru."
+  },
+  {
+   "coin": "SUI",
+   "reason": "Slabý relativní trend, vysoká beta."
+  },
+  {
+   "coin": "ZEC",
+   "reason": "Velký propad, extrémní volatilita, spíše riziko."
+  }
+ ]
+}
