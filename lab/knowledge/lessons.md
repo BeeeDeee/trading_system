@@ -1639,3 +1639,48 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile this ETF sort with other leaves, tree counts, top fractions, sleeve weights or windows: same ETFs, same dates, a new trial each. Multi-year overextension is the country reversal of H-0060, and H-0143 and H-0176 ended the same way; adding trend makes it momentum, not a new mechanism.
 - open questions: Make the state the event: entrants only when an ETF is far above its multi-year average after a strong run, against same-ETF placebos, both sides marked in one sleeve. The plain linear sort was never reported.
 - related: H-0060, H-0143, H-0176, H-0087, H-0062, H-0088
+
+## H-0183 – Term-premium duration timing on a 60/40 core - bond sleeve in TLT when the 10y-3m Treasury slope is above its trailing 5-year median, in SHY when below, 12-month monthly cohorts
+
+- family: `bond-term-premium-timing` · mechanism: risk_premium · instruments: TLT against SHY as the bond sleeve of a sixty-forty SPY/IEF core; IEF, SPY, LQD unmarked peers
+- outcome: rejected at G1: with both legs marked, the abnormal return was barely positive, below the placebo percentile bar, and gross was a small fraction of cost; strategy gates never ran
+- lesson: A steep-versus-flat slope state did not separate TLT from SHY beyond what shifted dates earn. The average was near zero, gross far under cost, and it did not build toward the long horizon as a slow premium should. Early third flat, middle positive, latest wrong-signed (K-0060 kill condition). Few independent slope regimes in 2003-2020 and overlapping events widen the cloud, but the point estimate was at zero, so this is a null, not a near miss. Inferred, untested: after 2008 the bill rate was pinned at the floor, so the slope reflected policy, not duration compensation.
+- avoid: Do not retune median_months or cohort_months, switch to T10Y2Y, or refile the same TLT-versus-SHY slope bet with a different window: same events, one trial. A pass in the other cohort-based variants of this family would not be independent of this event set if it marks the same TLT/SHY legs on the same monthly dates.
+- open questions: Untested: slope outside the zero-lower-bound years, a term-premium estimate instead of the raw slope, a carry or roll-down version, and the tilt as a book against the core (never judged). H-0184 shares this sleeve and cohort machinery; only its information source is new.
+- related: H-0184, H-0061, H-0177, H-0087, H-0038, H-0127
+
+## H-0186 – Linear short-term momentum in liquid crypto perps, learned - top-30 Binance perps dollar-neutral, walk-forward ridge on 1-28 day returns, daily 5-day cohorts
+
+- family: `short-term-momentum` · mechanism: behavioral · instruments: top liquid Binance perps, dollar-neutral daily cohorts, walk-forward ridge on past returns, 2020-2022
+- outcome: rejected at G1 mechanism test: entries far below the placebo percentile bar, gross a fraction of cost, first block empty (warm-up), 2021 block wrong-signed; strategy not run
+- lesson: First scored plain linear continuation claim in liquid perps, and a null with the placebo mean near zero, so not coin identity but absence of timing content. The placebo bar lay above cost: only a large effect could show, and gross was far under cost. The boom block went against continuation and the bear block for it, the cycle (K-0006), not a stable sign. Horizons were mixed, with no build toward a week. With K-0119, daily-to-weekly own-return sorts show neither reversal nor continuation here.
+- avoid: Do not refile with a shorter or longer horizon, other leg fractions, lookbacks or features: same dates, new trials. Do not add a gbm, volume- or funding-conditioned interaction on top of this score; its main effect is now measured as absent (K-0182). Do not read the positive 2022 block as continuation: one bear block of one cycle.
+- open questions: Ridge coefficients and side split never reached the gate output (K-0135, K-0207). A fixed rule without a model fit would keep the empty 2020 block (K-0163), at the price of fixing the lookback in advance. Untested: BTC alone, news-conditioned own-price events.
+- related: H-0134, H-0124, H-0029, H-0039, H-0081, H-0135, H-0144
+
+## H-0187 – Daily stop-cascade breakout on Binance perps - top-30, follow the first close outside a quiet 20-day range (coin-specific, volume-confirmed), BTC-hedged, hold 3 days
+
+- family: `stop-cascade-breakout` · mechanism: flow_structural · instruments: Binance USD-M perps, liquid top coins on daily bars, long/short first close outside a quiet range, BTC-hedged, short hold
+- outcome: rejected at G1: positive and about equal to cost, but below the placebo percentile bar, which itself lay above cost
+- lesson: Daily breakouts from quiet ranges did not show the forced-flow cascade: almost nothing the session after the break, larger at five days and larger again at ten, the shape of slow drift, not stops firing in a burst. At the primary hold the average was positive but inside the same-coin placebo cloud and about cost. Earliest third strongest, later thirds positive, none reversed. A small effect is unresolved, not excluded; the 15-minute version (H-0063) was front-loaded, this one is back-loaded.
+- avoid: Do not refile with the longer holds or wider ranges that looked better in the horizon profile: that is dev-selected and a new trial on the same events. Do not relabel as Donchian, range-expansion or volatility-squeeze breakout on the same perps.
+- open questions: The slow build may be beta or coin identity, not breakout timing: the placebo at the long horizons and a beta-matched control were not reported. Untested: a split by breakout side, by BTC direction, and a market-wide breakout day versus a single-coin one. A different card would need a new information source, not another range parameter.
+- related: H-0063, H-0135, H-0186, H-0142
+
+## H-0188 – No-news residual reversal at the monthly horizon - S&P 500 beta-neutral, long peer-adjusted 21-session losers / short winners that had no 8-K earnings release in the month, monthly rebalance
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: S&P 500 members, monthly beta-neutral long/short: long peer-adjusted one-month losers, short winners, only names with no 8-K earnings release in the formation month, 2005-2020
+- outcome: rejected at G1: right-signed, but under the placebo percentile bar and gross well under round-trip cost
+- lesson: The monthly no-news, peer-adjusted reversal is small, not absent. It beat the same-stock placebo mean but not its upper bar, and the bar sat just under cost, so this is a measured miss, not a power problem. Cutting turnover by holding a month did not lift gross enough: H-0030's slow-build argument did not rescue the idea, and the profile grew only modestly with horizon. The earliest third, with 2008-2009, was clearly wrong-signed (reversal books lose in crises); the later thirds were positive, the latest strongest, the reverse of K-0060.
+- avoid: Do not refile this sort at another horizon, peer count, leg size or news filter in the S&P 500 or LIQ-500: the gap to cost, not significance, is the problem (K-0044, K-0053). No taker book on it.
+- open questions: Not separated: whether the peer adjustment or the no-news filter added anything over plain monthly reversal (no plain control), and whether the first-third loss is the 2008-2009 crisis alone (no per-episode split). Less-covered names, where a concession may be larger, are not loadable. The brief's 1-5 day window in large-cap single stocks is now answered on this mechanism at both ends.
+- related: H-0030, H-0007, H-0029, H-0094, H-0117
+
+## H-0189 – Earnings-season beta premium - LIQ-500 long-only weekly, top beta quintile in predicted peak 8-K release weeks, bottom beta quintile otherwise, hold 5 days
+
+- family: `macro-announcement-premium` · mechanism: risk_premium · instruments: LIQ-500 stocks, long-only weekly rotation: top beta quintile in predicted peak 8-K release weeks, bottom beta quintile in other weeks, against SPY total return, 2004-2020
+- outcome: rejected at G1: event study passed, but net Sharpe missed the margin over SPY and the bootstrap bound was below zero
+- lesson: The high-minus-low beta gap in predicted earnings weeks exists at event level, but the book could not use it. Gross Sharpe was barely above SPY's, the active return was smaller than the cost drag, and the book was almost always invested with a small tracking error, so there was little to earn. The event study scores both legs; the book holds the low-beta quintile most of the time, a different claim the mechanism test never covered. The gap was concentrated in the earliest third (which includes the 2009 rebound, when high beta led, K-0074) and thin later (K-0060); the first session was negative and the effect built over days.
+- avoid: Do not retune beta lookback, peak fraction, quintile size or rotation timing, nor add a firm-level reporting filter: these are neighbors of the same book. Do not credit a pass to the season clock when the off-peak leg is a static low-beta book; the family now carries the heavier trial count of K-0089.
+- open questions: Untested: a static low-beta quintile as control, a peak-week-only overlay on an always-invested core with the same average exposure (K-0027, K-0153), and the latest third alone. Beta-clock cards (month turn, Fed cycle, earnings season) now all share the early-heavy pattern; a new card would need a different information source, not a fourth clock.
+- related: H-0042, H-0045, H-0016, H-0025, H-0023, H-0098

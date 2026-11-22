@@ -2734,5 +2734,53 @@
   "actor": "librarian",
   "message_id": 1505,
   "ts": "2026-11-20T18:08:01.339773+00:00"
+ },
+ {
+  "id": "K-0229",
+  "kind": "market",
+  "title": "Liquid crypto perps: own-past-return sorts over days show neither continuation nor reversal; the sign follows the cycle",
+  "statement": "K-0119 found no daily reversal under four conditioners and K-0182 recorded that crypto momentum itself was unscored. H-0186 now scored the plain linear form: a walk-forward ridge on one-day, one-week and weeks-two-to-four returns with volume, volatility and funding controls, entries to both legs of daily cohorts in the top perps. The average was barely positive, well inside the same-coin placebo cloud with a placebo mean near zero, gross per entry a fraction of round-trip cost, and the placebo bar above cost, so only a large effect could have shown. The 2021 boom block went against continuation and the 2022 bear block for it, as in the other perp cards (K-0006, K-0224), and horizons gave no build. Reading: in this window liquid perps show no tradable cross-sectional timing content from own past returns at daily to weekly scale, in either direction; any sign belongs to a block of the one boom-and-bust cycle. Not measured: ridge coefficients, side split, a rule without a fitted model, other perps. Low prior for another own-return momentum or reversal card on these perps unless it adds a new information source.",
+  "evidence": "[\"H-0186\",\"H-0134\",\"H-0124\",\"H-0039\",\"H-0049\",\"H-0071\",\"H-0081\",\"K-0119\",\"K-0182\",\"K-0196\",\"K-0006\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1521,
+  "ts": "2026-11-21T06:06:34.419795+00:00"
+ },
+ {
+  "id": "K-0230",
+  "kind": "market",
+  "title": "Perp range breakouts: front-loaded at 15 minutes, slow drift at daily scale",
+  "statement": "The stop-cascade claim has now been tested at two clocks on liquid Binance perps. At 15 minutes (H-0063) continuation existed but was front-loaded: a one-candle later fill erased it. At daily closes (H-0187) a coin-specific, volume-confirmed first close outside a quiet range, BTC-hedged, showed almost nothing the next session and an average that grew with the horizon out to ten days, the shape of slow drift, not a cascade spent in a burst. The average at the primary hold was positive, about equal to round-trip cost, and inside the same-coin placebo cloud, with the placebo bar above cost. So the fast version is too early for a taker and the slow version is not separable from persistent coin identity or beta. With the BTC/ETH price-level taker rules (K-0194, K-0200) and the own-return sorts (K-0229), no breakout or trend rule on these perps has beaten its control. Untested: the long-horizon placebo, a beta-matched control and a side split; one boom-and-bust window (K-0006).",
+  "evidence": "[\"H-0187\",\"H-0063\",\"K-0194\",\"K-0200\",\"K-0229\",\"K-0006\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1528,
+  "ts": "2026-11-21T07:36:09.121738+00:00"
+ },
+ {
+  "id": "K-0231",
+  "kind": "market",
+  "title": "No-news peer-adjusted reversal in the S&P 500: daily and monthly holds are both right-signed, neither covers cost",
+  "statement": "H-0030 (daily sort, short hold) left a real reversal on sessions without an earnings release, with gross far under round-trip cost, and asked whether a monthly horizon with much lower turnover would pay. H-0188 answered it: a monthly, beta-neutral, peer-adjusted version for names with no earnings release in the month was right-signed against a placebo mean near zero, but under the percentile bar, with gross well under cost and a placebo bar just under cost. So the slower hold did not buy enough per event, and it was not a power problem. The sign pattern differs from the usual decay (K-0060): the earliest third, with the 2008-2009 crisis, was clearly wrong-signed (reversal books lose when liquidity is scarce) and the latest third was the strongest; the daily version was the one that faded. The horizon profile grew only modestly, so a slow build is weak. Inferred: removing earnings and peer components changes significance, not size relative to cost (K-0044, K-0053). Not separated: plain monthly reversal as control, per-episode split. A further large-cap no-news reversal card has a low prior.",
+  "evidence": "[\"H-0188\",\"H-0030\",\"K-0044\",\"K-0053\",\"K-0060\",\"K-0160\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1537,
+  "ts": "2026-11-22T03:07:48.915084+00:00"
+ },
+ {
+  "id": "K-0232",
+  "kind": "market",
+  "title": "Three calendar clocks for the high-beta advantage: early-heavy event gap, no book beats SPY",
+  "statement": "The claim that high beta is paid on scheduled-information days has now been tried on three clocks: the month turn (H-0016, H-0025; K-0038), the Fed calendar (H-0042, H-0045; K-0063) and, new, the predicted earnings-season weeks in liquid US stocks (H-0189). The newest cleared the same-quintile placebo test with gross just above cost, the best event-level result of the three, and still lost as a book: gross Sharpe was barely above SPY, the active return was below the cost drag, and the bound of the difference was below zero. In all three the gap is largest in the earliest third and thin in the latest (K-0060), and the early blocks include the 2009 rebound when high beta led, so a market-direction reading (K-0074) is not excluded. A long-only rotation holds the low-beta leg most of the time, which the event study, scoring both legs, does not test; no core-only or static low-beta control exists (K-0153). A fourth beta clock has a low prior unless it reports the static low-beta control or works as a tilt on an always-invested core.",
+  "evidence": "[\"H-0189\",\"H-0016\",\"H-0025\",\"H-0042\",\"H-0045\",\"K-0038\",\"K-0063\",\"K-0027\",\"K-0060\",\"K-0074\",\"K-0153\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1540,
+  "ts": "2026-11-22T03:07:49.118215+00:00"
  }
 ]
