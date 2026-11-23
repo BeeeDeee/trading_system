@@ -161,3 +161,91 @@
     report the result by terciles of ATR/price at entry and say whether the claim holds. Mechanism to argue: VWAP is
     the session's average cost; after a return into value, a hold of VWAP shows which side controls the rotation.
     Expect traps (the leaflet itself warns of VWAP break-and-reclaim games). Family: session-vwap-bands-crypto.
+
+# 2026-11-23, G2 follow-up batch: variants and combinations of the cards that reached G2 (owner's request). Seven
+# of 198 cards reached G2 (H-0007, H-0035, H-0040, H-0063, H-0139, H-0193; H-0113 also passed G2 and failed G3).
+# Rules for every entry (write them into the card and the notes):
+# - The parents were picked BECAUSE they did well on dev, so every card here is post hoc. `families:` of the entry
+#   is binding (the tick checks it): the first name is the card's family, the others go to related_families, and
+#   their trials count in G3/G4. A new family name to escape the penalty is refused.
+# - Do not move the parent's parameters inside or next to the parent's grid; that is exactly what G2 already
+#   tested. A variant changes the FORM of the signal (continuous instead of a hard threshold, a different measure
+#   of the same mechanism), argued from the mechanism, and names in notes the parent G2 failure it addresses and
+#   why the mechanism says it should not recur.
+# - Write `parent: H-xxxx` in notes. Forecast honestly: the base rate of this lab is about 1 card in 30 past G1.
+# - Families of short-term-reversal (110 trials, H-0007/H-0035/H-0063/H-0139 all count there after merges) are left
+#   out on purpose: the DSR hurdle there is too high for a variant to be worth a run.
+# - G2C-* combinations are stage 2 (`skip: true`): the owner releases them only if their components hold up.
+#   Weights are fixed before any run (equal risk per sleeve), never chosen from how the sleeves fit in dev.
+# Stop rule: if nothing of this batch passes G3, the line is closed and recorded with `lab knowledge add`.
+
+- id: G2V-1
+  title: Insider buying relative to firm size, cross-sectional rank (variant of H-0193)
+  families: [insider-purchase-information]
+  text: |
+    Parent H-0193 (rejected at G2): the event "trailing 91-day insider buying crosses $X" worked at one threshold
+    only (the neighbours did not), and most of the return came from the first third of dev. A fixed dollar
+    threshold mixes firm size into the signal: $500k is a large bet for a small LIQ-500 member and noise for a
+    mega cap. Variant: no dollar threshold. Signal = ins_buy_value_91d / market capitalisation (sf1 marketcap as
+    attached; never sharesbas x close_u, see K-0168), only for stocks with a new purchase filing in the last
+    week. Weekly, LIQ-500, long the top fifth of that ratio among stocks with a filing, short a liquid hedge
+    basket (market neutral, like the parent). Optionally subtract insider selling (ins_sell_value_91d) in the
+    numerator (one choice, argue it). Mechanism: the informative part of an insider purchase is the insider's
+    wealth at risk relative to the firm, which a relative measure captures and a dollar threshold does not.
+    Falsification must include: the effect is absent in the last third of dev (the parent's failure), and the
+    top fifth does not beat the bottom fifth of the same ratio. Family: insider-purchase-information.
+
+- id: G2V-2
+  title: Quarterly index share-update pressure, rule-based and market neutral (variant of H-0113)
+  families: [index-inclusion-price-pressure]
+  text: |
+    Parent H-0113 (passed G2, failed G3 with DSR 0.51): an S&P 500 core switched before each quarterly rebalance
+    into LightGBM-scored pending share changes. Two problems: its share counts were split-inconsistent (K-0168:
+    sf1 sharesbas is split-adjusted to the end of the data, close_u is not, so their product is look-ahead), and
+    the edge was a thin excess over an SPY core, so the DSR hurdle buried it. Variant: no learned model and no
+    index core. In the 5 sessions before each quarterly rebalance (same calendar rule as the parent), long the
+    members with the largest pending share-count increase and short those with the largest decrease, measured
+    point in time from sf1 marketcap / price consistently (never sharesbas x close_u), dollar neutral, S&P 500
+    members only. Mechanism: index trackers buy the increases and sell the decreases at the rebalance close
+    whatever the price. Falsification must include: the long-short spread is absent outside the pre-rebalance
+    window (placebo weeks), and the decrease leg alone shows no pressure. Family: index-inclusion-price-pressure.
+
+- id: G2V-3
+  title: BTC-led catch-up sized by the expected catch-up, no hard thresholds (variant of H-0040)
+  families: [btc-lead-altcoin-lag]
+  text: |
+    Parent H-0040 (rejected at G2): long altcoins that moved less than half as much as BTC after a 3-sigma
+    1-hour BTC jump; the neighbours of the sigma threshold were weaker (median ratio 0.62). Two hard cut-offs
+    (the jump size and the "less than half" rule) make the book depend on where they sit. Variant: after every
+    closed 15m candle, the expected catch-up of altcoin j = beta_j * r_BTC(1h) - r_j(1h), with beta_j from a
+    trailing window ending before the candle; trade only when the BTC move is large relative to its own
+    volatility (one threshold, argued), weight positions in proportion to the expected catch-up, both sides
+    (also short altcoins that overshot a BTC drop), same universe rule as the parent (ETH excluded). Note: qlab
+    research 17 (LEAD on altcoins) is a related rule in a forward test until 2027-03-31; this card does not
+    touch that test and must say how it differs. Falsification must include: realised catch-up does not grow with
+    the expected catch-up (top vs bottom tercile). Family: btc-lead-altcoin-lag.
+
+- id: G2C-1
+  title: Equal-risk blend of US equity event books - insider buying and index share-update pressure
+  families: [us-equity-event-blend, insider-purchase-information, index-inclusion-price-pressure]
+  skip: true   # stage 2: release only if G2V-1 and G2V-2 both pass G1
+  text: |
+    Combination of the cards from G2V-1 and G2V-2 exactly as they were specified (no change to either rule).
+    Universe: LIQ-500 (the index sleeve keeps only S&P 500 members inside it). Each sleeve is scaled to the same
+    ex-ante volatility from a trailing window; weights are fixed before any run. Mechanism: two different
+    counterparties (outside holders ignoring insiders, index trackers at the rebalance) whose events rarely
+    coincide in time, so the blend should be steadier than each sleeve, not stronger per trade. Falsification
+    must include: the blend's Sharpe is not above the better sleeve's, or the correlation of the sleeves is
+    above 0.5. Family: us-equity-event-blend; related_families: insider-purchase-information,
+    index-inclusion-price-pressure.
+
+- id: G2C-2
+  title: Equal-risk blend of crypto perp event books - BTC-led catch-up and US-open narrow-range breakout
+  families: [crypto-perp-event-blend, btc-lead-altcoin-lag, short-term-reversal]
+  skip: true   # stage 2: release only if G2V-3 passes G1; it carries the 110-trial short-term-reversal penalty
+  text: |
+    Combination of the G2V-3 card and H-0139 (US-open range breakout on BTC/ETH after an NR4 day, unchanged) on
+    binance_perp_15m. Each sleeve scaled to the same ex-ante volatility from a trailing window, weights fixed
+    before any run. Mechanism: market-wide information diffusing from BTC versus stop flows at the US open; the
+    events are rarely at the same time. Falsification must include: the blend's Sharpe is not above the better
+    sleeve's. Family: crypto-perp-event-blend; related_families: btc-lead-altcoin-lag, short-term-reversal.

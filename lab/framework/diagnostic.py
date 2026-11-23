@@ -141,8 +141,10 @@ def evaluate(stats: dict, th: dict) -> dict:
     return {
         # named first so the rejection says why the events vanished instead of "below the event minimum"
         "mechanism_controls": _check(share, ">=", th.get("min_control_share", 0.5)),
-        "mechanism_events": _check(stats["n_events"] if stats["n_event_dates"] >= th["min_event_dates"] else 0,
-                                   ">=", th["min_events"]),
+        # the two counts are separate checks so the registry shows the real number of events (it used to read 0
+        # whenever the events sat on too few dates: H-0157 with 173 events on 18 dates); the verdict is the same
+        "mechanism_events": _check(stats["n_events"], ">=", th["min_events"]),
+        "mechanism_event_dates": _check(stats["n_event_dates"], ">=", th["min_event_dates"]),
         "mechanism_abnormal_return": _check(obs if obs is not None else float("nan"), ">", 0.0),
         "mechanism_placebo_percentile": _check(pct if pct is not None else float("nan"), ">=",
                                                th["min_placebo_percentile"]),

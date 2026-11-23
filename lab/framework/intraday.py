@@ -27,6 +27,7 @@ import numpy as np
 from qlab.validation.stats import expected_max_sharpe, pbo_cscv, probabilistic_sharpe
 
 from lab.framework import metrics, strategy
+from lab.framework.blackboard import card_families
 from lab.framework.evaluator import QlabEvaluator, _check, _merge, _outcome, _per_period
 from lab.framework.gates import Outcome, Trial, strategy_sha
 from lab.framework.intraday_data import FIELDS, HOLDOUT_FROM, IntradayView
@@ -478,7 +479,7 @@ class IntradayEvaluator:
         sim = self.run(lab, hid, view, params, cfg, w=w)
         win = self.window(w, len(view.times))
         ex = sim.returns[win]
-        family = card["family"]
+        family = card_families(card)              # merged and related families included
         family_sharpes = np.array(lab.family_trial_sharpes(family), dtype=float)
         n_family = lab.family_trials(family)
         prior = th["literature_prior_trials"] if card.get("references") else 0
@@ -486,7 +487,7 @@ class IntradayEvaluator:
         var = max(float(family_sharpes.var(ddof=1)) if len(family_sharpes) > 1 else 0.0, 1.0 / len(ex))
         hurdle = expected_max_sharpe(n, var)
         dsr = probabilistic_sharpe(ex, hurdle)
-        m = {"n_family_trials": n_family, "literature_prior": prior, "n_trials": n, "sr_variance": var,
+        m = {"families": family, "n_family_trials": n_family, "literature_prior": prior, "n_trials": n, "sr_variance": var,
              "sharpe_per_period": _per_period(ex), "hurdle_per_period": hurdle, "dsr": dsr}
         configs = [params] + self.neighbors(card)
         if len(configs) >= 2:
@@ -512,7 +513,7 @@ class IntradayEvaluator:
         stressed = self.run(lab, hid, view, params, cfg, cost_mult=cfg["cost"]["stress_multiplier"], w=w)
         s = self._stats(sim, win, view.periods_per_year())
         tr = s.pop("_trades")
-        attempts = lab.family_holdout_attempts(card["family"])
+        attempts = lab.family_holdout_attempts(card_families(card))
         level = th["trade_ci_levels"][min(attempts, len(th["trade_ci_levels"]) - 1)]
         lower = (metrics.bootstrap_mean_lower(tr["ret"], level, 2000, 1.5) if len(tr["ret"]) > 20 else float("-inf"))
         checks = {

@@ -24,7 +24,7 @@ from qlab.validation.stats import expected_max_sharpe, pbo_cscv, probabilistic_s
 
 from lab.framework import attached as attached_mod
 from lab.framework import catalog, costs, data, engine, metrics, strategy
-from lab.framework.blackboard import Lab
+from lab.framework.blackboard import Lab, card_families
 from lab.framework.gates import Outcome, Trial, strategy_sha
 from lab.framework.api import period_starts
 from lab.framework.data import DataView
@@ -165,7 +165,7 @@ class QlabEvaluator:
                 for adset, fields in attached.items():
                     v = attached_mod.attach(v, adset, fields, data.DATA_ROOT / "parquet" / data.SHARADAR,
                                               lab.paths.home)
-            if universe["kind"] == "crypto_top_n" and ds == "binance_spot_1d":
+            if universe["kind"] == "crypto_top_n" and ds in ("binance_spot_1d", "binance_perp_1d"):
                 v = replace(v, universe=data.crypto_top_n(v, universe["n"]))
             if ds in per_ds:
                 strat_set |= set(v.instruments if per_ds[ds] is None else per_ds[ds])
@@ -506,8 +506,8 @@ class QlabEvaluator:
         win = self.window(ctx, run)
         ex = self.excess(ctx, run.returns, win)
         sb = _per_period(self.excess(ctx, bench, win))
-        family = ctx.card["family"]
-        family_sharpes = np.array(lab.family_trial_sharpes(family), dtype=float)   # merged families included
+        family = card_families(ctx.card)          # merged and related families included
+        family_sharpes = np.array(lab.family_trial_sharpes(family), dtype=float)
         n_family = lab.family_trials(family)
         prior = th["literature_prior_trials"] if ctx.card.get("references") else 0
         n = max(n_family + prior, th["min_trials"])
@@ -515,7 +515,7 @@ class QlabEvaluator:
         hurdle = sb + expected_max_sharpe(n, var)
         dsr = probabilistic_sharpe(ex, hurdle)
         checks = {"dsr": _check(dsr, ">=", th["min_dsr"])}
-        m = {"n_family_trials": n_family, "literature_prior": prior, "n_trials": n, "sr_variance": var,
+        m = {"families": family, "n_family_trials": n_family, "literature_prior": prior, "n_trials": n, "sr_variance": var,
              "sharpe_per_period": _per_period(ex), "bench_sharpe_per_period": sb, "hurdle_per_period": hurdle,
              "dsr": dsr}
         configs = [params] + self.neighbors(ctx.card)
@@ -541,7 +541,7 @@ class QlabEvaluator:
         if win.stop - win.start < 60:
             return Outcome(False, {"error": "holdout shorter than 60 rows"}, "g4_too_short")
         s = self._scores(ctx, full, bench, win)
-        attempts = lab.family_holdout_attempts(ctx.card["family"])
+        attempts = lab.family_holdout_attempts(card_families(ctx.card))
         levels = th["sharpe_diff_ci_levels"]
         level = levels[min(attempts, len(levels) - 1)]
         lower = metrics.bootstrap_sharpe_diff_lower(self.excess(ctx, full.returns, win), self.excess(ctx, bench, win),

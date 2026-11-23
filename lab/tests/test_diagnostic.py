@@ -65,6 +65,16 @@ def test_too_few_events_fail(view):
     assert not diagnostic.evaluate(st, TH)["mechanism_events"]["pass"]
 
 
+def test_events_on_too_few_dates_report_the_real_count_and_fail_on_dates(view):
+    mask = np.zeros(view.shape, dtype=bool)
+    mask[1000:1010, : view.shape[1] // 2] = True                # many events, ten dates (H-0157: 173 on 18); half unmarked as controls
+    st = diagnostic.event_study(view, mask, None, 1, placebo_runs=20)
+    c = diagnostic.evaluate(st, {**TH, "min_events": 100})
+    assert c["mechanism_events"]["value"] == st["n_events"] >= 100
+    assert c["mechanism_events"]["pass"] and not c["mechanism_event_dates"]["pass"]
+    assert c["mechanism_event_dates"]["value"] == st["n_event_dates"]
+
+
 def test_placebo_is_a_time_shift_not_a_reshuffle(view):
     """Events clustered in one sub-period must not look special just because that period was good."""
     mask = np.zeros(view.shape, dtype=bool)

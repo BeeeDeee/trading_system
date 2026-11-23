@@ -117,6 +117,17 @@ def owner_seed(lab: Lab, path: Path | None = None) -> dict | None:
     return next((s for s in seeds if s["id"] not in done and not s.get("skip")), None)
 
 
+def seed_families(card: dict, path: Path | None = None) -> list[str]:
+    """The families the queue entries a card cites tell it to carry (`families:` of the entry; the first one is
+    the card's own family, the others its related_families). Empty for a card without such an entry."""
+    path = path or OWNER_QUEUE
+    ids = SEED_RE.findall(card.get("notes") or "")
+    if not ids or not path.exists():
+        return []
+    seeds = {s["id"]: s for s in yaml.safe_load(path.read_text()) or []}
+    return [f for i in ids for f in seeds.get(i, {}).get("families", [])]
+
+
 def seed_text(seed: dict) -> str:
     return (f"propose. OWNER QUEUE item {seed['id']} ({seed['title']}): the owner asked for this idea to be tested. "
             f"Turn it into one full card. Write `owner_seed: {seed['id']}` as the first line of notes (this marks the "
@@ -124,7 +135,10 @@ def seed_text(seed: dict) -> str:
             "falsification criteria, within the lab's data and contracts. If the data the idea needs is not in the "
             "catalog, still write the card (it will wait in BLOCKED_DATA) and say what is missing in notes. If the "
             "idea is a duplicate or cannot be made honest, write the closest honest card and explain why in notes. "
-            "Owner's description:\n" + seed["text"].strip())
+            + (f"Binding: family {seed['families'][0]!r}" + (f", related_families {seed['families'][1:]}"
+               if len(seed["families"]) > 1 else "") + " (the tick refuses a card without them). "
+               if seed.get("families") else "")
+            + "Owner's description:\n" + seed["text"].strip())
 
 
 def next_task(lab: Lab, path: Path | None = None) -> str:

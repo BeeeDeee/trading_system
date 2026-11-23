@@ -16,7 +16,7 @@ from typing import Protocol
 
 import yaml
 
-from lab.framework.blackboard import Lab, LabError
+from lab.framework.blackboard import Lab, LabError, card_families
 from lab.framework.db import Tx, dumps, now
 from lab.framework.states import GATE_FOR, GATE_FROM, S
 
@@ -110,7 +110,7 @@ def run_gate(lab: Lab, hid: str, gate: str, evaluator: Evaluator) -> Outcome:
         if lab.con.execute("SELECT 1 FROM gate_results WHERE hypothesis_id = ? AND gate = 'G4'",
                            (hid,)).fetchone():
             raise LabError(f"{hid} already used its one holdout attempt")
-        if lab.family_holdout_attempts(card["family"]) >= config["G4"]["family_max_attempts"]:
+        if lab.family_holdout_attempts(card_families(card)) >= config["G4"]["family_max_attempts"]:
             raise LabError(f"family {card['family']} reached its holdout cap; the owner must approve more")
 
     with Tx(lab.con):

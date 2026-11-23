@@ -175,6 +175,8 @@ compute budget. What you design is the **hypothesis around the model**:
 8. **Honest family.** `family` names the economic mechanism (kebab-case). Reuse an existing family name from
    `registry.json` or `prior_studies.md` if your idea shares its mechanism: the trial count of the family is the
    multiple-testing penalty, and a new name to escape it is exactly what the Skeptic and Librarian look for.
+   A card that combines or varies the signals of other families lists them in `related_families`: their trials
+   then count in this card's G3 and G4 penalty too (an owner-queue entry with `families:` makes this binding).
 9. **Real references only.** Cite papers you are sure exist (author, year, title). With `references` the
    literature prior adds 20 trials in G3 and a publication-decay check in G2, so a famous anomaly has to be
    clearly stronger than a novel one. Never invent a citation; omit the year if unsure. You may use WebSearch

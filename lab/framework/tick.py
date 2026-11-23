@@ -12,7 +12,7 @@ import json
 from difflib import SequenceMatcher
 
 from lab.framework import attached, catalog, sentinel, validate
-from lab.framework.blackboard import Lab, LabError
+from lab.framework.blackboard import Lab, LabError, card_families
 from lab.framework.db import Tx, now
 from lab.framework.gates import Evaluator, run_gate, thresholds
 from lab.framework.states import HUMAN, S
@@ -122,8 +122,30 @@ def _spec_and_data(lab: Lab, hid: str, m) -> str:
                  {"question": f"{hid} looks like a duplicate of {dup}; revise to make the difference explicit "
                               "or let the Chair park it", "in_reply_to": m["id"]})
         return f"stays IDEA (duplicate of {dup}?)"
+    fam = _family_problems(lab, card)
+    if fam:
+        lab.send("QUESTION", "system", ask_to, hid,
+                 {"question": f"{hid} stays in IDEA: " + "; ".join(fam), "in_reply_to": m["id"]})
+        return "stays IDEA (families)"
     lab.transition(hid, S.SPECIFIED, author, "spec complete", invocation_id=m["invocation_id"], message_id=m["id"])
     return _check_data(lab, hid)
+
+
+def _family_problems(lab: Lab, card: dict) -> list[str]:
+    """`related_families` must name other existing families (a new name would carry no trials), and a card from
+    an owner-queue entry with `families:` must carry all of them, so a variant or combination cannot escape the
+    multiple-testing penalty of its parents."""
+    from lab.framework import briefs
+    own = lab.canonical_family(card["family"])
+    known = {h["family"] for h in lab.hypotheses()}
+    out = [f"related family {f!r} is not a family of any hypothesis" for f in card.get("related_families", [])
+           if f not in known]
+    out += [f"related family {f!r} is the card's own family" for f in card.get("related_families", [])
+            if f in known and lab.canonical_family(f) == own]
+    carried = {lab.canonical_family(f) for f in card_families(card)}
+    out += [f"the owner-queue entry asks for family {f!r} (as family or related_families)"
+            for f in briefs.seed_families(card) if lab.canonical_family(f) not in carried]
+    return out
 
 
 def _duplicate_of(lab: Lab, hid: str, card: dict) -> str | None:
