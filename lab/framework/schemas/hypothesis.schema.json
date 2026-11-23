@@ -35,6 +35,16 @@
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9-]{1,60}$"
     },
+    "related_families": {
+      "description": "existing families whose signals this card combines or varies; their trials count in this card's G3 and G4 penalty",
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 4,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]{1,60}$"
+      }
+    },
     "asset_classes": {
       "type": "array",
       "minItems": 1,

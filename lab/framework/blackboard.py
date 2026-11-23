@@ -16,7 +16,7 @@ from lab.framework.db import Tx, dumps, now
 from lab.framework.paths import LabPaths
 from lab.framework.states import S
 
-CARD_ORDER = ("title", "author_agent", "family", "asset_classes", "universe", "mechanism", "signal",
+CARD_ORDER = ("title", "author_agent", "family", "related_families", "asset_classes", "universe", "mechanism", "signal",
               "mechanism_test", "ml", "data_requirements", "holding_period", "market_exposure", "references", "falsification_criteria",
               "notes")
 
@@ -27,6 +27,12 @@ class LabError(RuntimeError):
 
 def sha256(obj) -> str:
     return hashlib.sha256(dumps(obj).encode()).hexdigest()
+
+
+def card_families(card: dict) -> list[str]:
+    """The families whose multiple-testing penalty a card carries: its own plus `related_families` (a card that
+    combines or varies the signals of other families). Trials are recorded under the card's own family only."""
+    return [card["family"], *card.get("related_families", [])]
 
 
 @dataclass
@@ -259,20 +265,21 @@ class Lab:
                 [(root, f"prior:{source.strip()}:{k + 1}/{n}", ts) for k in range(n)])
         return self.family_trials(root)
 
-    def _in_family(self, family: str) -> tuple[str, list[str]]:
-        members = self.family_members(family)
+    def _in_family(self, family: str | list[str]) -> tuple[str, list[str]]:
+        """A list of families counts their union (each canonical family once)."""
+        members = sorted({m for f in ([family] if isinstance(family, str) else family) for m in self.family_members(f)})
         return ",".join("?" * len(members)), members
 
-    def family_trials(self, family: str) -> int:
+    def family_trials(self, family: str | list[str]) -> int:
         q, members = self._in_family(family)
         return int(self.con.execute(f"SELECT COUNT(*) FROM trials WHERE family IN ({q})", members).fetchone()[0])
 
-    def family_trial_sharpes(self, family: str) -> list[float]:
+    def family_trial_sharpes(self, family: str | list[str]) -> list[float]:
         q, members = self._in_family(family)
         return [r[0] for r in self.con.execute(
             f"SELECT sharpe FROM trials WHERE family IN ({q}) AND sharpe IS NOT NULL", members)]
 
-    def family_holdout_attempts(self, family: str) -> int:
+    def family_holdout_attempts(self, family: str | list[str]) -> int:
         q, members = self._in_family(family)
         return int(self.con.execute(
             "SELECT COUNT(*) FROM gate_results g JOIN hypotheses h ON h.id = g.hypothesis_id "

@@ -12,6 +12,7 @@ from pathlib import Path
 import yaml
 
 from lab.framework import factsheets
+from lab.framework.blackboard import card_families
 from lab.framework.paths import LAB_DIR, LabPaths
 
 AGENTS_DIR = LAB_DIR / "agents"
@@ -111,13 +112,14 @@ def history(lab, hid: str) -> dict:
 
 def family(lab, hid: str) -> dict:
     """The multiple-testing context: every hypothesis and every recorded trial of the same family."""
-    fam = lab.hypothesis(hid)["family"]
-    members = lab.family_members(fam)
+    card = lab.card(hid)
+    fam, fams = card["family"], card_families(card)
+    members = sorted({m for f in fams for m in lab.family_members(f)})
     hyps = [{"id": r["id"], "title": r["title"], "family": r["family"], "status": r["status"],
              "reject_stage": r["reject_stage"], "reject_code": r["reject_code"]}
             for r in lab.hypotheses() if r["family"] in members]
-    return {"family": fam, "canonical": lab.canonical_family(fam), "merged_names": members,
-            "trials_recorded": lab.family_trials(fam), "hypotheses": hyps}
+    return {"family": fam, "canonical": lab.canonical_family(fam), "related_families": fams[1:],
+            "merged_names": members, "trials_recorded": lab.family_trials(fams), "hypotheses": hyps}
 
 
 def families(lab) -> list[dict]:
