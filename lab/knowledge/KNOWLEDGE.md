@@ -180,12 +180,6 @@ H-0046 passed the event study on band-breach days of both directions, so stress 
 
 *confidence low · 2026-11-11 · librarian · supersedes K-0068 · evidence: H-0131; H-0050; H-0046; H-0002; K-0068; K-0084; K-0060; K-0034*
 
-### K-0184 Nearness to the 52-week high has no timing content in three settings: it picks persistent winners
-
-Three anchoring cards died at the mechanism gate: stale-high breakouts in liquid US stocks (H-0011), nearness to the high within return-by-volatility cells (H-0083), and liquid crypto spot coins nearest their one-year high (H-0135). In H-0011 and H-0135 the raw gap was positive and above cost, but same-name placebos on shifted dates earned the same, so the sort selects names that do well in any week. In H-0135 the effect was largest early and nearly gone in the latest block, and grew with the horizon like the placebo. Reading: nearness to the high marks past winners; any premium is momentum or coin identity. Untested: crypto matched on prior return, and a dated own-price event conditioned on distance to the high. A further plain near-high card has a low prior.
-
-*confidence low · 2026-11-12 · librarian · evidence: H-0135; H-0011; H-0083; K-0025; K-0060; K-0074; K-0006*
-
 ### K-0185 Earnings-reaction drift in liquid US stocks lives in the first weeks; held a quarter it matches same-stock placebos
 
 On real 8-K dates a large positive reaction cleared the same-stock placebo over the first week in three designs (H-0028, H-0031, H-0033). H-0136 held the same kind of events to the next release. The abnormal return stayed positive, above cost, positive in every third with the latest among the strongest, and grew with horizon. But placebos of the same stocks on shifted dates earned more on average, so beyond the first weeks the set marks stocks that do well in any quarter (repeat positive reactors, persistent winners; K-0025, K-0184). This answers the open item of K-0143 (holds beyond a week) with a negative, and it is not the later-year large-cap decay of the literature, since the latest third did not weaken. Caveats: raw peers (K-0074); confirming releases of held stocks overlap; the book was never run. A longer-hold card on the plain rule has a low prior; only a control matched on reaction history could separate timing from identity.
@@ -329,6 +323,30 @@ H-0030 (daily sort, short hold) left a real reversal on sessions without an earn
 The claim that high beta is paid on scheduled-information days has now been tried on three clocks: the month turn (H-0016, H-0025; K-0038), the Fed calendar (H-0042, H-0045; K-0063) and, new, the predicted earnings-season weeks in liquid US stocks (H-0189). The newest cleared the same-quintile placebo test with gross just above cost, the best event-level result of the three, and still lost as a book: gross Sharpe was barely above SPY, the active return was below the cost drag, and the bound of the difference was below zero. In all three the gap is largest in the earliest third and thin in the latest (K-0060), and the early blocks include the 2009 rebound when high beta led, so a market-direction reading (K-0074) is not excluded. A long-only rotation holds the low-beta leg most of the time, which the event study, scoring both legs, does not test; no core-only or static low-beta control exists (K-0153). A fourth beta clock has a low prior unless it reports the static low-beta control or works as a tilt on an always-invested core.
 
 *confidence low · 2026-11-22 · librarian · evidence: H-0189; H-0016; H-0025; H-0042; H-0045; K-0038; K-0063; K-0027; K-0060; K-0074; K-0153*
+
+### K-0233 Crowded-book deleveraging concessions: three designs on three traders, none beats its placebo
+
+The claim that forced de-risking of a crowded systematic book leaves a concession that liquidity providers earn has been tried on three traders: a replicated trend-following book spilling into ETFs (H-0169), a volatility-target de-risking cycle in ETFs (H-0176) and the equity multi-factor quant book in style-unwind weeks (H-0190). All died at the mechanism test: gross about cost or a fraction of it, and horizon shapes either a one-day reversal fading within two weeks or slow drift building toward a month, not a concession absorbed in days. In each the crowded book is inferred from prices, not holdings, and events sit on few dates, so the placebo cloud is wide. A fourth deleveraging card has a low prior unless positions or flows are observed, or the unwind week is the event against a static-tilt control; near misses look like generic stress rebound (K-0084).
+
+*confidence low · 2026-11-22 · librarian · evidence: H-0190; H-0169; H-0176; K-0084; K-0135; K-0209*
+
+### K-0234 A scheduled non-information flow event in large caps (post-split) also failed: past-winner give-back, not drift
+
+K-0024 named non-information flow events as the remaining candidates in liquid US stocks after information and sentiment events failed. A published scheduled one of that kind, the sessions after a forward-split ex-date, was tested against same-stock time-shifted placebos and failed: the abnormal return of split stocks was below the placebo mean and wrong-signed in all dev blocks, most in the latest. Split stocks are past winners, so the sign fits give-back, the same direction as the post-release winner give-back and the nearness-to-high identity results (K-0083, K-0184). The surviving flow events remain the mandated ones (index changes, month-turn); price-grid and clientele stories have no support in the most liquid names. Low prior for another nominal-price or retail-clientele card in LIQ-500; smaller, lower-priced stocks are untested and not loadable.
+
+*confidence low · 2026-11-22 · librarian · evidence: H-0191; K-0024; K-0083; K-0184; K-0060; K-0169*
+
+### K-0235 Insider purchase filings in liquid US stocks: no drift in three designs; the one pass is the crisis era
+
+Three cards on open-market insider purchases in LIQ-500 over five sessions: first purchases after a quiet half-year (H-0012, wrong-signed), buying first above a fixed dollar amount (H-0193) and a learned ranking of every new filing (H-0194, below same-stock placebos, wrong-signed in every usable block). Only H-0193 passed the event study and G1, but its average came from the earliest third, which holds the 2008-2009 crisis; the latest third was negative and neither threshold neighbour held, so purchase size shows no dose-response. The hedge of mega caps against beaten-down event stocks leaves a beta gap (K-0074). Reading: the week after a purchase filing carries no tradable drift in large caps outside a crisis, and a score fitted on the crisis years did not carry forward. Untested: less-covered stocks, longer horizons, a by-year split, the ridge control (K-0135). Low prior for another card here without a new information source.
+
+*confidence low · 2026-11-23 · librarian · evidence: H-0012; H-0193; H-0194; K-0024; K-0060; K-0074; K-0135*
+
+### K-0236 Nearness to the 52-week high: no timing content alone, and as a conditioner on release reactions it adds nothing visible
+
+K-0184 closed plain near-high sorts (H-0011, H-0083, H-0135: they pick persistent winners) and left open nearness to the high as a conditioner on a dated own-price event. H-0192 tested it: large positive earnings reactions closing near the one-year high, as an overweight on an always-invested S&P 500 core. The mechanism cleared the placebo bar only at the margin, positive in every third, the shape of plain reaction drift (K-0046, K-0185); the book beat SPY on the point estimate with a reliable bound but missed the Sharpe margin, as H-0033 did. The anchoring increment over plain reaction drift is not separated, and cost drag was several times the Scout's tilt arithmetic with no core-only control (K-0153). Reading: the anchor is at best a re-selection of plain post-earnings drift. Low prior for another near-high card unless it reports the plain-drift control and a core-only run.
+
+*confidence low · 2026-11-23 · librarian · supersedes K-0184 · evidence: H-0192; H-0011; H-0083; H-0135; H-0033; K-0046; K-0153; K-0185*
 
 ## Data
 
@@ -926,6 +944,7 @@ On 2026-11-18 the Chair declined to merge cross-asset-momentum into oil-shock-eq
 - K-0176 Macro-news diffusion into stocks: a plain credit rule and an inflation sort failed
 - K-0177 Scout forecasts: a calendar-key event count ran to a third of the forecast; gross short again
 - K-0183 Wrapper-gap reversion needs a cut arbitrage link
+- K-0184 Nearness to the 52-week high has no timing content in three settings: it picks persistent winners
 - K-0186 Intraday cards: owner controls and mechanism claims outside the judge never run when G1 fails
 - K-0187 15m crypto perp taker rules held for hours: gross at or below cost
 - K-0189 15m crypto perp taker rules held for hours: gross at or below cost; a volatility filter lowered it

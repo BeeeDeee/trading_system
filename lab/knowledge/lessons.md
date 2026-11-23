@@ -1684,3 +1684,48 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not retune beta lookback, peak fraction, quintile size or rotation timing, nor add a firm-level reporting filter: these are neighbors of the same book. Do not credit a pass to the season clock when the off-peak leg is a static low-beta book; the family now carries the heavier trial count of K-0089.
 - open questions: Untested: a static low-beta quintile as control, a peak-week-only overlay on an always-invested core with the same average exposure (K-0027, K-0153), and the latest third alone. Beta-clock cards (month turn, Fed cycle, earnings season) now all share the early-heavy pattern; a new card would need a different information source, not a fourth clock.
 - related: H-0042, H-0045, H-0016, H-0025, H-0023, H-0098
+
+## H-0190 – Quant-crowding unwind rebound, learned - LIQ-500 long-only weekly top fifth of a LightGBM 5-day score on value, momentum, quality and low-vol exposures x the week's style-composite and market moves
+
+- family: `trend-follower-deleveraging` · mechanism: liquidity_provision · instruments: liquid US stocks (LIQ-500), gradient-boosted score on style exposures crossed with style-unwind and market states
+- outcome: rejected at G1 on the placebo percentile: positive average, gross barely covered cost, but inside the same-stock placebo cloud; book never run
+- lesson: No visible deleveraging concession. In unwind weeks the picks beat peers slightly, but gross was about the size of cost and a small fraction of the card's own forecast, and the same stocks on shifted dates earned a little too. The average grew with the horizon out to a month, the shape of slow style drift, not a concession absorbed in days. The earliest block was strong on few events, the middle about zero, the latest small and positive. Only a few dozen unwind weeks carry the evidence, so the cloud was wider than cost: a small effect is unresolved, but nothing points to the large one the card needed.
+- avoid: Do not refile with another unwind threshold, lookback, exposure set, top fraction or hold to get more weeks or a longer horizon: same weeks, new trial. Do not read the strong earliest block (few events) or the growth with horizon as support. Do not name a new forced-selling card deleveraging without saying who sells and how their book is observed.
+- open questions: Never reported: the ridge control, the split by market-move state, the split by side. Cleaner: make the market-neutral unwind week the event and compare plain quality and low-volatility entrants with same-stock placebos.
+- related: H-0169, H-0176, H-0099, H-0112
+
+## H-0191 – Post-split ex-date demand drift - LIQ-500 market-neutral, long stocks the session after their forward-split ex-date, hedged with the other members, hold 5 days
+
+- family: `split-nominal-price-demand` · mechanism: behavioral · instruments: liquid US stocks (LIQ-500): the split stock from the session after its forward-split ex-date, against the other members, about a week
+- outcome: rejected at G1 mechanism test, book not run: split stocks' abnormal return was below zero and below the placebo mean, wrong-signed in all three dev blocks; enough events, so not a power problem
+- lesson: No post-ex-date demand drift in large liquid stocks: split stocks lagged the other members over the first days and the latest, thinnest block was the worst. Split stocks are past winners, so the sign reads as give-back, not drift; the one positive horizon was the longest, the generic slow-drift shape. The card's own decimalization and fractional-share decay reading fits, but blocks cannot separate it from era. Clean test of a 1980s anomaly, not a bug: event count matched the forecast and G0 was clean.
+- avoid: Do not re-propose post-split drift in LIQ-500 with another hold, ratio threshold or hedge set: the neighbour grid is the same evidence. A long-only variant is not new: the sign was wrong, not just small.
+- open questions: Untested: reverse splits, lower-priced or less liquid stocks (not loadable), and a control matched on prior return to separate winner give-back from a split effect.
+- related: H-0014, H-0067, H-0068, H-0011
+
+## H-0192 – Earnings news at the 52-week anchor - S&P 500 cap-weighted core, 5-day overweight after large positive 8-K reactions closing near the 52-week high, zero weight at the low
+
+- family: `52-week-high-anchoring` · mechanism: behavioral · instruments: S&P 500 cap-weighted core plus 5-day overweight after large positive earnings reactions near the 52-week high
+- outcome: rejected at G1: mechanism cleared the placebo bar narrowly and the book beat SPY with a reliable bound, but the Sharpe margin stayed under the fixed bar
+- lesson: Conditioning the release-reaction drift on nearness to the 52-week high gave an event set that behaves like plain reaction drift (positive in every third, slow build to a month, thin sleeve), with no visible anchoring increment; the judge cannot split the two. The tilt was too small to move the Sharpe margin, and net active return was smaller than the cost drag, which was several times the Scout's own arithmetic. That points at core upkeep (monthly proxy-cap rebalancing, index changes), not the tilt, but no core-only control exists (K-0153).
+- avoid: Do not enlarge tilt_w, the overweight cap, band or z_min to close the margin (the H-0033 path: new trials, same events). Do not file another release-reaction conditioner (distance to high, size, ownership) as a new family (K-0083, K-0143).
+- open questions: Whether the anchor adds anything over plain reaction drift is untested: no card reports the plain-drift average on the same S&P 500 events. A core-only run (K-0153) would show how much of the cost drag and active return belongs to the core. Negative-side events (zero weight at the low) were never reported separately.
+- related: H-0033, H-0028, H-0031, H-0083, H-0011, H-0135
+
+## H-0193 – Conviction-sized insider purchases - LIQ-500 market-neutral, long stocks whose trailing 91-day open-market insider buying first crosses $500k, liquid-basket hedge, hold 5 days
+
+- family: `insider-purchase-information` · mechanism: behavioral · instruments: LIQ-500 stocks, market-neutral 5-day slots after large insider buying, liquid-basket hedge
+- outcome: passed G1, rejected at G2: threshold neighbours did not hold and nearly all the return came from the earliest third of dev
+- lesson: The pass is an early-era effect, most likely the 2008-2009 crisis and rebound when insider buying clustered in beaten-down stocks against a hedge of mega caps, not a stable information effect: the average fades from large to negative across the thirds and the threshold has no monotone dose-response (a lower and a higher cut both fail), so purchase size is not what pays. The long leg carried the book and the hedge lost, so a beta gap is not excluded (K-0074). Random entry lost heavily, so that bar was easy. The S&P 500 variant did not weaken, so it is not a LIQ-500 artifact.
+- avoid: Do not retune the dollar threshold, the 91-day window or the hold to find a stable neighbour. Do not read the G1 pass as evidence of informed buying: it is one era. Do not refile the same crossing event with another hedge basket.
+- open questions: A card that reports the effect by year, separates the 2008-2009 window from later years and matches the long leg to the hedge on beta and past return would show whether any information survives outside the crisis. The long leg alone as a tilt on a core was not tried.
+- related: H-0012, H-0194, H-0011, H-0017
+
+## H-0194 – Which insider purchases are informative, learned - LIQ-500, LightGBM ranks new purchase filings (size vs firm, routine buyer, sales, prior drop), long top half 5 days, hedged
+
+- family: `insider-purchase-information` · mechanism: behavioral · instruments: LIQ-500 stocks, gbm-ranked new insider purchase filings, long top half 5 days, hedged
+- outcome: rejected at G1 mechanism test, no book run: entries below same-stock placebos, wrong-signed in every usable block, gross negative
+- lesson: A learned ranking of insider filings found no information in large caps after the 2008-2009 window. The best-scored filings did worse than average ones and the loss grew with the horizon, the shape of continuation. Not a power problem: the placebo bar lay below cost and events were plentiful. With H-0193 (a pass in the earliest era only) and H-0012 (no drift), the week after a purchase filing carries no tradable drift outside the crisis; a rule fitted on the crisis years did not carry forward.
+- avoid: Do not add a feature (role, cluster, other sales), change top or n_estimators, or lengthen the label to rescue it. The ridge control named in the card did not run (K-0135), so do not claim the nonlinearity is what failed.
+- open questions: Insider information may live in less-covered stocks or at monthly to quarterly horizons, not testable in LIQ-500 at this clock. A new card needs a new information source, not a better ranking of the same filings.
+- related: H-0012, H-0193, H-0095, H-0104

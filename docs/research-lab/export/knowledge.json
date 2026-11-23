@@ -2782,5 +2782,53 @@
   "actor": "librarian",
   "message_id": 1540,
   "ts": "2026-11-22T03:07:49.118215+00:00"
+ },
+ {
+  "id": "K-0233",
+  "kind": "market",
+  "title": "Crowded-book deleveraging concessions: three designs on three traders, none beats its placebo",
+  "statement": "The claim that forced de-risking of a crowded systematic book leaves a concession that liquidity providers earn has been tried on three traders: a replicated trend-following book spilling into ETFs (H-0169), a volatility-target de-risking cycle in ETFs (H-0176) and the equity multi-factor quant book in style-unwind weeks (H-0190). All died at the mechanism test: gross about cost or a fraction of it, and horizon shapes either a one-day reversal fading within two weeks or slow drift building toward a month, not a concession absorbed in days. In each the crowded book is inferred from prices, not holdings, and events sit on few dates, so the placebo cloud is wide. A fourth deleveraging card has a low prior unless positions or flows are observed, or the unwind week is the event against a static-tilt control; near misses look like generic stress rebound (K-0084).",
+  "evidence": "[\"H-0190\",\"H-0169\",\"H-0176\",\"K-0084\",\"K-0135\",\"K-0209\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1546,
+  "ts": "2026-11-22T05:20:33.003696+00:00"
+ },
+ {
+  "id": "K-0234",
+  "kind": "market",
+  "title": "A scheduled non-information flow event in large caps (post-split) also failed: past-winner give-back, not drift",
+  "statement": "K-0024 named non-information flow events as the remaining candidates in liquid US stocks after information and sentiment events failed. A published scheduled one of that kind, the sessions after a forward-split ex-date, was tested against same-stock time-shifted placebos and failed: the abnormal return of split stocks was below the placebo mean and wrong-signed in all dev blocks, most in the latest. Split stocks are past winners, so the sign fits give-back, the same direction as the post-release winner give-back and the nearness-to-high identity results (K-0083, K-0184). The surviving flow events remain the mandated ones (index changes, month-turn); price-grid and clientele stories have no support in the most liquid names. Low prior for another nominal-price or retail-clientele card in LIQ-500; smaller, lower-priced stocks are untested and not loadable.",
+  "evidence": "[\"H-0191\",\"K-0024\",\"K-0083\",\"K-0184\",\"K-0060\",\"K-0169\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1554,
+  "ts": "2026-11-22T07:35:58.797247+00:00"
+ },
+ {
+  "id": "K-0235",
+  "kind": "market",
+  "title": "Insider purchase filings in liquid US stocks: no drift in three designs; the one pass is the crisis era",
+  "statement": "Three cards on open-market insider purchases in LIQ-500 over five sessions: first purchases after a quiet half-year (H-0012, wrong-signed), buying first above a fixed dollar amount (H-0193) and a learned ranking of every new filing (H-0194, below same-stock placebos, wrong-signed in every usable block). Only H-0193 passed the event study and G1, but its average came from the earliest third, which holds the 2008-2009 crisis; the latest third was negative and neither threshold neighbour held, so purchase size shows no dose-response. The hedge of mega caps against beaten-down event stocks leaves a beta gap (K-0074). Reading: the week after a purchase filing carries no tradable drift in large caps outside a crisis, and a score fitted on the crisis years did not carry forward. Untested: less-covered stocks, longer horizons, a by-year split, the ridge control (K-0135). Low prior for another card here without a new information source.",
+  "evidence": "[\"H-0012\",\"H-0193\",\"H-0194\",\"K-0024\",\"K-0060\",\"K-0074\",\"K-0135\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1573,
+  "ts": "2026-11-23T02:39:00.958974+00:00"
+ },
+ {
+  "id": "K-0236",
+  "kind": "market",
+  "title": "Nearness to the 52-week high: no timing content alone, and as a conditioner on release reactions it adds nothing visible",
+  "statement": "K-0184 closed plain near-high sorts (H-0011, H-0083, H-0135: they pick persistent winners) and left open nearness to the high as a conditioner on a dated own-price event. H-0192 tested it: large positive earnings reactions closing near the one-year high, as an overweight on an always-invested S&P 500 core. The mechanism cleared the placebo bar only at the margin, positive in every third, the shape of plain reaction drift (K-0046, K-0185); the book beat SPY on the point estimate with a reliable bound but missed the Sharpe margin, as H-0033 did. The anchoring increment over plain reaction drift is not separated, and cost drag was several times the Scout's tilt arithmetic with no core-only control (K-0153). Reading: the anchor is at best a re-selection of plain post-earnings drift. Low prior for another near-high card unless it reports the plain-drift control and a core-only run.",
+  "evidence": "[\"H-0192\",\"H-0011\",\"H-0083\",\"H-0135\",\"H-0033\",\"K-0046\",\"K-0153\",\"K-0185\"]",
+  "confidence": "low",
+  "supersedes": "K-0184",
+  "actor": "librarian",
+  "message_id": 1574,
+  "ts": "2026-11-23T02:39:01.014532+00:00"
  }
 ]

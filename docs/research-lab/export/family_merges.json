@@ -110,5 +110,13 @@
   "reason": "H-0171 is the H-0039 funding sort (short high / long low trailing funding in liquid Binance perps, hold five days) run on VIX-shock dates, and H-0166 sorts the same funding/basis crowding on the same dates; the counterparty (crowded leveraged perp holders) and the reason for the effect (forced unwind of leverage) are the same as perp-leverage-crowding, which was merged into short-term-reversal (K-0087). The TradFi-stress gate is a conditioning date set, not a new counterparty. Families cannot be split, so H-0130 (learned risk ladder, spot) moves too; it is a different cross-asset story, but H-0081 and H-0124 on the same VIX state already sit in short-term-reversal, so the merge only makes the penalty stricter.",
   "message_id": 1395,
   "ts": "2026-11-15T08:35:48.212691+00:00"
+ },
+ {
+  "from_family": "trend-follower-deleveraging",
+  "into_family": "short-term-reversal",
+  "actor": "chair",
+  "reason": "Same claim and same reason for the effect: forced selling by a crowded or rule-bound book (CTA, vol-target, quant factor) leaves a few-day concession that liquidity providers earn, i.e. the stress-rebound mechanism of K-0084 already tested in short-term-reversal (H-0041, H-0070, H-0099, H-0168). All three members (H-0169, H-0176, H-0190) died at the mechanism placebo gate and were liquidity-provision designs; a separate name kept their trials out of the reversal family's multiple-testing count. Merging only makes the penalty stricter.",
+  "message_id": 1548,
+  "ts": "2026-11-22T05:36:20.587297+00:00"
  }
 ]
