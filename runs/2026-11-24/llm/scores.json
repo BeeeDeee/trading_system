@@ -1,0 +1,128 @@
+{
+ "date": "2026-11-24",
+ "regime": {
+  "label": "Risk-off, zvýšená volatilita",
+  "summary": "BTC se o víkendu propadl na ~55,1k a po likvidacích ~1,8–2,7 mld. USD se odrazil na ~61k, ale odliv z ETF pokračuje (listopad ~−3,5 mld.), Fear & Greed je 11 a trh čeká zvyšování sazeb Fedem. Odraz vypadá spíš jako úleva po vyčištění pák než příliv nového kapitálu, dominance BTC ~60 %."
+ },
+ "events_7d": [
+  {"date": "2026-11-25", "title": "USA: PCE za říjen a 2. odhad HDP Q3", "type": "makro"},
+  {"date": "2026-11-26", "title": "Fed Beige Book, Díkůvzdání v USA – tenká likvidita", "type": "makro"},
+  {"date": "2026-11-28", "title": "Binance Blockchain Week Bangkok (28.–29. 11.)", "type": "jine"},
+  {"date": "2026-11-29", "title": "Měsíční odemčení HYPE (plán ~9,9 mil. HYPE pro core contributors)", "type": "unlock"},
+  {"date": "2026-11-30", "title": "Konec hlasování Zcash o financování vývoje (dev fund / ZCG)", "type": "jine"}
+ ],
+ "coins": {
+  "BTC": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Hluboko pod SMA a RSI 27 po kapitulaci k 55k, ale odliv z ETF a jestřábí Fed brání trvalejšímu obratu.",
+   "sources": [
+    "https://www.kucoin.com/news/articles/crypto-daily-market-report-november-23-2026",
+    "https://cryptobriefing.com/bitcoin-rebounds-above-61000-stock-futures/",
+    "https://theblock.co/news/markets/2026-11-14-bitcoin-etfs-lose-1-billion-for-the-second-week-in-a-row-as-crypto-funds-except-one-continue-bleeding-440337"
+   ]
+  },
+  "ETH": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.46, "p_up_7d": 0.49, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Beta 1,33 a trvalý odliv z ETH ETF ho v risk-off prostředí znevýhodňují vůči BTC, přeprodanost dává jen krátký odraz.",
+   "sources": [
+    "https://www.kucoin.com/news/flash/ether-etfs-see-2-35-billion-outflows-over-seven-weeks",
+    "https://www.kucoin.com/news/articles/crypto-daily-market-report-november-23-2026"
+   ]
+  },
+  "BNB": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.49, "p_up_7d": 0.5, "expected_move_7d_pct": 0.3,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Kopíruje BTC (rel30 −0,5) s RSI 27,6; Binance Blockchain Week je spíš marketing bez cenového překvapení.",
+   "sources": [
+    "https://www.theblock.co/tag/bnb"
+   ]
+  },
+  "XRP": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.51, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Relativní síla za 7 dní (+4 vs BTC) a záporný funding, ale Swell, banková licence i ETF jsou známé a v ceně.",
+   "sources": [
+    "https://coinstats.app/news/8be7325b377ae7222f600b06258e9f1934c3162f35444404906c4b560eadcf1f_XRP-News-Today-Ripple-Swell-Mastercard-AI-and-Binance-Leverage-Shift/"
+   ]
+  },
+  "SOL": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.51, "p_up_7d": 0.5, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejsilnější rel7 (+6,2) v koši a záporný funding, ale rel30 −5,4 a bez nové zprávy; L/S 3,9 ukazuje přeplněné retailové longy.",
+   "sources": []
+  },
+  "HYPE": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.44, "p_up_7d": 0.45, "expected_move_7d_pct": -1.5,
+   "event": true, "event_type": "unlock", "risk_flag": false,
+   "note": "Odemčení 29. 11. je známé, ale v nálado-slabém trhu vytváří převis nabídky; tým v listopadu rozdělil jen zlomek, což riziko tlumí.",
+   "sources": [
+    "https://cryptoticker.io/en/hyperliquid-team-unlock-180000-hype/",
+    "https://cointelegraph.com/news/maelstrom-warns-hype-token-pressure-11-9b-unlocks"
+   ]
+  },
+  "ZEC": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.44, "p_up_7d": 0.45, "expected_move_7d_pct": -1.0,
+   "event": true, "event_type": "jine", "risk_flag": false,
+   "note": "Nejhorší trend v koši (rel30 −11,4, −22 % pod SMA20) s odlivem z Grayscale ZEC ETF; hlasování o dev fundu končí 30. 11. bez jasného dopadu.",
+   "sources": [
+    "https://cryptoticker.io/en/zcash-vote-dev-fund-zcg-50000-zec/",
+    "https://cryptoticker.io/en/zcash-zcg-drops-98000-zec-plan/"
+   ]
+  },
+  "DOGE": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.45, "p_up_7d": 0.47, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Memecoin s betou 1,24 na víceletých minimech a ETF bez přítoků; v risk-off bez katalyzátoru.",
+   "sources": [
+    "https://cryptoticker.io/en/dogecoin-news-21shares-house-of-doge-tdog-etf/"
+   ]
+  },
+  "NEAR": {
+   "trend": -2, "mr": 0, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.45, "p_up_7d": 0.46, "expected_move_7d_pct": -1.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Snížení emise je schválené a už rozprodané, beta 1,76 a rel30 −9,3 ho v risk-off trhu penalizují.",
+   "sources": [
+    "https://bitcoinworld.co.in/near-protocol-price-up-token-issuance-cut/"
+   ]
+  },
+  "U": {
+   "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.5, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Stablecoin držící peg 1,00; výkon vůči BTC je čistě inverzní sázka na pohyb BTC.",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/united-stables/latest-updates/"
+   ]
+  }
+ },
+ "top10": [
+  {"coin": "XRP", "reason": "Relativní síla za 7 dní a záporný funding."},
+  {"coin": "SOL", "reason": "Nejlepší rel7 v koši, ale přeplněné longy."},
+  {"coin": "BTC", "reason": "Nejlikvidnější a nejméně rizikový v risk-off."},
+  {"coin": "U", "reason": "Stablecoin – ochrana při dalším poklesu BTC."},
+  {"coin": "BNB", "reason": "Nízká relativní volatilita, kopíruje BTC."},
+  {"coin": "ETH", "reason": "Přeprodaný, ale vyšší beta a odliv z ETF."},
+  {"coin": "DOGE", "reason": "Vysoká beta bez katalyzátoru."},
+  {"coin": "NEAR", "reason": "Nejvyšší beta, slabý trend vůči BTC."},
+  {"coin": "ZEC", "reason": "Nejhorší trend, odliv z ETF."},
+  {"coin": "HYPE", "reason": "Převis nabídky z odemčení 29. 11."}
+ ],
+ "claude_volne": {
+  "comment": "Nízká expozice (~20 %) s převahou hotovosti: kapitulace nabízí odraz, ale makro a odliv z ETF zůstávají proti, proto beze změny a bez honění trhu.",
+  "positions": [
+   {"coin": "BTC", "weight_pct": 15, "reason": "Jádrová pozice v přeprodaném BTC (RSI 27) po vyčištění pák; nejlepší poměr riziko/likvidita.", "invalidation": "Denní uzavření pod 55 000 USD nebo jestřábí překvapení v PCE s pokračujícím odlivem z ETF."},
+   {"coin": "ETH", "weight_pct": 5, "reason": "Malá pozice na odraz z přeprodanosti (RSI 29), bez navyšování kvůli vyšší betě.", "invalidation": "Uzavření pod 1 550 USD (víkendové minimum) nebo další týden odlivu z ETH ETF nad 300 mil. USD."}
+  ]
+ }
+}

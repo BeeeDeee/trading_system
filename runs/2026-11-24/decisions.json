@@ -1,0 +1,274 @@
+{
+ "date": "2026-11-24",
+ "llm_ok": true,
+ "locked_at": "2026-11-24T05:02:26.828Z",
+ "locked_ms": 1795496546828,
+ "portfolios": {
+  "b_btc": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_btc_eth": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_cash": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_ew20": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "b_mcap10": {
+   "exits": {},
+   "info": {},
+   "kind": "benchmark",
+   "targets": null
+  },
+  "bez_brany": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "XRP",
+     "SOL",
+     "BTC",
+     "U",
+     "BNB",
+     "ETH",
+     "DOGE",
+     "NEAR",
+     "ZEC",
+     "HYPE"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.1041666667,
+    "BTC": 0.1041666667,
+    "DOGE": 0.0625,
+    "ETH": 0.1041666667,
+    "HYPE": 0.1041666667,
+    "NEAR": 0.0416666667,
+    "SOL": 0.125,
+    "U": 0.1666666667,
+    "XRP": 0.125,
+    "ZEC": 0.0625
+   }
+  },
+  "btc_filtr": {
+   "exits": {},
+   "info": {
+    "overlay": "BTC pod SMA50 → hotovost",
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "claude_volne": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "BTC",
+     "ETH"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BTC": 0.15,
+    "ETH": 0.05
+   }
+  },
+  "inv_vol": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "jen_mr": {
+   "exits": {
+    "BNB": "max_hold",
+    "HYPE": "max_hold",
+    "NEAR": "max_hold",
+    "SOL": "max_hold",
+    "ZEC": "max_hold"
+   },
+   "info": {
+    "selected": [
+     "BTC",
+     "DOGE",
+     "ETH"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BTC": 0.25,
+    "DOGE": 0.25,
+    "ETH": 0.25
+   }
+  },
+  "jen_trend": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "jen_zpravy": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "kontrarian": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "NEAR",
+     "DOGE",
+     "ZEC",
+     "BTC",
+     "BNB",
+     "ETH",
+     "HYPE",
+     "SOL",
+     "XRP",
+     "U"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.1,
+    "BTC": 0.1,
+    "DOGE": 0.1,
+    "ETH": 0.1,
+    "HYPE": 0.1,
+    "NEAR": 0.1,
+    "SOL": 0.1,
+    "U": 0.1,
+    "XRP": 0.1,
+    "ZEC": 0.1
+   }
+  },
+  "mech_momentum": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "U"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "U": 0.25
+   }
+  },
+  "nahodny": {
+   "exits": {},
+   "info": {
+    "selected": [
+     "BNB",
+     "BTC",
+     "DOGE",
+     "ETH",
+     "HYPE",
+     "NEAR",
+     "SOL",
+     "U",
+     "XRP",
+     "ZEC"
+    ]
+   },
+   "kind": "variant",
+   "targets": {
+    "BNB": 0.1,
+    "BTC": 0.1,
+    "DOGE": 0.1,
+    "ETH": 0.1,
+    "HYPE": 0.1,
+    "NEAR": 0.1,
+    "SOL": 0.1,
+    "U": 0.1,
+    "XRP": 0.1,
+    "ZEC": 0.1
+   }
+  },
+  "pravdepodobnost": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "rovne": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "skore_vol": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "stop": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "top3": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "tydenni": {
+   "exits": {},
+   "info": {
+    "hold": "rebalanc jen v pondělí"
+   },
+   "kind": "variant",
+   "targets": null
+  },
+  "vol_target": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  },
+  "zaklad": {
+   "exits": {},
+   "info": {
+    "selected": []
+   },
+   "kind": "variant",
+   "targets": {}
+  }
+ },
+ "scores_sha256": "a9e90e7788fd8324f6e109ba4b48a01e410d039a7a3b207569921c41c233ac40"
+}
