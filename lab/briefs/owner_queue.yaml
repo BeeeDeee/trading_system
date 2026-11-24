@@ -249,3 +249,28 @@
     before any run. Mechanism: market-wide information diffusing from BTC versus stop flows at the US open; the
     events are rarely at the same time. Falsification must include: the blend's Sharpe is not above the better
     sleeve's. Family: crypto-perp-event-blend; related_families: btc-lead-altcoin-lag, short-term-reversal.
+
+# 2026-11-24, follow-up of the G2V batch (K-0240, K-0243): the only open direction that came out of the data.
+- id: G2V-4
+  title: S&P 500 quarterly share-update pressure as a long-only tilt on an SPY core (variant of H-0201)
+  families: [index-inclusion-price-pressure]
+  text: |
+    Parent H-0201 (rejected at G1 on net Sharpe, K-0240): the event test passed (the stocks with a pending share
+    increase beat other members before the quarterly rebalance, above the placebo bar and cost, positive in every
+    third), but the dollar-neutral book did not pay: the long leg earned (Sharpe about +0.16), the short leg lost
+    (about -0.13), and the book was mostly in cash. K-0207 and K-0218 say the same of other neutral books. Variant:
+    keep the event, drop the short leg and the cash. A 100 % SPY_TR core (the benchmark) all year; inside the
+    same pre-rebalance window as H-0201 (decision d = W sessions before the quarterly rebalance R, W = 20,
+    grid 15/20/25 exactly as the parent; do not widen it), move a fixed share of the core, 20 % of NAV, from SPY
+    into the 50 eligible S&P 500 members with the largest pending share increase g (same g, same filters, same
+    split guard, same marketcap/price share counts as H-0201; never sharesbas x close_u, K-0168), equal weight,
+    and switch back to SPY after the close of R. Read the card of H-0201 and reuse its definitions word for word.
+    Why a different form and not a retune: a tilt has no short leg and no idle cash, so its excess over SPY is the
+    long-leg effect alone, at the cost of a small active share and a small number of events per year. State the
+    tracking error and the active return in the forecasts. Do NOT use a learned model (H-0113 did, and its
+    result rested on a core artefact, K-0168). Falsification must include: the long leg of the event study is not
+    above the placebo bar alone (the side split is not reported by G1, so make the long side the event definition,
+    K-0218); the active return over SPY is not positive in the latest third; the tilt does not beat a random
+    choice of 50 members in the same windows. Expect a thin result: the pooled effect is about 1.5 times round-trip
+    cost and the placebo bar is close to the effect, and the family already carries many trials. Family:
+    index-inclusion-price-pressure.
