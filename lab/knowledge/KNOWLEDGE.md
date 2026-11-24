@@ -312,12 +312,6 @@ The stop-cascade claim has now been tested at two clocks on liquid Binance perps
 
 *confidence low · 2026-11-21 · librarian · evidence: H-0187; H-0063; K-0194; K-0200; K-0229; K-0006*
 
-### K-0231 No-news peer-adjusted reversal in the S&P 500: daily and monthly holds are both right-signed, neither covers cost
-
-H-0030 (daily sort, short hold) left a real reversal on sessions without an earnings release, with gross far under round-trip cost, and asked whether a monthly horizon with much lower turnover would pay. H-0188 answered it: a monthly, beta-neutral, peer-adjusted version for names with no earnings release in the month was right-signed against a placebo mean near zero, but under the percentile bar, with gross well under cost and a placebo bar just under cost. So the slower hold did not buy enough per event, and it was not a power problem. The sign pattern differs from the usual decay (K-0060): the earliest third, with the 2008-2009 crisis, was clearly wrong-signed (reversal books lose when liquidity is scarce) and the latest third was the strongest; the daily version was the one that faded. The horizon profile grew only modestly, so a slow build is weak. Inferred: removing earnings and peer components changes significance, not size relative to cost (K-0044, K-0053). Not separated: plain monthly reversal as control, per-episode split. A further large-cap no-news reversal card has a low prior.
-
-*confidence low · 2026-11-22 · librarian · evidence: H-0188; H-0030; K-0044; K-0053; K-0060; K-0160*
-
 ### K-0232 Three calendar clocks for the high-beta advantage: early-heavy event gap, no book beats SPY
 
 The claim that high beta is paid on scheduled-information days has now been tried on three clocks: the month turn (H-0016, H-0025; K-0038), the Fed calendar (H-0042, H-0045; K-0063) and, new, the predicted earnings-season weeks in liquid US stocks (H-0189). The newest cleared the same-quintile placebo test with gross just above cost, the best event-level result of the three, and still lost as a book: gross Sharpe was barely above SPY, the active return was below the cost drag, and the bound of the difference was below zero. In all three the gap is largest in the earliest third and thin in the latest (K-0060), and the early blocks include the 2009 rebound when high beta led, so a market-direction reading (K-0074) is not excluded. A long-only rotation holds the low-beta leg most of the time, which the event study, scoring both legs, does not test; no core-only or static low-beta control exists (K-0153). A fourth beta clock has a low prior unless it reports the static low-beta control or works as a tilt on an always-invested core.
@@ -347,6 +341,12 @@ Three cards on open-market insider purchases in LIQ-500 over five sessions: firs
 K-0184 closed plain near-high sorts (H-0011, H-0083, H-0135: they pick persistent winners) and left open nearness to the high as a conditioner on a dated own-price event. H-0192 tested it: large positive earnings reactions closing near the one-year high, as an overweight on an always-invested S&P 500 core. The mechanism cleared the placebo bar only at the margin, positive in every third, the shape of plain reaction drift (K-0046, K-0185); the book beat SPY on the point estimate with a reliable bound but missed the Sharpe margin, as H-0033 did. The anchoring increment over plain reaction drift is not separated, and cost drag was several times the Scout's tilt arithmetic with no core-only control (K-0153). Reading: the anchor is at best a re-selection of plain post-earnings drift. Low prior for another near-high card unless it reports the plain-drift control and a core-only run.
 
 *confidence low · 2026-11-23 · librarian · supersedes K-0184 · evidence: H-0192; H-0011; H-0083; H-0135; H-0033; K-0046; K-0153; K-0185*
+
+### K-0238 Large-cap reversal: event and calendar conditioners stay near cost
+
+K-0237 found no-news reversal in liquid US stocks near cost however the droppers were selected. Two more conditioners came in. H-0196 added the firm's own buyback bid: net repurchasers in an open trading window, after no-news drops. The average just covered cost and sat inside the same-stock placebo cloud, almost all of it from the earliest third (the 2008-2009 crisis), with a negative first session. H-0198 added the reporting cycle in a linear score: the interaction picks cleared the placebo bar only at the margin, gross about cost, and the long-only book lost to SPY after turnover cost. Selection by news state, supply-shock footprint, value, quality, buyer of last resort or reporting cycle has not produced a rebound clearly beyond cost. What remains concentrates in crisis liquidity stress (K-0084, K-0060). The corporate-bid and blackout-window controls were never run by the judge. A further conditioner on LIQ-500 reversal has a low prior.
+
+*confidence low · 2026-11-24 · librarian · supersedes K-0237 · evidence: H-0196; H-0198; H-0195; H-0188; H-0030; H-0108; H-0064; H-0115; H-0117; K-0084; K-0060; K-0207*
 
 ## Data
 
@@ -957,3 +957,5 @@ On 2026-11-18 the Chair declined to merge cross-asset-momentum into oil-shock-eq
 - K-0206 Macro-shock weeks in liquid US stocks: learned balance-sheet cards pass the event test three times, no book follows
 - K-0211 Second learned crypto perp card with zero events: H-0166 passed G0 with none and the whole dev window was empty
 - K-0217 ETF cross-sections sorted on price-derived state: four designs, none above same-ETF placebos
+- K-0231 No-news peer-adjusted reversal in the S&P 500: daily and monthly holds are both right-signed, neither covers cost
+- K-0237 No-news reversal in large caps: sorts, tail conditioners and a supply-shock event filter all stay near cost
