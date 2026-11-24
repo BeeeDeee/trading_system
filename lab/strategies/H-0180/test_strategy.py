@@ -1,18 +1,23 @@
+import dataclasses
+
 import numpy as np
 import pytest
 from lab.framework.data import DataView
 
-from strategy import PARAMS, target_weights, avg_rank01, ols_residual, n_cohorts, formation_signal
+from strategy import PARAMS, target_weights, avg_rank01, ols_residual, n_cohorts, formation_signal, AA_KEYS
 
 PREFIX = "coinmetrics_adractcnt_1d."
 BASE = 17532          # day number of 2018-01-01
 T = 600
 N = 9
-NAMES = tuple("C%dUSDT" % j for j in range(N))
+# nine spot pairs whose keys are in the card's list (<ID>USDT -> <ID>USDT.P)
+LISTED = ("ADAUSDT", "BCHUSDT", "BTCUSDT", "DASHUSDT", "EOSUSDT", "ETCUSDT", "ETHUSDT", "LTCUSDT", "NEOUSDT")
+UNLISTED = ("XRPUSDT", "BUSDUSDT")     # pairs whose key is not in the card's list
 ROW_JAN19, ROW_FEB19, ROW_MAR19, ROW_APR19 = 365, 396, 424, 455
 
 
-def make_view(a=None, b=None, drop_keys=(), universe=None, aa_override=None, close_override=None):
+def make_view(a=None, b=None, unlisted=(), universe=None, aa_override=None, close_override=None,
+              missing_key=None):
     d = np.arange(T, dtype=float)[:, None]
     a = np.arange(N) * 0.001 if a is None else np.asarray(a, float)
     b = np.full(N, 0.001) if b is None else np.asarray(b, float)
@@ -22,16 +27,20 @@ def make_view(a=None, b=None, drop_keys=(), universe=None, aa_override=None, clo
         aa = aa_override
     if close_override is not None:
         close = close_override
-    series = {}
-    for j, nm in enumerate(NAMES):
-        if j not in drop_keys:
-            series[PREFIX + nm + ".P"] = aa[:, j].copy()
-    series[PREFIX + "OTHERUSDT.P"] = np.ones(T)
-    series[PREFIX + "BTCUSDT.P"] = np.ones(T)     # dataset presence key (BTC not an instrument here)
+    names = list(LISTED)
+    for i, j in enumerate(unlisted):
+        names[j] = UNLISTED[i]
+    names = tuple(names)
+    series = {PREFIX + k: np.ones(T) for k in AA_KEYS if k != missing_key}
+    for j, nm in enumerate(names):
+        # an unlisted pair gets a served series too: the card's list, not the dataset, decides
+        series[PREFIX + nm + ".P"] = aa[:, j].copy()
+        if missing_key is not None and nm + ".P" == missing_key:
+            del series[PREFIX + nm + ".P"]
     dates = np.arange(BASE, BASE + T).astype("datetime64[D]")
     ones = np.ones((T, N), dtype=bool)
     return DataView(
-        dates=dates, instruments=NAMES, asset_class=tuple("crypto_spot" for _ in NAMES),
+        dates=dates, instruments=names, asset_class=tuple("crypto_spot" for _ in names),
         ret_co=np.zeros((T, N)), ret_oc=np.zeros((T, N)), tradable=ones.copy(), listed=ones.copy(),
         delisting=np.zeros((T, N), dtype=bool), close=close, dollar_volume=np.ones((T, N)),
         universe=ones.copy() if universe is None else universe, extras={}, series=series,
@@ -102,9 +111,10 @@ def test_residual_removes_price_run():
 
 
 def test_fewer_than_eight_eligible_is_cash():
-    w = target_weights(make_view(drop_keys=(0, 1)), P)      # 7 coins with a key
+    w = target_weights(make_view(unlisted=(0, 1)), P)      # 7 coins with a listed key
     assert np.all(np.nan_to_num(w) == 0)
-    w8 = target_weights(make_view(drop_keys=(0,)), P)       # 8 coins: ceil(8/3) = 3
+    w8 = target_weights(make_view(unlisted=(0,)), P)       # 8 coins: ceil(8/3) = 3
+    assert np.all(np.nan_to_num(w8[:, 0]) == 0)
     assert np.allclose(w8[ROW_JAN19, 6:], 1.0 / 9.0)
 
 
@@ -171,12 +181,34 @@ def test_missing_dataset_raises():
         target_weights(v, P)
 
 
-def test_extra_empty_dataset_key_does_not_matter():
+def test_missing_listed_key_raises():
+    with pytest.raises(KeyError):
+        target_weights(make_view(missing_key="SRMUSDT.P"), P)      # not an instrument here
+    with pytest.raises(KeyError):
+        target_weights(make_view(missing_key="ETHUSDT.P"), P)
+
+
+def test_card_key_list():
+    assert len(AA_KEYS) == 57 and len(set(AA_KEYS)) == 57
+    assert "BTCUSDT.P" in AA_KEYS and "ETHUSDT.P" in AA_KEYS
+    assert not any(k.startswith(("BUSD", "DAI", "PAXG", "HBTC", "RENBTC")) for k in AA_KEYS)
+    assert not any("_" in k for k in AA_KEYS)
+
+
+def test_extra_dataset_keys_do_not_matter():
     v = make_view()
     base = target_weights(v, P)
     v.series["coinmetrics_adractcnt_1d.SDAI_ETHUSDT.P"] = np.full(T, np.nan)   # empty extra key
+    v.series["coinmetrics_adractcnt_1d.XRPUSDT.P"] = np.ones(T)
     w = target_weights(v, P)
     assert np.array_equal(np.nan_to_num(base, nan=-1.0), np.nan_to_num(w, nan=-1.0))
+
+
+def test_perp_style_names_map_too():
+    v = make_view()
+    v2 = dataclasses.replace(make_view(), instruments=tuple(n + ".P" for n in v.instruments))
+    assert np.array_equal(np.nan_to_num(target_weights(v, P), nan=-1.0),
+                          np.nan_to_num(target_weights(v2, P), nan=-1.0))
 
 
 def test_short_view():

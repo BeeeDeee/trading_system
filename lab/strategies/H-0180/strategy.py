@@ -12,8 +12,18 @@ from lab.framework.api import period_starts
 PARAMS = {"hold_days": 182, "lookback_days": 180}
 
 AA_PREFIX = "coinmetrics_adractcnt_1d."
-# dataset presence check without enumerating the dataset's keys: BTC (eligible per card) must have a series
-PRESENCE_KEY = AA_PREFIX + "BTCUSDT.P"
+# card data_requirements[coinmetrics_adractcnt_1d].fields: the only keys a spot pair may map to
+AA_KEYS = (
+    "1INCHUSDT.P", "AAVEUSDT.P", "ADAUSDT.P", "ALGOUSDT.P", "ALPHAUSDT.P", "BALUSDT.P", "BATUSDT.P",
+    "BCHUSDT.P", "BSVUSDT.P", "BTCUSDT.P", "BTGUSDT.P", "COMPUSDT.P", "CROUSDT.P", "CRVUSDT.P",
+    "CVCUSDT.P", "DASHUSDT.P", "DCRUSDT.P", "DGBUSDT.P", "DOGEUSDT.P", "DOTUSDT.P", "DRGNUSDT.P",
+    "ELFUSDT.P", "EOSUSDT.P", "ETCUSDT.P", "ETHUSDT.P", "FTTUSDT.P", "FUNUSDT.P", "GASUSDT.P",
+    "GNOUSDT.P", "GNTUSDT.P", "HEDGUSDT.P", "HTUSDT.P", "ICPUSDT.P", "KCSUSDT.P", "KNCUSDT.P",
+    "LDOUSDT.P", "LENDUSDT.P", "LINKUSDT.P", "LPTUSDT.P", "LTCUSDT.P", "MAIDUSDT.P", "MANAUSDT.P",
+    "MKRUSDT.P", "NEOUSDT.P", "NXMUSDT.P", "OMGUSDT.P", "PAYUSDT.P", "PERPUSDT.P", "POLYUSDT.P",
+    "POWRUSDT.P", "PPTUSDT.P", "QASHUSDT.P", "QNTUSDT.P", "RENUSDT.P", "SNTUSDT.P", "SNXUSDT.P",
+    "SRMUSDT.P",
+)
 TOP_N = 50            # card universe: crypto_top_n, n = 50 (fallback only)
 VOL_WINDOW = 30       # 30-day quote volume for the fallback universe
 WIN = 30              # address-mean window (days)
@@ -34,19 +44,19 @@ def aa_key(name):
 
 
 def address_matrix(data):
-    """(T, N) active-address counts; NaN where unknown or where the pair has no key.
+    """(T, N) active-address counts; NaN where unknown or where the pair has no listed key.
 
-    Only the keys of the universe's own pairs (<ID>USDT -> <ID>USDT.P) are looked up; the
-    dataset's other keys (chain-suffixed ids, stablecoins, wrapped tokens) are never touched.
+    Every key of the card's list is indexed directly (a missing one raises). A pair maps to
+    <ID>USDT -> <ID>USDT.P; a pair whose key is not in the card's list is ineligible (all NaN),
+    even if the dataset happens to serve such a key.
     """
-    if PRESENCE_KEY not in data.series:
-        raise KeyError("dataset coinmetrics_adractcnt_1d missing from data.series")
+    series = {k: data.series[AA_PREFIX + k] for k in AA_KEYS}
     T, N = len(data.dates), len(data.instruments)
     aa = np.full((T, N), np.nan)
     for j, name in enumerate(data.instruments):
-        key = AA_PREFIX + aa_key(name)
-        if key in data.series:          # a pair without a key is ineligible (card)
-            aa[:, j] = np.asarray(data.series[key], dtype=float).reshape(-1)
+        k = aa_key(name)
+        if k in series:
+            aa[:, j] = np.asarray(series[k], dtype=float).reshape(-1)
     return aa
 
 

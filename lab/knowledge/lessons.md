@@ -1550,6 +1550,24 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - open questions: Untested: more closure dates through a wrapper whose home calendar is already loadable (the exchange-holiday dataset), or Israel and Saudi only if a verified calendar from 2008 appears. The ordinary-day control for the wrapper effect is still unreported (K-0205).
 - related: H-0133, H-0161, H-0157, H-0037
 
+## H-0173 – Oil-specific shocks into country equity ETFs - after a large 5-day WTI move net of world equities, long the most oil-exposed country ETFs and short the least in the shock's direction, hold 5 days
+
+- family: `oil-shock-equity-underreaction` · mechanism: cross_asset_information · instruments: about thirty single-country equity ETFs, long high and short low oil exposure after a WTI shock
+- outcome: rejected at G1: right-signed average, but below the 95th placebo percentile and gross only matched cost
+- lesson: The oil underreaction of H-0114 did not reproduce cleanly in a second cross-section. Both legs were marked, so the placebo mean was near zero and beta is no excuse; the average was right-signed but inside the placebo cloud, and gross only matched the round trip, so a real effect would net about nothing. Earliest third wrong-signed, later two positive. The response was there within a week and gone or reversed by two weeks. Several ETFs share each date, so the independent evidence is event dates over a few oil episodes. The H-0114 pass is most likely US-specific or luck.
+- avoid: Do not retune shock_z, n_leg or the exposure window, relist a subset of exporters or importers after seeing which carried it, or flip the sign. No further oil or commodity cross-section under this family without a new information source.
+- open questions: The requested split by shock sign and by leg was not reported by the gate, so which side carries the small positive average is unknown. Not tested: exporters only, a long-only tilt on a core, an episode split. Prior for more oil cards is low.
+- related: H-0114, H-0056, H-0132, H-0116, H-0119
+
+## H-0174 – Korean retail pump fade - after a Korea-specific Upbit KRW volume surge with a Binance up-move, short the coin's Binance perp vs a BTC/ETH hedge, hold 5 days
+
+- family: `segmented-venue-premium-transmission` · mechanism: flow_structural · instruments: Binance perps of mid-cap coins listed on Upbit, short after a Korea-specific volume surge, BTC/ETH hedge
+- outcome: rejected at G1: short side right-signed but below the 95th placebo percentile, gross under cost, one block positive
+- lesson: Not a clean refutation, nothing to build on. The pooled fade was right-signed against a negative placebo mean (same coins on shifted dates rose in the boom) but stayed inside a wide cloud and gross fell short of cost. Only the latest third, the 2022 bear, was positive; the earlier two were wrong-signed (pump continuation in 2021, the card's named rival). A short of a high-beta alt against an equal-notional BTC/ETH hedge gains in a bear from beta alone (K-0074). The Korea-specific control was not reported, so the segmentation claim is untested.
+- avoid: Do not lower the threshold for more events, retune hold_days, or flip to a long after the surge: the sign would be chosen from dev. Do not refile Upbit-Binance premium or volume gaps under a new family; with H-0076 it is the same channel in one boom-and-bust window.
+- open questions: Untested: the Korea-specific against global surge control, a beta-scaled hedge, a split by market regime, delisted Korean coins (missing, bias against the short). A new card should say why a daily lag would exist.
+- related: H-0076, H-0125, H-0071, H-0039
+
 ## H-0175 – Slow closed-end fund catch-up, pooled across seven fund classes - long a CEF after a 2-sigma 5-session shortfall vs its beta-adjusted ETF anchor, short the anchor, hold one month (21 sessions)
 
 - family: `etf-premium-arbitrage` · mechanism: liquidity_provision · instruments: 44 closed-end funds in seven classes, long after a shortfall vs an ETF anchor, short the anchor, one-month hold, 2001 to 2020
@@ -1568,6 +1586,15 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - open questions: The judge cannot output a by-state split (K-0135), so make the state the event: entrants only in the post-peak state, against same-ETF placebos. Never reported: the plain linear sort and the beta gap of picks against peers.
 - related: H-0169, H-0143, H-0099, H-0168, H-0041, H-0003
 
+## H-0177 – Cross-asset time-series momentum on a 60/40 core - monthly, SPY tilted by the past year of Treasury (IEF) excess return, IEF tilted against the past year of SPY excess return, SHY absorbs the rest
+
+- family: `cross-asset-momentum` · mechanism: cross_asset_information · instruments: SPY, IEF and SHY, monthly always-invested tilt on past cross-asset excess returns; near-cash Treasury ETFs as peers
+- outcome: rejected at G1 mechanism test: events earned less than the same events on shifted dates, gross far under cost; strategy never run
+- lesson: The slow-capital claim (past bond returns lead equities, past equity returns lead bond excess returns) left no trace in the SPY/IEF time series: the placebo mean sat above the event mean, the first week was about zero, and the quarter horizon was negative, the opposite of the months-long build the card required. The first block held only the 2007-2008 crisis months (inferred from its few events) and was wrong-signed. The bar is above cost, so a tiny effect is unresolved, but nothing leans toward one. Dev is mostly falling yields, so the bond leg also fought a strong unconditional bond return. The book was never simulated.
+- avoid: Do not retune lookback_days, the tilt size or the cash proxy, and do not refile as bond-to-equity or equity-to-bond time-series momentum on SPY/IEF, TLT, AGG or another equity-bond pair: same events, one trial. Do not add a trend or volatility conditioner (H-0003, K-0005). With H-0087, neither the country cross-section nor the US time series of this claim has beaten its placebo.
+- open questions: The paper's claim is across many countries; one US pair gives few independent bets (K-0026). Only a many-market time-series design with an always-invested control could add information; the prior is low.
+- related: H-0087, H-0178, H-0003, H-0001, H-0041
+
 ## H-0178 – Macro-trend pass-through into stock exposures, learned - LIQ-500 long-only, monthly 2-month sleeves of the top fifth of a LightGBM score on rate, oil and dollar betas x the factors' own trends
 
 - family: `cross-asset-momentum` · mechanism: cross_asset_information · instruments: liquid US stocks (LIQ-500), long-only top fifth of a gbm score on rate, oil and dollar exposures crossed with factor trends
@@ -1576,6 +1603,24 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not file another stock sort on estimated rate, oil, dollar or credit exposure, keyed to a shock week or to a slow trend, without a new information source. Do not make a gbm interaction the claim without a ridge-on-products control, and do not forecast gross from literature spreads, since the same-stock placebo absorbs them.
 - open questions: Untested: use of the trend-by-exposure interaction by trend sign, a market-beta-neutral top fifth (K-0074), the ridge on the three products as primary claim, and a time-series form on the factors themselves (that is H-0177's idea, not this one).
 - related: H-0087, H-0177, H-0116, H-0114, H-0119, H-0170
+
+## H-0179 – FX delayed overshooting - six G10 currency trusts, monthly dollar-neutral: long the 2 whose home 10y yield rose most over 3 months, short the 2 that fell most, 2-month cohorts
+
+- family: `fx-delayed-overshooting` · mechanism: cross_asset_information · instruments: six G10 currency trusts, signal from 10-year yield changes, monthly extremes marked
+- outcome: rejected at G1 mechanism test as a near miss: right-signed, gross above cost, percentile just under the bar; strategy never run
+- lesson: The strongest slow cross-asset result in this batch: currencies whose home yield rose most kept outperforming those whose yield fell most, building from the first week to a quarter (the card's shape condition held), positive in every third, and the placebo mean near zero says it is not just currency identity. But the percentile missed and the placebo bar lay above cost, so this is a coin flip (K-0034), not a refutation or a find. Middle third strongest, latest weakest (K-0060). The marked currencies are single extremes against raw peers, so carry and risk-on beta are not separated (K-0074): yield risers tend to be higher-beta currencies, fallers funding currencies. Inferred, not tested.
+- avoid: Do not retune lookback_months, hold_months or the currency list, add the Swedish trust, or swap the yield series to lift the percentile: a near miss re-run is a new trial on the same dates. Do not refile as yield-change carry, rate-news momentum or yield-differential momentum on the same trusts under another family name, and do not blend with currency value (H-0062) to rescue it.
+- open questions: Separate delayed overshooting from carry and beta: legs matched on carry and equity beta, or a split by side. Report the book next to the event study (K-0112). ETFs have no forward data, so G4 is the ceiling.
+- related: H-0062, H-0087, H-0088, H-0070, H-0177
+
+## H-0180 – Network adoption not yet in the price - Binance spot top-50 long-only, monthly 6-month cohorts of coins whose on-chain active-address growth most exceeds what their own price run implies
+
+- family: `crypto-network-adoption` · mechanism: behavioral · instruments: Binance spot top-50 coins, on-chain active-address growth net of own price run, monthly thirds
+- outcome: rejected at G1 mechanism test: under the percentile bar and only one positive block of two required; strategy never run
+- lesson: Coins whose user base grew faster than their price ran beat the middle third on average, building with the horizon, and the placebo mean was slightly negative, so unlike earlier crypto sorts (K-0128, K-0184, K-0196) this is not plain coin identity. But the events sit on only a few dozen dates, the placebo cloud was far above cost, the first third was empty (eligibility needs seasoned address history, K-0163), and the gain came from one stretch while the latest third lost: a boom-era result in one cycle (K-0006). Cannot tell, not refuted. The pooled mean also includes the bottom third, which spot cannot short, and no side split was reported.
+- avoid: Do not retune lookback_days or hold_days, or swap in transactions, new addresses or active senders on the same coins: same events, new trials. Do not read the positive middle block as support; one boom stretch cannot count as two blocks. Do not file a long-only alt basket without saying what it earns beyond alt beta in a bear market.
+- open questions: Needs more than one cycle, a larger eligible set (the community tier lacks several large coins), a control matched on prior price run, and a top-versus-bottom split.
+- related: H-0085, H-0058, H-0135, H-0144, H-0004, H-0082
 
 ## H-0181 – Slow S&P 500 change reversal held for a year - LIQ-500, long liquid stocks just deleted from the index, short just-added ones, equal slots hedged dollar-neutral with the other members, 12-month hold
 
@@ -1594,3 +1639,129 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile this ETF sort with other leaves, tree counts, top fractions, sleeve weights or windows: same ETFs, same dates, a new trial each. Multi-year overextension is the country reversal of H-0060, and H-0143 and H-0176 ended the same way; adding trend makes it momentum, not a new mechanism.
 - open questions: Make the state the event: entrants only when an ETF is far above its multi-year average after a strong run, against same-ETF placebos, both sides marked in one sleeve. The plain linear sort was never reported.
 - related: H-0060, H-0143, H-0176, H-0087, H-0062, H-0088
+
+## H-0183 – Term-premium duration timing on a 60/40 core - bond sleeve in TLT when the 10y-3m Treasury slope is above its trailing 5-year median, in SHY when below, 12-month monthly cohorts
+
+- family: `bond-term-premium-timing` · mechanism: risk_premium · instruments: TLT against SHY as the bond sleeve of a sixty-forty SPY/IEF core; IEF, SPY, LQD unmarked peers
+- outcome: rejected at G1: with both legs marked, the abnormal return was barely positive, below the placebo percentile bar, and gross was a small fraction of cost; strategy gates never ran
+- lesson: A steep-versus-flat slope state did not separate TLT from SHY beyond what shifted dates earn. The average was near zero, gross far under cost, and it did not build toward the long horizon as a slow premium should. Early third flat, middle positive, latest wrong-signed (K-0060 kill condition). Few independent slope regimes in 2003-2020 and overlapping events widen the cloud, but the point estimate was at zero, so this is a null, not a near miss. Inferred, untested: after 2008 the bill rate was pinned at the floor, so the slope reflected policy, not duration compensation.
+- avoid: Do not retune median_months or cohort_months, switch to T10Y2Y, or refile the same TLT-versus-SHY slope bet with a different window: same events, one trial. A pass in the other cohort-based variants of this family would not be independent of this event set if it marks the same TLT/SHY legs on the same monthly dates.
+- open questions: Untested: slope outside the zero-lower-bound years, a term-premium estimate instead of the raw slope, a carry or roll-down version, and the tilt as a book against the core (never judged). H-0184 shares this sleeve and cohort machinery; only its information source is new.
+- related: H-0184, H-0061, H-0177, H-0087, H-0038, H-0127
+
+## H-0186 – Linear short-term momentum in liquid crypto perps, learned - top-30 Binance perps dollar-neutral, walk-forward ridge on 1-28 day returns, daily 5-day cohorts
+
+- family: `short-term-momentum` · mechanism: behavioral · instruments: top liquid Binance perps, dollar-neutral daily cohorts, walk-forward ridge on past returns, 2020-2022
+- outcome: rejected at G1 mechanism test: entries far below the placebo percentile bar, gross a fraction of cost, first block empty (warm-up), 2021 block wrong-signed; strategy not run
+- lesson: First scored plain linear continuation claim in liquid perps, and a null with the placebo mean near zero, so not coin identity but absence of timing content. The placebo bar lay above cost: only a large effect could show, and gross was far under cost. The boom block went against continuation and the bear block for it, the cycle (K-0006), not a stable sign. Horizons were mixed, with no build toward a week. With K-0119, daily-to-weekly own-return sorts show neither reversal nor continuation here.
+- avoid: Do not refile with a shorter or longer horizon, other leg fractions, lookbacks or features: same dates, new trials. Do not add a gbm, volume- or funding-conditioned interaction on top of this score; its main effect is now measured as absent (K-0182). Do not read the positive 2022 block as continuation: one bear block of one cycle.
+- open questions: Ridge coefficients and side split never reached the gate output (K-0135, K-0207). A fixed rule without a model fit would keep the empty 2020 block (K-0163), at the price of fixing the lookback in advance. Untested: BTC alone, news-conditioned own-price events.
+- related: H-0134, H-0124, H-0029, H-0039, H-0081, H-0135, H-0144
+
+## H-0187 – Daily stop-cascade breakout on Binance perps - top-30, follow the first close outside a quiet 20-day range (coin-specific, volume-confirmed), BTC-hedged, hold 3 days
+
+- family: `stop-cascade-breakout` · mechanism: flow_structural · instruments: Binance USD-M perps, liquid top coins on daily bars, long/short first close outside a quiet range, BTC-hedged, short hold
+- outcome: rejected at G1: positive and about equal to cost, but below the placebo percentile bar, which itself lay above cost
+- lesson: Daily breakouts from quiet ranges did not show the forced-flow cascade: almost nothing the session after the break, larger at five days and larger again at ten, the shape of slow drift, not stops firing in a burst. At the primary hold the average was positive but inside the same-coin placebo cloud and about cost. Earliest third strongest, later thirds positive, none reversed. A small effect is unresolved, not excluded; the 15-minute version (H-0063) was front-loaded, this one is back-loaded.
+- avoid: Do not refile with the longer holds or wider ranges that looked better in the horizon profile: that is dev-selected and a new trial on the same events. Do not relabel as Donchian, range-expansion or volatility-squeeze breakout on the same perps.
+- open questions: The slow build may be beta or coin identity, not breakout timing: the placebo at the long horizons and a beta-matched control were not reported. Untested: a split by breakout side, by BTC direction, and a market-wide breakout day versus a single-coin one. A different card would need a new information source, not another range parameter.
+- related: H-0063, H-0135, H-0186, H-0142
+
+## H-0188 – No-news residual reversal at the monthly horizon - S&P 500 beta-neutral, long peer-adjusted 21-session losers / short winners that had no 8-K earnings release in the month, monthly rebalance
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: S&P 500 members, monthly beta-neutral long/short: long peer-adjusted one-month losers, short winners, only names with no 8-K earnings release in the formation month, 2005-2020
+- outcome: rejected at G1: right-signed, but under the placebo percentile bar and gross well under round-trip cost
+- lesson: The monthly no-news, peer-adjusted reversal is small, not absent. It beat the same-stock placebo mean but not its upper bar, and the bar sat just under cost, so this is a measured miss, not a power problem. Cutting turnover by holding a month did not lift gross enough: H-0030's slow-build argument did not rescue the idea, and the profile grew only modestly with horizon. The earliest third, with 2008-2009, was clearly wrong-signed (reversal books lose in crises); the later thirds were positive, the latest strongest, the reverse of K-0060.
+- avoid: Do not refile this sort at another horizon, peer count, leg size or news filter in the S&P 500 or LIQ-500: the gap to cost, not significance, is the problem (K-0044, K-0053). No taker book on it.
+- open questions: Not separated: whether the peer adjustment or the no-news filter added anything over plain monthly reversal (no plain control), and whether the first-third loss is the 2008-2009 crisis alone (no per-episode split). Less-covered names, where a concession may be larger, are not loadable. The brief's 1-5 day window in large-cap single stocks is now answered on this mechanism at both ends.
+- related: H-0030, H-0007, H-0029, H-0094, H-0117
+
+## H-0189 – Earnings-season beta premium - LIQ-500 long-only weekly, top beta quintile in predicted peak 8-K release weeks, bottom beta quintile otherwise, hold 5 days
+
+- family: `macro-announcement-premium` · mechanism: risk_premium · instruments: LIQ-500 stocks, long-only weekly rotation: top beta quintile in predicted peak 8-K release weeks, bottom beta quintile in other weeks, against SPY total return, 2004-2020
+- outcome: rejected at G1: event study passed, but net Sharpe missed the margin over SPY and the bootstrap bound was below zero
+- lesson: The high-minus-low beta gap in predicted earnings weeks exists at event level, but the book could not use it. Gross Sharpe was barely above SPY's, the active return was smaller than the cost drag, and the book was almost always invested with a small tracking error, so there was little to earn. The event study scores both legs; the book holds the low-beta quintile most of the time, a different claim the mechanism test never covered. The gap was concentrated in the earliest third (which includes the 2009 rebound, when high beta led, K-0074) and thin later (K-0060); the first session was negative and the effect built over days.
+- avoid: Do not retune beta lookback, peak fraction, quintile size or rotation timing, nor add a firm-level reporting filter: these are neighbors of the same book. Do not credit a pass to the season clock when the off-peak leg is a static low-beta book; the family now carries the heavier trial count of K-0089.
+- open questions: Untested: a static low-beta quintile as control, a peak-week-only overlay on an always-invested core with the same average exposure (K-0027, K-0153), and the latest third alone. Beta-clock cards (month turn, Fed cycle, earnings season) now all share the early-heavy pattern; a new card would need a different information source, not a fourth clock.
+- related: H-0042, H-0045, H-0016, H-0025, H-0023, H-0098
+
+## H-0190 – Quant-crowding unwind rebound, learned - LIQ-500 long-only weekly top fifth of a LightGBM 5-day score on value, momentum, quality and low-vol exposures x the week's style-composite and market moves
+
+- family: `trend-follower-deleveraging` · mechanism: liquidity_provision · instruments: liquid US stocks (LIQ-500), gradient-boosted score on style exposures crossed with style-unwind and market states
+- outcome: rejected at G1 on the placebo percentile: positive average, gross barely covered cost, but inside the same-stock placebo cloud; book never run
+- lesson: No visible deleveraging concession. In unwind weeks the picks beat peers slightly, but gross was about the size of cost and a small fraction of the card's own forecast, and the same stocks on shifted dates earned a little too. The average grew with the horizon out to a month, the shape of slow style drift, not a concession absorbed in days. The earliest block was strong on few events, the middle about zero, the latest small and positive. Only a few dozen unwind weeks carry the evidence, so the cloud was wider than cost: a small effect is unresolved, but nothing points to the large one the card needed.
+- avoid: Do not refile with another unwind threshold, lookback, exposure set, top fraction or hold to get more weeks or a longer horizon: same weeks, new trial. Do not read the strong earliest block (few events) or the growth with horizon as support. Do not name a new forced-selling card deleveraging without saying who sells and how their book is observed.
+- open questions: Never reported: the ridge control, the split by market-move state, the split by side. Cleaner: make the market-neutral unwind week the event and compare plain quality and low-volatility entrants with same-stock placebos.
+- related: H-0169, H-0176, H-0099, H-0112
+
+## H-0191 – Post-split ex-date demand drift - LIQ-500 market-neutral, long stocks the session after their forward-split ex-date, hedged with the other members, hold 5 days
+
+- family: `split-nominal-price-demand` · mechanism: behavioral · instruments: liquid US stocks (LIQ-500): the split stock from the session after its forward-split ex-date, against the other members, about a week
+- outcome: rejected at G1 mechanism test, book not run: split stocks' abnormal return was below zero and below the placebo mean, wrong-signed in all three dev blocks; enough events, so not a power problem
+- lesson: No post-ex-date demand drift in large liquid stocks: split stocks lagged the other members over the first days and the latest, thinnest block was the worst. Split stocks are past winners, so the sign reads as give-back, not drift; the one positive horizon was the longest, the generic slow-drift shape. The card's own decimalization and fractional-share decay reading fits, but blocks cannot separate it from era. Clean test of a 1980s anomaly, not a bug: event count matched the forecast and G0 was clean.
+- avoid: Do not re-propose post-split drift in LIQ-500 with another hold, ratio threshold or hedge set: the neighbour grid is the same evidence. A long-only variant is not new: the sign was wrong, not just small.
+- open questions: Untested: reverse splits, lower-priced or less liquid stocks (not loadable), and a control matched on prior return to separate winner give-back from a split effect.
+- related: H-0014, H-0067, H-0068, H-0011
+
+## H-0192 – Earnings news at the 52-week anchor - S&P 500 cap-weighted core, 5-day overweight after large positive 8-K reactions closing near the 52-week high, zero weight at the low
+
+- family: `52-week-high-anchoring` · mechanism: behavioral · instruments: S&P 500 cap-weighted core plus 5-day overweight after large positive earnings reactions near the 52-week high
+- outcome: rejected at G1: mechanism cleared the placebo bar narrowly and the book beat SPY with a reliable bound, but the Sharpe margin stayed under the fixed bar
+- lesson: Conditioning the release-reaction drift on nearness to the 52-week high gave an event set that behaves like plain reaction drift (positive in every third, slow build to a month, thin sleeve), with no visible anchoring increment; the judge cannot split the two. The tilt was too small to move the Sharpe margin, and net active return was smaller than the cost drag, which was several times the Scout's own arithmetic. That points at core upkeep (monthly proxy-cap rebalancing, index changes), not the tilt, but no core-only control exists (K-0153).
+- avoid: Do not enlarge tilt_w, the overweight cap, band or z_min to close the margin (the H-0033 path: new trials, same events). Do not file another release-reaction conditioner (distance to high, size, ownership) as a new family (K-0083, K-0143).
+- open questions: Whether the anchor adds anything over plain reaction drift is untested: no card reports the plain-drift average on the same S&P 500 events. A core-only run (K-0153) would show how much of the cost drag and active return belongs to the core. Negative-side events (zero weight at the low) were never reported separately.
+- related: H-0033, H-0028, H-0031, H-0083, H-0011, H-0135
+
+## H-0193 – Conviction-sized insider purchases - LIQ-500 market-neutral, long stocks whose trailing 91-day open-market insider buying first crosses $500k, liquid-basket hedge, hold 5 days
+
+- family: `insider-purchase-information` · mechanism: behavioral · instruments: LIQ-500 stocks, market-neutral 5-day slots after large insider buying, liquid-basket hedge
+- outcome: passed G1, rejected at G2: threshold neighbours did not hold and nearly all the return came from the earliest third of dev
+- lesson: The pass is an early-era effect, most likely the 2008-2009 crisis and rebound when insider buying clustered in beaten-down stocks against a hedge of mega caps, not a stable information effect: the average fades from large to negative across the thirds and the threshold has no monotone dose-response (a lower and a higher cut both fail), so purchase size is not what pays. The long leg carried the book and the hedge lost, so a beta gap is not excluded (K-0074). Random entry lost heavily, so that bar was easy. The S&P 500 variant did not weaken, so it is not a LIQ-500 artifact.
+- avoid: Do not retune the dollar threshold, the 91-day window or the hold to find a stable neighbour. Do not read the G1 pass as evidence of informed buying: it is one era. Do not refile the same crossing event with another hedge basket.
+- open questions: A card that reports the effect by year, separates the 2008-2009 window from later years and matches the long leg to the hedge on beta and past return would show whether any information survives outside the crisis. The long leg alone as a tilt on a core was not tried.
+- related: H-0012, H-0194, H-0011, H-0017
+
+## H-0194 – Which insider purchases are informative, learned - LIQ-500, LightGBM ranks new purchase filings (size vs firm, routine buyer, sales, prior drop), long top half 5 days, hedged
+
+- family: `insider-purchase-information` · mechanism: behavioral · instruments: LIQ-500 stocks, gbm-ranked new insider purchase filings, long top half 5 days, hedged
+- outcome: rejected at G1 mechanism test, no book run: entries below same-stock placebos, wrong-signed in every usable block, gross negative
+- lesson: A learned ranking of insider filings found no information in large caps after the 2008-2009 window. The best-scored filings did worse than average ones and the loss grew with the horizon, the shape of continuation. Not a power problem: the placebo bar lay below cost and events were plentiful. With H-0193 (a pass in the earliest era only) and H-0012 (no drift), the week after a purchase filing carries no tradable drift outside the crisis; a rule fitted on the crisis years did not carry forward.
+- avoid: Do not add a feature (role, cluster, other sales), change top or n_estimators, or lengthen the label to rescue it. The ridge control named in the card did not run (K-0135), so do not claim the nonlinearity is what failed.
+- open questions: Insider information may live in less-covered stocks or at monthly to quarterly horizons, not testable in LIQ-500 at this clock. A new card needs a new information source, not a better ranking of the same filings.
+- related: H-0012, H-0193, H-0095, H-0104
+
+## H-0195 – Absorbed overnight supply shock - LIQ-500, long no-earnings heavy-volume gap-downs that held the open, liquid hedge, 5 days
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: LIQ-500 US stocks: no-earnings, heavy-volume overnight gap-downs that closed at or above the open, long for five sessions against a liquid hedge basket (event study only, book not run)
+- outcome: rejected at G1 mechanism test: right-signed but far below the placebo percentile bar, gross about equal to cost, only the earliest third positive; strategy not run
+- lesson: Selecting the supply-shock footprint (gap at the open, abnormal volume, no earnings, session held the open) did not make the generic no-news reversal bigger than cost. The average was about the size of the cost and the placebo cloud was wide, so a small effect is unresolved but nothing suggests a hidden large one. The horizon shape was no concession absorbed over days: slightly positive on day one, about zero at three, larger only at ten. The earliest third, with the 2008-2009 crisis, carried the average, as K-0060 predicts. Events were far fewer than forecast.
+- avoid: Another gap, volume, intraday-hold or no-news filter on large-cap droppers with a different threshold, hold or hedge: same event class as H-0030, H-0108 and H-0188, already counted in this family. Do not forecast events from a general gap-rate guess; count them on the series.
+- open questions: The control the card asked for (the same gaps that continued lower intraday) is not run by the judge, so whether the intraday hold adds anything is unknown. Observed offering or block data (not loadable) would identify supply shocks directly, and less liquid stocks or crisis-only windows are untested. A new card needs one of those, not another filter on LIQ-500 prices.
+- related: H-0030, H-0188, H-0108, H-0105, H-0094
+
+## H-0196 – Buyback desks as buyers of last resort - LIQ-500 neutral, long no-news droppers that are net repurchasers in their open window, hedged, 5 days
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: LIQ-500 US stocks: no-news idiosyncratic droppers that are net repurchasers inside their open trading window, long for five sessions against a liquid hedge basket (event study only, book not run)
+- outcome: rejected at G1 mechanism test: average just above cost but under the placebo percentile bar, nearly all from the earliest third
+- lesson: The buyback bid did not make the no-news rebound larger than the generic one. Events were plentiful and matched the forecast, and the average just covered cost, but it sat inside the same-stock placebo cloud. The earliest third (2008-2009 crisis) carried more than the whole average, the middle third was negative and the latest about zero. The first session was negative, so no concession was absorbed on entry. That is crisis stress rebound (K-0084, K-0237), not corporate support; the card's own shape and era kill conditions were met or nearly met.
+- avoid: Do not refile with another repurchaser cut (yield tercile, window bounds, z_min, slot count) or another no-news filter: same events, new trial. Do not read the large crisis block as support for the channel.
+- open questions: The controls the card asked for are not run by the judge: the same drops in repurchasers during the blackout window and in non-repurchasers inside the window. Without them the channel is unseparated from generic reversal. Daily repurchase prints (not loadable) would identify the bid directly; the trailing yield from quarterly filings is stale when firms suspend buybacks in a recession.
+- related: H-0195, H-0030, H-0108, H-0188, H-0019, H-0027, H-0086
+
+## H-0197 – Last quarter's earnings reaction priced at the next release - LIQ-500 dollar-neutral, long/short by previous 8-K reaction, 5 sessions around the predicted release
+
+- family: `post-earnings-announcement-drift` · mechanism: behavioral · instruments: LIQ-500 US stocks, dollar-neutral long/short by last quarter's 8-K release reaction, held for a week around the predicted next release (event study only, book not run)
+- outcome: rejected at G1 mechanism test: a large wrong-signed average, below every time-shifted placebo and negative in all three dev blocks; events plentiful; strategy not run
+- lesson: The opposite of the Bernard-Thomas claim showed up. Stocks that reacted strongly up last quarter lagged, and those that reacted down led, around the next release. The placebo mean was near zero and the placebo bar well under cost, so this is a measured result, not a power problem. The loss built from the release session to the end of the week and was flat after, so it is release-timed, not slow drift, and unlike most effects here the latest third was the most negative. Open: a silent sign inversion (G0 does not test sign), a beta gap between extreme winners and losers (K-0074), and a weekday-calendar date approximation that only adds noise.
+- avoid: Do not flip the sign and refile as a rescue: a mirrored card is a new hypothesis that must name who is on the other side (raised expectations, guidance ratchet) and be counted as a new trial. Check the sign first. Do not tune leg_fraction or hold_days: the neighbour grid is the same events.
+- open questions: Not reported by the judge: the split by leg (winners lagging versus losers leading), the beta of each leg, and by release season. A control matched on reaction history and run off the release window would show whether this is release timing or the identity of repeat extreme reactors (K-0185). Does it fit the winner give-back of H-0068, H-0091 and H-0191 (K-0234)?
+- related: H-0136, H-0028, H-0031, H-0033, H-0023, H-0068, H-0091
+
+## H-0198 – Reporting-cycle reversal concession, learned linearly - LIQ-500 long-only weekly top decile of a ridge 5-day score on reversal x pre-release window x news x vol; mechanism = interaction-only picks
+
+- family: `short-term-reversal` · mechanism: liquidity_provision · instruments: LIQ-500 US stocks, long-only weekly top decile of a ridge score on five-day reversal crossed with a pre-release window, news and volatility, mostly invested
+- outcome: rejected at G1 on the Sharpe margin: mechanism cleared at the margin, net book below SPY, bootstrap bound below zero
+- lesson: The reporting-cycle interaction picks passed only at the bar: gross about equal to round-trip cost, placebo mean near zero, every third positive, the earliest the strongest. The effect was already full at one session, so it is front-loaded. As a book it died of cost and risk, not of the mechanism alone: weekly turnover took a large share of the gross edge, gross Sharpe was already below SPY, and a top decile of volatile losers carried a deep drawdown and a large tracking error against the index. A concession equal to cost cannot pay a long-only book that must beat the market.
+- avoid: Do not retune pre_window, top or alpha, or add interaction terms, to close the Sharpe gap: near-neighbour trials of the same score. Do not read the marginal pass as proof that the cycle adds to plain reversal; the volatility term sits in the same interaction set.
+- open questions: Not separated: the reporting-cycle term from the volatility term (one ridge with both), and the long leg as a tilt on an always-invested core (K-0153). A fix would need a much larger gross edge per entry or far lower turnover; the pre-release concession may need a maker's execution, not a taker's weekly book.
+- related: H-0064, H-0115, H-0117, H-0097, H-0123, H-0107
