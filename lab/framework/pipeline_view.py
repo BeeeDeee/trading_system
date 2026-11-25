@@ -54,13 +54,18 @@ def esc(x) -> str:
     return html.escape("" if x is None else str(x))
 
 
+def thousands(v) -> str:
+    """12345.6 -> "12 346": a no-break space, not a comma, so 3,544 is not read as 3.544 in Czech."""
+    return f"{v:,.0f}".replace(",", "\u00a0")
+
+
 def fmt(v, nd=3) -> str:
     if isinstance(v, bool):
         return str(v)
     if isinstance(v, float):
         if v == int(v) and abs(v) >= 2:
-            return f"{int(v):,}"
-        return f"{v:.{nd}f}" if abs(v) < 1000 else f"{v:,.0f}"
+            return thousands(v)
+        return f"{v:.{nd}f}" if abs(v) < 1000 else thousands(v)
     return esc(v)
 
 

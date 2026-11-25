@@ -59,3 +59,10 @@ def test_pipeline_tab_covers_every_state(lab, card, evaluator, tmp_path):
     assert st["stages"]["g1"] == "failed" and st["stages"]["g2"] == "pending" and st["stages"]["data"] == "skipped"
     st = pipeline_view.story(lab, lab.hypothesis(waiting))
     assert st["stages"]["idea"] == "done" and st["stages"]["build"] == "active"
+
+
+def test_numbers_use_a_no_break_space_as_thousands_separator():
+    from lab.framework import dashboard, pipeline_view
+    assert pipeline_view.fmt(3544.0) == "3\u00a0544" and pipeline_view.fmt(6245.4) == "6\u00a0245"
+    assert pipeline_view.fmt(0.692) == "0.692" and pipeline_view.fmt(36.0) == "36"
+    assert dashboard.fmt(12345.6) == "12\u00a0346" and dashboard.fmt(0.3) == "0.300"
