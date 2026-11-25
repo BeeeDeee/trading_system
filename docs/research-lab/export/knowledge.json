@@ -2854,5 +2854,101 @@
   "actor": "librarian",
   "message_id": 1605,
   "ts": "2026-11-24T02:07:25.484682+00:00"
+ },
+ {
+  "id": "K-0239",
+  "kind": "market",
+  "title": "Insider purchases in liquid US stocks: a slow near miss at monthly horizon, still no usable drift",
+  "statement": "K-0235 covered three designs at five sessions and left longer horizons open. H-0200 used them: purchase value over market cap ranked among each week's new filers, held four weeks, both sides marked. The average was right-signed against a negative placebo mean and above round-trip cost, but fell just under the placebo bar, which lies well above cost, so a small effect is unresolved. It was nil in the first sessions and grew toward the longest horizon, the shape of slow drift, not a filing-week reaction. The earliest third (2008-2009 crisis) was strongest and the middle third wrong-signed; unlike H-0193 the latest third was positive, though smaller, so the K-0235 reading 'only the crisis era' is softened, not reversed. Raw top-versus-bottom comparison carries a size and beta gap (K-0074) of the same order as the average, and no side split was reported, so relative stake is not separated from small beaten-down firms. Dollar thresholds, learned rankings, first-after-quiet and relative stake have now all failed to give a tradable result at weekly to monthly horizons in LIQ-500. Untested: size- and beta-matched peers, the long side alone as a tilt, less covered stocks (not loadable).",
+  "evidence": "[\"H-0200\",\"H-0193\",\"H-0194\",\"H-0012\",\"K-0235\",\"K-0074\",\"K-0060\",\"K-0135\"]",
+  "confidence": "low",
+  "supersedes": "K-0235",
+  "actor": "librarian",
+  "message_id": 1612,
+  "ts": "2026-11-24T03:36:35.569508+00:00"
+ },
+ {
+  "id": "K-0240",
+  "kind": "market",
+  "title": "S&P 500 quarterly share-update pressure: event passes, neutral book does not",
+  "statement": "H-0113 died on a core artefact (K-0168) and never tested the event. H-0201 did, with split-consistent share counts and both sides marked. The average beat other members at the rebalance close, cleared the same-stock placebo bar and cost, and was positive in every third with the latest not weaker, unlike most events in the lab (K-0060). The gain came in the second half of the window, which looks like pre-positioning near the close, not drift. It gave no book: gross Sharpe was under the absolute floor, the long leg earned and the short leg lost (K-0207), and the book was mostly in cash. One pass of one card, with a placebo bar near the effect. Untested: increases alone as a tilt on a core, a beta-matched control, a side split (K-0218).",
+  "evidence": "[\"H-0201\",\"H-0113\",\"K-0168\",\"K-0207\",\"K-0218\",\"K-0221\",\"K-0024\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1618,
+  "ts": "2026-11-24T05:07:14.186739+00:00"
+ },
+ {
+  "id": "K-0241",
+  "kind": "market",
+  "title": "BTC-led altcoin catch-up: proportional sizing and the down side did not cure it",
+  "statement": "K-0058 read the long-only BTC-led catch-up rule as strong at its primary setting but dependent on a high threshold and one sub-period. H-0202 replaced the binary lag cut-off by a beta-implied expected catch-up with proportional sizing and added the down direction, keeping threshold, window, hold and leader. It was not more stable: it died at the first gate, with a clearly negative net result, a bootstrap bound of the mean net trade below zero, and costs a multiple of the gross per trade. So the parent's pass at that gate looks tied to the long-only binary-lag form, and the claim that sizing by expected gap makes the threshold matter less is not supported. The lag side after a BTC drop and the dose response (do larger expected gaps catch up more) were not separated, because the judge does not report side splits or per-trade terciles (K-0193). A beta-implied gap is a gross-up of the full beta move and probably overstates what is realised in four hours. The family now has two rejections and a parked duplicate; further variants have a low prior, and the owner's forward test is the clean evidence.",
+  "evidence": "[\"H-0202\",\"H-0040\",\"H-0074\",\"K-0058\",\"K-0059\",\"K-0060\",\"K-0193\"]",
+  "confidence": "low",
+  "supersedes": "K-0058",
+  "actor": "librarian",
+  "message_id": 1624,
+  "ts": "2026-11-24T06:36:54.489498+00:00"
+ },
+ {
+  "id": "K-0242",
+  "kind": "framework",
+  "title": "Intraday cards: a Builder-written trade log is not consumed either",
+  "statement": "K-0193 found that a control written as a strategy argument does not run unless the judge executes it. H-0202 took a third route: its card asked the Builder to write a per-trade log (expected gap, beta, side, gross, BTC return) so the owner's tercile, BTC-hedged and down-side criteria could be checked. The Builder delivered a trade_log function in strategy.py, but G1 judged only the primary run and failed the card, so none of those three criteria was computed, and the Librarian cannot compute them from cases.json (no per-trade data reaches it). Gross per trade was again only derivable from mean net trade and cost share. Five intraday cards (H-0137 to H-0140 and H-0202) have now left owner criteria unevaluated whichever route they used (separate module, argument, trade log). Suggested: either the judge runs a trade_log or controls hook on dev for intraday cards and reports it in the G1 metrics (gross per trade, side split, thirds, terciles), or the Scout stops writing criteria the pipeline cannot read and lets the card be decided on the metrics the judge produces.",
+  "evidence": "[\"H-0202\",\"H-0140\",\"H-0139\",\"H-0138\",\"H-0137\",\"K-0193\"]",
+  "confidence": "medium",
+  "supersedes": "K-0193",
+  "actor": "librarian",
+  "message_id": 1625,
+  "ts": "2026-11-24T06:36:54.497221+00:00"
+ },
+ {
+  "id": "K-0243",
+  "kind": "process",
+  "title": "G2 follow-up batch: three variants of G2-stage parents all died at G1",
+  "statement": "Owner batch G2V (2026-11-24) varied the form of three G2-stage parents: insider buying (H-0193 to H-0200), S&P 500 share updates (H-0113 to H-0201), BTC-led catch-up (H-0040 to H-0202). All three died at G1, none reached G2, so the stop rule closed the line and the combination entries G2C-1/2 stay skipped. G1 does not say the variants are worse than the parents in every respect: H-0201 passed the event test, which the parent never reached (K-0240), and H-0200 was a near miss (K-0239). What it shows is that the parents' G2-stage results did not carry over to a changed signal form, as expected when parents are picked for dev performance. Related families were not needed (each entry had one family). The trial accounting for combinations (related_families, commit e9dfc8b12) is deployed but untested on a real combination card. Untested: the combinations themselves.",
+  "evidence": "[\"H-0200\",\"H-0201\",\"H-0202\",\"K-0239\",\"K-0240\",\"K-0241\"]",
+  "confidence": "medium",
+  "supersedes": null,
+  "actor": "human",
+  "message_id": 1633,
+  "ts": "2026-11-24T09:25:12.065775+00:00"
+ },
+ {
+  "id": "K-0244",
+  "kind": "market",
+  "title": "Aggregate option demand: two near misses of the predicted sign, in ETFs and in stocks, neither above the placebo bar",
+  "statement": "The option-demand-pressure family has two cards, both reading market-wide option volume from the Cboe series. H-0165 used excess equity put demand against price and VIX to tilt stocks versus bonds; the stock-bond premium was contrarian as claimed. H-0203 used call-volume surges as a state for a boosted score on stock speculativeness; new leg entrants in surge weeks beat peers in every third. Both ended just under the 95th-percentile placebo bar with a placebo mean near zero and gross above cost, both with a wide cloud from few event dates, and the latest third was the weakest in each (K-0060). The shapes differ: H-0165 built slowly toward two weeks, H-0203 was front-loaded and gone by ten sessions. Neither card separated the option state from what it was crossed with: H-0165 had no state-free control and H-0203 had no ridge contrast at the gate. So aggregate option demand has produced two right-signed near misses and no clear pass, and whether the option series itself adds information is unknown. Per-stock option volume, skew and open interest are not loadable. A further aggregate-Cboe card has a low prior unless the state-free baseline is the control or the instrument changes.",
+  "evidence": "[\"H-0203\",\"H-0165\",\"K-0060\",\"K-0209\",\"K-0162\",\"K-0135\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1637,
+  "ts": "2026-11-25T02:07:46.040143+00:00"
+ },
+ {
+  "id": "K-0245",
+  "kind": "method",
+  "title": "G3 after a dev-selected sign: H-0204 passed G1 and G2, failed DSR; family count is twice the registry",
+  "statement": "H-0204 is the second card at G3 (after H-0113). It mirrored H-0197 on the same dev window, so a strong G1 pass and a G2 pass were nearly guaranteed and carry no independent evidence. G3 reported 38 family trials over its two families (post-earnings-announcement-drift and the related earnings-announcement-premium), a literature prior of 20 and 58 trials in all (38 + 20 = 58, inferred, code not read). The book's per-period Sharpe was about a quarter below the hurdle that count implies, the DSR about one fifth against a bar near one. Observation: the registry holds 19 hypotheses in those two families, exactly half of 38, which suggests every card is counted twice (or grid points enter as in K-0154); not verified, sent to the owner. Consequences: (1) a related-family tag pulls the other family's trials into the hurdle; (2) a late card in a busy family needs a net Sharpe well above the G1 floor; (3) a mirrored sign flip costs a trial and gains nothing. The holdout was not reached.",
+  "evidence": "[\"H-0204\",\"H-0197\",\"H-0113\",\"K-0154\",\"decision log 2026-11-24 run 490\"]",
+  "confidence": "low",
+  "supersedes": "K-0154",
+  "actor": "librarian",
+  "message_id": 1640,
+  "ts": "2026-11-25T02:07:46.104900+00:00"
+ },
+ {
+  "id": "K-0246",
+  "kind": "market",
+  "title": "Expectation ratchet at the next release: previous-reaction reversal reproduces, long leg carries it",
+  "statement": "In liquid US stocks the previous earnings reaction predicts the opposite direction around the next predicted release: big negative reactors last quarter beat peers, big positive ones lag. H-0197 measured it with approximate dates; H-0204 re-built it with real prior reaction dates and a sign unit test and got the same direction, so H-0197 was not a silent sign inversion. The two share events and dev window (one piece of evidence seen twice) and the second sign was chosen after the first result. Same-stock placebos near zero, so not stock identity; positive in every third with the latest strongest, the reverse of K-0060; nothing at the first session and still building after the release; the long leg carried the book and the short leg added about nothing (K-0207); leg betas not reported (K-0074). It covered cost in an event study but not the deflated Sharpe hurdle; holdout not read. Untested: a reaction-history-matched control away from the release.",
+  "evidence": "[\"H-0204\",\"H-0197\",\"H-0068\",\"K-0083\",\"K-0185\",\"K-0207\",\"K-0074\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1641,
+  "ts": "2026-11-25T02:07:46.113776+00:00"
  }
 ]
