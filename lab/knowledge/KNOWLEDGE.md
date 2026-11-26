@@ -366,6 +366,12 @@ In liquid US stocks the previous earnings reaction predicts the opposite directi
 
 *confidence low · 2026-11-25 · librarian · evidence: H-0204; H-0197; H-0068; K-0083; K-0185; K-0207; K-0074; K-0060*
 
+### K-0248 US rate information into G10 currency trusts: two designs, two right-signed near misses, both weakest lately
+
+Two cards used US or home-country rate information to predict the G10 currency trusts: a monthly sort on home ten-year yield changes (H-0179) and a five-session dollar hold after large two-year yield moves on scheduled release days (H-0207). They differ in signal, horizon and book, yet the picture is the same: a right-signed pooled average, gross near round-trip cost, a percentile just under the placebo bar with the bar at or above cost, an effect that builds with the horizon instead of appearing in the first sessions, and the latest third of dev the weakest (negative in H-0207, the card's own kill). So a delayed-response story is not refuted, but neither is it separated from carry, dollar trend or a risk-sentiment loading (K-0074), and a bar above cost means a small real effect is not excluded. Six trusts marked on one date count as one date, so independent evidence is a few regimes or a few hundred dates (K-0034). Untested: a non-release-day control with the same yield move, a side split, legs matched on carry and beta. A third rate-into-currency card on these trusts has a low prior unless it adds one of those controls or a different instrument.
+
+*confidence low · 2026-11-25 · librarian · evidence: H-0207; H-0179; H-0070; H-0047; K-0228; K-0060; K-0074; K-0034*
+
 ## Data
 
 ### K-0001 Sharadar SFP adjusted-close spikes
@@ -779,6 +785,12 @@ H-0180 (Coin Metrics active addresses, 2026-11-18 to 2026-11-20) failed G0 with 
 K-0193 found that a control written as a strategy argument does not run unless the judge executes it. H-0202 took a third route: its card asked the Builder to write a per-trade log (expected gap, beta, side, gross, BTC return) so the owner's tercile, BTC-hedged and down-side criteria could be checked. The Builder delivered a trade_log function in strategy.py, but G1 judged only the primary run and failed the card, so none of those three criteria was computed, and the Librarian cannot compute them from cases.json (no per-trade data reaches it). Gross per trade was again only derivable from mean net trade and cost share. Five intraday cards (H-0137 to H-0140 and H-0202) have now left owner criteria unevaluated whichever route they used (separate module, argument, trade log). Suggested: either the judge runs a trade_log or controls hook on dev for intraday cards and reports it in the G1 metrics (gross per trade, side split, thirds, terciles), or the Scout stops writing criteria the pipeline cannot read and lets the card be decided on the metrics the judge produces.
 
 *confidence medium · 2026-11-24 · librarian · supersedes K-0193 · evidence: H-0202; H-0140; H-0139; H-0138; H-0137; K-0193*
+
+### K-0247 lab try cannot exercise tail-threshold event cards: synthetic returns never fall ten percent (H-0206)
+
+H-0206 defines its events by daily drops of at least ten percent. The Builder reports that lab try's synthetic returns never fall below about six percent, so the card showed 0 events and 0 trades in lab try; the Builder exercised the logic with injected drops in unit tests. On real data G0 was the first meaningful check (4233 events at G0, 4232 at G1). Same class of gap as K-0082, K-0092 and K-0135: synthetic data cannot reach the card's event definition. Suggested: give the synthetic market a fat-tailed return component so extreme-move cards can be smoke-tested. The Scout's forecast (R 1000-2000, N 900-1800 over the dev period) was met (about 4200 events combined, on about 1170 dates), but the latest third held more than half of them, from clustered selloff dates.
+
+*confidence low · 2026-11-25 · librarian · evidence: H-0206; K-0082; K-0092; K-0135*
 
 ## How the lab works
 

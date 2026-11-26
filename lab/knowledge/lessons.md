@@ -1810,3 +1810,21 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile with other z_min or lead_sessions values or a long-only version of the long leg as a rescue: neighbours are the same events and every card adds to the family trial count. Do not treat a pass of a sign chosen on the same dev window as evidence. Leg beta was never reported (K-0074): a part-time long-biased book in a rising 2004-2020 sample is partly market exposure.
 - open questions: The 2021-2026 holdout was not reached, so the sign is untested out of sample. Untested: a control matched on reaction history run away from the release window, to separate release timing from the identity of repeat extreme reactors (K-0185); leg betas; whether the long leg alone survives as a tilt on an always-invested core (K-0064 warns it often does not).
 - related: H-0197, H-0068, H-0033, H-0136, H-0091, H-0113
+
+## H-0206 – Rule 201 short-sale circuit breaker - LIQ-500 neutral, long restricted -10 % droppers, short near misses, ridge-ranked, 2 days
+
+- family: `short-sale-circuit-breaker` · mechanism: flow_structural · instruments: LIQ-500 US stocks: long ten-percent droppers (Rule 201 binds), short near misses, two days
+- outcome: rejected at G1: the restricted-minus-near-miss average sat inside the placebo cloud and gross was a fraction of round-trip cost. The ridge and book never ran.
+- lesson: The Rule 201 step was not visible in daily bars. The contrast was barely positive at the primary horizon, inside the placebo cloud, with the placebo bar about at cost, so a literature-sized step would have shown. The first session, which the restriction covers, was about zero, so the restriction shape is absent. The contrast turned negative at five and ten sessions (continuation or give-back; not separable). Blocks disagreed in sign and the latest was mostly clustered selloff dates, so events overstate independent evidence. Near-miss contamination dilutes but hardly explains a zero first session.
+- avoid: Do not re-run this restricted-versus-near-miss contrast with other bands, alphas, horizons or a gbm: the model was never reached and variants are new trials of the same events.
+- open questions: Not run by the judge: the same contrast before 2011 without a price test, and plain rule versus ridge. Intraday lows and less liquid stocks are not loadable.
+- related: H-0082, H-0108, H-0030
+
+## H-0207 – Delayed dollar response to scheduled US rate news - after a large 2-year Treasury yield move on a CPI, payrolls or FOMC day, hold six G10 currency trusts on the dollar's predicted side for 5 sessions
+
+- family: `fx-delayed-overshooting` · mechanism: cross_asset_information · instruments: six G10 currency trusts on one dollar side for five sessions after large two-year yield moves on CPI, payrolls and FOMC days; near-cash Treasury ETFs as peers
+- outcome: rejected at G1 mechanism test: right-signed, gross about equal to cost, but below the placebo percentile bar and negative in the latest third; strategy not run
+- lesson: A near miss, not a refutation: the pooled five-session average was positive, but placebos reached nearly as far, gross only just covered cost and the placebo bar sat at or above cost. Two earlier thirds were positive and the latest negative, the card's own sign kill. Effect was about nil at one and three sessions and larger only at longer horizons: slow drift outlasting the hold, not a quick delayed reaction. All six trusts share each date, so the evidence is the event dates, not the marked events.
+- avoid: Do not retune z_threshold or hold_days, or lengthen the hold because longer horizons look larger. Do not split by release type or flip the sign. Do not refile as rate-news dollar momentum or yield sorts on the same trusts (H-0179 family).
+- open questions: Is it release-specific? A same-size yield move on non-release days and a yield-up versus yield-down split would separate overshooting from dollar trend or risk sentiment. Why the latest third turned negative is untested.
+- related: H-0179, H-0047, H-0070, H-0062, H-0042
