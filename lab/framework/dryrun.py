@@ -115,7 +115,8 @@ def synthetic_view(card: dict, cat: dict, seed: int, sources: tuple[str, ...] = 
     if top_n and kind == "crypto_top_n":
         view = replace(view, universe=data.crypto_top_n(view, top_n))
     elif top_n and kind in ("liq_n", "sp500"):                    # PIT membership by trailing liquidity
-        member = data.crypto_top_n(view, top_n, window=63) & stocks[None, :]
+        # the real view (data.merge) gives every non-stock dataset in the card, e.g. an ETF core, universe = listed
+        member = (data.crypto_top_n(view, top_n, window=63) & stocks[None, :]) | (listed & ~stocks[None, :])
         rank = np.where(stocks[None, :] & listed, np.argsort(np.argsort(-np.nan_to_num(dv), axis=1), axis=1) + 1.0,
                         np.nan)
         alt = data.crypto_top_n(view, min(N, int(top_n * 1.25)), window=63) & stocks[None, :]

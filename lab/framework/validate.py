@@ -32,6 +32,23 @@ def specified_missing(card: dict) -> list[str]:
     return [f for f in required if not card.get(f)]
 
 
+MIN_UNIVERSE_WITH_EVENT_STUDY = 4     # the event study needs >= 3 unmarked eligible peers (K-0174, K-0226) and an event marks >= 1
+
+
+def mechanism_problems(card: dict) -> list[str]:
+    """A named-instruments universe too small for the event study fails G0 (g0_event_peer_set) on every event: H-0184,
+    H-0185 and H-0208 each cost a Builder run and an owner question. Cards with an event need at least
+    MIN_UNIVERSE_WITH_EVENT_STUDY instruments, peer-only ones (named, never traded, never marked) included."""
+    uni = card.get("universe") or {}
+    n = len(uni.get("instruments") or [])
+    if card.get("mechanism_test") and uni.get("kind") == "instruments" and n < MIN_UNIVERSE_WITH_EVENT_STUDY:
+        return [f"the universe names {n} instruments but the mechanism test needs at least "
+                f"{MIN_UNIVERSE_WITH_EVENT_STUDY} (3 unmarked eligible peers on every event date besides the marked ones): "
+                "add peer-only instruments (never traded, never marked) with a prices history over the whole dev period, "
+                "or drop the mechanism_test"]
+    return []
+
+
 def grid_problems(card: dict, both_sides: bool = False) -> list[str]:
     """G2 tests one grid step each way around the primary value, so the grid must allow that: the value is
     in the grid, a numeric grid is strictly increasing, and there is at least one neighbor. `both_sides`

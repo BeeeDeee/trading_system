@@ -191,7 +191,7 @@ def gate_summary(lab: Lab, hid: str) -> list[dict]:
 
 def fmt(v) -> str:
     if isinstance(v, float):
-        return f"{v:.3f}" if abs(v) < 10 else f"{v:,.0f}"
+        return f"{v:.3f}" if abs(v) < 10 else pipeline_view.thousands(v)
     return esc(v)
 
 

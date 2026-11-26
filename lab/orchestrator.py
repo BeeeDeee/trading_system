@@ -166,7 +166,12 @@ def gate(lab: Lab, policy: Policy, at: datetime) -> tuple[Callable[[str], bool],
 def propose_brief(lab: Lab, policy: Policy) -> str | None:
     """A Scout `propose` task when the pipeline has room (few hypotheses waiting for the Builder)."""
     from lab.framework import briefs
-    if len(lab.hypotheses(S.DATA_READY)) + len(lab.hypotheses(S.IDEA)) >= policy.propose_when_waiting_below:
+    # a card waiting only for the owner's answer does not wait for the Builder (it is not started, see pending_tasks):
+    # four such cards stalled the whole pipeline for 37 hours (2026-11-25..26)
+    asked = owner_questions(lab)
+    waiting = [h for h in lab.hypotheses(S.DATA_READY) + lab.hypotheses(S.IDEA)
+               if ("builder" if h["status"] == S.DATA_READY else "scout", h["id"]) not in asked]
+    if len(waiting) >= policy.propose_when_waiting_below:
         return None
     return briefs.next_task(lab)
 
