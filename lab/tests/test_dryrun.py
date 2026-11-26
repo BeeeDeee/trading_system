@@ -162,3 +162,18 @@ def test_synthetic_daily_perps_contain_instruments_named_by_the_strategy(card):
     assert {"BTCUSDT.P", "ETHUSDT.P"} <= set(v.instruments) and len(v.instruments) == 42
     assert "BTCUSDT.P" not in dryrun.synthetic_view(top, cat, seed=2).instruments
     assert v.extras["funding"].shape == v.shape                    # the named perps carry the perp extras too
+
+
+def test_etf_core_next_to_a_stock_universe_is_inside_the_synthetic_universe(card):
+    """H-0205: SPY named in data_requirements next to an sp500 universe. The real view (data.merge) gives a non-stock
+    dataset universe = listed, so a weight on it passes G0; the synthetic one used to mark it outside on every row."""
+    from lab.framework import catalog
+    from lab.framework.paths import LAB_DIR
+    cat = catalog.load(LAB_DIR / "data" / "catalog.yaml")
+    both = dict(card, asset_classes=["us_equity", "us_etf"], universe={"kind": "sp500"},
+                data_requirements=[{"dataset": "sharadar_sep", "frequency": "1d"},
+                                   {"dataset": "sharadar_sfp", "frequency": "1d", "instruments": ["SPY"]}])
+    v = dryrun.synthetic_view(both, cat, seed=2)
+    spy, stocks = v.col("SPY"), [j for j, i in enumerate(v.instruments) if i.startswith("E")]
+    assert (v.universe[:, spy] == v.listed[:, spy]).all() and v.universe[:, spy].mean() > 0.7
+    assert v.universe[:, stocks].sum(axis=1).max() == 40            # the stock universe itself is unchanged
