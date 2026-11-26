@@ -1,5 +1,7 @@
 """Framework reactions and gate driving."""
 
+import json
+
 import pytest
 
 from lab import stubs
@@ -194,3 +196,15 @@ def test_tick_without_evaluator_leaves_gate_work_waiting(lab, card):
     assert lab.hypothesis(hid)["status"] == S.DATA_READY
     tick(lab, Evaluator())
     assert lab.hypothesis(hid)["status"] == S.SKEPTIC_REVIEW
+
+
+def test_a_named_universe_too_small_for_the_event_study_stays_in_idea(lab, card):
+    """H-0184, H-0185, H-0208: three named ETFs plus a mechanism_test can never reach 3 unmarked peers (K-0174)."""
+    small = dict(card, title="Three named funds with an event study", mechanism_test={
+        "event": "Month-end dates on which all three funds are marked, measured against the other funds",
+        "primary_horizon_days": 5}, universe={"kind": "instruments", "instruments": ["SPY", "IEF", "TLT"]})
+    hid = submit(lab, small)
+    assert lab.hypothesis(hid)["status"] == "IDEA"
+    q = [json.loads(r["payload_json"])["question"] for r in lab.con.execute(
+        "SELECT payload_json FROM messages WHERE type = 'QUESTION' AND hypothesis_id = ?", (hid,))]
+    assert any("needs at least 4" in x for x in q)

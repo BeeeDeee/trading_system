@@ -213,6 +213,13 @@ as one trial of the family. For a ranking strategy (e.g. low volatility) the eve
 long (short) leg at a rebalance"; for a regime filter, "the filter switches on". If no event can be defined (a
 pure allocation rule with no conditional claim), leave `mechanism_test` out and say why in `notes`.
 
+**Peers.** The comparison needs at least 3 eligible instruments that are not marked on every event date (G0 check
+`g0_event_peer_set`; H-0184, H-0185 and H-0208 each cost a Builder run and an owner question on it). Count them
+before you file: the instruments in `universe.instruments` minus those the event marks, on the first event date
+too (a fund that lists later is not eligible before). With a named-instruments universe of fewer than 4 the
+checker refuses the card outright. Add **peer-only** instruments to the universe when needed (similar funds the strategy
+never trades and the event never marks; say so in `notes`, and name the beta or duration gap to the marked ones).
+
 ## Card details the checker enforces
 
 - `data_requirements[].period`: optional `[start, end]` inside the dataset range; use it to start after the

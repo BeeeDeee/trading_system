@@ -111,6 +111,11 @@ def _spec_and_data(lab: Lab, hid: str, m) -> str:
         lab.send("QUESTION", "system", ask_to, hid,
                  {"question": f"{hid} stays in IDEA: " + "; ".join(grid), "in_reply_to": m["id"]})
         return "stays IDEA (parameter grid)"
+    mech = validate.mechanism_problems(card)
+    if mech:
+        lab.send("QUESTION", "system", ask_to, hid,
+                 {"question": f"{hid} stays in IDEA: " + "; ".join(mech), "in_reply_to": m["id"]})
+        return "stays IDEA (event-study peers)"
     att = attached.requirement_problems(card, catalog.load(lab.paths.catalog))
     if att:
         lab.send("QUESTION", "system", ask_to, hid,

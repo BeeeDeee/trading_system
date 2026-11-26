@@ -104,3 +104,15 @@ def test_an_unanswered_owner_question_stops_the_agent_loop(lab, card, tmp_path):
     assert pending_tasks(lab) == []                       # the Builder is not started again and again
     lab.mark_handled([q], "human")
     assert [t.agent for t in pending_tasks(lab)] == ["builder"]
+
+
+def test_cards_waiting_only_for_the_owner_do_not_stop_the_scout_from_proposing(lab, card, tmp_path):
+    """2026-11-25..26: four DATA_READY cards with an owner question filled propose_when_waiting_below and nothing ran."""
+    from lab.orchestrator import Policy, propose_brief
+    pol = Policy.load(policy(tmp_path, propose_when_waiting_below=1))
+    hid = submit(lab, card)
+    assert propose_brief(lab, pol) is None                # one card waits for the Builder: no room
+    q = lab.send("QUESTION", "builder", "human", hid, {"question": "cannot implement this as written, please decide"})
+    assert propose_brief(lab, pol) is not None            # it waits for the owner now: the Scout may propose
+    lab.mark_handled([q], "human")
+    assert propose_brief(lab, pol) is None
