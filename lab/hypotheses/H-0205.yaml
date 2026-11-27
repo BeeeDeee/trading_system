@@ -168,7 +168,10 @@ notes: 'owner_seed: G2V-4
   cap-weighted core (sf1 marketcap anchored at its last change and grown by total return, K-0168), with a core-only
   run reported. The family carries many trials and references add the literature prior at G3, so even a G1 pass
   faces a high deflated-Sharpe hurdle.'
-status: DATA_READY
+status: REJECTED
+terminal:
+  stage: G1
+  reason_code: g1_mechanism_placebo_percentile
 history:
 - ts: '2026-11-25T02:38:53.446958+00:00'
   version: 1
@@ -191,3 +194,17 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-26T23:06:24.695432+00:00'
+  version: 1
+  from: DATA_READY
+  to: IMPLEMENTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G0 passed (run 499, qlab)
+- ts: '2026-11-26T23:09:11.139896+00:00'
+  version: 1
+  from: IMPLEMENTED
+  to: REJECTED
+  agent: gatekeeper
+  invocation_id: null
+  reason: G1 failed (run 500, qlab)

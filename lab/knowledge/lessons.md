@@ -1649,6 +1649,24 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - open questions: Untested: slope outside the zero-lower-bound years, a term-premium estimate instead of the raw slope, a carry or roll-down version, and the tilt as a book against the core (never judged). H-0184 shares this sleeve and cohort machinery; only its information source is new.
 - related: H-0184, H-0061, H-0177, H-0087, H-0038, H-0127
 
+## H-0184 – Treasury duration-supply surge and the term premium - 60/40 SPY/IEF core whose bond sleeve sits in TLT after a surge in long-coupon auction sizes, in SHY after a cut, 12-month monthly cohorts
+
+- family: `bond-term-premium-timing` · mechanism: risk_premium · instruments: TLT/TLH against SHY/IEI inside a sixty-forty SPY/IEF core, by auction supply
+- outcome: rejected at G1: positive and above cost, but under the placebo percentile bar; strategy gates never ran
+- lesson: The supply-surge claim had the right shape: small at one week, larger toward a quarter, positive in every third, the latest not weaker. But placebos with the same sides already earned most of it (long over short duration is a standing premium in a falling-rate sample, and surge months outnumber cuts), so the event sat inside a wide cloud. This is a cannot-tell, not a null: few independent supply cycles, four legs sharing each date. A pass would not separate supply from recession and rate cuts, as the card warned.
+- avoid: Do not refile with other supply_cut or base_years values or other duration legs on the same month-ends: same events, one trial. Do not read the unconditional long-duration drift of the dev years as a supply effect.
+- open questions: Untested: supply net of central-bank purchases (not loadable), a design whose same-side placebo mean is near zero, and a stock-versus-flow contrast of the supply measure. H-0183 used a price state for the same claim and was a null at zero; this information source did better in shape but not in power.
+- related: H-0183, H-0038, H-0127, H-0164
+
+## H-0185 – Breakeven-inflation reversion in TIPS vs nominal Treasuries - weekly 52-week cohorts, long TIP/SCHP and short IEF when the 5y breakeven sits 1 sd below its 3-year mean, the reverse 1 sd above
+
+- family: `tips-breakeven-reversion` · mechanism: risk_premium · instruments: TIP and SCHP against IEF, market-neutral, by the five-year breakeven
+- outcome: rejected at G1: small positive average inside the placebo cloud, earliest third wrong-signed; strategy gates never ran
+- lesson: A breakeven far from its own multi-year norm did not predict TIPS over nominals beyond what shifted dates earn. The average was small, the placebo mean about zero, the cloud wide against it, and it was flat at short horizons and built only toward a quarter. The earliest third, probably the 2008 liquidity episode (inferred, dates not reported), was wrong-signed: cheap TIPS got cheaper, the risk the card stated. TIP and SCHP share each date and breakeven regimes are few, so events overstate independent evidence. Null-leaning, but the bar was above cost, so a small effect is not excluded.
+- avoid: Do not retune lookback_days or the one-sd entry, or add other TIPS funds on the same dates: same events, one trial. Do not call this a liquidity-premium test while TIPS accrual and duration differences are not matched.
+- open questions: The card's side split (cheap side alone) was to come from Builder diagnostics and is not in the gate output, so the liquidity reading is untested. Also untested: the post-2010 years alone, a real-yield or liquidity-spread state instead of the raw breakeven, and an inflation-swap measure (not loadable).
+- related: H-0183, H-0184, H-0129
+
 ## H-0186 – Linear short-term momentum in liquid crypto perps, learned - top-30 Binance perps dollar-neutral, walk-forward ridge on 1-28 day returns, daily 5-day cohorts
 
 - family: `short-term-momentum` · mechanism: behavioral · instruments: top liquid Binance perps, dollar-neutral daily cohorts, walk-forward ridge on past returns, 2020-2022
@@ -1810,3 +1828,48 @@ Written by the Librarian, rendered by the framework. Qualitative on purpose: no 
 - avoid: Do not refile with other z_min or lead_sessions values or a long-only version of the long leg as a rescue: neighbours are the same events and every card adds to the family trial count. Do not treat a pass of a sign chosen on the same dev window as evidence. Leg beta was never reported (K-0074): a part-time long-biased book in a rising 2004-2020 sample is partly market exposure.
 - open questions: The 2021-2026 holdout was not reached, so the sign is untested out of sample. Untested: a control matched on reaction history run away from the release window, to separate release timing from the identity of repeat extreme reactors (K-0185); leg betas; whether the long leg alone survives as a tilt on an always-invested core (K-0064 warns it often does not).
 - related: H-0197, H-0068, H-0033, H-0136, H-0091, H-0113
+
+## H-0205 – Quarterly index share-update pressure as a long-only tilt - SPY core, 20 % of NAV in the 50 S&P 500 members with the largest pending share increase for the 20 sessions before each quarterly rebalance
+
+- family: `index-inclusion-price-pressure` · mechanism: flow_structural · instruments: S&P 500 pending-share-increase names as a small tilt on a SPY core
+- outcome: rejected at G1: above cost but under the placebo percentile bar; tilt book never ran
+- lesson: The long side alone did not reproduce the H-0201 pass. Increase names beat other members, but the same stocks on shifted dates also earned a positive amount, so the event was not clearly more than identity. The gain sat in the last sessions before the rebalance and was flat at the shorter horizons, the pre-positioning shape, and the middle third was near zero. So the pooled H-0201 pass leaned on the decrease side, on the contrast with other members, or on noise near the bar. By the card's own arithmetic a small sleeve part of the year could not have carried the Sharpe margin anyway.
+- avoid: Do not retune the window from the horizon profile, and do not treat this as independent of H-0201: it is a subset of its events. Do not size the sleeve up to reach the margin; that is a new trial on the same weak event.
+- open questions: H-0201's code was not available: the Builder rebuilt the definitions from the card with approximate holiday rules, so the event set is not verified identical to the parent's. Untested: the decrease side alone with the same core-only control, a beta- and size-matched peer set (K-0074), and a split by quarter-end month.
+- related: H-0201, H-0113, H-0181, H-0017, H-0022
+
+## H-0206 – Rule 201 short-sale circuit breaker - LIQ-500 neutral, long restricted -10 % droppers, short near misses, ridge-ranked, 2 days
+
+- family: `short-sale-circuit-breaker` · mechanism: flow_structural · instruments: LIQ-500 US stocks: long ten-percent droppers (Rule 201 binds), short near misses, two days
+- outcome: rejected at G1: the restricted-minus-near-miss average sat inside the placebo cloud and gross was a fraction of round-trip cost. The ridge and book never ran.
+- lesson: The Rule 201 step was not visible in daily bars. The contrast was barely positive at the primary horizon, inside the placebo cloud, with the placebo bar about at cost, so a literature-sized step would have shown. The first session, which the restriction covers, was about zero, so the restriction shape is absent. The contrast turned negative at five and ten sessions (continuation or give-back; not separable). Blocks disagreed in sign and the latest was mostly clustered selloff dates, so events overstate independent evidence. Near-miss contamination dilutes but hardly explains a zero first session.
+- avoid: Do not re-run this restricted-versus-near-miss contrast with other bands, alphas, horizons or a gbm: the model was never reached and variants are new trials of the same events.
+- open questions: Not run by the judge: the same contrast before 2011 without a price test, and plain rule versus ridge. Intraday lows and less liquid stocks are not loadable.
+- related: H-0082, H-0108, H-0030
+
+## H-0207 – Delayed dollar response to scheduled US rate news - after a large 2-year Treasury yield move on a CPI, payrolls or FOMC day, hold six G10 currency trusts on the dollar's predicted side for 5 sessions
+
+- family: `fx-delayed-overshooting` · mechanism: cross_asset_information · instruments: six G10 currency trusts on one dollar side for five sessions after large two-year yield moves on CPI, payrolls and FOMC days; near-cash Treasury ETFs as peers
+- outcome: rejected at G1 mechanism test: right-signed, gross about equal to cost, but below the placebo percentile bar and negative in the latest third; strategy not run
+- lesson: A near miss, not a refutation: the pooled five-session average was positive, but placebos reached nearly as far, gross only just covered cost and the placebo bar sat at or above cost. Two earlier thirds were positive and the latest negative, the card's own sign kill. Effect was about nil at one and three sessions and larger only at longer horizons: slow drift outlasting the hold, not a quick delayed reaction. All six trusts share each date, so the evidence is the event dates, not the marked events.
+- avoid: Do not retune z_threshold or hold_days, or lengthen the hold because longer horizons look larger. Do not split by release type or flip the sign. Do not refile as rate-news dollar momentum or yield sorts on the same trusts (H-0179 family).
+- open questions: Is it release-specific? A same-size yield move on non-release days and a yield-up versus yield-down split would separate overshooting from dollar trend or risk sentiment. Why the latest third turned negative is untested.
+- related: H-0179, H-0047, H-0070, H-0062, H-0042
+
+## H-0208 – Commodity-index roll pressure in crude ETFs - short front-month USO vs deferred USL/DBO, oil-beta-neutral, month start into the GSCI roll, 5 sessions
+
+- family: `commodity-index-roll-pressure` · mechanism: flow_structural · instruments: short USO, long USL and DBO (crude oil ETFs), oil-beta-neutral, month start
+- outcome: parked at DATA_READY by the owner before any gate ran; no result, untested
+- lesson: Nothing is learned about roll pressure itself. The parking shows a design gap: with only three funds, all marked, the peers are the other legs, so the abnormal return is read against the same spread that carries contango and oil-beta drift. A never-marked, oil-beta-matched peer set is needed (K-0074) and the card supplied none. The card's own forecast lists likely deaths: placebo bar, cost of the thin deferred funds, latest-third decay, one super-contango episode. Few independent months.
+- avoid: Do not resubmit with the same three-fund universe and no peer instruments. Do not read this parking as a failed test of the mandated-flow idea.
+- open questions: Whether a dated index roll shows in the front-minus-deferred spread of crude ETFs once contango drift is netted out, and whether sunshine trading absorbed it. Needs an oil-beta-matched peer set (other energy or commodity ETFs) and the thin funds' round-trip cost from the catalog tier.
+- related: H-0048, H-0073
+
+## H-0209 – Producer equities catch up to their own commodity - trade miner and E&P ETFs toward a 5-session gap vs their commodity ETF and SPY, hedged, hold 5 days
+
+- family: `etf-premium-arbitrage` · mechanism: cross_asset_information · instruments: gold, silver, oil and gas producer ETFs against their commodity ETF and SPY, hedged
+- outcome: rejected at G1: wrong-signed, below the placebo mean and far under the percentile bar; one of three blocks right-signed
+- lesson: A producer ETF that lagged or ran ahead of its own commodity did not converge over a week. Events were plentiful, so this is a measured null, not a power problem. Only the earliest block was positive, probably 2008-2009 stress (inferred, K-0084); the later blocks were wrong-signed (K-0060). No catch-up shape across horizons: flat at one session, negative at three and ten. The gap reads as priced cash-flow news or momentum, not an equity-side concession. The card said failure would mean anchor-gap books fail even with the tightest economic anchor; it did.
+- avoid: Do not retry the producer-commodity residual with another window, z threshold or producer subset: grid neighbours are the same evidence. Do not file a cross-market gap with no creation/redemption link as a wrapper premium; nothing forces convergence.
+- open questions: Side split (lagged-long versus ran-ahead-short) and split by commodity pair were not reported. A different information source (producer earnings or guidance dates, hedge-book disclosures) or a slower horizon with a matched control is different enough; a plain gap rule is not.
+- related: H-0080, H-0037, H-0119, H-0173, H-0132, H-0056

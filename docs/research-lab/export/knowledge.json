@@ -2950,5 +2950,53 @@
   "actor": "librarian",
   "message_id": 1641,
   "ts": "2026-11-25T02:07:46.113776+00:00"
+ },
+ {
+  "id": "K-0247",
+  "kind": "framework",
+  "title": "lab try cannot exercise tail-threshold event cards: synthetic returns never fall ten percent (H-0206)",
+  "statement": "H-0206 defines its events by daily drops of at least ten percent. The Builder reports that lab try's synthetic returns never fall below about six percent, so the card showed 0 events and 0 trades in lab try; the Builder exercised the logic with injected drops in unit tests. On real data G0 was the first meaningful check (4233 events at G0, 4232 at G1). Same class of gap as K-0082, K-0092 and K-0135: synthetic data cannot reach the card's event definition. Suggested: give the synthetic market a fat-tailed return component so extreme-move cards can be smoke-tested. The Scout's forecast (R 1000-2000, N 900-1800 over the dev period) was met (about 4200 events combined, on about 1170 dates), but the latest third held more than half of them, from clustered selloff dates.",
+  "evidence": "[\"H-0206\",\"K-0082\",\"K-0092\",\"K-0135\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1649,
+  "ts": "2026-11-25T04:37:24.808063+00:00"
+ },
+ {
+  "id": "K-0248",
+  "kind": "market",
+  "title": "US rate information into G10 currency trusts: two designs, two right-signed near misses, both weakest lately",
+  "statement": "Two cards used US or home-country rate information to predict the G10 currency trusts: a monthly sort on home ten-year yield changes (H-0179) and a five-session dollar hold after large two-year yield moves on scheduled release days (H-0207). They differ in signal, horizon and book, yet the picture is the same: a right-signed pooled average, gross near round-trip cost, a percentile just under the placebo bar with the bar at or above cost, an effect that builds with the horizon instead of appearing in the first sessions, and the latest third of dev the weakest (negative in H-0207, the card's own kill). So a delayed-response story is not refuted, but neither is it separated from carry, dollar trend or a risk-sentiment loading (K-0074), and a bar above cost means a small real effect is not excluded. Six trusts marked on one date count as one date, so independent evidence is a few regimes or a few hundred dates (K-0034). Untested: a non-release-day control with the same yield move, a side split, legs matched on carry and beta. A third rate-into-currency card on these trusts has a low prior unless it adds one of those controls or a different instrument.",
+  "evidence": "[\"H-0207\",\"H-0179\",\"H-0070\",\"H-0047\",\"K-0228\",\"K-0060\",\"K-0074\",\"K-0034\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1656,
+  "ts": "2026-11-25T07:06:17.684956+00:00"
+ },
+ {
+  "id": "K-0249",
+  "kind": "market",
+  "title": "S&P 500 quarterly share-update pressure: the event passed pooled, the long side alone did not clear; no book",
+  "statement": "H-0201 cleared the placebo bar with both sides marked, positive in every third, but its book lost: the long leg earned and the short leg lost (K-0240). H-0205 isolated the long side as a tilt on an always-invested core, with the other members as peers. Increase names beat other members on the point estimate and gross was above cost, but same-stock placebos also earned a positive amount and the event stayed under the percentile bar. The gain again came in the last sessions before the rebalance, flat at shorter horizons, and the middle third was near zero. So the pooled pass cannot be attributed to the long side; the decrease side, the contrast with other members or noise near the bar remain open. The two cards share events, so this is one piece of evidence seen twice. H-0205 was rebuilt without the parent's code, so event equality is unverified. A further card on this event needs the decrease side as a tilt, a size- and beta-matched peer set, and a core-only control; the long-only form has a low prior.",
+  "evidence": "[\"H-0205\",\"H-0201\",\"H-0113\",\"K-0240\",\"K-0207\",\"K-0153\",\"K-0074\"]",
+  "confidence": "low",
+  "supersedes": "K-0240",
+  "actor": "librarian",
+  "message_id": 1675,
+  "ts": "2026-11-26T23:11:07.245284+00:00"
+ },
+ {
+  "id": "K-0250",
+  "kind": "market",
+  "title": "Slow Treasury-ETF timing cards: three state variables, none above same-fund placebos",
+  "statement": "Three cards timed Treasury ETFs over a year-long hold: by curve slope (H-0183), by long-coupon auction supply (H-0184) and by breakeven inflation in TIPS versus nominals (H-0185). All ended under the placebo percentile bar at the mechanism test, for different reasons. The slope was a null at the point estimate. Auction supply had the shape of a slow premium and covered cost, but same-side placebos already earned most of it because long over short duration paid in the dev years: a cannot-tell. The breakeven card was wrong-signed in the earliest third, probably the 2008 liquidity episode (inferred). Each has few independent regimes behind many overlapping events and a bar above cost, so only a large effect is resolved (K-0026, K-0034). Consistent with K-0228. A further Treasury-ETF timing card has a low prior unless its placebo mean is near zero or both sides are balanced.",
+  "evidence": "[\"H-0183\",\"H-0184\",\"H-0185\",\"K-0228\",\"K-0210\",\"K-0026\",\"K-0034\",\"K-0060\"]",
+  "confidence": "low",
+  "supersedes": null,
+  "actor": "librarian",
+  "message_id": 1679,
+  "ts": "2026-11-26T23:11:07.338149+00:00"
  }
 ]

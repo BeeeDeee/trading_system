@@ -1,6 +1,7 @@
 """H-0184 mechanism test: at each book month-end decision date with state HIGH, TLT and TLH +1, SHY and IEI -1;
-with state LOW the reverse; NEUTRAL months no events. IEF and SPY are never marked. Same pipeline as
-strategy.py (copied: diagnostic.py is a separate file)."""
+with state LOW the reverse; NEUTRAL months no events. IEF, SPY, AGG and LQD are never marked (peers; AGG and
+LQD are peer-only instruments added in card v2). Same pipeline as strategy.py (copied: diagnostic.py is a
+separate file)."""
 import numpy as np
 
 DS = "treasury_auctions_1d"

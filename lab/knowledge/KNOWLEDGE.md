@@ -342,12 +342,6 @@ K-0235 covered three designs at five sessions and left longer horizons open. H-0
 
 *confidence low · 2026-11-24 · librarian · supersedes K-0235 · evidence: H-0200; H-0193; H-0194; H-0012; K-0235; K-0074; K-0060; K-0135*
 
-### K-0240 S&P 500 quarterly share-update pressure: event passes, neutral book does not
-
-H-0113 died on a core artefact (K-0168) and never tested the event. H-0201 did, with split-consistent share counts and both sides marked. The average beat other members at the rebalance close, cleared the same-stock placebo bar and cost, and was positive in every third with the latest not weaker, unlike most events in the lab (K-0060). The gain came in the second half of the window, which looks like pre-positioning near the close, not drift. It gave no book: gross Sharpe was under the absolute floor, the long leg earned and the short leg lost (K-0207), and the book was mostly in cash. One pass of one card, with a placebo bar near the effect. Untested: increases alone as a tilt on a core, a beta-matched control, a side split (K-0218).
-
-*confidence low · 2026-11-24 · librarian · evidence: H-0201; H-0113; K-0168; K-0207; K-0218; K-0221; K-0024; K-0060*
-
 ### K-0241 BTC-led altcoin catch-up: proportional sizing and the down side did not cure it
 
 K-0058 read the long-only BTC-led catch-up rule as strong at its primary setting but dependent on a high threshold and one sub-period. H-0202 replaced the binary lag cut-off by a beta-implied expected catch-up with proportional sizing and added the down direction, keeping threshold, window, hold and leader. It was not more stable: it died at the first gate, with a clearly negative net result, a bootstrap bound of the mean net trade below zero, and costs a multiple of the gross per trade. So the parent's pass at that gate looks tied to the long-only binary-lag form, and the claim that sizing by expected gap makes the threshold matter less is not supported. The lag side after a BTC drop and the dose response (do larger expected gaps catch up more) were not separated, because the judge does not report side splits or per-trade terciles (K-0193). A beta-implied gap is a gross-up of the full beta move and probably overstates what is realised in four hours. The family now has two rejections and a parked duplicate; further variants have a low prior, and the owner's forward test is the clean evidence.
@@ -365,6 +359,24 @@ The option-demand-pressure family has two cards, both reading market-wide option
 In liquid US stocks the previous earnings reaction predicts the opposite direction around the next predicted release: big negative reactors last quarter beat peers, big positive ones lag. H-0197 measured it with approximate dates; H-0204 re-built it with real prior reaction dates and a sign unit test and got the same direction, so H-0197 was not a silent sign inversion. The two share events and dev window (one piece of evidence seen twice) and the second sign was chosen after the first result. Same-stock placebos near zero, so not stock identity; positive in every third with the latest strongest, the reverse of K-0060; nothing at the first session and still building after the release; the long leg carried the book and the short leg added about nothing (K-0207); leg betas not reported (K-0074). It covered cost in an event study but not the deflated Sharpe hurdle; holdout not read. Untested: a reaction-history-matched control away from the release.
 
 *confidence low · 2026-11-25 · librarian · evidence: H-0204; H-0197; H-0068; K-0083; K-0185; K-0207; K-0074; K-0060*
+
+### K-0248 US rate information into G10 currency trusts: two designs, two right-signed near misses, both weakest lately
+
+Two cards used US or home-country rate information to predict the G10 currency trusts: a monthly sort on home ten-year yield changes (H-0179) and a five-session dollar hold after large two-year yield moves on scheduled release days (H-0207). They differ in signal, horizon and book, yet the picture is the same: a right-signed pooled average, gross near round-trip cost, a percentile just under the placebo bar with the bar at or above cost, an effect that builds with the horizon instead of appearing in the first sessions, and the latest third of dev the weakest (negative in H-0207, the card's own kill). So a delayed-response story is not refuted, but neither is it separated from carry, dollar trend or a risk-sentiment loading (K-0074), and a bar above cost means a small real effect is not excluded. Six trusts marked on one date count as one date, so independent evidence is a few regimes or a few hundred dates (K-0034). Untested: a non-release-day control with the same yield move, a side split, legs matched on carry and beta. A third rate-into-currency card on these trusts has a low prior unless it adds one of those controls or a different instrument.
+
+*confidence low · 2026-11-25 · librarian · evidence: H-0207; H-0179; H-0070; H-0047; K-0228; K-0060; K-0074; K-0034*
+
+### K-0249 S&P 500 quarterly share-update pressure: the event passed pooled, the long side alone did not clear; no book
+
+H-0201 cleared the placebo bar with both sides marked, positive in every third, but its book lost: the long leg earned and the short leg lost (K-0240). H-0205 isolated the long side as a tilt on an always-invested core, with the other members as peers. Increase names beat other members on the point estimate and gross was above cost, but same-stock placebos also earned a positive amount and the event stayed under the percentile bar. The gain again came in the last sessions before the rebalance, flat at shorter horizons, and the middle third was near zero. So the pooled pass cannot be attributed to the long side; the decrease side, the contrast with other members or noise near the bar remain open. The two cards share events, so this is one piece of evidence seen twice. H-0205 was rebuilt without the parent's code, so event equality is unverified. A further card on this event needs the decrease side as a tilt, a size- and beta-matched peer set, and a core-only control; the long-only form has a low prior.
+
+*confidence low · 2026-11-26 · librarian · supersedes K-0240 · evidence: H-0205; H-0201; H-0113; K-0240; K-0207; K-0153; K-0074*
+
+### K-0250 Slow Treasury-ETF timing cards: three state variables, none above same-fund placebos
+
+Three cards timed Treasury ETFs over a year-long hold: by curve slope (H-0183), by long-coupon auction supply (H-0184) and by breakeven inflation in TIPS versus nominals (H-0185). All ended under the placebo percentile bar at the mechanism test, for different reasons. The slope was a null at the point estimate. Auction supply had the shape of a slow premium and covered cost, but same-side placebos already earned most of it because long over short duration paid in the dev years: a cannot-tell. The breakeven card was wrong-signed in the earliest third, probably the 2008 liquidity episode (inferred). Each has few independent regimes behind many overlapping events and a bar above cost, so only a large effect is resolved (K-0026, K-0034). Consistent with K-0228. A further Treasury-ETF timing card has a low prior unless its placebo mean is near zero or both sides are balanced.
+
+*confidence low · 2026-11-26 · librarian · evidence: H-0183; H-0184; H-0185; K-0228; K-0210; K-0026; K-0034; K-0060*
 
 ## Data
 
@@ -780,6 +792,12 @@ K-0193 found that a control written as a strategy argument does not run unless t
 
 *confidence medium · 2026-11-24 · librarian · supersedes K-0193 · evidence: H-0202; H-0140; H-0139; H-0138; H-0137; K-0193*
 
+### K-0247 lab try cannot exercise tail-threshold event cards: synthetic returns never fall ten percent (H-0206)
+
+H-0206 defines its events by daily drops of at least ten percent. The Builder reports that lab try's synthetic returns never fall below about six percent, so the card showed 0 events and 0 trades in lab try; the Builder exercised the logic with injected drops in unit tests. On real data G0 was the first meaningful check (4233 events at G0, 4232 at G1). Same class of gap as K-0082, K-0092 and K-0135: synthetic data cannot reach the card's event definition. Suggested: give the synthetic market a fat-tailed return component so extreme-move cards can be smoke-tested. The Scout's forecast (R 1000-2000, N 900-1800 over the dev period) was met (about 4200 events combined, on about 1170 dates), but the latest third held more than half of them, from clustered selloff dates.
+
+*confidence low · 2026-11-25 · librarian · evidence: H-0206; K-0082; K-0092; K-0135*
+
 ## How the lab works
 
 ### K-0010 Fail loudly on missing inputs
@@ -987,3 +1005,4 @@ Owner batch G2V (2026-11-24) varied the form of three G2-stage parents: insider 
 - K-0231 No-news peer-adjusted reversal in the S&P 500: daily and monthly holds are both right-signed, neither covers cost
 - K-0235 Insider purchase filings in liquid US stocks: no drift in three designs; the one pass is the crisis era
 - K-0237 No-news reversal in large caps: sorts, tail conditioners and a supply-shock event filter all stay near cost
+- K-0240 S&P 500 quarterly share-update pressure: event passes, neutral book does not
