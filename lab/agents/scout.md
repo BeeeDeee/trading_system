@@ -137,6 +137,11 @@ compute budget. What you design is the **hypothesis around the model**:
    borrow cost in the engine, so use perps for short legs) and `binance_perp_1d` (perpetuals `BTCUSDT.P`
    etc., funding charged to positions, funding and basis available as signals).
 
+   **Signal series** (Coin Metrics, FRED, CFTC and other `loader: generic` datasets): always name the `fields`
+   you use. G0 checks every series you request for dev values, and a requirement without `fields` requests all
+   of the dataset's series, so one key that starts after the dev window fails G0 for a card that never reads it
+   (H-0075, H-0125, H-0180).
+
    **Stock-attached data** (list the dataset next to `sharadar_sep` and name the `fields`; at most 6 fields per
    card in total, RAM): `sharadar_sf1` fundamentals as reported (`sf1_art_<column>` trailing twelve months,
    `sf1_arq_<column>` quarter, e.g. `sf1_art_roe`, `sf1_art_netinc`, `sf1_arq_revenue`; usable from the day after
