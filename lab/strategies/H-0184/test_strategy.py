@@ -7,7 +7,7 @@ from strategy import PARAMS, target_weights
 from strategy import (auction_offerings, base_supply, cohort_counts, month_end_rows, supply_state,
                       supply_surge, trailing_supply, nyse_month_end_holidays, surge_signal)
 
-INSTR = ("SPY", "SHY", "IEI", "IEF", "TLH", "TLT")
+INSTR = ("SPY", "SHY", "IEI", "IEF", "TLH", "TLT", "AGG", "LQD")
 DS = "treasury_auctions_1d"
 
 
@@ -180,6 +180,7 @@ def test_weights_book():
     assert np.all(Wd >= 0) and np.allclose(Wd.sum(axis=1), 1.0)
     assert np.allclose(Wd[:, data.col("SPY")], 0.6)
     assert np.all(Wd[:, data.col("IEI")] == 0) and np.all(Wd[:, data.col("TLH")] == 0)
+    assert np.all(Wd[:, data.col("AGG")] == 0) and np.all(Wd[:, data.col("LQD")] == 0)   # peer-only (card v2)
     # g undefined before 252*(2+3)-1 rows: pure 60/40 SPY/IEF
     rows = np.flatnonzero(dec)
     early = rows < 1259
@@ -256,3 +257,4 @@ def test_low_state_moves_sleeve_to_shy():
     st = supply_state(g, 0.1)[rows]
     n_low = np.convolve(st == -1, np.ones(12), mode="full")[:rows.size]
     assert np.allclose(W[rows, data.col("SHY")], 0.4 * n_low / 12)
+    assert np.all(W[rows, data.col("AGG")] == 0) and np.all(W[rows, data.col("LQD")] == 0)

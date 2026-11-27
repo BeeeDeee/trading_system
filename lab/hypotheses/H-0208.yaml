@@ -142,7 +142,10 @@ notes: 'Brief fit. The brief asks for cross-asset signals at a 1-5 day hold. The
   DBO in backwardation can hold a near contract, which dilutes the contrast. ETF short borrow cost for USO is not
   modeled by the engine. No forward data for ETFs, so G4 is the ceiling. Natural gas (UNG against UNL) and Brent
   (BNO) are left out on purpose: UNL is too thin, and the Brent-WTI basis adds noise to the contrast.'
-status: DATA_READY
+status: PARKED
+terminal:
+  stage: DATA_READY
+  reason_code: null
 history:
 - ts: '2026-11-25T07:45:43.913789+00:00'
   version: 1
@@ -165,3 +168,11 @@ history:
   agent: system
   invocation_id: null
   reason: all data requirements resolve in the catalog
+- ts: '2026-11-26T21:21:27.298916+00:00'
+  version: 1
+  from: DATA_READY
+  to: PARKED
+  agent: human
+  invocation_id: null
+  reason: 'owner: needs oil-beta-matched peer-only instruments (g0_event_peer_set); parked until the peer design
+    is chosen (K-0074)'

@@ -7,6 +7,7 @@ Rules of the card and where they are implemented:
  (4) g_t = ln(S_t / B_t), state HIGH / LOW / NEUTRAL ..... supply_state()
  month-end decisions (last XNYS session of the month) .... month_end_rows()
  12 monthly cohorts, sleeve TLT / SHY / IEF, SPY 0.60 .... cohort_counts(), target_weights()
+ Card v2: AGG and LQD are peer-only instruments (event-study controls); the book holds 0 in them.
 """
 import numpy as np
 
@@ -204,7 +205,7 @@ def target_weights(data, params):
     if rows.size == 0:
         return W
     n_hi, n_lo, n_ne = cohort_counts(st[rows])
-    W[rows, :] = 0.0                                          # IEI, TLH (mechanism-test only) are never held
+    W[rows, :] = 0.0         # IEI, TLH (mechanism-test only) and AGG, LQD (peer-only, card v2) are never held
     W[rows, spy] = W_SPY
     W[rows, tlt] = W_BOND * n_hi / COHORTS
     W[rows, shy] = W_BOND * n_lo / COHORTS
