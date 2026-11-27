@@ -1,0 +1,106 @@
+{
+ "date": "2026-11-27",
+ "regime": {
+  "label": "Risk-off, přeprodaná konsolidace",
+  "summary": "BTC je za 30 dní −25 % a po dně u 55,1 tis. USD se drží kolem 60,6 tis. s RSI pod 30; z BTC ETF odtekly v listopadu rekordní částky a trh má v ceně prosincové zvýšení sazeb Fedem. Odraz z přeprodanosti je možný, ale trend zůstává medvědí a dny kolem Díkůvzdání mají nízkou likviditu."
+ },
+ "events_7d": [
+  {"date": "2026-11-28", "title": "Binance Blockchain Week v Bangkoku (28.–29. 11.)", "type": "jine"},
+  {"date": "2026-11-30", "title": "Konec komunitního hlasování Zcash o přerozdělení 50 tis. ZEC z grantové pokladny; KuCoin ten den delistuje XMR", "type": "jine"},
+  {"date": "2026-12-01", "title": "Ripple uvolní z escrow 1 mld. XRP (poslední letošní rutinní uvolnění)", "type": "unlock"},
+  {"date": "2026-12-04", "title": "Zpráva o zaměstnanosti v USA za listopad, poslední klíčová data před FOMC 8.–9. 12.", "type": "makro"},
+  {"date": "2026-12-06", "title": "Odemčení až 9,92 mil. HYPE pro klíčové přispěvatele (těsně za 7denním oknem)", "type": "unlock"}
+ ],
+ "coins": {
+  "BTC": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.52, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Hluboko pod všemi SMA s pokračujícími odlivy z ETF, ale RSI 27,7 a odraz od 55 tis. dávají šanci na krátkodobou stabilizaci.",
+   "sources": ["https://www.coindesk.com/markets/2026/11/23/u-s-inflation-thanksgiving-trading-crypto-week-ahead", "https://theblock.co/news/markets/2026-11-14-bitcoin-etfs-lose-1-billion-for-the-second-week-in-a-row-as-crypto-funds-except-one-continue-bleeding-440337", "https://www.morningstar.com/funds/crypto-etfs-saw-record-withdrawals-bitcoin-collapsed-november"]
+  },
+  "ETH": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.5, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Vyšší beta (1,31) a slabší relativní trend vůči BTC; nákupy treasury firem typu BitMine jsou známé a neobrátily trend.",
+   "sources": ["https://www.coindesk.com/markets/2026/11/23/u-s-inflation-thanksgiving-trading-crypto-week-ahead"]
+  },
+  "BNB": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.49, "p_up_7d": 0.51, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Kopíruje BTC (rel30 −0,5) s klesajícím objemem; Binance Blockchain Week je očekávaná akce bez zjevného překvapení.",
+   "sources": ["https://www.cryptotimes.io/2026/11/23/crypto-week-ahead-fed-inflation-data-strategys-msci-removal-binance-blockchain-week/"]
+  },
+  "XRP": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.52, "p_up_7d": 0.52, "expected_move_7d_pct": 1.0,
+   "event": true, "event_type": "unlock", "risk_flag": false,
+   "note": "Nejmenší odstup od SMA20 (−4,7 %) a mírně kladné rel7; rutinní uvolnění 1 mld. XRP z escrow 1. 12. je trhem dávno očekávané.",
+   "sources": ["https://crypto.com/en/market-updates/best-crypto-december-2026", "https://www.tradingnews.com/news/xrp-price-forecast-xrp-climbs-to-09520-as-etf-buyers-return-and-shorts-pile-up-108-usd-target-in-sight"]
+  },
+  "SOL": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.5, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Slabý trend (rel30 −4,8) a přeplněné longy (L/S 3,58); bez nové zprávy, která by změnila obraz.",
+   "sources": []
+  },
+  "HYPE": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.44, "p_up_7d": 0.45, "expected_move_7d_pct": -2.0,
+   "event": true, "event_type": "unlock", "risk_flag": false,
+   "note": "Odemčení 9,92 mil. HYPE (~600 mil. USD) 6. 12. je známé, ale zpravidla tlačí na cenu už předem; v ret7 −6,7 % je to zatím jen zčásti.",
+   "sources": ["https://crypto.com/en/market-updates/best-crypto-december-2026"]
+  },
+  "ZEC": {
+   "trend": -2, "mr": 2, "news": -1, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.47, "expected_move_7d_pct": -1.0,
+   "event": true, "event_type": "jine", "risk_flag": false,
+   "note": "Extrémně přeprodaný (−24 % za týden, 3 % nad 30denním minimem, shorty přibývají), ale velryby posílají ZEC na burzy, z fondu Grayscale odtékají peníze a 30. 11. končí sporné hlasování o pokladně.",
+   "sources": ["https://www.tokenpost.com/news/investing/63065", "https://beincrypto.com/zcash-price-etf-outflows-developer-count/", "https://cointelegraph.com/news/privacy-coins-kucoin-drop-monero-grayscale-zcash", "https://www.cryptotimes.io/2026/11/21/zcash-zec-price-drops-20-lowest-since-august-amid-broader-crypto-sell-off/"]
+  },
+  "DOGE": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.46, "p_up_7d": 0.49, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejníž od roku 2023; velryby od začátku listopadu prodávají a slábne podpora pro ETF, takže chybí katalyzátor.",
+   "sources": ["https://cryptoticker.io/en/dogecoin-price-crash-below-6-cents-lowest-since-june-2023/", "https://cryptoticker.io/en/dogecoin-whales-sell-750-million-doge/"]
+  },
+  "NEAR": {
+   "trend": -2, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.48, "expected_move_7d_pct": -0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Nejslabší rel30 (−9,7) s betou 1,78; schválené snížení emise už trh zpracoval a po ret3 +2,1 není přeprodaný.",
+   "sources": ["https://bitcoinworld.co.in/near-protocol-price-up-token-issuance-cut/"]
+  },
+  "U": {
+   "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.5, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Stablecoin držící kurz 1 USD; BTC překoná jen tehdy, když BTC klesne, a jako vklad nemá jinou výhodu než hotovost.",
+   "sources": ["https://defillama.com/stablecoin/united-stables"]
+  }
+ },
+ "top10": [
+  {"coin": "XRP", "reason": "Nejlepší relativní síla v rámci altcoinů a stabilní poptávka po ETF."},
+  {"coin": "BTC", "reason": "Nejnižší riziko v medvědím trhu; přeprodaný RSI."},
+  {"coin": "U", "reason": "Stablecoin, který překoná BTC, pokud trh dál klesá."},
+  {"coin": "BNB", "reason": "Pohybuje se s BTC při beta 1,1 bez zvláštního rizika."},
+  {"coin": "ZEC", "reason": "Nejsilnější potenciál pro odraz, ale s velkým rizikem kolem hlasování a prodejů velryb."},
+  {"coin": "ETH", "reason": "Odraz zesílený vyšší betou, ale trend vůči BTC je slabší."},
+  {"coin": "SOL", "reason": "Slabý trend, přeplněné longy."},
+  {"coin": "NEAR", "reason": "Nejslabší 30denní trend a vysoká beta."},
+  {"coin": "DOGE", "reason": "Velryby prodávají a chybí katalyzátor."},
+  {"coin": "HYPE", "reason": "Před odemčením tokenů 6. 12. hrozí prodejní tlak."}
+ ],
+ "claude_volne": {
+  "comment": "Zůstávám převážně v hotovosti (~75 %): trend je medvědí, a tak jen držím malé jádro BTC/ETH a přidávám malou pozici v relativně silném XRP na případný odraz z přeprodanosti.",
+  "positions": [
+   {"coin": "BTC", "weight_pct": 15, "reason": "Jádrová pozice; RSI pod 30 a odraz od 55 tis. dávají šanci na stabilizaci.", "invalidation": "Denní uzávěrka pod 55 tis. USD (nové minimum) nebo další týden s odlivy z ETF přes 1 mld. USD."},
+   {"coin": "ETH", "weight_pct": 5, "reason": "Malá pozice s vyšší betou pro případný odraz trhu.", "invalidation": "Uzávěrka pod 1 550 USD nebo pokračující zaostávání za BTC i během odrazu."},
+   {"coin": "XRP", "weight_pct": 5, "reason": "Nejmenší odstup od SMA20 v universu a trvalé přítoky do ETF.", "invalidation": "Pokles pod 0,88 USD nebo obrat ETF k odlivům."}
+  ]
+ }
+}

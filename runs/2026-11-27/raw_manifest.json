@@ -1,0 +1,265 @@
+{
+ "entries": [
+  {
+   "bytes": 151,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:09.311Z",
+   "file": "0012_okx_check_BTC.json",
+   "gzip": false,
+   "kind": "crosscheck_close",
+   "meta": {
+    "coin": "BTC",
+    "date": "2026-11-26"
+   },
+   "seq": 12,
+   "sha256": "3e31d6d5f70402513fa7c1dc5b3a601fca704cdc9213b843daff2d014f58a14e",
+   "status": 200,
+   "url": "https://www.okx.com/api/v5/market/candles?instId=BTC-USDT&bar=1Dutc&after=1795737600000&limit=1"
+  },
+  {
+   "bytes": 157,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:09.582Z",
+   "file": "0013_okx_check_DOGE.json",
+   "gzip": false,
+   "kind": "crosscheck_close",
+   "meta": {
+    "coin": "DOGE",
+    "date": "2026-11-26"
+   },
+   "seq": 13,
+   "sha256": "d838cb5714ada7bc9eab532008cb75fca6ec8e5c6f614c73ec4cb7b74889b13f",
+   "status": 200,
+   "url": "https://www.okx.com/api/v5/market/candles?instId=DOGE-USDT&bar=1Dutc&after=1795737600000&limit=1"
+  },
+  {
+   "bytes": 25,
+   "error": null,
+   "fetched_at": "2026-11-27T05:02:22.538Z",
+   "file": "0016_coingecko_price_BTC.json",
+   "gzip": false,
+   "kind": "crosscheck_price",
+   "meta": {
+    "coin": "BTC"
+   },
+   "seq": 16,
+   "sha256": "c0f0518de3def1c8c87af4a5401a80dbf07629076d8c90944c23e93047a06c62",
+   "status": 200,
+   "url": "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
+  },
+  {
+   "bytes": 35,
+   "error": null,
+   "fetched_at": "2026-11-27T05:02:22.570Z",
+   "file": "0017_coingecko_price_U.json",
+   "gzip": false,
+   "kind": "crosscheck_price",
+   "meta": {
+    "coin": "U"
+   },
+   "seq": 17,
+   "sha256": "a6c789b4789a821d69dba25a3f4a96eadb138e41c91fa068c06b6e2484ec70f5",
+   "status": 200,
+   "url": "https://api.coingecko.com/api/v3/simple/price?ids=united-stables&vs_currencies=usd"
+  },
+  {
+   "bytes": 1938,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:04.871Z",
+   "file": "0002_binance_1d_BNB.json",
+   "gzip": false,
+   "kind": "daily",
+   "meta": {
+    "coin": "BNB",
+    "pair": "BNBUSDT"
+   },
+   "seq": 2,
+   "sha256": "3a012ae91ed163e9ac939248d7faa645ec3c7ce60a8c781e0bc510cdce47f444",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=BNBUSDT&interval=1d&startTime=1794787200000&endTime=1795737599999&limit=1000"
+  },
+  {
+   "bytes": 2058,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:05.765Z",
+   "file": "0003_binance_1d_BTC.json",
+   "gzip": false,
+   "kind": "daily",
+   "meta": {
+    "coin": "BTC",
+    "pair": "BTCUSDT"
+   },
+   "seq": 3,
+   "sha256": "14f62d87eee95258eeeab8f82a8bf1e90794a078cdbca025713db79804656779",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime=1794787200000&endTime=1795737599999&limit=1000"
+  },
+  {
+   "bytes": 1925,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:06.663Z",
+   "file": "0004_binance_1d_DOGE.json",
+   "gzip": false,
+   "kind": "daily",
+   "meta": {
+    "coin": "DOGE",
+    "pair": "DOGEUSDT"
+   },
+   "seq": 4,
+   "sha256": "bdef9f07445a54dfecef706586ec214ce029391d23dac801b7a587e04d66b677",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=DOGEUSDT&interval=1d&startTime=1794787200000&endTime=1795737599999&limit=1000"
+  },
+  {
+   "bytes": 2027,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:07.326Z",
+   "file": "0005_binance_1d_ETH.json",
+   "gzip": false,
+   "kind": "daily",
+   "meta": {
+    "coin": "ETH",
+    "pair": "ETHUSDT"
+   },
+   "seq": 5,
+   "sha256": "054223a9394703555e0611a66d410e020201219ad2cc324ee9f72a61309e5da8",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1d&startTime=1794787200000&endTime=1795737599999&limit=1000"
+  },
+  {
+   "bytes": 1903,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:07.724Z",
+   "file": "0006_binance_1d_HYPE.json",
+   "gzip": false,
+   "kind": "daily",
+   "meta": {
+    "coin": "HYPE",
+    "pair": "HYPEUSDT"
+   },
+   "seq": 6,
+   "sha256": "67dcce3ff6ebee267b523227e40ee8b59f7d59514d9a385dd4e60429a7f2215e",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=HYPEUSDT&interval=1d&startTime=1794787200000&endTime=1795737599999&limit=1000"
+  },
+  {
+   "bytes": 1904,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:08.018Z",
+   "file": "0007_binance_1d_NEAR.json",
+   "gzip": false,
+   "kind": "daily",
+   "meta": {
+    "coin": "NEAR",
+    "pair": "NEARUSDT"
+   },
+   "seq": 7,
+   "sha256": "4b4db0533524f1c185fbf526d1cccf3792d82e83500bb514afb555ad2787b09f",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=NEARUSDT&interval=1d&startTime=1794787200000&endTime=1795737599999&limit=1000"
+  },
+  {
+   "bytes": 1943,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:08.277Z",
+   "file": "0008_binance_1d_SOL.json",
+   "gzip": false,
+   "kind": "daily",
+   "meta": {
+    "coin": "SOL",
+    "pair": "SOLUSDT"
+   },
+   "seq": 8,
+   "sha256": "ec65ea404997c358c3ef7fa605d59c798d6456c3f65d963c55d75936ac559fb6",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=SOLUSDT&interval=1d&startTime=1794787200000&endTime=1795737599999&limit=1000"
+  },
+  {
+   "bytes": 1893,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:08.537Z",
+   "file": "0009_binance_1d_U.json",
+   "gzip": false,
+   "kind": "daily",
+   "meta": {
+    "coin": "U",
+    "pair": "UUSDT"
+   },
+   "seq": 9,
+   "sha256": "20a1ba9500a420478c756791e232440e8a92d2790e19682cba0bcf7a49e2c1d5",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=UUSDT&interval=1d&startTime=1794787200000&endTime=1795737599999&limit=1000"
+  },
+  {
+   "bytes": 1920,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:08.793Z",
+   "file": "0010_binance_1d_XRP.json",
+   "gzip": false,
+   "kind": "daily",
+   "meta": {
+    "coin": "XRP",
+    "pair": "XRPUSDT"
+   },
+   "seq": 10,
+   "sha256": "4c08d9aa5d52aaf7d97577251a83d59a9e71258fb3e8f01962cedda86643a9d1",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=XRPUSDT&interval=1d&startTime=1794787200000&endTime=1795737599999&limit=1000"
+  },
+  {
+   "bytes": 1957,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:09.058Z",
+   "file": "0011_binance_1d_ZEC.json",
+   "gzip": false,
+   "kind": "daily",
+   "meta": {
+    "coin": "ZEC",
+    "pair": "ZECUSDT"
+   },
+   "seq": 11,
+   "sha256": "f88cfd25434d92c7627f4b37a1784f0a695c89696fcf5e0267887274f9bb7d27",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/klines?symbol=ZECUSDT&interval=1d&startTime=1794787200000&endTime=1795737599999&limit=1000"
+  },
+  {
+   "bytes": 50318,
+   "error": null,
+   "fetched_at": "2026-11-27T05:00:04.292Z",
+   "file": "0001_binance_exchangeinfo.json.gz",
+   "gzip": true,
+   "kind": "exchange_info",
+   "meta": {},
+   "seq": 1,
+   "sha256": "ae28b86465327071b7e9d2bd60d701c3e18f94cd7b388b50b642be5769f22908",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/exchangeInfo?symbols=%5B%22BNBUSDT%22%2C%22BTCUSDT%22%2C%22DOGEUSDT%22%2C%22ETHUSDT%22%2C%22HYPEUSDT%22%2C%22NEARUSDT%22%2C%22SOLUSDT%22%2C%22UUSDT%22%2C%22XRPUSDT%22%2C%22ZECUSDT%22%5D"
+  },
+  {
+   "bytes": 28,
+   "error": null,
+   "fetched_at": "2026-11-27T05:02:22.288Z",
+   "file": "0015_binance_time.json",
+   "gzip": false,
+   "kind": "server_time",
+   "meta": {},
+   "seq": 15,
+   "sha256": "fe375b498cd82ce1b4809096ae3bea61eef56c5129cb49ad52ad0e73ee371fcc",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/time"
+  },
+  {
+   "bytes": 1203,
+   "error": null,
+   "fetched_at": "2026-11-27T05:02:22.035Z",
+   "file": "0014_binance_snapshot.json",
+   "gzip": false,
+   "kind": "snapshot",
+   "meta": {},
+   "seq": 14,
+   "sha256": "c61330e95908d9a8a96dc8b28729aa580455e6a89bd312cdd29cc3d3eff3676d",
+   "status": 200,
+   "url": "https://api.binance.com/api/v3/ticker/bookTicker?symbols=%5B%22BNBUSDT%22%2C%22BTCUSDT%22%2C%22DOGEUSDT%22%2C%22ETHUSDT%22%2C%22HYPEUSDT%22%2C%22NEARUSDT%22%2C%22SOLUSDT%22%2C%22UUSDT%22%2C%22XRPUSDT%22%2C%22ZECUSDT%22%5D"
+  }
+ ]
+}
