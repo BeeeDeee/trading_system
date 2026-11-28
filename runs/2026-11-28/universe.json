@@ -1,0 +1,503 @@
+{
+ "coins": [
+  {
+   "coin": "BTC",
+   "id": "bitcoin",
+   "market_cap": 1231421406266.0,
+   "name": "Bitcoin",
+   "pair": "BTCUSDT",
+   "quote_volume_24h": 1277178887.7200985,
+   "rank": 1
+  },
+  {
+   "coin": "ETH",
+   "id": "ethereum",
+   "market_cap": 211042583375.0,
+   "name": "Ethereum",
+   "pair": "ETHUSDT",
+   "quote_volume_24h": 427464626.05496,
+   "rank": 2
+  },
+  {
+   "coin": "BNB",
+   "id": "binancecoin",
+   "market_cap": 73294419586.0,
+   "name": "BNB",
+   "pair": "BNBUSDT",
+   "quote_volume_24h": 59176880.60435,
+   "rank": 4
+  },
+  {
+   "coin": "XRP",
+   "id": "ripple",
+   "market_cap": 59260676562.0,
+   "name": "XRP",
+   "pair": "XRPUSDT",
+   "quote_volume_24h": 75504520.64972,
+   "rank": 6
+  },
+  {
+   "coin": "SOL",
+   "id": "solana",
+   "market_cap": 42217449516.0,
+   "name": "Solana",
+   "pair": "SOLUSDT",
+   "quote_volume_24h": 137488381.32594,
+   "rank": 7
+  },
+  {
+   "coin": "HYPE",
+   "id": "hyperliquid",
+   "market_cap": 14943454627.0,
+   "name": "Hyperliquid",
+   "pair": "HYPEUSDT",
+   "quote_volume_24h": 23850958.35766,
+   "rank": 10
+  },
+  {
+   "coin": "ZEC",
+   "id": "zcash",
+   "market_cap": 13458246952.0,
+   "name": "Zcash",
+   "pair": "ZECUSDT",
+   "quote_volume_24h": 88432777.3575,
+   "rank": 11
+  },
+  {
+   "coin": "DOGE",
+   "id": "dogecoin",
+   "market_cap": 8683985478.0,
+   "name": "Dogecoin",
+   "pair": "DOGEUSDT",
+   "quote_volume_24h": 21232050.90391,
+   "rank": 13
+  },
+  {
+   "coin": "NEAR",
+   "id": "near",
+   "market_cap": 3933701486.0,
+   "name": "NEAR Protocol",
+   "pair": "NEARUSDT",
+   "quote_volume_24h": 71116027.0098,
+   "rank": 23
+  },
+  {
+   "coin": "U",
+   "id": "united-stables",
+   "market_cap": 1643258395.0,
+   "name": "United Stables",
+   "pair": "UUSDT",
+   "quote_volume_24h": 43035095.4239,
+   "rank": 47
+  }
+ ],
+ "date": "2026-11-23",
+ "rejected": [
+  {
+   "coin": "USDT",
+   "id": "tether",
+   "market_cap": 174621636731.0,
+   "name": "Tether",
+   "pair": "USDTUSDT",
+   "quote_volume_24h": null,
+   "rank": 3,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "USDC",
+   "id": "usd-coin",
+   "market_cap": 68392588317.0,
+   "name": "USDC",
+   "pair": "USDCUSDT",
+   "quote_volume_24h": 1072939790.60116,
+   "rank": 5,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "TRX",
+   "id": "tron",
+   "market_cap": 29014803158.0,
+   "name": "TRON",
+   "pair": "TRXUSDT",
+   "quote_volume_24h": 17399300.12352,
+   "rank": 8,
+   "reason": "objem 24h $17.4M < $20M"
+  },
+  {
+   "coin": "FIGR_HELOC",
+   "id": "figure-heloc",
+   "market_cap": 28644056454.0,
+   "name": "Figure Heloc",
+   "pair": "FIGR_HELOCUSDT",
+   "quote_volume_24h": null,
+   "rank": 9,
+   "reason": "bez obchodovatelného páru FIGR_HELOCUSDT na Binance (neexistuje)"
+  },
+  {
+   "coin": "XMR",
+   "id": "monero",
+   "market_cap": 9453023027.0,
+   "name": "Monero",
+   "pair": "XMRUSDT",
+   "quote_volume_24h": null,
+   "rank": 12,
+   "reason": "bez obchodovatelného páru XMRUSDT na Binance (BREAK)"
+  },
+  {
+   "coin": "LEO",
+   "id": "leo-token",
+   "market_cap": 8318438366.0,
+   "name": "LEO Token",
+   "pair": "LEOUSDT",
+   "quote_volume_24h": null,
+   "rank": 14,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "WBT",
+   "id": "whitebit",
+   "market_cap": 6966133913.0,
+   "name": "WhiteBIT Coin",
+   "pair": "WBTUSDT",
+   "quote_volume_24h": null,
+   "rank": 15,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "LINK",
+   "id": "chainlink",
+   "market_cap": 6822404476.0,
+   "name": "Chainlink",
+   "pair": "LINKUSDT",
+   "quote_volume_24h": 11975940.2478,
+   "rank": 16,
+   "reason": "objem 24h $12.0M < $20M"
+  },
+  {
+   "coin": "USDS",
+   "id": "usds",
+   "market_cap": 6463488102.0,
+   "name": "USDS",
+   "pair": "USDSUSDT",
+   "quote_volume_24h": 153242.9719,
+   "rank": 17,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "ADA",
+   "id": "cardano",
+   "market_cap": 5432487889.0,
+   "name": "Cardano",
+   "pair": "ADAUSDT",
+   "quote_volume_24h": 12451012.41382,
+   "rank": 18,
+   "reason": "objem 24h $12.5M < $20M"
+  },
+  {
+   "coin": "USDE",
+   "id": "ethena-usde",
+   "market_cap": 4852424535.0,
+   "name": "Ethena USDe",
+   "pair": "USDEUSDT",
+   "quote_volume_24h": 1135343.769,
+   "rank": 19,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "XLM",
+   "id": "stellar",
+   "market_cap": 4509392801.0,
+   "name": "Stellar",
+   "pair": "XLMUSDT",
+   "quote_volume_24h": 4773639.0081,
+   "rank": 20,
+   "reason": "objem 24h $4.8M < $20M"
+  },
+  {
+   "coin": "DAI",
+   "id": "dai",
+   "market_cap": 4353419952.0,
+   "name": "Dai",
+   "pair": "DAIUSDT",
+   "quote_volume_24h": null,
+   "rank": 21,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "BCH",
+   "id": "bitcoin-cash",
+   "market_cap": 3990123069.0,
+   "name": "Bitcoin Cash",
+   "pair": "BCHUSDT",
+   "quote_volume_24h": 3682486.9264,
+   "rank": 22,
+   "reason": "objem 24h $3.7M < $20M"
+  },
+  {
+   "coin": "LTC",
+   "id": "litecoin",
+   "market_cap": 3144797634.0,
+   "name": "Litecoin",
+   "pair": "LTCUSDT",
+   "quote_volume_24h": 11045526.65032,
+   "rank": 24,
+   "reason": "objem 24h $11.0M < $20M"
+  },
+  {
+   "coin": "CC",
+   "id": "canton-network",
+   "market_cap": 3040955604.0,
+   "name": "Canton",
+   "pair": "CCUSDT",
+   "quote_volume_24h": null,
+   "rank": 25,
+   "reason": "bez obchodovatelného páru CCUSDT na Binance (neexistuje)"
+  },
+  {
+   "coin": "AVAX",
+   "id": "avalanche-2",
+   "market_cap": 2976456424.0,
+   "name": "Avalanche",
+   "pair": "AVAXUSDT",
+   "quote_volume_24h": 6954987.17375,
+   "rank": 26,
+   "reason": "objem 24h $7.0M < $20M"
+  },
+  {
+   "coin": "XAUT",
+   "id": "tether-gold",
+   "market_cap": 2911553538.0,
+   "name": "Tether Gold",
+   "pair": "XAUTUSDT",
+   "quote_volume_24h": 15692449.19533,
+   "rank": 27,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "UNI",
+   "id": "uniswap",
+   "market_cap": 2901239648.0,
+   "name": "Uniswap",
+   "pair": "UNIUSDT",
+   "quote_volume_24h": 15605074.89868,
+   "rank": 28,
+   "reason": "objem 24h $15.6M < $20M"
+  },
+  {
+   "coin": "RLUSD",
+   "id": "ripple-usd",
+   "market_cap": 2868768299.0,
+   "name": "Ripple USD",
+   "pair": "RLUSDUSDT",
+   "quote_volume_24h": 39570404.4812,
+   "rank": 29,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "GRAM",
+   "id": "the-open-network",
+   "market_cap": 2853159435.0,
+   "name": "Gram (prev. Toncoin)",
+   "pair": "GRAMUSDT",
+   "quote_volume_24h": 3302733.71728,
+   "rank": 30,
+   "reason": "objem 24h $3.3M < $20M"
+  },
+  {
+   "coin": "USD1",
+   "id": "usd1-wlfi",
+   "market_cap": 2847526917.0,
+   "name": "USD1",
+   "pair": "USD1USDT",
+   "quote_volume_24h": 100497747.85614,
+   "rank": 31,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "SUI",
+   "id": "sui",
+   "market_cap": 2729597563.0,
+   "name": "Sui",
+   "pair": "SUIUSDT",
+   "quote_volume_24h": 14649192.77992,
+   "rank": 32,
+   "reason": "objem 24h $14.6M < $20M"
+  },
+  {
+   "coin": "USDG",
+   "id": "global-dollar",
+   "market_cap": 2600152519.0,
+   "name": "Global Dollar",
+   "pair": "USDGUSDT",
+   "quote_volume_24h": null,
+   "rank": 33,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "USDY",
+   "id": "ondo-us-dollar-yield",
+   "market_cap": 2371388349.0,
+   "name": "Ondo US Dollar Yield",
+   "pair": "USDYUSDT",
+   "quote_volume_24h": null,
+   "rank": 34,
+   "reason": "bez obchodovatelného páru USDYUSDT na Binance (neexistuje)"
+  },
+  {
+   "coin": "RAIN",
+   "id": "rain",
+   "market_cap": 2337827361.0,
+   "name": "Rain",
+   "pair": "RAINUSDT",
+   "quote_volume_24h": null,
+   "rank": 35,
+   "reason": "bez obchodovatelného páru RAINUSDT na Binance (neexistuje)"
+  },
+  {
+   "coin": "PYUSD",
+   "id": "paypal-usd",
+   "market_cap": 2322984584.0,
+   "name": "PayPal USD",
+   "pair": "PYUSDUSDT",
+   "quote_volume_24h": null,
+   "rank": 36,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "HBAR",
+   "id": "hedera-hashgraph",
+   "market_cap": 2281899419.0,
+   "name": "Hedera",
+   "pair": "HBARUSDT",
+   "quote_volume_24h": 3101088.07766,
+   "rank": 37,
+   "reason": "objem 24h $3.1M < $20M"
+  },
+  {
+   "coin": "TAO",
+   "id": "bittensor",
+   "market_cap": 2235645947.0,
+   "name": "Bittensor",
+   "pair": "TAOUSDT",
+   "quote_volume_24h": 8047977.60215,
+   "rank": 38,
+   "reason": "objem 24h $8.0M < $20M"
+  },
+  {
+   "coin": "SHIB",
+   "id": "shiba-inu",
+   "market_cap": 2121415680.0,
+   "name": "Shiba Inu",
+   "pair": "SHIBUSDT",
+   "quote_volume_24h": 1363546.89103272,
+   "rank": 39,
+   "reason": "objem 24h $1.4M < $20M"
+  },
+  {
+   "coin": "CRO",
+   "id": "crypto-com-chain",
+   "market_cap": 2113619359.0,
+   "name": "Cronos",
+   "pair": "CROUSDT",
+   "quote_volume_24h": null,
+   "rank": 40,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "QNT",
+   "id": "quant-network",
+   "market_cap": 2083630286.0,
+   "name": "Quant",
+   "pair": "QNTUSDT",
+   "quote_volume_24h": 4145990.45533,
+   "rank": 41,
+   "reason": "objem 24h $4.1M < $20M"
+  },
+  {
+   "coin": "EURSAFO",
+   "id": "spiko-amundi-overnight-swap-fund-eur",
+   "market_cap": 2053953461.0,
+   "name": "Spiko Amundi Overnight Swap Fund (EUR)",
+   "pair": "EURSAFOUSDT",
+   "quote_volume_24h": null,
+   "rank": 42,
+   "reason": "bez obchodovatelného páru EURSAFOUSDT na Binance (neexistuje)"
+  },
+  {
+   "coin": "USYC",
+   "id": "hashnote-usyc",
+   "market_cap": 2016987416.0,
+   "name": "Circle USYC",
+   "pair": "USYCUSDT",
+   "quote_volume_24h": null,
+   "rank": 43,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "M",
+   "id": "memecore",
+   "market_cap": 1763233885.0,
+   "name": "MemeCore",
+   "pair": "MUSDT",
+   "quote_volume_24h": null,
+   "rank": 44,
+   "reason": "bez obchodovatelného páru MUSDT na Binance (neexistuje)"
+  },
+  {
+   "coin": "OKB",
+   "id": "okb",
+   "market_cap": 1734330759.0,
+   "name": "OKB",
+   "pair": "OKBUSDT",
+   "quote_volume_24h": null,
+   "rank": 45,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "USDF",
+   "id": "falcon-finance",
+   "market_cap": 1711611413.0,
+   "name": "Falcon USD",
+   "pair": "USDFUSDT",
+   "quote_volume_24h": null,
+   "rank": 46,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "PAXG",
+   "id": "pax-gold",
+   "market_cap": 1609751629.0,
+   "name": "PAX Gold",
+   "pair": "PAXGUSDT",
+   "quote_volume_24h": 15237778.562052,
+   "rank": 48,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "BUIDL",
+   "id": "blackrock-usd-institutional-digital-liquidity-fund",
+   "market_cap": 1553476586.0,
+   "name": "BlackRock USD Institutional Digital Liquidity Fund",
+   "pair": "BUIDLUSDT",
+   "quote_volume_24h": null,
+   "rank": 49,
+   "reason": "vyloučen seznamem (stablecoin/wrapped/staked/komoditní)"
+  },
+  {
+   "coin": "AAVE",
+   "id": "aave",
+   "market_cap": 1499047426.0,
+   "name": "Aave",
+   "pair": "AAVEUSDT",
+   "quote_volume_24h": 9253782.85928,
+   "rank": 50,
+   "reason": "objem 24h $9.3M < $20M"
+  }
+ ],
+ "rules": {
+  "candidates": 50,
+  "min_quote_volume_usd": 20000000,
+  "size": 20
+ },
+ "source": "coingecko"
+}

@@ -1,0 +1,170 @@
+{
+ "asof": "2026-11-27",
+ "catchup_days": [],
+ "checks": {
+  "close_crosscheck": {
+   "BTC": {
+    "diff_pct": 0.0003,
+    "ok": true,
+    "other": 59922.9,
+    "other_source": "okx",
+    "primary": 59923.1
+   },
+   "NEAR": {
+    "diff_pct": 0.0,
+    "ok": true,
+    "other": 3.021,
+    "other_source": "okx",
+    "primary": 3.021
+   }
+  },
+  "errors": [],
+  "quarantine": {},
+  "redenomination_suspects": [],
+  "sources": {
+   "BNB": "binance",
+   "BTC": "binance",
+   "DOGE": "binance",
+   "ETH": "binance",
+   "HYPE": "binance",
+   "NEAR": "binance",
+   "SOL": "binance",
+   "U": "binance",
+   "XRP": "binance",
+   "ZEC": "binance"
+  },
+  "warnings": []
+ },
+ "date": "2026-11-28",
+ "delisted": [],
+ "files": {
+  "check.json": "21bb1a23e83b71a3521a7243852fcffb31d4a614ee0b3f104dded8d3672aeb0a",
+  "config.json": "9c180bcc5d5cba09f5d61b71be078700eddd7fed6ac4ef00754b42fec8a5d8fd",
+  "decisions.json": "642941da26113988bf55bf28abfbc4553ad2d365f5cea2475e6df9d11e9c86bf",
+  "features.json": "12fe8654cfe9c887f1c85d08759b0ccaaa51836b860d27e59c2d9356b58ea29a",
+  "features.md": "8286178a939008989a2bf7c58488b07b048f749b88f755f9ade3251623b40c57",
+  "fills.json": "f319b28149e83096f43d79efb33789e77b341a7fe74d253de109baa0b14d8c21",
+  "inputs.json": "5d36b97102a1b61158b5f1bcb04f690ab35069fe96dcb718fa2f1cfb384b8edc",
+  "ledger.json": "7db900ea4bffaee55358dfe1b8eb1c3d705ac3d5a95b28b2a79249fd38058be5",
+  "llm/claude_volne_positions.json": "b3ee9ccd3be1ffb947fc072e85597bc6305399d7e0d50baf0469ce2802d54afe",
+  "llm/features.md": "a8a99f2add40bd9719ef11ef6d8d2599d8199642c6c63f0e083bb6afd13728f5",
+  "llm/meta.json": "ab62bd4abdcd6214668652e41260a06ecb5b58ee898c18df67e05f53e0c728ec",
+  "llm/prompt.md": "8279fee2931ec524c4af28a9274d680dbbf16b5703cf2587d6c837318855a61e",
+  "llm/scores.json": "006b8a571a89f37a6c52a162ff05dae85d9a693524fc2ddb45c253c3c46d96aa",
+  "llm/scores.schema.json": "5131a90e6a001866d8a2d47632ca0b75a0de0da5610c50b19c228fd2f4a85f7e",
+  "llm/transcript.jsonl": "939d9ec90d20d300dd45d501cfaf2632aa5c4ad814242cf3c31810b13761e1f5",
+  "llm/universe.json": "95380d4db5bf2c43f721cab3dea1205d7da4f641435997a07e9fb630443b580a",
+  "raw/0001_binance_exchangeinfo.json.gz": "b0c99b23de8554756d3bda71c86aadc80e9d3f8c810a92ae65f3db2aa6979ed2",
+  "raw/0002_binance_1d_BNB.json": "b503a7910e9a81dcf21adc8df126a22e05a1fb829918d9e77acc151170c78ad3",
+  "raw/0003_binance_1d_BTC.json": "5e5c3e38ace80597229ef66401976e69a03645c6cc7dbb5d62952bb40523e834",
+  "raw/0004_binance_1d_DOGE.json": "ea1552d94af0c2d84c80e516b67776f9ef59fb313674e7a733885f89a447fc96",
+  "raw/0005_binance_1d_ETH.json": "b35086c82d64cadaf49f076098af5fa1ee211c82c53983620ad8008e0b7458d1",
+  "raw/0006_binance_1d_HYPE.json": "2871683de2f771b6c66705b486b3624b63cb35dcc761d939f00051b6f65f44da",
+  "raw/0007_binance_1d_NEAR.json": "d762eb181ae0de5d987f7d26148f5475fe8509719498b5f99117a5b17d26ecf0",
+  "raw/0008_binance_1d_SOL.json": "6f3974fb7468badf42849f052c9283afe7d34ce17d26b18bea38df5dc246742d",
+  "raw/0009_binance_1d_U.json": "99d326e224767807a562e1f58dbc33147b6689f8bccdd911f4f5c141b216bff3",
+  "raw/0010_binance_1d_XRP.json": "d89fabfcf8aa98546578631971fc0c036f618da4feead27fcaaedc709df25533",
+  "raw/0011_binance_1d_ZEC.json": "f0e025088bb3911cd6e8ae563c284c47d3e875b419f18f015714ef48180ee811",
+  "raw/0012_okx_check_BTC.json": "1c4fc07a6634f00c809b04e8a0bbd59fe26031fdb4c86dbc4f9fab8c2254a5e2",
+  "raw/0013_okx_check_NEAR.json": "69015e07c756f3308d7a5a230795e2adacf8fcf32e13f27cd5068d0cdbe1f04f",
+  "raw/0014_binance_snapshot.json": "b090f9a7b0fc8852711ea00aa8bda4acf70b0464f468faec97ea9a8f3e4b915c",
+  "raw/0015_binance_time.json": "a3da01a7b0983957f64243dd830e284009cdfc974e22d511574f8c5eb6cedfd9",
+  "raw/0016_coingecko_price_BTC.json": "4d780b855b7ab6ba193ca464120ecc1dccf35320606e209c72eebfe42b66041d",
+  "raw/0017_coingecko_price_XRP.json": "831c1283baaa0e4044c64b7fbbb3d268e9718a204049aac6d22b0662e1ea2ffe",
+  "raw_manifest.json": "90810d7c677062746adcf80e682d393241ac8f11c372f7c85e2a985e1d0ee6a7",
+  "scores.json": "a51d2c2e80cab1ae4e6ae1fc1e5a77b86a92017c173da1331e26ac9dc503f31d",
+  "snapshot.json": "bcf0f22c0dfa60c72ed42c48156beeaad4c12c57c2f74d4650d6bcba3d2da5ba",
+  "universe.json": "27f1122416b7cb6d5488a25d8e1cc983bb3deb38809592d47997675b745d2bbb",
+  "validate.json": "9fc35b9596b3991619aaf8372aff18c16ca25a93239f53ae00746e77ad2b85ce"
+ },
+ "llm": {
+  "exit_code": 0,
+  "model_init": "claude-opus-5-5",
+  "model_pinned_ok": true,
+  "models_used": [
+   "claude-haiku-4-5-20251001",
+   "claude-opus-5-5"
+  ],
+  "num_turns": 22,
+  "repaired": false,
+  "session_id": "ea9b8a8c-456e-421e-9373-21c8495d9607",
+  "timed_out": false,
+  "wall_s": 115.9,
+  "web_fetch_requests": 0,
+  "web_search_requests": 15
+ },
+ "llm_model_pinned": "claude-opus-5-5",
+ "mode": "decision",
+ "prev_hash": "890dcc8ea1b0d62831a4a80d39037597fd8c22214bfab33e147fb22d31b514c5",
+ "snapshot_crosscheck": {
+  "BTC": {
+   "diff_pct": 0.0034,
+   "ok": true,
+   "other": 59944.0,
+   "other_source": "coingecko",
+   "primary": 59946.015
+  },
+  "XRP": {
+   "diff_pct": 0.0421,
+   "ok": true,
+   "other": 0.947951,
+   "other_source": "coingecko",
+   "primary": 0.94835
+  }
+ },
+ "status": "ok",
+ "summary": {
+  "best": [
+   {
+    "id": "jen_zpravy",
+    "name": "Jen zprávy",
+    "ret_pct": 4.55
+   },
+   {
+    "id": "pravdepodobnost",
+    "name": "Pravděpodobnost",
+    "ret_pct": -4.06
+   },
+   {
+    "id": "btc_filtr",
+    "name": "Filtr BTC",
+    "ret_pct": -19.84
+   }
+  ],
+  "btc_ret_pct": -28.55,
+  "n_portfolios": 23,
+  "n_trades_base": 20,
+  "n_variants": 18,
+  "worst": [
+   {
+    "id": "nahodny",
+    "name": "Náhodný",
+    "ret_pct": -47.41
+   },
+   {
+    "id": "bez_brany",
+    "name": "Bez brány",
+    "ret_pct": -49.12
+   }
+  ]
+ },
+ "this_hash": "62ef06ca5564b1094015bd1a188959029743fca1ff83cdad6b0cfb5d495e384f",
+ "timing": {
+  "finished_at": "2026-11-28T05:02:08.814Z",
+  "locked_at": "2026-11-28T05:02:08.013Z",
+  "snapshot_at": "2026-11-28T05:02:08.520Z",
+  "started_at": "2026-11-28T05:00:07.679Z"
+ },
+ "type": "run",
+ "universe_date": "2026-11-23",
+ "version": {
+  "code_commit": "dcea86411a6ac980a62e2911756d021d62d5b853",
+  "config_sha256": "9c180bcc5d5cba09f5d61b71be078700eddd7fed6ac4ef00754b42fec8a5d8fd",
+  "engine_sha256": "8001eb5cdf2741098ec00cd5384849d77e7cacf8132c97af84743acfb34d1629",
+  "manifest_sha256": "569c24cf708bb50311c7f171315a9a3db44447bad666748671eba9e20bff8514",
+  "pin_ok": true,
+  "prompt_sha256": "d160e2d791957515fe01902599625e4e729f4b6dd512268e56fc495687fb7551",
+  "tag": "v1.0.5"
+ },
+ "warnings": []
+}

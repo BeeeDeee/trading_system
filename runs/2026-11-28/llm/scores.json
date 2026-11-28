@@ -1,0 +1,135 @@
+{
+ "date": "2026-11-28",
+ "regime": {
+  "label": "Risk-off, přeprodaný trh",
+  "summary": "BTC po sedmi týdnech poklesu (−26 % za 30 d, RSI ~27) zkouší odraz kolem 60 tis. při extrémním strachu (index 12), neutrálním fundingu a rekordních odlivech z ETF v listopadu. Tenká likvidita po Díkůvzdání, odraz zatím bez potvrzení spotovou poptávkou."
+ },
+ "events_7d": [
+  {"date": "2026-11-28", "title": "Binance Blockchain Week Bangkok (28.–29. 11.)", "type": "jine"},
+  {"date": "2026-12-01", "title": "Franklin Templeton přidává HYPE do Crypto Index ETF", "type": "listing"},
+  {"date": "2026-12-01", "title": "USA: JOLTS (pracovní místa)", "type": "makro"},
+  {"date": "2026-12-04", "title": "USA: listopadová zpráva o zaměstnanosti (před FOMC 8.–9. 12.)", "type": "makro"},
+  {"date": "2026-12-06", "title": "Měsíční odemčení HYPE pro core contributors (těsně za oknem)", "type": "unlock"}
+ ],
+ "coins": {
+  "BTC": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.52, "expected_move_7d_pct": 0.5,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Hluboko pod SMA a RSI 27 dává prostor k odrazu, ale rekordní odlivy z ETF a extrémní strach drží trend dolů.",
+   "sources": [
+    "https://www.riotimesonline.com/crypto-markets-bitcoin-majors-friday-november-27-2026/",
+    "https://www.morningstar.com/funds/crypto-etfs-saw-record-withdrawals-bitcoin-collapsed-november",
+    "https://en.coinotag.com/bitcoin-btc-slips-below-60000-162m-long-liquidations"
+   ]
+  },
+  "ETH": {
+   "trend": -2, "mr": 1, "news": 0, "conviction": 2,
+   "p_outperform_btc_7d": 0.45, "p_up_7d": 0.5, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Přeprodaný, ale investoři z ETH ETF odcházejí rychleji než z BTC a rel30 je záporné, v risk-off vyšší beta škodí.",
+   "sources": [
+    "https://cryptobriefing.com/ether-etfs-2-35-billion-outflows-seven-weeks/"
+   ]
+  },
+  "BNB": {
+   "trend": -1, "mr": 1, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.52, "p_up_7d": 0.52, "expected_move_7d_pct": 0.8,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Defenzivní velký alt s rel30 téměř nula a RSI 29; Blockchain Week ani personální změny nejsou překvapení.",
+   "sources": [
+    "https://www.webull.com/news/15428567758816256"
+   ]
+  },
+  "XRP": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.5, "p_up_7d": 0.5, "expected_move_7d_pct": 0.3,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Drobné přítoky do XRP ETF jsou jediné kladné toky na trhu, ale odklad 3x ETF a slabý trend nedávají výraznou výhodu.",
+   "sources": [
+    "https://www.tokenpost.com/news/investing/63981",
+    "https://finance.biggo.com/news/6e7e5423-efed-4250-a585-5d26f2492310"
+   ]
+  },
+  "SOL": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.5, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Krátkodobě silnější než BTC, ale přeplněné longy (L/S 3,5) a převaha nabídek v knize zvyšují riziko výplachu.",
+   "sources": [
+    "https://www.coindesk.com/markets/2026/11/19/roundhill-scraps-solana-and-xrp-income-etfs-as-rival-funds-attract-just-usd12-million"
+   ]
+  },
+  "HYPE": {
+   "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.52, "p_up_7d": 0.52, "expected_move_7d_pct": 1.0,
+   "event": true, "event_type": "listing", "risk_flag": false,
+   "note": "Relativní síla (rel30 +5) a zařazení do Franklin ETF 1. 12. je známé a částečně v ceně, proti stojí odemčení 6. 12.",
+   "sources": [
+    "https://cryptobriefing.com/franklin-templeton-to-add-hyperliquids-hype-token-to-crypto-etf-in-december",
+    "https://coinmarketcap.com/cmc-ai/hyperliquid/latest-updates/",
+    "https://tokenomist.ai/hyperliquid/unlock-events?event-type=past"
+   ]
+  },
+  "ZEC": {
+   "trend": -2, "mr": 0, "news": -1, "conviction": 2,
+   "p_outperform_btc_7d": 0.4, "p_up_7d": 0.44, "expected_move_7d_pct": -3.0,
+   "event": true, "event_type": "upgrade", "risk_flag": false,
+   "note": "Výzva vývojářů k opuštění poolu Sapling kvůli teoretickému kryptografickému riziku poškozuje narativ a včerejší +8 % je spíše short squeeze.",
+   "sources": [
+    "https://www.theblock.co/news/ecosystems/2026-11-26-the-time-to-prepare-for-a-cryptographic-breakthrough-is-before-it-happens-zcash-team-urges-faster-deprecation-of-legacy-shielded-pool-447000",
+    "https://cointelegraph.com/news/zcash-users-migrate-zec-supply-sapling-pool-retirement",
+    "https://www.fxstreet.com/cryptocurrencies/news/zcash-price-forecast-zec-rebound-on-speculative-demand-risks-trapping-buyers-202611270404"
+   ]
+  },
+  "DOGE": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.5, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Týdenní odraz +6 % bez nové zprávy a při klesajícím objemu, beta 1,2 v nejistém trhu.",
+   "sources": [
+    "https://www.tokenpost.com/news/investing/63716"
+   ]
+  },
+  "NEAR": {
+   "trend": -1, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.48, "p_up_7d": 0.5, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Schválené snížení emise a růst NEAR Intents už cena zčásti zohlednila (+4,5 % za 3 dny), beta 1,8 je v risk-off dvousečná.",
+   "sources": [
+    "https://u.today/price-analysis/near-protocol-near-price-analysis-for-november-27-first-resistance-amid-token-issuance-drop",
+    "https://coinmarketcap.com/cmc-ai/near-protocol/latest-updates/"
+   ]
+  },
+  "U": {
+   "trend": 0, "mr": 0, "news": 0, "conviction": 3,
+   "p_outperform_btc_7d": 0.47, "p_up_7d": 0.5, "expected_move_7d_pct": 0.0,
+   "event": false, "event_type": "none", "risk_flag": false,
+   "note": "Stablecoin drží paritu, vůči BTC vyhraje jen pokud BTC klesne.",
+   "sources": [
+    "https://coinmarketcap.com/cmc-ai/united-stables/latest-updates/"
+   ]
+  }
+ },
+ "top10": [
+  {"coin": "HYPE", "reason": "Nejlepší relativní síla za 30 dní, nízká korelace s BTC a ETF katalyzátor 1. 12."},
+  {"coin": "BNB", "reason": "Defenzivní velký alt, přeprodaný, drží krok s BTC."},
+  {"coin": "XRP", "reason": "Jediné kladné ETF toky, neutrální výhled vůči BTC."},
+  {"coin": "BTC", "reason": "Benchmark, přeprodaný, ale bez potvrzeného obratu."},
+  {"coin": "U", "reason": "Stablecoin – ochrana při dalším poklesu."},
+  {"coin": "DOGE", "reason": "Krátkodobý odraz bez zpráv, vyšší beta."},
+  {"coin": "NEAR", "reason": "Pozitivní zprávy už v ceně, vysoká beta."},
+  {"coin": "SOL", "reason": "Přeplněné longy a slabá kniha."},
+  {"coin": "ETH", "reason": "Odlivy z ETF silnější než u BTC, slabá relativní síla."},
+  {"coin": "ZEC", "reason": "Rozbitý trend a negativní narativ kolem Sapling."}
+ ],
+ "claude_volne": {
+  "comment": "Zhruba třetina portfolia v trhu – přeprodanost láká, ale bez potvrzení obratu a s odlivy z ETF držím většinu v hotovosti; ETH prodávám kvůli slabé relativní síle.",
+  "positions": [
+   {"coin": "BTC", "weight_pct": 15, "reason": "Jádrová pozice, RSI 27 a extrémní strach historicky nabízí odraz.", "invalidation": "Denní uzavření BTC pod 30d minimem s dalším odlivem z ETF."},
+   {"coin": "BNB", "weight_pct": 7, "reason": "Defenzivní alt s nejmenší ztrátou vůči BTC a RSI pod 30.", "invalidation": "rel7 vůči BTC pod −3 % nebo negativní zpráva o Binance."},
+   {"coin": "XRP", "weight_pct": 5, "reason": "Držím včerejší pozici, ETF přítoky jsou jediné kladné toky na trhu.", "invalidation": "Pokles pod 30d minimum nebo obrat ETF toků do odlivů."},
+   {"coin": "HYPE", "weight_pct": 6, "reason": "Relativní síla a zařazení do Franklin ETF 1. 12., negativní funding bez přeplněných longů.", "invalidation": "Výprodej před odemčením 6. 12. nebo ztráta rel7 vůči BTC pod −5 %."}
+  ]
+ }
+}
